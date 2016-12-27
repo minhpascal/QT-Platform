@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<field
+	name="TEST_STRING_FIELD"
+	alias="TEST_STRING_FIELD"
+	type="String"
+	length="20"
+	decimals="0"
+	persistent="true"
+	
+	description="Full field example"
+	title="Full field example"
+	label="Full field example"
+	header="Full field"
+	
+	maximum-value="A9999"
+	minimum-value="A0000"
+	required="true"
+	nullable="false"
+	validator-class-name=""
+	initial-value="A0000"
+	current-date-time-or-timestamp="false"
+	
+	horizontal-alignment="Left"
+	vertical-alignment="Center"
+	display-length="20"
+	uppercase="true"
+	
+	minimum-width="0"
+	maximum-width="0"
+	preferred-width="0"
+	
+	auto-size="true"
+	width-factor="1.1"
+	fixed-width="true">
+	
+	<possible-values>
+		<possible-value value="A0000" label="Value A0000"/>
+		<possible-value value="A4999" label="Value A4999"/>
+		<possible-value value="A9999" label="Value A9999"/>
+	</possible-values>
+</field>

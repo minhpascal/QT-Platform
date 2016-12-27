@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<domain
+	name="INSTRUMENT_CODE"
+	alias="INSTRUMENT_CODE"
+	type="String"
+	length="20"
+	title="Instrument code"
+	label="Instrument code"
+	header="Instrument">
+</domain>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<domain
+	name="PIP_SCALE"
+	alias="PIP_SCALE"
+	type="Integer"
+	length="2"
+	title="Pip scale"
+	label="Pip scale"
+	header="Pip scale">
+</domain>

@@ -1,0 +1,280 @@
+/**
+ * 
+ */
+package com.qtplaf.library.trading.chart;
+
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
+import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.util.ColorUtils;
+
+/**
+ * Listener of event generated in the <i>JChartPlotter</i>.
+ * 
+ * @author Miquel Sas
+ */
+public class JChartPlotterListener implements MouseListener, MouseMotionListener, MouseWheelListener {
+
+	/**
+	 * The parent <i>JChartPlotter</i>.
+	 */
+	private JChartPlotter chartPlotter;
+	/**
+	 * The wheel rotation factor. Wheel rotations are always 1, but rotation for scroll and zoom require a factor of the
+	 * number of bars visible.
+	 */
+	private double wheelRotationFactor = 0.1;
+	/**
+	 * Mouse dragging control (left button) to scroll the chart.
+	 */
+	private boolean mouseDragging = false;
+	/**
+	 * The previous X coordinate when mouse dragging (always in the chart/component area).
+	 */
+	private int mouseDraggingX = 0;
+	/**
+	 * The saved cursor when mouse enters the component.
+	 */
+	private Cursor cursor;
+
+	/**
+	 * Constructor assigning the parent <i>JChartPlotter</i>.
+	 * 
+	 * @param chartPlotter The chart plotter.
+	 */
+	public JChartPlotterListener(JChartPlotter chartPlotter) {
+		super();
+		this.chartPlotter = chartPlotter;
+	}
+
+	/**
+	 * Returns the wheel rotation factor used to calculate the rotation as a factor of the number of visible bars.
+	 * 
+	 * @return The wheel rotation factor.
+	 */
+	public double getWheelRotationFactor() {
+		return wheelRotationFactor;
+	}
+
+	/**
+	 * Sets the wheel rotation factor used to calculate the rotation as a factor of the number of visible bars.
+	 * 
+	 * @param wheelRotationFactor The wheel rotation factor.
+	 */
+	public void setWheelRotationFactor(double wheelRotationFactor) {
+		this.wheelRotationFactor = wheelRotationFactor;
+	}
+
+	/**
+	 * Invoked when the mouse button has been clicked (pressed and released) on a component.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	/**
+	 * Invoked when a mouse button has been pressed on a component.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mousePressed(MouseEvent e) {
+	}
+
+	/**
+	 * Invoked when a mouse button has been released on a component.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mouseReleased(MouseEvent e) {
+		// Release dragging (left button) if applicable
+		if (e.getButton() == MouseEvent.BUTTON1 && mouseDragging) {
+			mouseDragging = false;
+			mouseDraggingX = -1;
+		}
+	}
+
+	/**
+	 * Invoked when the mouse enters a component.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mouseEntered(MouseEvent e) {
+
+		// Save the cursor.
+		cursor = chartPlotter.getCursor();
+
+		// Tell the chart plotter to set the appropriate cursor.
+		chartPlotter.setCursor();
+
+		// Set the info background color.
+		setInfoBackground();
+	}
+
+	/**
+	 * Invoked when the mouse exits a component.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mouseExited(MouseEvent e) {
+		// Restore the cursor.
+		if (cursor != null) {
+			chartPlotter.setCursor(cursor);
+		}
+		chartPlotter.clearMousePoint(true);
+		chartPlotter.getChartContainer().getChartVerticalAxis().clearMousePoint(true);
+	}
+
+	/**
+	 * Invoked when a mouse button is pressed on a component and then dragged.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mouseDragged(MouseEvent e) {
+		PlotData plotData = chartPlotter.getChartContainer().getPlotData();
+		if (plotData == null) {
+			return;
+		}
+		if (!mouseDragging) {
+			mouseDragging = true;
+			mouseDraggingX = e.getX();
+		}
+		if (mouseDragging) {
+			int x = e.getX();
+			if (x >= 0 && x <= chartPlotter.getSize().getWidth()) {
+				if (mouseDraggingX != x) {
+					// The absolute width factor.
+					double widthFactor =
+						Math.abs(((double) (x - mouseDraggingX)) / chartPlotter.getSize().getWidth());
+					// Convert the width factor into index length.
+					int startIndex = plotData.getStartIndex();
+					int endIndex = plotData.getEndIndex();
+					int indexScroll = Math.abs((int) ((endIndex - startIndex) * widthFactor));
+					if (indexScroll < 1) {
+						indexScroll = 1;
+					}
+					// Scroll plot data.
+					if (x < mouseDraggingX) {
+						plotData.scroll(indexScroll);
+					} else {
+						plotData.scroll(-indexScroll);
+					}
+					plotData.calculateFrame();
+					mouseDraggingX = x;
+
+					// Set the mouse point to the chart plotter to paint the cursor as required.
+					chartPlotter.setMousePoint(e.getPoint(), false);
+
+					// Draw the value in the vertical axis.
+					chartPlotter.getChartContainer().getChartVerticalAxis().setMousePoint(e.getPoint(), false);
+
+					// Propagate changes.
+					chartPlotter.getChartContainer().getChart().propagateFrameChanges(plotData);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Invoked when the mouse cursor has been moved onto a component but no buttons have been pushed.
+	 * 
+	 * @param e The mouse event.
+	 */
+	public void mouseMoved(MouseEvent e) {
+
+		// This chart plotter container.
+		JChartContainer chartContainer = chartPlotter.getChartContainer();
+
+		// Set the info in the info panel of this chart plotter.
+		chartContainer.setChartInfo(e.getX(), e.getY());
+
+		// Set the mouse point to the chart plotter to paint the cursor as required.
+		chartPlotter.setMousePoint(e.getPoint(), true);
+
+		// Propagate to the rest of chart containers.
+		JChart chart = chartContainer.getChart();
+		Point point = new Point(e.getX(), -1);
+		for (int i = 0; i < chart.getChartCount(); i++) {
+			if (chart.getChartContainer(i).equals(chartContainer)) {
+				continue;
+			}
+			chart.getChartContainer(i).setChartInfo(e.getX(), -1);
+			chart.getChartContainer(i).getChartPlotter().setMousePoint(point, true);
+		}
+
+		// Draw the value in the vertical axis.
+		chartContainer.getChartVerticalAxis().setMousePoint(e.getPoint(), true);
+	}
+
+	/**
+	 * Invoked when the mouse wheel is rotated.
+	 * 
+	 * @param e The mouse wheel event.
+	 */
+	public void mouseWheelMoved(MouseWheelEvent e) {
+
+		// PlotterOld data and start and end indexes.
+		PlotData plotData = chartPlotter.getChartContainer().getPlotData();
+		if (plotData == null) {
+			return;
+		}
+		int startIndex = plotData.getStartIndex();
+		int endIndex = plotData.getEndIndex();
+
+		// Calculate the number of bars to scroll or zoom.
+		int barsVisible = endIndex - startIndex + 1;
+		int barsToScrollOrZoom = (int) (barsVisible * wheelRotationFactor);
+		if (barsToScrollOrZoom < 1) {
+			barsToScrollOrZoom = 1;
+		}
+		barsToScrollOrZoom *= e.getWheelRotation();
+
+		// If the control key is down, zoom, otherwise scroll.
+		if ((e.getModifiersEx() & MouseWheelEvent.CTRL_DOWN_MASK) == MouseWheelEvent.CTRL_DOWN_MASK) {
+			plotData.zoom(barsToScrollOrZoom);
+		} else {
+			plotData.scroll(barsToScrollOrZoom);
+		}
+
+		// Calculate frame and paint.
+		plotData.calculateFrame();
+
+		// Set the mouse point to the chart plotter to paint the cursor as required.
+		chartPlotter.setMousePoint(e.getPoint(), false);
+
+		// Propagate changes.
+		chartPlotter.getChartContainer().getChart().propagateFrameChanges(plotData);
+	}
+
+	/**
+	 * Sets the info background color.
+	 */
+	private void setInfoBackground() {
+
+		JChartContainer chartContainer = chartPlotter.getChartContainer();
+		JChart chart = chartContainer.getChart();
+
+		Color colorFocusGained = chart.getPlotParameters().getInfoBackgroundColor();
+		double brightnessFactor = chart.getPlotParameters().getInfoBackgroundBrightnessFactor();
+		Color colorFocusLost = ColorUtils.brighter(colorFocusGained, brightnessFactor);
+
+		chartContainer.getChartInfo().setPanelInfoBackgorund(colorFocusGained);
+		chartContainer.getChartInfo().repaintInfo();
+
+		int chartCount = chart.getChartCount();
+		for (int i = 0; i < chartCount; i++) {
+			if (chart.getChartContainer(i).equals(chartContainer)) {
+				continue;
+			}
+			chart.getChartContainer(i).getChartInfo().setPanelInfoBackgorund(colorFocusLost);
+			chart.getChartContainer(i).getChartInfo().repaintInfo();
+		}
+	}
+}

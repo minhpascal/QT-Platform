@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-math-3.5"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jdbc-derby-10.11.1.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jdbc-mysql-5.1.39"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jdbc-oracle-ojdbc14"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-log4j-2.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/apache-commons-lang-3.3.2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/javax-jnlp-1.6"/>
+	<classpathentry kind="lib" path="libraries/images/images.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JForex-SDK"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

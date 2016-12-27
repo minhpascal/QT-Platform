@@ -1,0 +1,352 @@
+/*
+ * Copyright (C) 2015 Miquel Sas
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+package com.qtplaf.library.database.rdbms;
+
+import java.sql.SQLException;
+
+import com.qtplaf.library.database.Criteria;
+import com.qtplaf.library.database.Filter;
+import com.qtplaf.library.database.Order;
+import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.PersistorException;
+import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.RecordIterator;
+import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.ValueMap;
+import com.qtplaf.library.database.View;
+import com.qtplaf.library.database.rdbms.sql.Select;
+
+/**
+ * Database persistor.
+ * 
+ * @author Miquel Sas
+ */
+public class DBPersistor implements Persistor {
+
+	/**
+	 * The underlying <code>DBEngine</code>.
+	 */
+	private DBEngine dbEngine;
+	/**
+	 * The underlying <code>View</code>.
+	 */
+	private View view;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param dbEngine The <code>DBEngine</code>.
+	 * @param view The <code>View</code>.
+	 */
+	public DBPersistor(DBEngine dbEngine, View view) {
+		super();
+		this.dbEngine = dbEngine;
+		this.view = view;
+	}
+
+	/**
+	 * Count the number of records that agree with the criteria.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @return The number of records that agree with the criteria.
+	 * @throws PersistorException
+	 */
+	public long count(Criteria criteria) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectCount(view, filter);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Deletes records based on a selection criteria.
+	 * 
+	 * @param criteria The criteria to select the entities to delete.
+	 * @return The number of deleted records.
+	 * @throws PersistorException
+	 */
+	public int delete(Criteria criteria) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeDelete(view.getMasterTable(), filter);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Delete a record, that must contain the primary key fields of the master table.
+	 * 
+	 * @param record The record to delete.
+	 * @return The number deleted records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int delete(Record record) throws PersistorException {
+		try {
+			return dbEngine.executeDelete(view.getMasterTable(), view.getMasterTableRecord(record));
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Check if the record exists within its persistent layer.
+	 * 
+	 * @param record The record.
+	 * @return A boolean stating if the record exists within its persistent layer.
+	 * @throws PersistorException
+	 */
+	public boolean exists(Record record) throws PersistorException {
+		try {
+			return dbEngine.existsRecord(view.getMasterTable(), view.getMasterTableRecord(record));
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Insert a record.
+	 * 
+	 * @param record The record to insert.
+	 * @return The number of already inserted records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int insert(Record record) throws PersistorException {
+		try {
+			return dbEngine.executeInsert(view.getMasterTable(), view.getMasterTableRecord(record));
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns a record iterator to scan the records that agree with the criteria.
+	 * 
+	 * @param criteria Filter criteria.
+	 * @return The record iterator.
+	 * @throws PersistorException
+	 */
+	public RecordIterator iterator(Criteria criteria) throws PersistorException {
+		return iterator(criteria, null);
+	}
+
+	/**
+	 * Returns a record iterator to scan the records that agree with the criteria, in the given order.
+	 * 
+	 * @param criteria Filter criteria.
+	 * @param order Order.
+	 * @return The record iterator.
+	 * @throws PersistorException
+	 */
+	public RecordIterator iterator(Criteria criteria, Order order) throws PersistorException {
+		try {
+			// Use a copy of the view to change the order without side effects.
+			View view = new View(this.view);
+			if (order != null) {
+				view.setOrderBy(order);
+			}
+			Filter filter = new Filter(criteria);
+			Select select = dbEngine.getDBEngineAdapter().getQuerySelect(view, filter);
+			Cursor cursor = dbEngine.executeSelectCursor(select);
+			return new DBRecordIterator(cursor);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the maximum values of the argument field with the filter criteria.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @param indexes The field indexes.
+	 * @return The maximum values.
+	 * @throws PersistorException
+	 */
+	public ValueMap max(Criteria criteria, int... indexes) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectMaxMap(view, filter, indexes);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the maximum values of the argument field with the filter criteria.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @param aliases The field aliases.
+	 * @return The maximum value.
+	 * @throws PersistorException
+	 */
+	public ValueMap max(Criteria criteria, String... aliases) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectMaxMap(view, filter, aliases);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the minimum values of the argument field with the filter criteria.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @param indexes The field indexes.
+	 * @return The minimum values.
+	 * @throws PersistorException
+	 */
+	public ValueMap min(Criteria criteria, int... indexes) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectMinMap(view, filter, indexes);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the minimum values of the argument field with the filter criteria.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @param aliases The field aliases.
+	 * @return The minimum values.
+	 * @throws PersistorException
+	 */
+	public ValueMap min(Criteria criteria, String... aliases) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectMinMap(view, filter, aliases);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Saves the record, inserting if it does not exists and updating if it does.
+	 * 
+	 * @param record The record to save.
+	 * @return The number of updated records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int save(Record record) throws PersistorException {
+		try {
+			return dbEngine.executeSave(view.getMasterTable(), view.getMasterTableRecord(record));
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Select a list of records based on a selection criteria.
+	 *
+	 * @param criteria The selection criteria.
+	 * @return The list of records.
+	 * @throws PersistorException
+	 */
+	public RecordSet select(Criteria criteria) throws PersistorException {
+		return select(criteria, null);
+	}
+
+	/**
+	 * Select a list of records based on a selection criteria, returning the list with the given order.
+	 *
+	 * @param criteria The selection criteria.
+	 * @param order The selection order.
+	 * @return The list of records.
+	 * @throws PersistorException
+	 */
+	public RecordSet select(Criteria criteria, Order order) throws PersistorException {
+		try {
+			View view = new View(this.view);
+			view.setOrderBy(order);
+			Filter filter = new Filter(criteria);
+			Select select = dbEngine.getDBEngineAdapter().getQuerySelect(view, filter);
+			return dbEngine.executeSelectRecordSet(select);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the list of values that are the sum of the numeric argument fields applying the filter criteria.
+	 *
+	 * @param criteria The filter criteria.
+	 * @param indexes The list of indexes.
+	 * @return The list of values in a value map keyed by index.
+	 * @throws PersistorException
+	 */
+	public ValueMap sum(Criteria criteria, int... indexes) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectSumMap(view, filter, indexes);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the list of values that are the sum of the numeric argument fields applying the filter criteria.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @param aliases The list of field aliases.
+	 * @return The list of values in a value map keyed by alias.
+	 * @throws PersistorException
+	 */
+	public ValueMap sum(Criteria criteria, String... aliases) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeSelectSumMap(view, filter, aliases);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Update a record.
+	 * 
+	 * @param record The record to update.
+	 * @return The number of updated records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int update(Record record) throws PersistorException {
+		try {
+			return dbEngine.executeUpdate(view.getMasterTable(), view.getMasterTableRecord(record));
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Update a set of fields with given values for the firlter criteria. The map of values can be keyed either by
+	 * index, alias or field.
+	 * 
+	 * @param criteria The filter criteria.
+	 * @param map The map of field-values.
+	 * @return The number of updated records.
+	 * @throws PersistorException
+	 */
+	public int update(Criteria criteria, ValueMap map) throws PersistorException {
+		try {
+			Filter filter = new Filter(criteria);
+			return dbEngine.executeUpdate(view.getMasterTable(), filter, map);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+}

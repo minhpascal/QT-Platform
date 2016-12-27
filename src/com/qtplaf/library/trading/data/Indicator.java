@@ -1,0 +1,132 @@
+/**
+ * 
+ */
+package com.qtplaf.library.trading.data;
+
+import java.util.List;
+
+import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.data.info.IndicatorInfo;
+
+/**
+ * Indicator base class. Implementations must define the <b><i>IndicatorInfo</i></b> and implement the
+ * <b><i>calculate</i></b> method.
+ * 
+ * @author Miquel Sas
+ */
+public abstract class Indicator {
+
+	/**
+	 * Calculates an indicator.
+	 * 
+	 * @param session The working session.
+	 * @param indicator The indicator to calculate.
+	 * @param indicatorSources The list of indicator sources.
+	 * @return The indicator data list.
+	 */
+	public static DataList calculate(Session session, Indicator indicator, List<IndicatorSource> indicatorSources) {
+		DataList indicatorData = new DataList(session, indicator.getIndicatorInfo());
+		indicator.start(indicatorSources);
+		int size = indicatorSources.get(0).getDataList().size();
+		for (int index = 0; index < size; index++) {
+			Data data = indicator.calculate(index, indicatorSources, indicatorData);
+			indicatorData.add(data);
+		}
+		indicatorData.initializePlotProperties();
+		return indicatorData;
+	}
+
+	/**
+	 * The indicator info to be configured.
+	 */
+	private IndicatorInfo indicatorInfo;
+	/**
+	 * The number of indexes for all the indicator sources.
+	 */
+	private int numIndexes;
+	/**
+	 * The working session.
+	 */
+	private Session session;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param session The working session.
+	 */
+	public Indicator(Session session) {
+		super();
+		this.session = session;
+		indicatorInfo = new IndicatorInfo(session);
+	}
+
+	/**
+	 * Returns the working session.
+	 * 
+	 * @return The working session.
+	 */
+	public Session getSession() {
+		return session;
+	}
+
+	/**
+	 * Returns the indicator info.
+	 * 
+	 * @return The indicator info.
+	 */
+	public IndicatorInfo getIndicatorInfo() {
+		return indicatorInfo;
+	}
+
+	/**
+	 * Calculates the total number of indexes as a helper to further calculations. Normally should be called in the
+	 * <i>start</i> method.
+	 * 
+	 * @param indicatorSources The list of indicator sources.
+	 */
+	protected void calculateNumIndexes(List<IndicatorSource> indicatorSources) {
+		numIndexes = 0;
+		for (IndicatorSource source : indicatorSources) {
+			numIndexes += source.getIndexes().size();
+		}
+	}
+
+	/**
+	 * Returns the total number of indexes, that must be previously calculated with a call to
+	 * <i>calculateNumIndexes</i>.
+	 * 
+	 * @return the numIndexes
+	 */
+	protected int getNumIndexes() {
+		return numIndexes;
+	}
+
+	/**
+	 * Set the number of indexes, for indicators that do not set it based on the input sources.
+	 * 
+	 * @param numIndexes The number of indexes.
+	 */
+	protected void setNumIndexes(int numIndexes) {
+		this.numIndexes = numIndexes;
+	}
+
+	/**
+	 * Called before starting calculations to give the indicator the opportunity to initialize any internal resources.
+	 * 
+	 * @param indicatorSources The list of indicator sources.
+	 */
+	public abstract void start(List<IndicatorSource> indicatorSources);
+
+	/**
+	 * Calculates the indicator data at the given index, for the list of indicator sources.
+	 * <p>
+	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
+	 * calculated values or use them to improve calculation performance.
+	 * 
+	 * @param index The data index.
+	 * @param indicatorSources The list of indicator sources.
+	 * @param indicatorData This indicator already calculated data.
+	 * @return The result data.
+	 */
+	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
+}

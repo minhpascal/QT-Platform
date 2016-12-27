@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="jdbc-mysql-5.1.39" systemlibrary="false">
+        <archive path="/QT-Platform/libraries/jdbc/mysql/mysql-connector-java-5.1.39-bin.jar"/>
+    </library>
+</eclipse-userlibraries>

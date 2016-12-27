@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>QT-Platform</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<variableList>
+		<variable>
+			<name>JFOREX_SDK_FILES</name>
+			<value>file:/C:/Users/Miquel%20Sas/Eclipse/Luna/eclipse-workspaces/workspace-trading/JForex-SDK/files</value>
+		</variable>
+	</variableList>
+</projectDescription>

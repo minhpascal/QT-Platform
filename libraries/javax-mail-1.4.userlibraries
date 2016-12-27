@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="javax-mail-1.4" systemlibrary="false">
+        <archive path="/QT-Platform/libraries/javax/mail/1.4/mail-1.4.jar"/>
+    </library>
+</eclipse-userlibraries>

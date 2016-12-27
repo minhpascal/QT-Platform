@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="apache-log4j-2.7" systemlibrary="false">
+        <archive javadoc="jar:platform:/resource/QT-Platform/libraries/apache/log4j/2.7/log4j-1.2-api-2.7-javadoc.jar!/" path="/QT-Platform/libraries/apache/log4j/2.7/log4j-1.2-api-2.7.jar" source="/QT-Platform/libraries/apache/log4j/2.7/log4j-1.2-api-2.7-sources.jar"/>
+        <archive javadoc="jar:platform:/resource/QT-Platform/libraries/apache/log4j/2.7/log4j-api-2.7-javadoc.jar!/" path="/QT-Platform/libraries/apache/log4j/2.7/log4j-api-2.7.jar" source="/QT-Platform/libraries/apache/log4j/2.7/log4j-api-2.7-sources.jar"/>
+        <archive javadoc="jar:platform:/resource/QT-Platform/libraries/apache/log4j/2.7/log4j-core-2.7-javadoc.jar!/" path="/QT-Platform/libraries/apache/log4j/2.7/log4j-core-2.7.jar" source="/QT-Platform/libraries/apache/log4j/2.7/log4j-core-2.7-sources.jar"/>
+    </library>
+</eclipse-userlibraries>

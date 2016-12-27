@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="apache-commons-math-3.5" systemlibrary="false">
+        <archive javadoc="jar:platform:/resource/QT-Platform/libraries/apache/commons-math/3.5/commons-math3-3.5-javadoc.jar!/" path="/QT-Platform/libraries/apache/commons-math/3.5/commons-math3-3.5.jar" source="/QT-Platform/libraries/apache/commons-math/3.5/commons-math3-3.5-src.zip"/>
+    </library>
+</eclipse-userlibraries>

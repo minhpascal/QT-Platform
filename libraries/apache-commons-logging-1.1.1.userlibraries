@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="apache-commons-logging-1.1.1" systemlibrary="false">
+        <archive javadoc="jar:platform:/resource/QT-Platform/libraries/apache/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/" path="/QT-Platform/libraries/apache/commons-logging/1.1.1/commons-logging-1.1.1.jar" source="/QT-Platform/libraries/apache/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
+        <archive path="/QT-Platform/libraries/apache/commons-logging/1.1.1/commons-logging-api-1.1.1.jar"/>
+        <archive path="/QT-Platform/libraries/apache/commons-logging/1.1.1/commons-logging-adapters-1.1.1.jar"/>
+    </library>
+</eclipse-userlibraries>

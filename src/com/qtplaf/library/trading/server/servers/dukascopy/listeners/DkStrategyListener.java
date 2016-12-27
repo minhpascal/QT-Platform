@@ -1,0 +1,180 @@
+/**
+ * 
+ */
+package com.qtplaf.library.trading.server.servers.dukascopy.listeners;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.dukascopy.api.IAccount;
+import com.dukascopy.api.IBar;
+import com.dukascopy.api.IContext;
+import com.dukascopy.api.IMessage;
+import com.dukascopy.api.IStrategy;
+import com.dukascopy.api.ITick;
+import com.dukascopy.api.Instrument;
+import com.dukascopy.api.JFException;
+import com.dukascopy.api.OfferSide;
+import com.dukascopy.api.Period;
+import com.qtplaf.library.trading.server.feed.FeedListener;
+import com.qtplaf.library.trading.server.feed.OHLCVSubscription;
+import com.qtplaf.library.trading.server.feed.TickSubscription;
+import com.qtplaf.library.trading.server.servers.dukascopy.DkFeedDispatcher;
+import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
+
+/**
+ * Dukascopy strategy implementation to listen to strategy events, to retrieve the context, the history, ticks and all
+ * data that requires a running strategy.
+ * 
+ * @author Miquel Sas
+ */
+public class DkStrategyListener implements IStrategy {
+
+	/**
+	 * The saved context.
+	 */
+	private IContext context;
+	/**
+	 * The Dukascopy dispatcher to dispatch current bars and ticks. Completed bars are dispatched through the
+	 * <i>DkBarFeedListener</i>.
+	 */
+	private DkFeedDispatcher dispatcher;
+	/**
+	 * The list of system listeners.
+	 */
+	private List<FeedListener> listeners = new ArrayList<>();
+
+	/**
+	 * Constructor.
+	 */
+	public DkStrategyListener() {
+		super();
+	}
+
+	/**
+	 * Adds a system listener to the list of system listeners.
+	 * 
+	 * @param listener The system listener.
+	 */
+	public void addListener(FeedListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
+	 * Remove the listener from the list.
+	 * 
+	 * @param listener The listener to remove.
+	 */
+	public void removeListener(FeedListener listener) {
+		listeners.remove(listener);
+	}
+
+	/**
+	 * Returns the dispatcher.
+	 * 
+	 * @return The dispatcher.
+	 */
+	public DkFeedDispatcher getDispatcher() {
+		return dispatcher;
+	}
+
+	/**
+	 * Sets the dispatcher.
+	 * 
+	 * @param dispatcher The dispatcher.
+	 */
+	public void setDispatcher(DkFeedDispatcher dispatcher) {
+		this.dispatcher = dispatcher;
+	}
+
+	/**
+	 * Returns the context.
+	 * 
+	 * @return The context.
+	 */
+	public IContext getContext() {
+		return context;
+	}
+
+	/**
+	 * Called on strategy start, register the context.
+	 */
+	public void onStart(IContext context) throws JFException {
+		this.context = context;
+	}
+
+	/**
+	 * Forwards the current bar on every tick to the listeners intereted in.
+	 * 
+	 * @param dkInstrument The instrument.
+	 * @throws JFException
+	 */
+	private void forwardCurrentBars(Instrument dkInstrument) throws JFException {
+		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
+		for (FeedListener listener : listeners) {
+			List<OHLCVSubscription> currentSubscriptions = listener.getCurrentOHLCVSubscriptions();
+			for (OHLCVSubscription subscription : currentSubscriptions) {
+				if (!subscription.getInstrument().equals(instrument)) {
+					continue;
+				}
+				Period dkPeriod = DkUtilities.toDkPeriod(subscription.getPeriod());
+				OfferSide dkOfferSide = DkUtilities.toDkOfferSide(subscription.getOfferSide());
+				IBar dkBar = context.getHistory().getBar(dkInstrument, dkPeriod, dkOfferSide, 0);
+				dispatcher.addCurrentBar(dkInstrument, dkPeriod, dkOfferSide, dkBar);
+			}
+		}
+	}
+
+	/**
+	 * Forwards the tick to the listeners interested in.
+	 * 
+	 * @param dkInstrument The instrument.
+	 * @param dkTick The tick.
+	 */
+	private void forwardTick(Instrument dkInstrument, ITick dkTick) {
+		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
+		for (FeedListener listener : listeners) {
+			List<TickSubscription> tickSubscriptions = listener.getTickSubscriptions();
+			for (TickSubscription subscription : tickSubscriptions) {
+				if (!subscription.getInstrument().equals(instrument)) {
+					continue;
+				}
+				dispatcher.addTick(dkInstrument, dkTick);
+			}
+		}
+	}
+
+	/**
+	 * Called on every tick of every instrument that application is subscribed on.
+	 */
+	public void onTick(Instrument dkInstrument, ITick dkTick) throws JFException {
+		// Forward tick and current bars.
+		forwardTick(dkInstrument, dkTick);
+		forwardCurrentBars(dkInstrument);
+	}
+
+	/**
+	 * Called on every bar for every basic period and instrument that application is subscribed on.
+	 */
+	public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
+	}
+
+	/**
+	 * Called when new message is received.
+	 */
+	public void onMessage(IMessage message) throws JFException {
+	}
+
+	/**
+	 * Called when account information update is received.
+	 */
+	public void onAccount(IAccount account) throws JFException {
+	}
+
+	/**
+	 * Called before strategy is stopped.
+	 */
+	public void onStop() throws JFException {
+	}
+
+}

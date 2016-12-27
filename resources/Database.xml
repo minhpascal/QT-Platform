@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>Database strings</comment>
+
+	<!-- Generic fields (domains). -->
+
+	<entry key="fieldBrokerCodeTitle">Broker code</entry>
+	<entry key="fieldBrokerCodeLabel">Broker code</entry>
+	<entry key="fieldBrokerCodeHeader">Broker code</entry>
+	
+	<entry key="fieldBrokerNameTitle">Broker name</entry>
+	<entry key="fieldBrokerNameLabel">Broker name</entry>
+	<entry key="fieldBrokerNameHeader">Broker name</entry>
+
+</properties>

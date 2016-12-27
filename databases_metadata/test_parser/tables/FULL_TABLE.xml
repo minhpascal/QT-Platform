@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<table
+	name="FULL_TABLE"
+	alias="FULL_TABLE"
+	persistent="true"
+	persistent-constraints="false"
+	schema=""
+	title="Te full table definition">
+	<description>Full table description</description>
+	<fields>
+		<field master-field="TEST_STRING_FIELD" name="STRING_FIELD" alias="STRING_FIELD"/>
+	</fields>
+</table>

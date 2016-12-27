@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<domain
+	name="INSTRUMENT_DESCR"
+	alias="INSTRUMENT_DESCR"
+	type="String"
+	length="80"
+	title="Instrument description"
+	label="Instrument description"
+	header="Instrument description">
+</domain>

@@ -1,0 +1,140 @@
+/**
+ * 
+ */
+package com.qtplaf.library.ai.nnet.data.mnist;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Reads number images and stores an array of 'NumberImageIOData' instances. The files read are in MNIST DATABASE
+ * format.
+ * 
+ * @author Miquel Sas
+ */
+public class NumberImageReaderIOData {
+
+	/** Image file. */
+	private File imageFile;
+	/** Label file. */
+	private File labelFile;
+
+	/** The list of NumberImageIOData's read. */
+	private List<NumberImageIOData> numberImages;
+
+	/**
+	 * Constructor assigning the files.
+	 * 
+	 * @param labelFile The label file.
+	 * @param imageFile The image file.
+	 */
+	public NumberImageReaderIOData(File labelFile, File imageFile) {
+		super();
+		this.labelFile = labelFile;
+		this.imageFile = imageFile;
+	}
+
+	/**
+	 * Read the images and stores them in a list of NumberImageIOData instances.
+	 * <p>
+	 * Image file:
+	 * <p>
+	 * 32 bit Magic number 32 bit Integer: number of images 32 bit Integer: number of rows 32 bit Integer: number of
+	 * columns unsigned byte...
+	 * <p>
+	 * Label file:
+	 * <p>
+	 * 32 bit Magic number 32 bit Integer: number of items unsigned byte...
+	 * 
+	 * @throws IOException If an IO error occurs.
+	 */
+	public void read() throws IOException {
+
+		numberImages = new ArrayList<>();
+
+		FileInputStream fisImg = new FileInputStream(imageFile);
+		FileInputStream fisLbl = new FileInputStream(labelFile);
+		BufferedInputStream bisImg = new BufferedInputStream(fisImg);
+		BufferedInputStream bisLbl = new BufferedInputStream(fisLbl);
+
+		// Process image file up to the first data byte...
+
+		// Skip magic number
+		bisImg.skip(4);
+
+		// Read number of images
+		byte[] bytesNumImg = new byte[4];
+		bisImg.read(bytesNumImg, 0, 4);
+		ByteBuffer byteBufferNumImg = ByteBuffer.wrap(bytesNumImg);
+		int numImages = byteBufferNumImg.getInt();
+
+		// Read number of rows
+		byte[] bytesNumRows = new byte[4];
+		bisImg.read(bytesNumRows, 0, 4);
+		ByteBuffer byteBufferNumRows = ByteBuffer.wrap(bytesNumRows);
+		int numRows = byteBufferNumRows.getInt();
+
+		// Read number of columns
+		byte[] bytesNumColumns = new byte[4];
+		bisImg.read(bytesNumColumns, 0, 4);
+		ByteBuffer byteBufferNumColumns = ByteBuffer.wrap(bytesNumColumns);
+		int numColumns = byteBufferNumColumns.getInt();
+
+		// Process label file up to the first data byte...
+
+		// Skip magic number
+		bisLbl.skip(4);
+
+		// Read number of labels
+		byte[] bytesNumLbl = new byte[4];
+		bisLbl.read(bytesNumLbl, 0, 4);
+		ByteBuffer byteBufferNumLbl = ByteBuffer.wrap(bytesNumLbl);
+		int numLabels = byteBufferNumLbl.getInt();
+
+		// Check number of images versus labels
+		if (numImages != numLabels) {
+			bisImg.close();
+			bisLbl.close();
+			throw new IOException("The number of images " + numImages + " has to be equals to the numeber of labels " + numLabels);
+		}
+
+		// Read data and create number images
+		int imageSize = numRows * numColumns;
+		for (int i = 0; i < numImages; i++) {
+			byte[] bytes = new byte[imageSize];
+			bisImg.read(bytes, 0, imageSize);
+			int number = bisLbl.read();
+			NumberImageIOData numberImage = new NumberImageIOData(number, bytes);
+			numberImages.add(numberImage);
+		}
+
+		bisImg.close();
+		bisLbl.close();
+	}
+
+	/**
+	 * Returns the list of images.
+	 * 
+	 * @return The list of images.
+	 */
+	public List<NumberImageIOData> getNumberImages() {
+		return numberImages;
+	}
+	
+	/**
+	 * Returns the list of images as IOData
+	 * @return The list of IOData instances.
+	 */
+	public List<IOData> getIOData() {
+		List<IOData> data = new ArrayList<>();
+		for (NumberImageIOData numberImage : numberImages) {
+			data.add(numberImage);
+		}
+		return data;
+	}
+}

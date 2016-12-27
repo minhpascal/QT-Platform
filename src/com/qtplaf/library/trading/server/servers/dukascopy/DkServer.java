@@ -1,0 +1,183 @@
+/**
+ * 
+ */
+package com.qtplaf.library.trading.server.servers.dukascopy;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import com.dukascopy.api.IContext;
+import com.dukascopy.api.system.ClientFactory;
+import com.dukascopy.api.system.IClient;
+import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.server.ConnectionManager;
+import com.qtplaf.library.trading.server.FeedManager;
+import com.qtplaf.library.trading.server.HistoryManager;
+import com.qtplaf.library.trading.server.OrderManager;
+import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.library.trading.server.ServerException;
+import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkStrategyListener;
+import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkSystemListener;
+
+/**
+ * Dukascopy server implementation.
+ * 
+ * @author Miquel Sas
+ */
+public class DkServer implements Server {
+
+	/**
+	 * Client interface.
+	 */
+	private IClient client;
+	/**
+	 * System listener.
+	 */
+	private DkSystemListener systemListener;
+	/**
+	 * The strategy listener to get access to the history, the data service, the engine and the account.
+	 */
+	private DkStrategyListener strategyListener;
+	/**
+	 * Instance of the connection manager.
+	 */
+	private DkConnectionManager connectionManager;
+	/**
+	 * Instance of the history manager.
+	 */
+	private DkHistoryManager historyManager;
+	/**
+	 * Instance of the order manager.
+	 */
+	private DkOrderManager orderManager;
+	/**
+	 * Instance of the feed manager.
+	 */
+	private DkFeedManager feedManager;
+
+	/**
+	 * Constructor.
+	 */
+	public DkServer() throws ServerException {
+		super();
+
+		try {
+
+			// Initialize the Dukascopy client.
+			client = ClientFactory.getDefaultInstance();
+
+			// Initialize and set the system listener.
+			systemListener = new DkSystemListener(this);
+			client.setSystemListener(systemListener);
+
+			// Initialize the context strategy.
+			strategyListener = new DkStrategyListener();
+
+		} catch (Exception cause) {
+			throw new ServerException(cause);
+		}
+	}
+
+	/**
+	 * Returns the system listener.
+	 * 
+	 * @return The system listener.
+	 */
+	public DkSystemListener getSystemListener() {
+		return systemListener;
+	}
+
+	/**
+	 * Returns the strategy listener.
+	 * 
+	 * @return The strategy listener.
+	 */
+	public DkStrategyListener getStrategyListener() {
+		return strategyListener;
+	}
+
+	/**
+	 * Returns the reference to the client.
+	 * 
+	 * @return the client
+	 */
+	public IClient getClient() {
+		return client;
+	}
+
+	/**
+	 * Returns the reference to the context.
+	 * 
+	 * @return The context.
+	 */
+	public IContext getContext() {
+		return strategyListener.getContext();
+	}
+
+	/**
+	 * Returns a list with all available instruments.
+	 * 
+	 * @return A list with all available instruments.
+	 */
+	public List<Instrument> getAvailableInstruments() {
+		Set<com.dukascopy.api.Instrument> dukascopyInstruments = getClient().getAvailableInstruments();
+		List<Instrument> instruments = new ArrayList<>();
+		for (com.dukascopy.api.Instrument dukascopyInstrument : dukascopyInstruments) {
+			instruments.add(DkUtilities.fromDkInstrument(dukascopyInstrument));
+		}
+		return instruments;
+	}
+
+	/**
+	 * Returns the connection manager associated to this server.
+	 * 
+	 * @return The connection manager.
+	 * @throws ServerException
+	 */
+	public ConnectionManager getConnectionManager() throws ServerException {
+		if (connectionManager == null) {
+			connectionManager = new DkConnectionManager(this);
+		}
+		return connectionManager;
+	}
+
+	/**
+	 * Returns the order manager associated to this server.
+	 * 
+	 * @return The order manager.
+	 * @throws ServerException
+	 */
+	public OrderManager getOrderManager() throws ServerException {
+		if (orderManager == null) {
+			orderManager = new DkOrderManager(this);
+		}
+		return orderManager;
+	}
+
+	/**
+	 * Returns the history manager associated to this server.
+	 * 
+	 * @return The history manager.
+	 * @throws ServerException
+	 */
+	public HistoryManager getHistoryManager() throws ServerException {
+		if (historyManager == null) {
+			historyManager = new DkHistoryManager(this);
+		}
+		return historyManager;
+	}
+
+	/**
+	 * Returns the feed manager to receive live feed events.
+	 * 
+	 * @return The feed manager.
+	 * @throws ServerException
+	 */
+	public FeedManager getFeedManager() throws ServerException {
+		if (feedManager == null) {
+			feedManager = new DkFeedManager(this);
+		}
+		return feedManager;
+	}
+}

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>System library strings</comment>
+
+	<!-- Several widely used tokens. -->
+
+	<entry key="tokenYes">Yes</entry>
+	<entry key="tokenNo">No</entry>
+	<entry key="tokenTrue">true</entry>
+	<entry key="tokenFalse">false</entry>
+	<entry key="tokenSelect">Select</entry>
+	<entry key="tokenAsc">Asc</entry>
+	<entry key="tokenDesc">Desc</entry>
+	<entry key="tokenOk">Ok</entry>
+	<entry key="tokenClose">Close</entry>
+	<entry key="tokenElapsed">Elapsed</entry>
+	<entry key="tokenEstimated">Estimated</entry>
+	<entry key="tokenRemaining">Remaining</entry>
+	<entry key="tokenPending">Pending</entry>
+	<entry key="tokenTime">Time</entry>
+	<entry key="tokenError">Error</entry>
+	<entry key="tokenDetail">Detail</entry>
+	<entry key="tokenTask">Task</entry>
+	<entry key="tokenStep">Step</entry>
+	<entry key="tokenStart">Start</entry>
+	<entry key="tokenPause">Pause</entry>
+	<entry key="tokenResume">Resume</entry>
+	<entry key="tokenCancel">Cancel</entry>
+	<entry key="tokenFrom">From</entry>
+	<entry key="tokenTo">To</entry>
+	<entry key="tokenPurge">Purge</entry>
+	
+	<entry key="tokenSecond">Second</entry>
+	<entry key="tokenSeconds">Seconds</entry>
+	<entry key="tokenMinute">Minute</entry>
+	<entry key="tokenMinutes">Minutes</entry>
+	<entry key="tokenHour">Hour</entry>
+	<entry key="tokenHours">Hours</entry>
+
+	<!-- Message box options. -->
+
+	<entry key="messageBoxOptionAccept">Accept</entry>
+	<entry key="messageBoxOptionOk">Ok</entry>
+	<entry key="messageBoxOptionYes">Yes</entry>
+	<entry key="messageBoxOptionNo">No</entry>
+	<entry key="messageBoxOptionCancel">Cancel</entry>
+	<entry key="messageBoxOptionRetry">Retry</entry>
+	<entry key="messageBoxOptionIgnore">Ignore</entry>
+	<entry key="messageBoxOptionInvalid">Invalid message box option</entry>
+	<entry key="messageBoxTitleError">Error</entry>
+	<entry key="messageBoxTitleWarning">Warning</entry>
+	<entry key="messageBoxTitleQuestion">Question</entry>
+	<entry key="messageBoxTitleInformation">Information</entry>
+
+	<!-- Actions (buttons) names. These are more generic. -->
+
+	<entry key="actionStartName">Start</entry>
+	<entry key="actionStopName">Stop</entry>
+	<entry key="actionExitName">Exit</entry>
+	<entry key="actionCancelName">Cancel</entry>
+	<entry key="actionCloseName">Close</entry>
+	<entry key="actionSelectName">Select</entry>
+	<entry key="actionAcceptName">Accept</entry>
+	<entry key="actionColumnsName">Columns</entry>
+	<entry key="actionSortName">Sort</entry>
+	<entry key="actionAscendingName">Asc</entry>
+	<entry key="actionDescendingName">Desc</entry>
+
+	<!-- Actions (buttons) short descriptions for the columns panel. -->
+
+	<entry key="actionRightShortDesc">Move the unselected field to selected</entry>
+	<entry key="actionLeftShortDesc">Move the selected field to unselected</entry>
+	<entry key="actionUpShortDesc">Move the selected field up</entry>
+	<entry key="actionDownShortDesc">Move the selected field down</entry>
+
+	<!-- Batch chain: actions (buttons) messages. These are specific. -->
+
+	<entry key="actionExitBatchChainMessageCanNotExit">Can not exit while performing</entry>
+	<entry key="actionStartBatchChainMessageCanNotStart">Can not start while performing</entry>
+	<entry key="actionStartBatchChainMessageQueryStart">Start processing?</entry>
+	<entry key="actionStopBatchChainMessageCanNotStop">Can not stop if not executing</entry>
+	<entry key="actionStopBatchChainMessageQueryStop">Stop processing?</entry>
+
+	<!-- Batch chain: labels. These are specific. -->
+
+	<entry key="labelBatchChainStatus">Status</entry>
+	<entry key="labelBatchChainStartTime">Start time</entry>
+	<entry key="labelBatchChainEndTime">End time</entry>
+
+	<!-- Batch chain exceptions and messages. -->
+
+	<entry key="exceptionBatchChainCanceledByStopRequest">Chain processing cancelled by stop request.</entry>
+	<entry key="exceptionBatchChainStopError">An error occurred while executing the process {0} -
+		{1}</entry>
+	<entry key="exceptionBatchChainNoProcesses">No processes defined</entry>
+
+	<entry key="messageBatchChainStart">Chain {0} has started at {1}</entry>
+	<entry key="messageBatchChainEnd">Chain {0} has anded at {1}</entry>
+	<entry key="messageBatchChainProcessStart">Process {0} has started at {1}</entry>
+
+	<entry key="messageBatchProcessStepOfSteps">Step {0,number,integer} of {1,number,integer}</entry>
+
+	<entry key="labelBatchChainStatusInitial">Initial</entry>
+	<entry key="labelBatchChainStatusExecuting">Executing</entry>
+	<entry key="labelBatchChainStatusStopping">Stopping</entry>
+	<entry key="labelBatchChainStatusStopped">Stopped</entry>
+	<entry key="labelBatchChainStatusTerminated">Terminated</entry>
+
+	<!-- Several exception messages. -->
+
+	<entry key="exceptionNotExpected">Not expected exception</entry>
+
+	<entry key="exceptionNotComparableType">Not comparable type: {0}</entry>
+	<entry key="exceptionImageNotFound">Image {0} not found</entry>
+	<entry key="exceptionStringsMustNotBeNull">Strings must not be null</entry>
+	<entry key="exceptionValidateVectorDimensions">Vector 1 has a different number of dimensions than
+		vector 2</entry>
+
+	<entry key="exceptionVectorDimension">The argument matrix is not a one column matrix</entry>
+	<entry key="exceptionVectorSizes">Not supported for matrices with more than one column</entry>
+	<entry key="exceptionMatricesMultiply">The number of rows of the b matrix must be equal to
+		the number of columns of the a matrix.</entry>
+	<entry key="exceptionMatricesDimensions">Matrices dimensions must agree</entry>
+
+	<!-- Data package exceptions and messages. -->
+
+	<entry key="exceptionFieldCanNotBeNull">Field can not be null</entry>
+	<entry key="exceptionRightOperandExpected">Right operand is expected for operator: {0}</entry>
+	<entry key="exceptionInvalidValueType">Invalid value type ({0}) for field type {1}</entry>
+	<entry key="exceptionNoCaseOnlyApplies">No case only applies to string fields and values</entry>
+	<entry key="exceptionInvalidNumberOfValues">Invalid number of values</entry>
+	<entry key="exceptionInvalidNumberOfValuesForOperator">Invalid number of values for operator {0}</entry>
+	<entry key="exceptionCursorIsClosed">Cursor is closed</entry>
+	<entry key="exceptionForwardOnlyCursor">Unsupported operation for a forward only cursor</entry>
+	<entry key="exceptionSelectStatementsNotSupported">Select statements not supported</entry>
+	<entry key="exceptionFieldValidStrictType">Value type {0} is not equal than this field type {1}</entry>
+	<entry key="exceptionFieldValidMaxValue">Value {0} is greater than {1}</entry>
+	<entry key="exceptionFieldValidMinValue">Value {0} is less than {1}</entry>
+	<entry key="exceptionFieldValidPossibleValues">Value {0} is not in the list of possible values</entry>
+	<entry key="exceptionFieldValidNotEmptyRequired">A non empty value is required for this field</entry>
+	<entry key="exceptionFieldValidNotNullable">A not null value is required for this field</entry>
+	<entry key="exceptionFieldValidValueType">Field {0} type {1} does not match the corresponding
+		value type {2}</entry>
+	<entry key="exceptionFieldNotNull">The field should never be null</entry>
+	<entry key="exceptionFilterUsagesNotNull">Filter usages can not be null</entry>
+	<entry key="exceptionFilterNoCaseApplies">No case applies only to string fields and values</entry>
+	<entry key="exceptionFilterInvalidSimpleCondition">Invalid condition: not a simple comparison</entry>
+	<entry key="exceptionFilterInvalidGroupComparison">Invalid condition: not a group comparison</entry>
+	<entry key="exceptionFilterInvalidGroupModifier">Invalid group modifier</entry>
+	<entry key="exceptionFilterFieldIsNotString">Invalid condition: field is not a string</entry>
+	<entry key="exceptionFilterValueIsNotString">Invalid condition: value is not a string</entry>
+	<entry key="exceptionInvalidFieldList">Invalid field list</entry>
+	<entry key="exceptionUnsupportedAlignmentName">Unsupported alignment name: {0}</entry>
+	<entry key="exceptionUnsupportedTypeName">Unsupported type name: {0}</entry>
+	<entry key="exceptionUnsupportedTypeConversionToJDBC">Unsupported type conversion to JDBC: {0}</entry>
+	<entry key="exceptionValueNotComparable">Value {0} is not comparable</entry>
+	<entry key="exceptionValueNotBoolean">Value {0} is not a boolean</entry>
+	<entry key="exceptionValueNotString">Value {0} is not a string</entry>
+	<entry key="exceptionValueNotDate">Value {0} is not a date</entry>
+	<entry key="exceptionValueNotTime">Value {0} is not a time</entry>
+	<entry key="exceptionValueNotTimestamp">Value {0} is not a date, time or timestamp</entry>
+	<entry key="exceptionValueNotByteArray">Value {0} is not a byte array</entry>
+	<entry key="exceptionValueNotValueArray">Value {0} is not a value array</entry>
+	<entry key="exceptionValueNotNumber">Value {0} is not a number</entry>
+
+	<!-- Data package: SQL exceptions and messages. -->
+
+	<entry key="exceptionDatabaseAdapterMustBeSet">The database adapter must be set</entry>
+
+	<entry key="exceptionMalformedAddCheckTableNull">Malformed ADD CHECK query: table is null</entry>
+	<entry key="exceptionMalformedAddCheckFieldNull">Malformed ADD CHECK query: field is null</entry>
+	<entry key="exceptionMalformedAddFieldTableNull">Malformed ADD COLUMN query: table is null</entry>
+	<entry key="exceptionMalformedAddFieldFieldNull">Malformed ADD COLUMN query: field is null</entry>
+	<entry key="exceptionMalformedAddForeignKeyTableNull">Malformed ADD FOREIGN KEY query: table is null</entry>
+	<entry key="exceptionMalformedAddForeignKeyForeignKeyNull">Malformed ADD FOREIGN KEY query: foreign key is null</entry>
+	<entry key="exceptionMalformedAddPrimaryKeyTableNull">Malformed ADD PRIMARY KEY query: table is null</entry>
+	<entry key="exceptionMalformedCreateIndexIndexNull">Malformed CREATE INDEX query: index is null</entry>
+	<entry key="exceptionMalformedCreateTableTableNull">Malformed CREATE TABLE query: table is null</entry>
+	<entry key="exceptionMalformedDeleteTableTableNull">Malformed DELETE query: table is null</entry>
+	<entry key="exceptionMalformedDropConstraintTableNull">Malformed DROP CONSTRAINT query: table is null</entry>
+	<entry key="exceptionMalformedDropConstraintConstraintNull">Malformed DROP CONSTRAINT query: constraint name is
+		null</entry>
+	<entry key="exceptionMalformedDropFieldTableNull">Malformed DROP COLUMN query: table is null</entry>
+	<entry key="exceptionMalformedDropFieldFieldNull">Malformed DROP COLUMN query: field is null</entry>
+	<entry key="exceptionMalformedDropForeignKeyTableNull">Malformed DROP FOREIGN KEY query: table is null</entry>
+	<entry key="exceptionMalformedDropForeignKeyForeignKeyNull">Malformed DROP FOREIGN KEY query: foreign key is null</entry>
+	<entry key="exceptionMalformedDropIndexIndexNull">Malformed DROP INDEX query: index is null</entry>
+	<entry key="exceptionMalformedDropPrimaryKeyTableNull">Malformed DROP PRIMARY KEY query: table is null</entry>
+	<entry key="exceptionMalformedDropTableTableNull">Malformed DROP TABLE query: table is null</entry>
+
+	<entry key="exceptionMalformedInsertMatchingAdapters">Malformed INSERT query: the select and the insert
+		database adapters must be the same</entry>
+	<entry key="exceptionMalformedInsertTableNull">Malformed INSERT query: table is null</entry>
+	<entry key="exceptionMalformedInsertRecordValuesOrSelect">Malformed INSERT query: need record, values or select</entry>
+	<entry key="exceptionMalformedInsertValuesOrSelect">Malformed INSERT query: set only values or select</entry>
+	<entry key="exceptionMalformedInsertRecordOrSelect">Malformed INSERT query: set only record or select</entry>
+	<entry key="exceptionMalformedInsertRecordOrValues">Malformed INSERT query: set only values or record</entry>
+	<entry key="exceptionMalformedInsertFieldsNeeded">Malformed INSERT query: fields are needed for a select</entry>
+	<entry key="exceptionMalformedInsertNumberOfFields">Malformed INSERT query: invalid number of fields</entry>
+
+	<entry key="exceptionMalformedSelectViewNull">Malformed SELECT query: view is null</entry>
+
+	<entry key="exceptionMalformedUpdateRecordAfterTable">Malformed UPDATE query: the record must be set after
+		the table</entry>
+	<entry key="exceptionMalformedUpdateTableNull">Malformed UPDATE query: table is null</entry>
+
+	<!-- Neural network strings. -->
+
+	<entry key="exceptionOperationNotValidForInputNeurons">Operation not valid for origin input neurons</entry>
+	<entry key="exceptionOperationNotValidForNonInputNeurons">Operation not valid for non origin input neurons:
+		output should be calculated</entry>
+	<entry key="exceptionLayersMustBeEmpty">The list of layers must be empty to set the first
+		layer.</entry>
+	<entry key="exceptionInputsSizeNotMatch">Size of inputs is not the same than the input layer</entry>
+	<entry key="exceptionLearningProcessNotNull">The learning process can not be null</entry>
+	<entry key="exceptionLearningDataMustBeSet">The learning data must be set and not empty</entry>
+	<entry key="exceptionLearningErrorFunctionNotNull">The error function can not be null</entry>
+	<entry key="exceptionLearningStopConditionsNeeded">Stop conditions needed</entry>
+	<entry key="exceptionLearningEventSource">Source must be an instance of LearningProcessManager</entry>
+	<entry key="exceptionNumberOfProperties">Invalid number of properties</entry>
+	<entry key="exceptionTypeFirstProperty">Invalid type for the first property: learning rate</entry>
+	<entry key="exceptionTypeSecongProperty">Invalid type for the second property: momentum</entry>
+	<entry key="exceptionTypeThirdProperty">Invalid type for the third property: update weights</entry>
+	<entry key="exceptionTypeFourthProperty">Invalid type for the fourth property: update biases</entry>
+
+	<entry key="messageStopIrreducibleError">
+		Stopped by irreducible error condition:
+		Network error:
+		{0,number}
+		Irreducible error: {1,number}
+	</entry>
+	<entry key="messageStopMaxIterations">
+		Stopped by max iterations error condition:
+		Network
+		iteration: {0,number,integer}
+		Max iterations: {1,number,integer}
+	</entry>
+
+	<!-- XML database provider and parser strings. -->
+
+	<entry key="exceptionXMLDBP_CatalogMustBeNull">Catalog must be null</entry>
+	<entry key="exceptionXMLDBP_CatalogCanNotBeNull">Catalog can not be null or empty</entry>
+	<entry key="exceptionXMLDBP_SchemaMustBeNull">Schema must be null</entry>
+	<entry key="exceptionXMLDBP_SchemaCanNotBeNull">Schema can not be null or empty</entry>
+
+	<!-- Trading: unit descriptions. -->
+
+	<entry key="tradeUnitTickDescription">Tick</entry>
+	<entry key="tradeUnitMillisecondDescription">ms</entry>
+	<entry key="tradeUnitSecondDescription">Sec</entry>
+	<entry key="tradeUnitMinuteDescription">Min</entry>
+	<entry key="tradeUnitHourDescription">Hour</entry>
+	<entry key="tradeUnitDayDescription">Day</entry>
+	<entry key="tradeUnitWeekDescription">Week</entry>
+	<entry key="tradeUnitMonthDescription">Month</entry>
+	<entry key="tradeUnitYearDescription">Year</entry>
+
+	<!-- Trading: chart messages. -->
+
+	<!-- JTable strings. -->
+
+	<entry key="lineOfLines">Line {0,number,integer} of {1,number,integer}</entry>
+
+	<!-- Field properties. -->
+
+	<entry key="fieldIndex">Index</entry>
+	<entry key="fieldGroup">Group</entry>
+	<entry key="fieldGroupIndex">Group index</entry>
+	<entry key="fieldName">Name</entry>
+	<entry key="fieldAlias">Alias</entry>
+	<entry key="fieldHeader">Header</entry>
+	<entry key="fieldTitle">Title</entry>
+	<entry key="fieldType">Type</entry>
+	<entry key="fieldLength">Length</entry>
+	<entry key="fieldDecimals">Decimals</entry>
+	<entry key="fieldAsc">Asc/Desc</entry>
+
+	<!-- Key words -->
+
+	<entry key="key_0">0</entry>
+	<entry key="key_1">1</entry>
+	<entry key="key_2">2</entry>
+	<entry key="key_3">3</entry>
+	<entry key="key_4">4</entry>
+	<entry key="key_5">5</entry>
+	<entry key="key_6">6</entry>
+	<entry key="key_7">7</entry>
+	<entry key="key_8">8</entry>
+	<entry key="key_9">9</entry>
+	<entry key="key_A">A</entry>
+	<entry key="key_B">B</entry>
+	<entry key="key_C">C</entry>
+	<entry key="key_D">D</entry>
+	<entry key="key_E">E</entry>
+	<entry key="key_F">F</entry>
+	<entry key="key_G">G</entry>
+	<entry key="key_H">H</entry>
+	<entry key="key_I">I</entry>
+	<entry key="key_J">J</entry>
+	<entry key="key_K">K</entry>
+	<entry key="key_L">L</entry>
+	<entry key="key_M">M</entry>
+	<entry key="key_N">N</entry>
+	<entry key="key_O">O</entry>
+	<entry key="key_P">P</entry>
+	<entry key="key_Q">Q</entry>
+	<entry key="key_R">R</entry>
+	<entry key="key_S">S</entry>
+	<entry key="key_T">T</entry>
+	<entry key="key_U">U</entry>
+	<entry key="key_V">V</entry>
+	<entry key="key_W">W</entry>
+	<entry key="key_X">X</entry>
+	<entry key="key_Y">Y</entry>
+	<entry key="key_Z">Z</entry>
+	<entry key="key_F1">F1</entry>
+	<entry key="key_F2">F2</entry>
+	<entry key="key_F3">F3</entry>
+	<entry key="key_F4">F4</entry>
+	<entry key="key_F5">F5</entry>
+	<entry key="key_F6">F6</entry>
+	<entry key="key_F7">F7</entry>
+	<entry key="key_F8">F8</entry>
+	<entry key="key_F9">F9</entry>
+	<entry key="key_F10">F10</entry>
+	<entry key="key_F11">F11</entry>
+	<entry key="key_F12">F12</entry>
+	<entry key="key_Add">Add</entry>
+	<entry key="key_Alt">Alt</entry>
+	<entry key="key_Altgraph">AltGr</entry>
+	<entry key="key_Back_slash">BackSlash</entry>
+	<entry key="key_Back_space">BackSpace</entry>
+	<entry key="key_Button1">Button1</entry>
+	<entry key="key_Button2">Button2</entry>
+	<entry key="key_Button3">Button3</entry>
+	<entry key="key_Cancel">Cancel</entry>
+	<entry key="key_Caps_lock">CapsLock</entry>
+	<entry key="key_Clear">Clear</entry>
+	<entry key="key_Close_bracket">CloseBracket</entry>
+	<entry key="key_Comma">Comma</entry>
+	<entry key="key_Control">Control</entry>
+	<entry key="key_Ctrl">Ctrl</entry>
+	<entry key="key_Decimal">Dec</entry>
+	<entry key="key_Delete">Del</entry>
+	<entry key="key_Divide">Div</entry>
+	<entry key="key_Down">Down</entry>
+	<entry key="key_End">End</entry>
+	<entry key="key_Enter">Enter</entry>
+	<entry key="key_Equals">Equals</entry>
+	<entry key="key_Escape">Esc</entry>
+	<entry key="key_Home">Home</entry>
+	<entry key="key_Left">Left</entry>
+	<entry key="key_Meta">Meta</entry>
+	<entry key="key_Minus">Minus</entry>
+	<entry key="key_Multiply">Multiply</entry>
+	<entry key="key_Num_lock">NumLock</entry>
+	<entry key="key_Numpad0">Numpad0</entry>
+	<entry key="key_Numpad1">Numpad1</entry>
+	<entry key="key_Numpad2">Numpad2</entry>
+	<entry key="key_Numpad3">Numpad3</entry>
+	<entry key="key_Numpad4">Numpad4</entry>
+	<entry key="key_Numpad5">Numpad5</entry>
+	<entry key="key_Numpad6">Numpad6</entry>
+	<entry key="key_Numpad7">Numpad7</entry>
+	<entry key="key_Numpad8">Numpad8</entry>
+	<entry key="key_Numpad9">Numpad9</entry>
+	<entry key="key_Open_bracket">OpenBracket</entry>
+	<entry key="key_Page_down">PageDn</entry>
+	<entry key="key_Page_up">PageUp</entry>
+	<entry key="key_Pause">Pause</entry>
+	<entry key="key_Period">Period</entry>
+	<entry key="key_Right">Right</entry>
+	<entry key="key_Scroll_lock">ScrollLock</entry>
+	<entry key="key_Semicolon">Semicolon</entry>
+	<entry key="key_Separater">Sep</entry>
+	<entry key="key_Separator">Sep</entry>
+	<entry key="key_Shift">Shift</entry>
+	<entry key="key_Slash">Slash</entry>
+	<entry key="key_Space">Space</entry>
+	<entry key="key_Subtract">Subtract</entry>
+	<entry key="key_Tab">Tab</entry>
+	<entry key="key_Up">Up</entry>
+	
+	<!-- Panel/Dialog columns -->
+	
+	<entry key="dialogColumnsSelectTableFields">Select table fields</entry>
+	<entry key="dialogColumnsDefineTableOrder">Define table order</entry>
+	
+	<entry key="panelColumnsAvailableFields">Available fields</entry>
+	<entry key="panelColumnsSelectedFields">Selected fields</entry>
+	
+	<!-- Panel progress strings. --> 
+	
+	<entry key="panelProgressPause">Pause the current task</entry>
+	<entry key="panelProgressResume">Resume the current task</entry>
+	<entry key="panelProgressStart">Start the current task</entry>
+	<entry key="panelProgressCancel">Cancel (stop) the current task</entry>
+	<entry key="panelProgressClose">Close the current task monitor</entry>
+	<entry key="panelProgressError">View error</entry>
+	<entry key="panelProgressErrorInfo">View detailed error information</entry>
+	<entry key="panelProgressCounting">Counting</entry>
+	<entry key="panelProgressProcessing">Processing...</entry>
+	<entry key="panelProgressProcessed">Processed</entry>
+	<entry key="panelProgressCompleted">Completed</entry>
+	<entry key="panelProgressStarted">Started</entry>
+	<entry key="panelProgressPaused">Paused</entry>
+	<entry key="panelProgressCancelled">Cancelled</entry>
+	<entry key="panelProgressCancelledByUserRequest">Cancelled by user resquest</entry>
+	<entry key="panelProgressHasBeenCancelledByUserRequest">Has been cancelled by user resquest.</entry>
+	<entry key="panelProgressError">Error occurred while processing</entry>
+	
+	<!-- Task specific strings. -->
+	
+	<entry key="taskStepOfSteps">{0,number,integer} of {1,number,integer}</entry>
+	<entry key="taskExecutingTask">Executing task</entry>
+	
+	<!-- JFileChooser -->
+	
+	<entry key="fileChooserInvalidFileName">Invalid file name: {0}</entry>
+	<entry key="fileChooserConfirmSaveTitle">Confirm save</entry>
+	<entry key="fileChooserConfirmSaveText">{0} exists. Replace it?</entry>
+	<entry key="fileChooserOpenNotExists">{0} does not exist. Choose an existing file.</entry>
+	
+	<!-- Tree menu -->
+	
+	<entry key="treeMenuAccessDenied">Access to menu option is denied. Please contact the security administrator.</entry>
+	<entry key="treeMenuNoAction">No action has been set for the current menu option.</entry>
+	
+	<!-- General security messages. -->
+	
+	<entry key="securityAccessToFileDenied">Access to file denied.</entry>
+	
+</properties>

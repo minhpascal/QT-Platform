@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="apache-commons-digester-3.3.2" systemlibrary="false">
+        <archive javadoc="jar:platform:/resource/QT-Platform/libraries/apache/commons-digester/3.3.2/commons-digester3-3.2-javadoc.jar!/" path="/QT-Platform/libraries/apache/commons-digester/3.3.2/commons-digester3-3.2.jar" source="/QT-Platform/libraries/apache/commons-digester/3.3.2/commons-digester3-3.2-sources.jar"/>
+    </library>
+</eclipse-userlibraries>

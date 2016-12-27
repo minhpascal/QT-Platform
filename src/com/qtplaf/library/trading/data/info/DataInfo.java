@@ -1,0 +1,390 @@
+/**
+ * 
+ */
+package com.qtplaf.library.trading.data.info;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.DataType;
+import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.data.OHLCV;
+import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.util.FormatUtils;
+
+/**
+ * Base information that describes data in a data list.
+ * 
+ * @author Miquel Sas
+ */
+public abstract class DataInfo {
+
+	/**
+	 * Name, like for instance <b>SMA<b>. Once an indicator with a gien identifier is regisrated in the visual
+	 * environment, no other indicator can be registrated with he same identifier.
+	 */
+	private String name;
+	/**
+	 * A title to use in list or tool tips.
+	 */
+	private String title;
+	/**
+	 * An optional long description that completely describes the data.
+	 */
+	private String description;
+	/**
+	 * The type of data to be plotted.
+	 */
+	private DataType dataType;
+	/**
+	 * Instrument of data if applicable.
+	 */
+	private Instrument instrument;
+	/**
+	 * Period.
+	 */
+	private Period period;
+	/**
+	 * The pip scale used for the data in this data list. If -1, take it from the instrument.
+	 */
+	private int pipScale = -1;
+	/**
+	 * The tick scale used for the data in this data list. If -1, take it from the instrument.
+	 */
+	private int tickScale = -1;
+	/**
+	 * The list of informations about outputs.
+	 */
+	private List<OutputInfo> outputs = new ArrayList<>();
+	/**
+	 * The working session.
+	 */
+	private Session session;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param session The working session.
+	 */
+	public DataInfo(Session session) {
+		super();
+		this.session = session;
+	}
+
+	/**
+	 * Returns the working session.
+	 * 
+	 * @return The working session.
+	 */
+	public Session getSession() {
+		return session;
+	}
+
+	/**
+	 * Adds an output data information to the list of outputs.
+	 * 
+	 * @param name The output name.
+	 * @param shortName The output short name.
+	 * @param index The index in the data.
+	 */
+	public void addOutput(String name, String shortName, int index) {
+		outputs.add(new OutputInfo(name, shortName, index));
+	}
+
+	/**
+	 * Adds an output data information to the list of outputs.
+	 * 
+	 * @param name The output name.
+	 * @param shortName The output short name.
+	 * @param index The index in the data.
+	 * @param plot A boolean indicating if this output has to be plotted.
+	 */
+	public void addOutput(String name, String shortName, int index, boolean plot) {
+		outputs.add(new OutputInfo(name, shortName, index, plot));
+	}
+
+	/**
+	 * Adds an output to the list of outputs.
+	 * 
+	 * @param name The output name.
+	 * @param shortName The output short name.
+	 * @param index The index in the data.
+	 * @param description The output description.
+	 */
+	public void addOutput(String name, String shortName, int index, String description) {
+		outputs.add(new OutputInfo(name, shortName, index, description));
+	}
+
+	/**
+	 * Adds an output to the list of outputs.
+	 * 
+	 * @param name The output name.
+	 * @param shortName The output short name.
+	 * @param index The index in the data.
+	 * @param description The output description.
+	 * @param plot A boolean indicating if this output has to be plotted.
+	 */
+	public void addOutput(String name, String shortName, int index, String description, boolean plot) {
+		outputs.add(new OutputInfo(name, shortName, index, description, plot));
+	}
+
+	/**
+	 * Returns the number of outputs.
+	 * 
+	 * @return The number of outputs.
+	 */
+	public int getOutputCount() {
+		return outputs.size();
+	}
+
+	/**
+	 * Returns the output at the given index.
+	 * 
+	 * @param index The output index.
+	 * @return The output.
+	 */
+	public OutputInfo getOutput(int index) {
+		if (index < outputs.size()) {
+			return outputs.get(index);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the output with the given name.
+	 * 
+	 * @param name The output name.
+	 * @return The output or null.
+	 */
+	public OutputInfo getOutput(String name) {
+		for (OutputInfo output : outputs) {
+			if (output.getName().equals(name)) {
+				return output;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the data instrument.
+	 * 
+	 * @return The data instrument.
+	 */
+	public Instrument getInstrument() {
+		return instrument;
+	}
+
+	/**
+	 * Sets the data instrument.
+	 * 
+	 * @param instrument The data instrument.
+	 */
+	public void setInstrument(Instrument instrument) {
+		this.instrument = instrument;
+	}
+
+	/**
+	 * Returns the data period.
+	 * 
+	 * @return The data period.
+	 */
+	public Period getPeriod() {
+		return period;
+	}
+
+	/**
+	 * Sets the data period.
+	 * 
+	 * @param period The data period.
+	 */
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	/**
+	 * Returns the identifier or name.
+	 * 
+	 * @return The unique identifier or name, like for instance <b>SMA<b>.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the unique identifier or name, like for instance <b>SMA<b>.
+	 * 
+	 * @param name The unique identifier or name, like for instance <b>SMA<b>.
+	 */
+	public void setName(String id) {
+		this.name = id;
+	}
+
+	/**
+	 * Returns the title to use in list or tool tips.
+	 * 
+	 * @return The title to use in list or tool tips.
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * Sets the title to use in list or tool tips.
+	 * 
+	 * @param title The title to use in list or tool tips.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * Returns the long description.
+	 * 
+	 * @return The long description.
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Sets the long description.
+	 * 
+	 * @param description The long description.
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Returns the type of data (Price, Volume or Indicator).
+	 * 
+	 * @return The type of data.
+	 */
+	public DataType getDataType() {
+		return dataType;
+	}
+
+	/**
+	 * Sets the data type.
+	 * 
+	 * @param dataType The data type.
+	 */
+	protected void setDataType(DataType dataType) {
+		this.dataType = dataType;
+	}
+
+	/**
+	 * Returns the pip scale to use.
+	 * 
+	 * @return The pip scale.
+	 * @throws UnsupportedOperationException If the pip scale can not be resolved.
+	 */
+	public int getPipScale() {
+		if (pipScale >= 0) {
+			return pipScale;
+		}
+		if (instrument != null) {
+			return instrument.getPipScale();
+		}
+		throw new UnsupportedOperationException("Pip scale can not be resolved");
+	}
+
+	/**
+	 * Sets the pip scale for the data in this data list. If -1, retrieve it from the instrument.
+	 * 
+	 * @param pipScale The pip scale.
+	 */
+	public void setPipScale(int pipScale) {
+		this.pipScale = pipScale;
+	}
+
+	/**
+	 * Returns the tick scale to use.
+	 * 
+	 * @return The tick scale.
+	 * @throws UnsupportedOperationException If the tick scale can not be resolved.
+	 */
+	public int getTickScale() {
+		if (tickScale >= 0) {
+			return tickScale;
+		}
+		if (instrument != null) {
+			return instrument.getTickScale();
+		}
+		throw new UnsupportedOperationException("Tick scale can not be resolved");
+	}
+
+	/**
+	 * Returns the volume scale or -1 if it can not be resolved.
+	 * 
+	 * @return The volume scale.
+	 */
+	public int getVolumeScale() {
+		if (instrument != null) {
+			return instrument.getVolumeScale();
+		}
+		return -1;
+	}
+
+	/**
+	 * Sets the tick or minimum value scale.
+	 * 
+	 * @param tickScale The tick or minimum value scale.
+	 */
+	public void setTickScale(int tickScale) {
+		this.tickScale = tickScale;
+	}
+
+	/**
+	 * Returns a display information of the given data.
+	 * 
+	 * @param data The data.
+	 * @return The display info.
+	 */
+	public String getInfoData(Data data) {
+		boolean priceInfo = (this instanceof PriceInfo);
+		boolean addVolumeValue = (priceInfo && data.getValue(OHLCV.Index.Volume.getIndex()) != 0);
+		StringBuilder b = new StringBuilder();
+		int count = getOutputCount();
+		for (int i = 0; i < count; i++) {
+			OutputInfo output = getOutput(i);
+			int index = output.getIndex();
+			boolean addValue = true;
+			if (index == OHLCV.Index.Volume.getIndex()) {
+				addValue = addVolumeValue;
+			}
+			if (addValue) {
+				if (i > 0) {
+					b.append(", ");
+				}
+				String shortName = output.getShortName();
+				if (shortName != null) {
+					b.append(shortName);
+					b.append(": ");
+				}
+				b.append(
+					FormatUtils.formattedFromDouble(data.getValue(index), getPipScale(), getSession().getLocale()));
+			}
+		}
+		return b.toString();
+	}
+
+	/**
+	 * Returns a string representation of this data info.
+	 * 
+	 * @return A string representation.
+	 */
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append("Name: " + getName() + "\n");
+		b.append("Title: " + getTitle() + "\n");
+		b.append("Data type: " + getDataType() + "\n");
+		b.append("Instrument: " + getInstrument() + "\n");
+		b.append("Period: " + getPeriod() + "\n");
+		b.append("Pip scale: " + getPipScale() + "\n");
+		b.append("Tick scale: " + getTickScale() + "\n");
+		return b.toString();
+	}
+}

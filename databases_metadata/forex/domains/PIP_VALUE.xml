@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<domain
+	name="PIP_VALUE"
+	alias="PIP_VALUE"
+	type="Double"
+	title="Pip value"
+	label="Pip value"
+	header="Pip value">
+</domain>

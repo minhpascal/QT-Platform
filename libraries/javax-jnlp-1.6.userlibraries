@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="javax-jnlp-1.6" systemlibrary="false">
+        <archive path="/QT-Platform/libraries/javax/jnlp/1.6/jnlp-1.6.jar"/>
+    </library>
+</eclipse-userlibraries>

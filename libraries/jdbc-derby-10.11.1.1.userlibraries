@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="jdbc-derby-10.11.1.1" systemlibrary="false">
+        <archive path="/QT-Platform/libraries/jdbc/derby/10.11.1.1/db-derby-10.11.1.1-bin/lib/derby.jar" source="/QT-Platform/libraries/jdbc/derby/10.11.1.1/db-derby-10.11.1.1-src.zip"/>
+        <archive path="/QT-Platform/libraries/jdbc/derby/10.11.1.1/db-derby-10.11.1.1-bin/lib/derbyclient.jar"/>
+        <archive path="/QT-Platform/libraries/jdbc/derby/10.11.1.1/db-derby-10.11.1.1-bin/lib/derbynet.jar"/>
+    </library>
+</eclipse-userlibraries>
