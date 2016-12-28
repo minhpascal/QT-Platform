@@ -218,7 +218,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 */
 	public static String[] parse(String string, String separator) {
 		StringTokenizer tokenizer = new StringTokenizer(string, separator);
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		while (tokenizer.hasMoreTokens()) {
 			list.add(tokenizer.nextToken().trim());
 		}

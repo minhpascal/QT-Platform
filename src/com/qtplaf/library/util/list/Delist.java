@@ -16,6 +16,7 @@ package com.qtplaf.library.util.list;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
@@ -209,6 +210,19 @@ public interface Delist<E> {
 	boolean removeAll(Collection<?> c);
 
 	/**
+	 * Removes a single instance of the specified element from this collection, if it is present (optional operation).
+	 *
+	 * @param o element to be removed from this collection, if present
+	 * @return <tt>true</tt> if an element was removed as a result of this call
+	 * @throws ClassCastException if the type of the specified element is incompatible with this collection
+	 *         (<a href="#optional-restrictions">optional</a>)
+	 * @throws NullPointerException if the specified element is null and this collection does not permit null elements
+	 *         (<a href="#optional-restrictions">optional</a>)
+	 * @throws UnsupportedOperationException if the <tt>remove</tt> operation is not supported by this collection
+	 */
+	boolean remove(Object o);
+
+	/**
 	 * Returns the index of the first occurrence of the specified element in this list, or -1 if this list does not
 	 * contain the element. More formally, returns the lowest index <tt>i</tt> such that
 	 * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>, or -1 if there is no such index.
@@ -368,4 +382,25 @@ public interface Delist<E> {
 	 * @throws NullPointerException if the specified array is null
 	 */
 	<T> T[] toArray(T[] a);
+
+	/**
+	 * Returns a list iterator over the elements in this list (in proper sequence).
+	 *
+	 * @return a list iterator over the elements in this list (in proper sequence)
+	 */
+	ListIterator<E> listIterator();
+	
+	/**
+	 * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified position
+	 * in the list. The specified index indicates the first element that would be returned by an initial call to
+	 * {@link ListIterator#next next}. An initial call to {@link ListIterator#previous previous} would return the
+	 * element with the specified index minus one.
+	 *
+	 * @param index index of the first element to be returned from the list iterator (by a call to
+	 *        {@link ListIterator#next next})
+	 * @return a list iterator over the elements in this list (in proper sequence), starting at the specified position
+	 *         in the list
+	 * @throws IndexOutOfBoundsException if the index is out of range ({@code index < 0 || index > size()})
+	 */
+	ListIterator<E> listIterator(int index);
 }

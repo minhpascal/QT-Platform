@@ -14,19 +14,18 @@
 
 package com.qtplaf.library.swing;
 
-import java.awt.Window;
-
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
- * Base dialog class that basically handles the working session.
+ * Base frame class that basically handles the working session.
  * 
  * @author Miquel Sas
  */
-public class JDialogSession extends JDialog {
+public class JFrameSession extends JFrame {
 
 	/**
 	 * The working session.
@@ -38,20 +37,8 @@ public class JDialogSession extends JDialog {
 	 * 
 	 * @param session The working session.
 	 */
-	public JDialogSession(Session session) {
+	public JFrameSession(Session session) {
 		super();
-		this.session = session;
-		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-	}
-
-	/**
-	 * Constructor assigning the parent owner.
-	 * 
-	 * @param session The working session.
-	 * @param owner The parent window owner.
-	 */
-	public JDialogSession(Session session, Window owner) {
-		super(owner);
 		this.session = session;
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	}
