@@ -93,7 +93,7 @@ public class ArgumentManager {
 		List<Argument> requiredArguments = getRequiredArguments();
 		for (Argument argument : requiredArguments) {
 			if (!containsArgument(argument, args)) {
-				errors.add("Argument " + argument.getName() + " is required.");
+				errors.add("Argument " + argument.getName() + " is required");
 			}
 		}
 
@@ -103,20 +103,25 @@ public class ArgumentManager {
 			// Get the argument.
 			Argument argument = getArgument(arg);
 			if (argument == null) {
-				errors.add("Invalid argument " + arg);
+				errors.add("Invalid argument " + getArg(arg));
 				continue;
 			}
+			
+			// List of passed values.
+			List<String> values = parseValues(argument, arg);
 
-			// Argument without values, just check it is present.
-			if (isMatchWithoutValues(argument, arg)) {
+			// Argument without values.
+			if (!argument.isValuesRequired()) {
+				if (!values.isEmpty()) {
+					errors.add("Argument " + argument.getName() + " does not require values");
+					continue;
+				}
 				valuesMap.put(argument.getName().toLowerCase(), null);
 				continue;
 			}
 
 			// Argument with values.
-			if (isMatchWithValues(argument, arg)) {
-				List<String> values = parseValues(argument, arg);
-				// The argument requires at least a value, check that the list is not empty.
+			if (argument.isValuesRequired()) {
 				if (values.isEmpty()) {
 					errors.add("Argument " + argument.getName() + " requires at least a value");
 					continue;
@@ -126,9 +131,29 @@ public class ArgumentManager {
 					errors.add("Argument " + argument.getName() + " can have only one single value");
 					continue;
 				}
-				// Store the values.
-				valuesMap.put(argument.getName().toLowerCase(), values);
-				continue;
+				// Validate possible values.
+				if (!argument.getPossibleValues().isEmpty()) {
+					boolean error = false;
+					for (String value : values) {
+						boolean validated = false;
+						for (String possibleValue : argument.getPossibleValues()) {
+							if (value.toLowerCase().equals(possibleValue.toLowerCase())) {
+								validated = true;
+								break;
+							}
+						}
+						if (!validated) {
+							errors.add("Argument " + argument.getName() + " invalid value: " + value);
+							error = true;
+						}
+					}
+					if (error) {
+						continue;
+					}
+					// Store the values.
+					valuesMap.put(argument.getName().toLowerCase(), values);
+					continue;
+				}
 			}
 			
 			// Should never come here.
@@ -146,9 +171,13 @@ public class ArgumentManager {
 	 * @return The list of values.
 	 */
 	private List<String> parseValues(Argument argument, String arg) {
-		String valueString = arg.substring((argument.getName() + ":").length() + 1);
-		String[] valueArray = StringUtils.parse(valueString, "+");
-		return new ArrayList<>(ListUtils.asList(valueArray));
+		List<String> values = new ArrayList<>();
+		if (getArg(arg).toLowerCase().startsWith(argument.getName().toLowerCase() + ":")) {
+			String valueString = arg.substring((argument.getName() + ":").length() + 1);
+			String[] valueArray = StringUtils.parse(valueString, "+");
+			values.addAll(ListUtils.asList(valueArray));
+		}
+		return values;
 	}
 
 	/**
@@ -159,7 +188,7 @@ public class ArgumentManager {
 	 */
 	private Argument getArgument(String arg) {
 		for (Argument argument : arguments) {
-			if (isMatch(argument, arg)) {
+			if (isArgument(argument, arg)) {
 				return argument;
 			}
 		}
@@ -175,7 +204,7 @@ public class ArgumentManager {
 	 */
 	private boolean containsArgument(Argument argument, String[] args) {
 		for (String arg : args) {
-			if (isMatch(argument, arg)) {
+			if (isArgument(argument, arg)) {
 				return true;
 			}
 		}
@@ -189,46 +218,12 @@ public class ArgumentManager {
 	 * @param arg The command line argument.
 	 * @return A boolean that indicates whether they meet.
 	 */
-	private boolean isMatch(Argument argument, String arg) {
-		// Argument without values.
-		if (isMatchWithoutValues(argument, arg)) {
+	private boolean isArgument(Argument argument, String arg) {
+		if (getArg(arg).toLowerCase().startsWith(argument.getName().toLowerCase() + ":")) {
 			return true;
 		}
-		// Argument with values (name:)
-		if (isMatchWithValues(argument, arg)) {
+		if (getArg(arg).toLowerCase().equals(argument.getName().toLowerCase())) {
 			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Check if the argument is with values and meets the command line argument.
-	 * 
-	 * @param argument The argument to check.
-	 * @param arg The command line argument.
-	 * @return A boolean if they agree.
-	 */
-	private boolean isMatchWithValues(Argument argument, String arg) {
-		if (argument.isValuesRequired()) {
-			if (getArg(arg).toLowerCase().startsWith(argument.getName().toLowerCase() + ":")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Check if the argument is without values and meets the command line argument.
-	 * 
-	 * @param argument The argument to check.
-	 * @param arg The command line argument.
-	 * @return A boolean if they agree.
-	 */
-	private boolean isMatchWithoutValues(Argument argument, String arg) {
-		if (!argument.isValuesRequired()) {
-			if (getArg(arg).toLowerCase().equals(argument.getName().toLowerCase())) {
-				return true;
-			}
 		}
 		return false;
 	}

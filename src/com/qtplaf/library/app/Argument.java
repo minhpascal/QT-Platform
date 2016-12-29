@@ -125,6 +125,18 @@ public class Argument {
 	}
 
 	/**
+	 * Add a possible value.
+	 * 
+	 * @param value The value.
+	 */
+	public void addPossibleValue(String value) {
+		if (!isValuesRequired()) {
+			throw new IllegalStateException("No value required");
+		}
+		possibleValues.add(value);
+	}
+
+	/**
 	 * Returns this argument description.
 	 * 
 	 * @return The description.
@@ -190,10 +202,13 @@ public class Argument {
 		b.append("\n");
 		b.append("Required: " + isRequired());
 		if (isValuesRequired()) {
-			b.append(", requires value");
-			if (isMultipleValues()) {
-				b.append(", accepts multiple values");
+			if (!isMultipleValues()) {
+				b.append(", single value.");
+			} else {
+				b.append(", multiple values.");
 			}
+		} else {
+			b.append(", no value.");
 		}
 		if (!possibleValues.isEmpty()) {
 			b.append("\n");
