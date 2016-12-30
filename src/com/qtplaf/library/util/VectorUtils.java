@@ -15,7 +15,6 @@ package com.qtplaf.library.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Static methods to operate n-dimensional vectors as lists of values.
@@ -252,8 +251,7 @@ public class VectorUtils {
 	 */
 	private static void validateDimensions(List<?> v1, List<?> v2) {
 		if (v1.size() != v2.size()) {
-			String error = TextServer.getString("exceptionValidateVectorDimensions", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Vectors 1 and 2 must have the same dimension");
 		}
 	}
 

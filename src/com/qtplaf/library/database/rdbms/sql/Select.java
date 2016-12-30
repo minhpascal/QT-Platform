@@ -17,14 +17,12 @@
 package com.qtplaf.library.database.rdbms.sql;
 
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Relation;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.View;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A builder of simple SELECT queries.
@@ -60,8 +58,7 @@ public class Select extends Statement {
 	 */
 	public boolean isExplicitRelation() {
 		if (getDBEngineAdapter() == null) {
-			String error = TextServer.getString("exceptionDatabaseAdapterMustBeSet", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("The database adapter must be set");
 		}
 		return getDBEngineAdapter().isExplicitRelation();
 	}
@@ -146,8 +143,7 @@ public class Select extends Statement {
 	@Override
 	public String toSQL() {
 		if (getView() == null) {
-			String error = TextServer.getString("exceptionMalformedSelectViewNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed SELECT query: view is null");
 		}
 
 		StringBuilder b = new StringBuilder(1024);

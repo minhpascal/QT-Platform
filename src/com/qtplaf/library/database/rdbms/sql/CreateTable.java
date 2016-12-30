@@ -16,11 +16,8 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A builder of simple CREATE TABLE statements.
@@ -68,8 +65,7 @@ public class CreateTable extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedCreateTableTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed CREATE TABLE query: table is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

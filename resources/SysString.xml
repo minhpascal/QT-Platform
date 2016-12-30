@@ -37,6 +37,8 @@
 	<entry key="tokenMinutes">Minutes</entry>
 	<entry key="tokenHour">Hour</entry>
 	<entry key="tokenHours">Hours</entry>
+	
+	<entry key="tokenTerminated">Terminated</entry>
 
 	<!-- Message box options. -->
 
@@ -82,147 +84,7 @@
 	<entry key="actionStopBatchChainMessageCanNotStop">Can not stop if not executing</entry>
 	<entry key="actionStopBatchChainMessageQueryStop">Stop processing?</entry>
 
-	<!-- Batch chain: labels. These are specific. -->
-
-	<entry key="labelBatchChainStatus">Status</entry>
-	<entry key="labelBatchChainStartTime">Start time</entry>
-	<entry key="labelBatchChainEndTime">End time</entry>
-
-	<!-- Batch chain exceptions and messages. -->
-
-	<entry key="exceptionBatchChainCanceledByStopRequest">Chain processing cancelled by stop request.</entry>
-	<entry key="exceptionBatchChainStopError">An error occurred while executing the process {0} -
-		{1}</entry>
-	<entry key="exceptionBatchChainNoProcesses">No processes defined</entry>
-
-	<entry key="messageBatchChainStart">Chain {0} has started at {1}</entry>
-	<entry key="messageBatchChainEnd">Chain {0} has anded at {1}</entry>
-	<entry key="messageBatchChainProcessStart">Process {0} has started at {1}</entry>
-
-	<entry key="messageBatchProcessStepOfSteps">Step {0,number,integer} of {1,number,integer}</entry>
-
-	<entry key="labelBatchChainStatusInitial">Initial</entry>
-	<entry key="labelBatchChainStatusExecuting">Executing</entry>
-	<entry key="labelBatchChainStatusStopping">Stopping</entry>
-	<entry key="labelBatchChainStatusStopped">Stopped</entry>
-	<entry key="labelBatchChainStatusTerminated">Terminated</entry>
-
-	<!-- Several exception messages. -->
-
-	<entry key="exceptionNotExpected">Not expected exception</entry>
-
-	<entry key="exceptionNotComparableType">Not comparable type: {0}</entry>
-	<entry key="exceptionImageNotFound">Image {0} not found</entry>
-	<entry key="exceptionStringsMustNotBeNull">Strings must not be null</entry>
-	<entry key="exceptionValidateVectorDimensions">Vector 1 has a different number of dimensions than
-		vector 2</entry>
-
-	<entry key="exceptionVectorDimension">The argument matrix is not a one column matrix</entry>
-	<entry key="exceptionVectorSizes">Not supported for matrices with more than one column</entry>
-	<entry key="exceptionMatricesMultiply">The number of rows of the b matrix must be equal to
-		the number of columns of the a matrix.</entry>
-	<entry key="exceptionMatricesDimensions">Matrices dimensions must agree</entry>
-
-	<!-- Data package exceptions and messages. -->
-
-	<entry key="exceptionFieldCanNotBeNull">Field can not be null</entry>
-	<entry key="exceptionRightOperandExpected">Right operand is expected for operator: {0}</entry>
-	<entry key="exceptionInvalidValueType">Invalid value type ({0}) for field type {1}</entry>
-	<entry key="exceptionNoCaseOnlyApplies">No case only applies to string fields and values</entry>
-	<entry key="exceptionInvalidNumberOfValues">Invalid number of values</entry>
-	<entry key="exceptionInvalidNumberOfValuesForOperator">Invalid number of values for operator {0}</entry>
-	<entry key="exceptionCursorIsClosed">Cursor is closed</entry>
-	<entry key="exceptionForwardOnlyCursor">Unsupported operation for a forward only cursor</entry>
-	<entry key="exceptionSelectStatementsNotSupported">Select statements not supported</entry>
-	<entry key="exceptionFieldValidStrictType">Value type {0} is not equal than this field type {1}</entry>
-	<entry key="exceptionFieldValidMaxValue">Value {0} is greater than {1}</entry>
-	<entry key="exceptionFieldValidMinValue">Value {0} is less than {1}</entry>
-	<entry key="exceptionFieldValidPossibleValues">Value {0} is not in the list of possible values</entry>
-	<entry key="exceptionFieldValidNotEmptyRequired">A non empty value is required for this field</entry>
-	<entry key="exceptionFieldValidNotNullable">A not null value is required for this field</entry>
-	<entry key="exceptionFieldValidValueType">Field {0} type {1} does not match the corresponding
-		value type {2}</entry>
-	<entry key="exceptionFieldNotNull">The field should never be null</entry>
-	<entry key="exceptionFilterUsagesNotNull">Filter usages can not be null</entry>
-	<entry key="exceptionFilterNoCaseApplies">No case applies only to string fields and values</entry>
-	<entry key="exceptionFilterInvalidSimpleCondition">Invalid condition: not a simple comparison</entry>
-	<entry key="exceptionFilterInvalidGroupComparison">Invalid condition: not a group comparison</entry>
-	<entry key="exceptionFilterInvalidGroupModifier">Invalid group modifier</entry>
-	<entry key="exceptionFilterFieldIsNotString">Invalid condition: field is not a string</entry>
-	<entry key="exceptionFilterValueIsNotString">Invalid condition: value is not a string</entry>
-	<entry key="exceptionInvalidFieldList">Invalid field list</entry>
-	<entry key="exceptionUnsupportedAlignmentName">Unsupported alignment name: {0}</entry>
-	<entry key="exceptionUnsupportedTypeName">Unsupported type name: {0}</entry>
-	<entry key="exceptionUnsupportedTypeConversionToJDBC">Unsupported type conversion to JDBC: {0}</entry>
-	<entry key="exceptionValueNotComparable">Value {0} is not comparable</entry>
-	<entry key="exceptionValueNotBoolean">Value {0} is not a boolean</entry>
-	<entry key="exceptionValueNotString">Value {0} is not a string</entry>
-	<entry key="exceptionValueNotDate">Value {0} is not a date</entry>
-	<entry key="exceptionValueNotTime">Value {0} is not a time</entry>
-	<entry key="exceptionValueNotTimestamp">Value {0} is not a date, time or timestamp</entry>
-	<entry key="exceptionValueNotByteArray">Value {0} is not a byte array</entry>
-	<entry key="exceptionValueNotValueArray">Value {0} is not a value array</entry>
-	<entry key="exceptionValueNotNumber">Value {0} is not a number</entry>
-
-	<!-- Data package: SQL exceptions and messages. -->
-
-	<entry key="exceptionDatabaseAdapterMustBeSet">The database adapter must be set</entry>
-
-	<entry key="exceptionMalformedAddCheckTableNull">Malformed ADD CHECK query: table is null</entry>
-	<entry key="exceptionMalformedAddCheckFieldNull">Malformed ADD CHECK query: field is null</entry>
-	<entry key="exceptionMalformedAddFieldTableNull">Malformed ADD COLUMN query: table is null</entry>
-	<entry key="exceptionMalformedAddFieldFieldNull">Malformed ADD COLUMN query: field is null</entry>
-	<entry key="exceptionMalformedAddForeignKeyTableNull">Malformed ADD FOREIGN KEY query: table is null</entry>
-	<entry key="exceptionMalformedAddForeignKeyForeignKeyNull">Malformed ADD FOREIGN KEY query: foreign key is null</entry>
-	<entry key="exceptionMalformedAddPrimaryKeyTableNull">Malformed ADD PRIMARY KEY query: table is null</entry>
-	<entry key="exceptionMalformedCreateIndexIndexNull">Malformed CREATE INDEX query: index is null</entry>
-	<entry key="exceptionMalformedCreateTableTableNull">Malformed CREATE TABLE query: table is null</entry>
-	<entry key="exceptionMalformedDeleteTableTableNull">Malformed DELETE query: table is null</entry>
-	<entry key="exceptionMalformedDropConstraintTableNull">Malformed DROP CONSTRAINT query: table is null</entry>
-	<entry key="exceptionMalformedDropConstraintConstraintNull">Malformed DROP CONSTRAINT query: constraint name is
-		null</entry>
-	<entry key="exceptionMalformedDropFieldTableNull">Malformed DROP COLUMN query: table is null</entry>
-	<entry key="exceptionMalformedDropFieldFieldNull">Malformed DROP COLUMN query: field is null</entry>
-	<entry key="exceptionMalformedDropForeignKeyTableNull">Malformed DROP FOREIGN KEY query: table is null</entry>
-	<entry key="exceptionMalformedDropForeignKeyForeignKeyNull">Malformed DROP FOREIGN KEY query: foreign key is null</entry>
-	<entry key="exceptionMalformedDropIndexIndexNull">Malformed DROP INDEX query: index is null</entry>
-	<entry key="exceptionMalformedDropPrimaryKeyTableNull">Malformed DROP PRIMARY KEY query: table is null</entry>
-	<entry key="exceptionMalformedDropTableTableNull">Malformed DROP TABLE query: table is null</entry>
-
-	<entry key="exceptionMalformedInsertMatchingAdapters">Malformed INSERT query: the select and the insert
-		database adapters must be the same</entry>
-	<entry key="exceptionMalformedInsertTableNull">Malformed INSERT query: table is null</entry>
-	<entry key="exceptionMalformedInsertRecordValuesOrSelect">Malformed INSERT query: need record, values or select</entry>
-	<entry key="exceptionMalformedInsertValuesOrSelect">Malformed INSERT query: set only values or select</entry>
-	<entry key="exceptionMalformedInsertRecordOrSelect">Malformed INSERT query: set only record or select</entry>
-	<entry key="exceptionMalformedInsertRecordOrValues">Malformed INSERT query: set only values or record</entry>
-	<entry key="exceptionMalformedInsertFieldsNeeded">Malformed INSERT query: fields are needed for a select</entry>
-	<entry key="exceptionMalformedInsertNumberOfFields">Malformed INSERT query: invalid number of fields</entry>
-
-	<entry key="exceptionMalformedSelectViewNull">Malformed SELECT query: view is null</entry>
-
-	<entry key="exceptionMalformedUpdateRecordAfterTable">Malformed UPDATE query: the record must be set after
-		the table</entry>
-	<entry key="exceptionMalformedUpdateTableNull">Malformed UPDATE query: table is null</entry>
-
-	<!-- Neural network strings. -->
-
-	<entry key="exceptionOperationNotValidForInputNeurons">Operation not valid for origin input neurons</entry>
-	<entry key="exceptionOperationNotValidForNonInputNeurons">Operation not valid for non origin input neurons:
-		output should be calculated</entry>
-	<entry key="exceptionLayersMustBeEmpty">The list of layers must be empty to set the first
-		layer.</entry>
-	<entry key="exceptionInputsSizeNotMatch">Size of inputs is not the same than the input layer</entry>
-	<entry key="exceptionLearningProcessNotNull">The learning process can not be null</entry>
-	<entry key="exceptionLearningDataMustBeSet">The learning data must be set and not empty</entry>
-	<entry key="exceptionLearningErrorFunctionNotNull">The error function can not be null</entry>
-	<entry key="exceptionLearningStopConditionsNeeded">Stop conditions needed</entry>
-	<entry key="exceptionLearningEventSource">Source must be an instance of LearningProcessManager</entry>
-	<entry key="exceptionNumberOfProperties">Invalid number of properties</entry>
-	<entry key="exceptionTypeFirstProperty">Invalid type for the first property: learning rate</entry>
-	<entry key="exceptionTypeSecongProperty">Invalid type for the second property: momentum</entry>
-	<entry key="exceptionTypeThirdProperty">Invalid type for the third property: update weights</entry>
-	<entry key="exceptionTypeFourthProperty">Invalid type for the fourth property: update biases</entry>
+	<!-- Neural network messages. -->
 
 	<entry key="messageStopIrreducibleError">
 		Stopped by irreducible error condition:
@@ -236,13 +98,6 @@
 		iteration: {0,number,integer}
 		Max iterations: {1,number,integer}
 	</entry>
-
-	<!-- XML database provider and parser strings. -->
-
-	<entry key="exceptionXMLDBP_CatalogMustBeNull">Catalog must be null</entry>
-	<entry key="exceptionXMLDBP_CatalogCanNotBeNull">Catalog can not be null or empty</entry>
-	<entry key="exceptionXMLDBP_SchemaMustBeNull">Schema must be null</entry>
-	<entry key="exceptionXMLDBP_SchemaCanNotBeNull">Schema can not be null or empty</entry>
 
 	<!-- Trading: unit descriptions. -->
 

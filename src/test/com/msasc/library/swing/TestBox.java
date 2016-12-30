@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.action.DefaultActionAccept;
 
 /**
  * Option pane to test a text field.
@@ -49,10 +50,9 @@ public class TestBox {
 		}
 	}
 
-	static class ActionAccept extends AbstractAction {
+	static class ActionAccept extends DefaultActionAccept {
 		ActionAccept() {
-			ActionUtils.setupActionAccept(new Session(Locale.UK), this);
-			ActionUtils.setName(this, "Accept");
+			super(new Session(Locale.UK));
 		}
 		public void actionPerformed(ActionEvent e) {
 			JButton button = ActionUtils.getButton(this);

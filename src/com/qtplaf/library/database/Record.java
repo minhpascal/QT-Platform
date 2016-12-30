@@ -18,11 +18,9 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.util.Date;
 import com.qtplaf.library.util.Properties;
-import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.Time;
 import com.qtplaf.library.util.Timestamp;
 
@@ -607,8 +605,7 @@ public class Record implements Comparable<Object> {
 		try {
 			record = (Record) o;
 		} catch (ClassCastException exc) {
-			String error = TextServer.getString("exceptionNotComparableType", Locale.UK);
-			throw new UnsupportedOperationException(MessageFormat.format(error, o.getClass().getName()));
+			throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		// Compare using the primary key pointers.
 		RecordComparator comparator = new RecordComparator(getPrimaryKeyPointers());

@@ -16,14 +16,12 @@ package com.qtplaf.library.database.rdbms.sql;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * An UPDATE statement builder.
@@ -153,8 +151,7 @@ public class Update extends Statement {
 	 */
 	public void setRecord(Record record) {
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedUpdateRecordAfterTable", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed UPDATE query: the record must be set after the table");
 		}
 		this.record = record;
 		for (int i = 0; i < record.getFieldCount(); i++) {
@@ -221,8 +218,7 @@ public class Update extends Statement {
 	public String toSQL() {
 
 		if (table == null) {
-			String error = TextServer.getString("exceptionMalformedUpdateTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed UPDATE query: table is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

@@ -16,11 +16,8 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * An ALTER TABLE ADD FOREIGN KEY builder.
@@ -90,12 +87,10 @@ public class AddForeignKey extends Statement {
 	public String toSQL() {
 
 		if (table == null) {
-			String error = TextServer.getString("exceptionMalformedAddForeignKeyTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD FOREIGN KEY query: table is null");
 		}
 		if (foreignKey == null) {
-			String error = TextServer.getString("exceptionMalformedAddForeignKeyForeignKeyNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD FOREIGN KEY query: foreign key is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

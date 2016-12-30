@@ -23,13 +23,14 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.swing.action.DefaultActionAccept;
+import com.qtplaf.library.swing.action.DefaultActionCancel;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
@@ -60,14 +61,13 @@ public class JDialogColumns extends JDialogSession {
 	/**
 	 * Cancel action.
 	 */
-	class ActionCancel extends AbstractAction {
+	class ActionCancel extends DefaultActionCancel {
 
 		/**
 		 * Constructor.
 		 */
 		ActionCancel() {
-			super();
-			ActionUtils.setupActionCancel(getSession(), this);
+			super(getSession());
 		}
 
 		/**
@@ -83,14 +83,13 @@ public class JDialogColumns extends JDialogSession {
 	/**
 	 * Accept action.
 	 */
-	class ActionAccept extends AbstractAction {
+	class ActionAccept extends DefaultActionAccept {
 
 		/**
 		 * Constructor.
 		 */
 		ActionAccept() {
-			super();
-			ActionUtils.setupActionAccept(getSession(), this);
+			super(getSession());
 		}
 
 		/**

@@ -140,8 +140,7 @@ public class Neuron implements Serializable {
 	 */
 	public void addInputSynapse(Synapse synapse) {
 		if (isInputNeuron()) {
-			String error = TextServer.getString("exceptionOperationNotValidForInputNeurons", Locale.UK);
-			throw new UnsupportedOperationException(error);
+			throw new UnsupportedOperationException("Operation not valid for origin input neurons");
 		}
 		synapse.setOutputNeuron(this);
 		inputSynapses.add(synapse);

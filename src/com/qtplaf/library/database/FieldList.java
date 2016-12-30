@@ -17,9 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A field list packs a list of field, its field map, the primary key pointers and the order key pointers if applicable.
@@ -115,16 +112,18 @@ public class FieldList {
 	 */
 	public void validateValues(List<Value> values) throws IllegalArgumentException {
 		if (fields.size() != values.size()) {
-			String error = TextServer.getString("exceptionInvalidNumberOfValues", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid number of values");
 		}
 		for (int i = 0; i < fields.size(); i++) {
 			Field field = fields.get(i);
 			Value value = values.get(i);
 			if (!field.getType().equals(value.getType())) {
-				String error = TextServer.getString("exceptionFieldValidValueType", Locale.UK);
 				throw new IllegalArgumentException(
-					MessageFormat.format(error, field.getName(), field.getType(), value.getType()));
+					MessageFormat.format(
+						"Field {0} type {1} does not match the corresponding value type {2}",
+						field.getName(),
+						field.getType(),
+						value.getType()));
 			}
 		}
 	}

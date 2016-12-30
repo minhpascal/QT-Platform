@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.Action;
 import javax.swing.JFormattedTextField;
@@ -29,7 +28,6 @@ import com.qtplaf.library.util.Alignment;
 import com.qtplaf.library.util.Date;
 import com.qtplaf.library.util.Properties;
 import com.qtplaf.library.util.StringUtils;
-import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.Time;
 import com.qtplaf.library.util.Timestamp;
 
@@ -556,42 +554,38 @@ public class Field implements Comparable<Object> {
 
 		// Strict type
 		if (!value.getType().equals(getType())) {
-			String error = TextServer.getString("exceptionFieldValidStrictType", session.getLocale());
-			return MessageFormat.format(error, value.getType(), getType());
+			return MessageFormat.format("Value type {0} is not equal than field type {1}", value.getType(), getType());
 		}
 
 		// Maximum value
 		if (getMaximumValue() != null) {
 			if (value.compareTo(getMaximumValue()) > 0) {
-				String error = TextServer.getString("exceptionFieldValidMaxValue", session.getLocale());
-				return MessageFormat.format(error, value, getMaximumValue());
+				return MessageFormat.format("Value {0} is greater than {1}", value, getMaximumValue());
 			}
 		}
 
 		// Minimum value
 		if (getMinimumValue() != null) {
 			if (value.compareTo(getMinimumValue()) < 0) {
-				String error = TextServer.getString("exceptionFieldValidMinValue", session.getLocale());
-				return MessageFormat.format(error, value, getMinimumValue());
+				return MessageFormat.format("Value {0} is less than {1}", value, getMinimumValue());
 			}
 		}
 
 		// Possible values
 		if (getPossibleValues() != null) {
 			if (!value.in(getPossibleValues())) {
-				String error = TextServer.getString("exceptionFieldValidPossibleValues", session.getLocale());
-				return MessageFormat.format(error, value);
+				return MessageFormat.format("Value {0} is not in the list of possible values", value);
 			}
 		}
 
 		// Non empty required
 		if (isRequired() && value.isEmpty()) {
-			return TextServer.getString("exceptionFieldValidNotEmptyRequired", session.getLocale());
+			return "A non empty value is required for this field";
 		}
 
 		// Nullable
 		if (!isNullable() && value.isNull()) {
-			return TextServer.getString("exceptionFieldValidNotNullable", session.getLocale());
+			return "A not null value is required for this field";
 		}
 
 		// Validator
@@ -1125,8 +1119,8 @@ public class Field implements Comparable<Object> {
 		try {
 			field = (Field) o;
 		} catch (ClassCastException exc) {
-			String error = TextServer.getString("exceptionNotComparableType", Locale.UK);
-			throw new UnsupportedOperationException(MessageFormat.format(error, o.getClass().getName()));
+			throw new UnsupportedOperationException(
+				MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		if (getAlias().equals(field.getAlias())) {
 			if (getType().equals(field.getType())) {
@@ -1179,8 +1173,8 @@ public class Field implements Comparable<Object> {
 			|| (isDateTimeOrTimestamp() && !value.isDateTimeOrTimestamp())
 			|| (isString() && !value.isString())
 			|| (isNumber() && !value.isNumber())) {
-			String error = TextServer.getString("exceptionInvalidValueType", Locale.UK);
-			throw new IllegalArgumentException(MessageFormat.format(error, value.getType(), getType()));
+			throw new IllegalArgumentException(
+				MessageFormat.format("Invalid value type ({0}) for field type {1}", value.getType(), getType()));
 		}
 	}
 

@@ -18,14 +18,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 import com.qtplaf.library.ai.nnet.function.InputFunction;
 import com.qtplaf.library.ai.nnet.function.OutputFunction;
 import com.qtplaf.library.math.Vector;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A feed forward neural network.
@@ -142,8 +140,7 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 	 */
 	public void addLayer(int numberOfNeurons, int numberOfInputs, InputFunction inputFunction, OutputFunction outputFunction) {
 		if (!layers.isEmpty()) {
-			String error = TextServer.getString("exceptionLayersMustBeEmpty", Locale.UK);
-			throw new UnsupportedOperationException(error);
+			throw new UnsupportedOperationException("The list of layers must be empty to set the first layer.");
 		}
 
 		// Input neurons
@@ -220,8 +217,7 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 		// Get the input layer and set the values.
 		Layer inputLayer = getInputLayer();
 		if (inputVector.size() != inputLayer.size()) {
-			String error = TextServer.getString("exceptionInputsSizeNotMatch", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Size of inputs is not the same than the input layer");
 		}
 		for (int i = 0; i < inputLayer.size(); i++) {
 			inputLayer.get(i).setOutput(inputVector.get(i));

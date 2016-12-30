@@ -14,7 +14,6 @@
 package com.qtplaf.library.ai.nnet.learning;
 
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.ai.nnet.Layer;
 import com.qtplaf.library.ai.nnet.NeuralNetwork;
@@ -22,7 +21,6 @@ import com.qtplaf.library.ai.nnet.Neuron;
 import com.qtplaf.library.ai.nnet.Synapse;
 import com.qtplaf.library.ai.nnet.function.OutputFunction;
 import com.qtplaf.library.math.Vector;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * Back propagation learning process for feed forward neural networks, with learning rate and momentum, and separate
@@ -308,28 +306,23 @@ public class BackPropagationLearningProcess extends LearningProcess {
 	public void setProperties(Object... properties) {
 		// Validate number of  properties.
 		if (properties.length != 4) {
-			String error = TextServer.getString("exceptionNumberOfProperties", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid number of properties");
 		}
 		// Validate learning rate type
 		if (!(properties[0] instanceof Double)) {
-			String error = TextServer.getString("exceptionTypeFirstProperty", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid type for the first property: learning rate");
 		}
 		// Validate momentum type
 		if (!(properties[1] instanceof Double)) {
-			String error = TextServer.getString("exceptionTypeSecongProperty", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid type for the second property: momentum");
 		}
 		// Validate update weights type
 		if (!(properties[2] instanceof Boolean)) {
-			String error = TextServer.getString("exceptionTypeThirdProperty", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid type for the third property: update weights");
 		}
 		// Validate update biases type
 		if (!(properties[3] instanceof Boolean)) {
-			String error = TextServer.getString("exceptionTypeFourthProperty", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid type for the fourth property: update biases");
 		}
 		// Update properties
 		learningRate = (Double)properties[0];

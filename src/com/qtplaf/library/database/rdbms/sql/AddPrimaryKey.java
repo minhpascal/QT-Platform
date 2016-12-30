@@ -16,11 +16,8 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * An ALTER TABLE ADD PRIMARY KEY builder.
@@ -68,8 +65,7 @@ public class AddPrimaryKey extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedAddPrimaryKeyTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD PRIMARY KEY query: table is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

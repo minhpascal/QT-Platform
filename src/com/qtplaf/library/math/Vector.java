@@ -13,10 +13,6 @@
  */
 package com.qtplaf.library.math;
 
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
-
 /**
  * A one dimensional matrix, a vector.
  * 
@@ -54,8 +50,7 @@ public class Vector extends Matrix {
 	public Vector(double[][] matrix) {
 		super(matrix);
 		if (Calculator.columns(matrix) != 1) {
-			String error = TextServer.getString("exceptionVectorDimension", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("The argument matrix is not a one column matrix");
 		}
 	}
 

@@ -17,9 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * Filters are used to build complex <code>WHERE</code> clauses programmatic. Filters chain expressions with logical
@@ -155,8 +152,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 		@Override
 		public int compareTo(Object o) {
 			if (!(o instanceof Segment)) {
-				String error = TextServer.getString("exceptionNotComparableType", Locale.UK);
-				throw new UnsupportedOperationException(MessageFormat.format(error, o.getClass().getName()));
+				throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 			}
 			// Filter segments are not aimed to e compared inn order to be sorted.
 			return 0;
@@ -364,8 +360,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 	 */
 	public void setUsage(Usage usage) {
 		if (usage == null) {
-			String error = TextServer.getString("exceptionFilterUsagesNotNull", Locale.UK);
-			throw new NullPointerException(error);
+			throw new NullPointerException("Filter usages can not be null");
 		}
 		this.usage = usage;
 	}
@@ -392,7 +387,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 	 */
 	private String getFieldName(Field field) {
 		if (field == null) {
-			throw new NullPointerException(TextServer.getString("exceptionFieldNotNull", Locale.UK));
+			throw new NullPointerException("The field should never be null");
 		}
 		if (usage == Usage.SELECT) {
 			return field.getNameWhere();
@@ -496,8 +491,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 	private void condSimple(Field field, String condition, Value value, boolean nocase) {
 
 		if (nocase && (!field.isString() || !value.isString())) {
-			String error = TextServer.getString("exceptionFilterNoCaseApplies", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("No case applies only to string fields and values");
 		}
 
 		StringBuilder b = new StringBuilder();
@@ -529,8 +523,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 			b.append(" != ?");
 			break;
 		default:
-			String error = TextServer.getString("exceptionFilterInvalidSimpleCondition", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid condition: not a simple comparison");
 		}
 
 		if (nocase) {
@@ -577,8 +570,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 			b.append(" != ");
 			break;
 		default:
-			String error = TextServer.getString("exceptionFilterInvalidGroupComparison", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid condition: not a group comparison");
 		}
 
 		switch (group) {
@@ -592,8 +584,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 			b.append("ALL (");
 			break;
 		default:
-			String error = TextServer.getString("exceptionFilterInvalidGroupModifier", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid group modifier");
 		}
 
 		b.append(parameters(values));
@@ -760,8 +751,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 		boolean not, boolean nocase) {
 
 		if (nocase && !field.isString() && !value1.isString() && value2.isString()) {
-			String error = TextServer.getString("exceptionNoCaseOnlyApplies", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("No case only applies to string fields and values");
 		}
 
 		StringBuilder b = new StringBuilder();
@@ -814,12 +804,10 @@ public class Filter extends ArrayList<Filter.Segment> {
 	 */
 	private void validateLike(Field field, Value value) {
 		if (!field.isString()) {
-			String error = TextServer.getString("exceptionFilterFieldIsNotString", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid condition: field is not a string");
 		}
 		if (!value.isString()) {
-			String error = TextServer.getString("exceptionFilterValueIsNotString", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Invalid condition: value is not a string");
 		}
 	}
 

@@ -13,10 +13,7 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A DROP TABLE statement builder.
@@ -65,8 +62,7 @@ public class DropTable extends Statement {
 	public String toSQL() {
 
 		if (table == null) {
-			String error = TextServer.getString("exceptionMalformedDropTableTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DROP TABLE query: table is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

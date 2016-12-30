@@ -13,10 +13,7 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A generic DROP CONTRAINT builder.
@@ -87,12 +84,10 @@ public class DropConstraint extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedDropConstraintTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DROP CONSTRAINT query: table is null");
 		}
 		if (getConstraintName() == null) {
-			String error = TextServer.getString("exceptionMalformedDropConstraintConstraintNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DROP CONSTRAINT query: constraint name is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

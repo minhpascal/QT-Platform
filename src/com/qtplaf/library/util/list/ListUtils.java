@@ -18,10 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * ArrayList utility functions.
@@ -80,8 +77,7 @@ public class ListUtils {
 		try {
 			comparable = ((ArrayList) o);
 		} catch (ClassCastException exc) {
-			String error = TextServer.getString("exceptionNotComparableType", Locale.UK);
-			throw new UnsupportedOperationException(MessageFormat.format(error, o.getClass().getName()));
+			throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		if (arrayList.isEmpty() && comparable.size() > 0) {
 			return -1;

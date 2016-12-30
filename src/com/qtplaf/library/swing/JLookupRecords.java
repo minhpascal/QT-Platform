@@ -26,7 +26,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
@@ -35,6 +34,8 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.swing.action.ActionSelectColumns;
 import com.qtplaf.library.swing.action.ActionSortTable;
+import com.qtplaf.library.swing.action.DefaultActionCancel;
+import com.qtplaf.library.swing.action.DefaultActionSelect;
 import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
 import com.qtplaf.library.util.Alignment;
@@ -60,14 +61,13 @@ public class JLookupRecords extends JDialogSession {
 	/**
 	 * Cancel action.
 	 */
-	class ActionCancel extends AbstractAction {
+	class ActionCancel extends DefaultActionCancel {
 
 		/**
 		 * Constructor.
 		 */
 		ActionCancel() {
-			super();
-			ActionUtils.setupActionCancel(getSession(), this);
+			super(getSession());
 		}
 
 		/**
@@ -83,14 +83,13 @@ public class JLookupRecords extends JDialogSession {
 	/**
 	 * Select action.
 	 */
-	class ActionSelect extends AbstractAction {
+	class ActionSelect extends DefaultActionSelect {
 
 		/**
 		 * Constructor.
 		 */
 		ActionSelect() {
-			super();
-			ActionUtils.setupActionSelect(getSession(), this);
+			super(getSession());
 		}
 
 		/**

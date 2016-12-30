@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.swing.ImageIcon;
 
@@ -76,8 +75,7 @@ public class ImageIconUtils {
 				iconImagesMap.put(imageName, imageIcon);
 				return imageIcon;
 			}
-			String error = TextServer.getString("exceptionImageNotFound", Locale.UK);
-			throw new IOException(MessageFormat.format(error, imageName));
+			throw new IOException(MessageFormat.format("Image {0} not found", imageName));
 		} catch (IOException ioExc) {
 			ioExc.printStackTrace();
 		}

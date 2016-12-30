@@ -20,7 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
@@ -43,7 +42,6 @@ import com.qtplaf.library.database.rdbms.sql.Select;
 import com.qtplaf.library.database.rdbms.sql.Statement;
 import com.qtplaf.library.database.rdbms.sql.Update;
 import com.qtplaf.library.util.StringUtils;
-import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.list.ListUtils;
 
 /**
@@ -144,7 +142,7 @@ public class DBEngine {
 	 */
 	public int executeStatement(Statement statement, Connection cn) throws SQLException {
 		if (statement.getClass() == Select.class) {
-			throw new SQLException(TextServer.getString("exceptionSelectStatementsNotSupported", Locale.UK));
+			throw new SQLException("Select statements not supported");
 		}
 		int count = 0;
 		PreparedStatement ps = null;

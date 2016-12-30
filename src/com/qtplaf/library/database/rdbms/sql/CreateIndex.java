@@ -16,10 +16,7 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Index;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A builder of CREATE INDEX statements.
@@ -67,8 +64,7 @@ public class CreateIndex extends Statement {
 	public String toSQL() {
 
 		if (getIndex() == null) {
-			String error = TextServer.getString("exceptionMalformedCreateIndexIndexNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed CREATE INDEX query: index is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

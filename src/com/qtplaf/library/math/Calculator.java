@@ -15,11 +15,9 @@ package com.qtplaf.library.math;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import com.qtplaf.library.util.NumberUtils;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * Generic static calculator methods.
@@ -381,8 +379,8 @@ public class Calculator {
 	 */
 	public static double[][] multiply(double[][] a, double[][] b) {
 		if (rows(b) != columns(a)) {
-			String error = TextServer.getString("exceptionMatricesMultiply", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException(
+				"The number of rows of the b matrix must be equal to the number of columns of the a matrix.");
 		}
 
 		int rows_a = rows(a);
@@ -496,10 +494,7 @@ public class Calculator {
 	 * @return The addition matrix.
 	 */
 	public static double[][] add(double[][] a, double[][] b) {
-		if (rows(a) != rows(b) || columns(a) != columns(b)) {
-			String error = TextServer.getString("exceptionMatricesDimensions", Locale.UK);
-			throw new IllegalArgumentException(error);
-		}
+		checkMatricesDimensions(a, b);
 		int rows = rows(a);
 		int columns = columns(a);
 		double[][] addition = new double[rows][columns];
@@ -512,16 +507,25 @@ public class Calculator {
 	}
 
 	/**
+	 * Check that matrices dimensions agree.
+	 *
+	 * @param a Matrix a
+	 * @param b Matrix b
+	 */
+	private static void checkMatricesDimensions(double[][] a, double[][] b) {
+		if (rows(a) != rows(b) || columns(a) != columns(b)) {
+			throw new IllegalArgumentException("Matrices dimensions must agree");
+		}
+	}
+
+	/**
 	 * Add and assign matrix b to matrix a.
 	 * 
 	 * @param a Matrix a.
 	 * @param b Matrix b
 	 */
 	public static void addAssign(double[][] a, double[][] b) {
-		if (rows(a) != rows(b) || columns(a) != columns(b)) {
-			String error = TextServer.getString("exceptionMatricesDimensions", Locale.UK);
-			throw new IllegalArgumentException(error);
-		}
+		checkMatricesDimensions(a, b);
 		int rows = rows(a);
 		int columns = columns(a);
 		for (int row = 0; row < rows; row++) {
@@ -567,10 +571,7 @@ public class Calculator {
 	 * @param b Matrix b
 	 */
 	public static void subtractAssign(double[][] a, double[][] b) {
-		if (rows(a) != rows(b) || columns(a) != columns(b)) {
-			String error = TextServer.getString("exceptionMatricesDimensions", Locale.UK);
-			throw new IllegalArgumentException(error);
-		}
+		checkMatricesDimensions(a, b);
 		int rows = rows(a);
 		int columns = columns(a);
 		for (int row = 0; row < rows; row++) {
@@ -588,10 +589,7 @@ public class Calculator {
 	 * @return The subtraction matrix.
 	 */
 	public static double[][] subtract(double[][] a, double[][] b) {
-		if (rows(a) != rows(b) || columns(a) != columns(b)) {
-			String error = TextServer.getString("exceptionMatricesDimensions", Locale.UK);
-			throw new IllegalArgumentException(error);
-		}
+		checkMatricesDimensions(a, b);
 		int rows = rows(a);
 		int columns = columns(a);
 		double[][] subtraction = new double[rows][columns];

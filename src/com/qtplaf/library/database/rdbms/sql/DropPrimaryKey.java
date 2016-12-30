@@ -13,10 +13,7 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * An ALTER TABLE DROP PRIMARY KEY builder.
@@ -64,8 +61,7 @@ public class DropPrimaryKey extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedDropPrimaryKeyTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DROP PRIMARY KEY query: table is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

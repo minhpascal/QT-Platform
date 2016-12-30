@@ -17,20 +17,24 @@ package com.qtplaf.library.swing.action;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import javax.swing.table.TableColumnModel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.JDialogColumns;
 import com.qtplaf.library.swing.JTableRecord;
 import com.qtplaf.library.swing.SwingUtils;
 import com.qtplaf.library.swing.TableModelRecord;
+import com.qtplaf.library.util.ImageIconUtils;
 
 /**
  * Action to select columns from a <code>JtableRecord</code>.
@@ -56,7 +60,12 @@ public class ActionSelectColumns extends AbstractAction {
 	public ActionSelectColumns(JTableRecord tableRecord) {
 		super();
 		this.tableRecord = tableRecord;
-		ActionUtils.setupActionSelectColumns(tableRecord.getSession(), this);
+		ActionUtils.setSourceName(this, tableRecord.getSession().getString("actionColumnsName"));
+		ActionUtils.setShortDescription(this, tableRecord.getSession().getString("actionColumnsName"));
+		ActionUtils.setAcceleratorKey(this, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+		ActionUtils.setSession(this, tableRecord.getSession());
+		ActionUtils.setActionGroup(this, ActionGroup.Operation);
+		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon("images/gif/columns.gif"));
 	}
 
 	/**

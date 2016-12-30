@@ -16,11 +16,8 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A builder of ADD COLUMN statements.
@@ -90,12 +87,10 @@ public class AddField extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedAddFieldTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD COLUMN query: table is null");
 		}
 		if (getField() == null) {
-			String error = TextServer.getString("exceptionMalformedAddFieldFieldNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD COLUMN query: field is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

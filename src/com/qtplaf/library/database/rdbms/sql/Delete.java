@@ -14,13 +14,11 @@
 package com.qtplaf.library.database.rdbms.sql;
 
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A builder of DELETE FROM statements
@@ -125,8 +123,7 @@ public class Delete extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedDeleteTableTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DELETE query: table is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

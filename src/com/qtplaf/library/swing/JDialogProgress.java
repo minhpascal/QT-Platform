@@ -21,10 +21,10 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
@@ -47,14 +47,13 @@ public class JDialogProgress extends JDialogSession {
 	/**
 	 * Close action.
 	 */
-	class ActionClose extends AbstractAction {
+	class ActionClose extends DefaultActionClose {
 
 		/**
 		 * Constructor.
 		 */
 		ActionClose() {
-			super();
-			ActionUtils.setupActionClose(getSession(), this);
+			super(getSession());
 		}
 
 		/**

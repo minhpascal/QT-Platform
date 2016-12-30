@@ -13,10 +13,6 @@
  */
 package com.qtplaf.library.math;
 
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
-
 /**
  * A matrix with fundamental operations of numerical linear algebra.
  * 
@@ -130,8 +126,7 @@ public class Matrix {
 	 */
 	public Vector toVector() {
 		if (columns() != 1) {
-			String error = TextServer.getString("exceptionVectorSizes", Locale.UK);
-			throw new UnsupportedOperationException(error);
+			throw new UnsupportedOperationException("Not supported for matrices with more than one column");
 		}
 		return new Vector(matrix);
 	}

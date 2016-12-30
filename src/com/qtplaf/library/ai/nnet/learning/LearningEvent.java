@@ -14,9 +14,6 @@
 package com.qtplaf.library.ai.nnet.learning;
 
 import java.util.EventObject;
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A learning event that describes the type of event during the learning process.
@@ -50,8 +47,7 @@ public class LearningEvent extends EventObject {
 	LearningEvent(Object source, String key) {
 		super(source);
 		if (!(source instanceof LearningProcessManager)) {
-			String error = TextServer.getString("exceptionLearningEventSource", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Source must be an instance of LearningProcessManager");
 		}
 		this.key = key;
 	}
@@ -67,8 +63,7 @@ public class LearningEvent extends EventObject {
 	LearningEvent(Object source, String key, String message) {
 		super(source);
 		if (!(source instanceof LearningProcessManager)) {
-			String error = TextServer.getString("exceptionLearningEventSource", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Source must be an instance of LearningProcessManager");
 		}
 		this.key = key;
 		this.message = message;

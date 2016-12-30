@@ -17,9 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A condition used to build filtering criteria.
@@ -213,14 +210,13 @@ public class Condition {
 	public final static void validate(Field field, Operator operator, List<Value> values) {
 		// The field can not be null.
 		if (field == null) {
-			String error = TextServer.getString("exceptionFieldCanNotBeNull", Locale.UK);
-			throw new NullPointerException(error);
+			throw new NullPointerException("Field can not be null");
 		}
 		// Null or empty values can only apply to null or not null operators.
 		if (values == null || values.isEmpty()) {
 			if (!operator.equals(Operator.IS_NULL) && !operator.equals(Operator.NOT_IS_NULL)) {
-				String error = TextServer.getString("exceptionRightOperandExpected", Locale.UK);
-				throw new IllegalArgumentException(MessageFormat.format(error, operator));
+				throw new IllegalArgumentException(
+					MessageFormat.format("Right operand is expected for operator: {0}", operator));
 			}
 		}
 		// The type of the right operand must be compatible with the type of the field.
@@ -243,20 +239,19 @@ public class Condition {
 				invalidValueType = true;
 			}
 			if (invalidValueType) {
-				String error = TextServer.getString("exceptionInvalidValueType", Locale.UK);
-				throw new IllegalArgumentException(MessageFormat.format(error, value.getType(), field.getType()));
+				throw new IllegalArgumentException(
+					MessageFormat
+						.format("Invalid value type ({0}) for field type {1}", value.getType(), field.getType()));
 			}
 		}
 		// A no case operator requires a field and a value of type string.
 		if (operator.isNoCase()) {
 			if (!fieldType.isString()) {
-				String error = TextServer.getString("exceptionNoCaseOnlyApplies", Locale.UK);
-				throw new IllegalArgumentException(error);
+				throw new IllegalArgumentException("No case only applies to string fields and values");
 			}
 			for (Value value : values) {
 				if (!value.isString()) {
-					String error = TextServer.getString("exceptionNoCaseOnlyApplies", Locale.UK);
-					throw new IllegalArgumentException(error);
+					throw new IllegalArgumentException("No case only applies to string fields and values");
 				}
 			}
 		}
@@ -283,8 +278,8 @@ public class Condition {
 			}
 		}
 		if (invalidNumberOfValues) {
-			String error = TextServer.getString("exceptionInvalidNumberOfValuesForOperator", Locale.UK);
-			throw new IllegalArgumentException(MessageFormat.format(error, operator));
+			throw new IllegalArgumentException(
+				MessageFormat.format("Invalid number of values for operator {0}", operator));
 		}
 	}
 
@@ -1145,7 +1140,7 @@ public class Condition {
 		return sChk.compareTo(vMin.getString().toUpperCase()) >= 0
 			&& sChk.compareTo(vMax.getString().toUpperCase()) <= 0;
 	}
-	
+
 	/**
 	 * Check that a record meets the condition.
 	 * 

@@ -14,7 +14,6 @@
 package com.qtplaf.library.util;
 
 import java.text.MessageFormat;
-import java.util.Locale;
 
 import javax.swing.SwingConstants;
 
@@ -125,7 +124,6 @@ public enum Alignment {
 				return alignment;
 			}
 		}
-		String error = TextServer.getString("exceptionUnsupportedAlignmentName", Locale.UK);
-		throw new IllegalArgumentException(MessageFormat.format(error, alignmentName));
+		throw new IllegalArgumentException(MessageFormat.format("Unsupported alignment name: {0}", alignmentName));
 	}
 }

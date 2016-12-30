@@ -1,23 +1,19 @@
 /*
  * Copyright (C) 2015 Miquel Sas
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package com.qtplaf.library.database.rdbms.sql;
 
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
@@ -26,7 +22,6 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A builder of INSERT statements. Insert can be of the following forms:
@@ -152,8 +147,8 @@ public class Insert extends Statement {
 	 */
 	public void setSelect(Select select) {
 		if (!getDBEngineAdapter().equals(select.getDBEngineAdapter())) {
-			String error = TextServer.getString("exceptionMalformedDropFieldTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException(
+				"Malformed INSERT query: the select and the insert database adapters must be the same");
 		}
 		this.select = select;
 	}
@@ -181,36 +176,28 @@ public class Insert extends Statement {
 	public String toSQL() {
 
 		if (table == null) {
-			String error = TextServer.getString("exceptionMalformedInsertTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: table is null");
 		}
 		if (record == null && values == null && select == null) {
-			String error = TextServer.getString("exceptionMalformedInsertRecordValuesOrSelect", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: need record, values or select");
 		}
 		if (values != null && select != null) {
-			String error = TextServer.getString("exceptionMalformedInsertValuesOrSelect", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: set only values or select");
 		}
 		if (record != null && select != null) {
-			String error = TextServer.getString("exceptionMalformedInsertRecordOrSelect", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: set only record or select");
 		}
 		if (values != null && record != null) {
-			String error = TextServer.getString("exceptionMalformedInsertRecordOrValues", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: set only values or record");
 		}
 		if (select != null && fields == null) {
-			String error = TextServer.getString("exceptionMalformedInsertFieldsNeeded", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: fields are needed for a select");
 		}
 		if (select != null && select.getView().getFieldCount() != getFields().size()) {
-			String error = TextServer.getString("exceptionMalformedInsertNumberOfFields", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed INSERT query: invalid number of fields");
 		}
 		if (getDBEngineAdapter() == null) {
-			String error = TextServer.getString("exceptionDatabaseAdapterMustBeSet", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("The database adapter must be set");
 		}
 
 		if (record != null) {
@@ -236,7 +223,7 @@ public class Insert extends Statement {
 		if (record != null) {
 			boolean comma = false;
 			List<KeyPointer> persistentKeyPointers = record
-					.getPersistentKeyPointers();
+				.getPersistentKeyPointers();
 			for (KeyPointer pointer : persistentKeyPointers) {
 				Field field = record.getField(pointer.getIndex());
 				if (comma) {
@@ -277,7 +264,7 @@ public class Insert extends Statement {
 			if (record != null) {
 				boolean comma = false;
 				List<KeyPointer> persistentKeyPointers = record
-						.getPersistentKeyPointers();
+					.getPersistentKeyPointers();
 				for (KeyPointer pointer : persistentKeyPointers) {
 					Field field = record.getField(pointer.getIndex());
 					if (comma) {

@@ -136,22 +136,18 @@ public class XMLDatabaseProvider implements DatabaseProvider {
 
 		// Check that catalog conforms to the catalogs flag
 		if (catalog != null && !catalog.isEmpty() && !isCatalogs()) {
-			String error = TextServer.getString("exceptionXMLDBP_CatalogMustBeNull", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Catalog must be null");
 		}
 		if ((catalog == null || catalog.isEmpty()) && isCatalogs()) {
-			String error = TextServer.getString("exceptionXMLDBP_CatalogCanNotBeNull", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Catalog can not be null or empty");
 		}
 
 		// Check that schema conforms to the schema flag
 		if (schema != null && !schema.isEmpty() && !isSchemas()) {
-			String error = TextServer.getString("exceptionXMLDBP_SchemaMustBeNull", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Schema must be null");
 		}
 		if ((schema == null || schema.isEmpty()) && isSchemas()) {
-			String error = TextServer.getString("exceptionXMLDBP_SchemaCanNotBeNull", Locale.UK);
-			throw new IllegalArgumentException(error);
+			throw new IllegalArgumentException("Schema can not be null or empty");
 		}
 
 		// Build the path

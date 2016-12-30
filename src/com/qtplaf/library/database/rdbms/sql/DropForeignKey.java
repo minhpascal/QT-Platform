@@ -13,11 +13,8 @@
  */
 package com.qtplaf.library.database.rdbms.sql;
 
-import java.util.Locale;
-
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A DROP FOREIGN KEY builder.
@@ -87,12 +84,10 @@ public class DropForeignKey extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedDropForeignKeyTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DROP FOREIGN KEY query: table is null");
 		}
 		if (getForeignKey() == null) {
-			String error = TextServer.getString("exceptionMalformedDropForeignKeyForeignKeyNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed DROP FOREIGN KEY query: foreign key is null");
 		}
 
 		StringBuilder b = new StringBuilder(256);

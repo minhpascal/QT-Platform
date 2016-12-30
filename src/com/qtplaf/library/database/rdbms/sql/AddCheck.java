@@ -18,13 +18,11 @@ package com.qtplaf.library.database.rdbms.sql;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.util.StringUtils;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * An ALTER TABLE ADD CONSTRAINT name CHECK (condition) builder to apply the constraints related to the field.
@@ -109,12 +107,10 @@ public class AddCheck extends Statement {
 	public String toSQL() {
 
 		if (getTable() == null) {
-			String error = TextServer.getString("exceptionMalformedAddCheckTableNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD CHECK query: table is null");
 		}
 		if (getField() == null) {
-			String error = TextServer.getString("exceptionMalformedAddCheckFieldNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Malformed ADD CHECK query: field is null");
 		}
 		if (getField().getMaximumValue() == null
 				&& getField().getMinimumValue() == null

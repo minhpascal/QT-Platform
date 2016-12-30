@@ -16,10 +16,8 @@ package com.qtplaf.library.database;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.ForeignKey.Segment;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A database table definition.
@@ -278,8 +276,7 @@ public class Table implements Comparable<Object> {
 		try {
 			table = (Table) o;
 		} catch (ClassCastException exc) {
-			String error = TextServer.getString("exceptionNotComparableType", Locale.UK);
-			throw new UnsupportedOperationException(MessageFormat.format(error, o.getClass().getName()));
+			throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		return getNameFrom().compareTo(table.getNameFrom());
 	}

@@ -18,14 +18,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.rdbms.sql.Select;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A class to scan a view of a database.
@@ -104,21 +102,25 @@ public class Cursor {
 	}
 
 	/**
-	 * Return the string error for a closed cursor.
+	 * Check if the cursor is closed.
 	 * 
-	 * @return The error.
+	 * @throws SQLException
 	 */
-	private String getErrorClosedCursor() {
-		return TextServer.getString("exceptionCursorIsClosed", Locale.UK);
+	private void checkClosedCursor() throws SQLException {
+		if (closed) {
+			throw new SQLException("Cursor is closed.");
+		}
 	}
 
 	/**
-	 * Return the string error for a forward only cursor.
+	 * Check if the cursor forward only.
 	 * 
-	 * @return The error.
+	 * @throws SQLException
 	 */
-	private String getErrorForwardOnlyCursor() {
-		return TextServer.getString("exceptionForwardOnlyCursor", Locale.UK);
+	private void checkForwardOnly() throws SQLException {
+		if (forwardOnly) {
+			throw new SQLException(">Unsupported operation for a forward only cursor.");
+		}
 	}
 
 	/**
@@ -127,12 +129,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public void beforeFirst() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		rs.beforeFirst();
 	}
 
@@ -142,12 +140,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public void afterLast() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		rs.afterLast();
 	}
 
@@ -158,9 +152,7 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean nextPage() throws SQLException {
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkClosedCursor();
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(fieldList);
 		int count = 0;
@@ -179,9 +171,7 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean nextRecord() throws SQLException {
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkClosedCursor();
 		if (rs.next()) {
 			record = readRecord();
 			return true;
@@ -196,12 +186,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean firstPage() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(fieldList);
 		rs.beforeFirst();
@@ -221,12 +207,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean firstRecord() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		if (rs.first()) {
 			record = readRecord();
 			return true;
@@ -242,12 +224,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean lastPage() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(fieldList);
 		rs.afterLast();
@@ -267,12 +245,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean lastRecord() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		if (rs.last()) {
 			record = readRecord();
 			return true;
@@ -288,12 +262,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean previousPage() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(fieldList);
 		int count = 0;
@@ -312,12 +282,8 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public boolean previousRecord() throws SQLException {
-		if (forwardOnly) {
-			throw new SQLException(getErrorForwardOnlyCursor());
-		}
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkForwardOnly();
+		checkClosedCursor();
 		if (rs.previous()) {
 			record = readRecord();
 			return true;
@@ -345,9 +311,7 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public RecordSet getAllRecords(int maxRecords) throws SQLException {
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkClosedCursor();
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(fieldList);
 		int count = 0;
@@ -380,9 +344,6 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public RecordSet getAllRecordsAndClose(int maxRecords) throws SQLException {
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
 		RecordSet recordSet = getAllRecords(maxRecords);
 		close();
 		return recordSet;
@@ -432,9 +393,7 @@ public class Cursor {
 	 * @throws SQLException
 	 */
 	public void close() throws SQLException {
-		if (closed) {
-			throw new SQLException(getErrorClosedCursor());
-		}
+		checkClosedCursor();
 		if (rs != null) {
 			rs.close();
 			rs = null;

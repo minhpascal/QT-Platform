@@ -14,9 +14,6 @@
 package com.qtplaf.library.database;
 
 import java.text.MessageFormat;
-import java.util.Locale;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * Simple data types supported by the system.
@@ -257,8 +254,7 @@ public enum Types {
 		default:
 			break;
 		}
-		String error = TextServer.getString("exceptionUnsupportedTypeConversionToJDBC", Locale.UK);
-		throw new IllegalArgumentException(MessageFormat.format(error, this));
+		throw new IllegalArgumentException(MessageFormat.format("Unsupported type conversion to JDBC: {0}", this));
 	}
 
 	/**
@@ -275,7 +271,6 @@ public enum Types {
 				return type;
 			}
 		}
-		String error = TextServer.getString("exceptionUnsupportedTypeName", Locale.UK);
-		throw new IllegalArgumentException(MessageFormat.format(error, typeName));
+		throw new IllegalArgumentException(MessageFormat.format("Unsupported type name: {0}", typeName));
 	}
 }

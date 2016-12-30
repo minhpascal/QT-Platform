@@ -16,12 +16,10 @@ package com.qtplaf.library.ai.nnet.learning;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import com.qtplaf.library.ai.nnet.function.ErrorFunction;
 import com.qtplaf.library.math.Vector;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * The root class of learning process managers. A specific learning process manager must be implemented for each
@@ -467,26 +465,22 @@ public class LearningProcessManager {
 
 		// The learning process can not be null.
 		if (getLearningProcess() == null) {
-			String error = TextServer.getString("exceptionLearningProcessNotNulls", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("The learning process can not be null");
 		}
 
 		// The learning data must have been set.
 		if (learningData == null || learningData.isEmpty()) {
-			String error = TextServer.getString("exceptionLearningDataMustBeSet", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("y");
 		}
 
 		// The error function must be set.
 		if (errorFunction == null) {
-			String error = TextServer.getString("exceptionLearningErrorFunctionNotNull", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("The error function can not be null");
 		}
 
 		// At least a stop condition is needed.
 		if (stopConditions.isEmpty()) {
-			String error = TextServer.getString("exceptionLearningStopConditionsNeeded", Locale.UK);
-			throw new IllegalStateException(error);
+			throw new IllegalStateException("Stop conditions needed");
 		}
 	}
 

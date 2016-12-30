@@ -75,7 +75,9 @@ public class JPanelColumns extends JPanel {
 		 */
 		ActionLeft() {
 			super();
-			ActionUtils.setupActionLeft(getSession(), this);
+			ActionUtils.setShortDescription(this, getSession().getString("actionLeftShortDesc"));
+			ActionUtils.setSmallIcon(this, new IconArrow(IconArrow.Direction.Left));
+			ActionUtils.setSession(this, getSession());
 		}
 
 		/**
@@ -114,7 +116,9 @@ public class JPanelColumns extends JPanel {
 		 */
 		ActionRight() {
 			super();
-			ActionUtils.setupActionRight(getSession(), this);
+			ActionUtils.setShortDescription(this, getSession().getString("actionRightShortDesc"));
+			ActionUtils.setSmallIcon(this, new IconArrow(IconArrow.Direction.Right));
+			ActionUtils.setSession(this, getSession());
 		}
 
 		/**
@@ -152,7 +156,9 @@ public class JPanelColumns extends JPanel {
 		 */
 		ActionUp() {
 			super();
-			ActionUtils.setupActionUp(getSession(), this);
+			ActionUtils.setShortDescription(this, getSession().getString("actionUpShortDesc"));
+			ActionUtils.setSmallIcon(this, new IconArrow(IconArrow.Direction.Up));
+			ActionUtils.setSession(this, getSession());
 		}
 
 		/**
@@ -181,7 +187,9 @@ public class JPanelColumns extends JPanel {
 		 */
 		ActionDown() {
 			super();
-			ActionUtils.setupActionDown(getSession(), this);
+			ActionUtils.setShortDescription(this, getSession().getString("actionDownShortDesc"));
+			ActionUtils.setSmallIcon(this, new IconArrow(IconArrow.Direction.Down));
+			ActionUtils.setSession(this, getSession());
 		}
 
 		/**
@@ -210,7 +218,9 @@ public class JPanelColumns extends JPanel {
 		 */
 		ActionAsc() {
 			super();
-			ActionUtils.setupActionAscending(getSession(), this);
+			ActionUtils.setName(this, getSession().getString("actionAscendingName"));
+			ActionUtils.setShortDescription(this, getSession().getString("actionAscendingName"));
+			ActionUtils.setSession(this, getSession());
 		}
 
 		/**
@@ -231,7 +241,9 @@ public class JPanelColumns extends JPanel {
 		 */
 		ActionDesc() {
 			super();
-			ActionUtils.setupActionDescending(getSession(), this);
+			ActionUtils.setName(this, getSession().getString("actionDescendingName"));
+			ActionUtils.setShortDescription(this, getSession().getString("actionDescendingName"));
+			ActionUtils.setSession(this, getSession());
 		}
 
 		/**

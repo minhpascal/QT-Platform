@@ -15,10 +15,7 @@ package com.qtplaf.library.database;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-
-import com.qtplaf.library.util.TextServer;
 
 /**
  * An order definition.
@@ -237,8 +234,7 @@ public class Order extends ArrayList<Order.Segment> {
 				}
 			}
 			if (index == -1) {
-				String error = TextServer.getString("exceptionInvalidFieldList", Locale.UK);
-				throw new IllegalArgumentException(error);
+				throw new IllegalArgumentException("Invalid field list");
 			}
 			keyPointers.add(new KeyPointer(index, asc));
 		}

@@ -15,9 +15,7 @@ package com.qtplaf.library.database;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
-import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.list.ListUtils;
 
 /**
@@ -69,8 +67,7 @@ public class OrderKey extends ArrayList<OrderKey.Segment> implements Comparable<
 			try {
 				segment = (Segment) o;
 			} catch (ClassCastException exc) {
-				String error = TextServer.getString("exceptionNotComparableType", Locale.UK);
-				throw new UnsupportedOperationException(MessageFormat.format(error, o.getClass().getName()));
+				throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 			}
 			int compare = value.compareTo(segment.value);
 			if (compare != 0) {
