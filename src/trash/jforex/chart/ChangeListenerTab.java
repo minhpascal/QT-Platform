@@ -4,6 +4,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -35,14 +36,14 @@ public class ChangeListenerTab implements ChangeListener {
 			TabTitle tabTitleSelected = (TabTitle) tabbedPaneCharts.getTabComponentAt(selectedIndex);
 			if (tabTitleSelected != null) {
 				tabTitleSelected.setIconChart(
-					ImageIconUtils.getImageIcon("images/png/titlebar_chart_active.png"));
+					ImageIconUtils.getImageIcon(Icons.chart_16x16_titlebar_chart_active));
 			}
 			for (int i = 0; i < tabbedPaneCharts.getTabCount(); i++) {
 				if (i != selectedIndex) {
 					TabTitle tabTitleNotSelected = (TabTitle) tabbedPaneCharts.getTabComponentAt(i);
 					if (tabTitleNotSelected != null) {
 						tabTitleNotSelected.setIconChart(
-							ImageIconUtils.getImageIcon("images/png/titlebar_chart_inactive.png"));
+							ImageIconUtils.getImageIcon(Icons.chart_16x16_titlebar_chart_inactive));
 					}
 				}
 			}

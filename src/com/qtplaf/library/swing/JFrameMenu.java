@@ -14,11 +14,15 @@
 
 package com.qtplaf.library.swing;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.JTabbedPane;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.action.DefaultActionClear;
 import com.qtplaf.library.swing.action.DefaultActionExit;
 
 /**
@@ -43,7 +47,36 @@ public class JFrameMenu extends JFrameSession {
 		/**
 		 * Perform the action, exit the application.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
+			String message = getSession().getString("frameMenuExitApplication");
+			if (MessageBox.question(getSession(), message, MessageBox.yesNo) == MessageBox.yes) {
+				if (getPreExitAction() != null) {
+					getPreExitAction().actionPerformed(e);
+				}
+				System.exit(0);
+			}
+		}
+	}
+
+	/**
+	 * Clear the console.
+	 */
+	class ActionClear extends DefaultActionClear {
+
+		/**
+		 * Constructor.
+		 */
+		ActionClear() {
+			super(getSession());
+		}
+
+		/**
+		 * Perform the action, clear the console.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			getConsole().clear();
 		}
 	}
 
@@ -65,12 +98,27 @@ public class JFrameMenu extends JFrameSession {
 	private JTabbedPane tabbedPane;
 
 	/**
+	 * An optional action to be executed prior to exit the application.
+	 */
+	private Action preExitAction;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param session The working session.
 	 */
 	public JFrameMenu(Session session) {
 		super(session);
+	}
+
+	/**
+	 * Layout components.
+	 */
+	private void layoutComponents() {
+		
+		// Configure tabbed pane.
+		getTabbedPane().removeAll();
+
 	}
 
 	/**
@@ -119,5 +167,23 @@ public class JFrameMenu extends JFrameSession {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		}
 		return tabbedPane;
+	}
+
+	/**
+	 * Returns the pre-exit action.
+	 * 
+	 * @return The pre-exit action.
+	 */
+	public Action getPreExitAction() {
+		return preExitAction;
+	}
+
+	/**
+	 * Sets the pre-exit action.
+	 * 
+	 * @param preExitAction The pre-exit action.
+	 */
+	public void setPreExitAction(Action preExitAction) {
+		this.preExitAction = preExitAction;
 	}
 }

@@ -41,6 +41,7 @@ import com.qtplaf.library.swing.EditField;
 import com.qtplaf.library.swing.JLookupRecords;
 import com.qtplaf.library.swing.SwingUtils;
 import com.qtplaf.library.util.Alignment;
+import com.qtplaf.library.util.Icons;
 
 /**
  * An action to lookup a list of records, select one of them and update the referred components.
@@ -104,7 +105,7 @@ public class ActionLookup extends AbstractAction {
 	 */
 	public ActionLookup() {
 		super();
-		ActionUtils.setSmallIcon(this, "images/gif/select-all.gif");
+		ActionUtils.setSmallIcon(this, Icons.app_16x16_select_all);
 	}
 
 	/**

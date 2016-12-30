@@ -44,6 +44,7 @@ import com.qtplaf.library.swing.formatters.DateFormatter;
 import com.qtplaf.library.swing.formatters.TimeFormatter;
 import com.qtplaf.library.swing.formatters.TimestampFormatter;
 import com.qtplaf.library.util.Alignment;
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -199,7 +200,7 @@ public class JMaskedField extends JPanel implements EditField, FocusListener {
 		if (multipleValuesLabel == null) {
 			Icon multipleValuesLabelIcon = null;
 			try {
-				multipleValuesLabelIcon = ImageIconUtils.getImageIcon("images/gif/list.gif");
+				multipleValuesLabelIcon = ImageIconUtils.getImageIcon(Icons.app_16x16_list);
 			} catch (Exception exc) {
 				exc.printStackTrace();
 			}

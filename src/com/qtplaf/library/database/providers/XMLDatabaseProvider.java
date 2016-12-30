@@ -15,7 +15,6 @@ package com.qtplaf.library.database.providers;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import com.qtplaf.library.database.Database;
@@ -23,7 +22,6 @@ import com.qtplaf.library.database.DatabaseProvider;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.View;
-import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.xml.Parser;
 
 /**

@@ -107,7 +107,7 @@ public class JPanelProgress extends JPanel {
 			ActionUtils.setShortDescription(this, getSession().getString("panelProgressPause"));
 			ActionUtils.setSession(this, getSession());
 			ActionUtils.setActionGroup(this, ActionGroup.Operation);
-			ActionUtils.setSmallIcon(this, Icons.pause24);
+			ActionUtils.setSmallIcon(this, Icons.flat_24x24_pause);
 			ActionUtils.setSortIndex(this, 0);
 		}
 
@@ -153,7 +153,7 @@ public class JPanelProgress extends JPanel {
 			ActionUtils.setShortDescription(this, getSession().getString("panelProgressCancel"));
 			ActionUtils.setSession(this, getSession());
 			ActionUtils.setActionGroup(this, ActionGroup.Operation);
-			ActionUtils.setSmallIcon(this, Icons.cancel24);
+			ActionUtils.setSmallIcon(this, Icons.flat_24x24_cancel);
 			ActionUtils.setSortIndex(this, 1);
 		}
 
@@ -187,7 +187,7 @@ public class JPanelProgress extends JPanel {
 			ActionUtils.setShortDescription(this, getSession().getString("panelProgressErrorInfo"));
 			ActionUtils.setSession(this, getSession());
 			ActionUtils.setActionGroup(this, ActionGroup.Operation);
-			ActionUtils.setSmallIcon(this, Icons.info24);
+			ActionUtils.setSmallIcon(this, Icons.flat_24x24_info);
 			ActionUtils.setSortIndex(this, 3);
 		}
 
@@ -220,7 +220,7 @@ public class JPanelProgress extends JPanel {
 			ActionUtils.setShortDescription(this, getSession().getString("panelProgressClose"));
 			ActionUtils.setSession(this, getSession());
 			ActionUtils.setActionGroup(this, ActionGroup.Operation);
-			ActionUtils.setSmallIcon(this, Icons.close24);
+			ActionUtils.setSmallIcon(this, Icons.flat_24x24_close);
 			ActionUtils.setSortIndex(this, 1);
 		}
 
@@ -766,9 +766,9 @@ public class JPanelProgress extends JPanel {
 	 */
 	private void setActionRunProperties(Run run) {
 		if (run.equals(Run.Pause)) {
-			getButtonPauseResume().setIcon(ImageIconUtils.getImageIcon(Icons.pause24));
+			getButtonPauseResume().setIcon(ImageIconUtils.getImageIcon(Icons.flat_24x24_pause));
 		} else {
-			getButtonPauseResume().setIcon(ImageIconUtils.getImageIcon(Icons.resume24));
+			getButtonPauseResume().setIcon(ImageIconUtils.getImageIcon(Icons.flat_24x24_resume));
 		}
 		String menuItem = null;
 		String shortDescription = null;

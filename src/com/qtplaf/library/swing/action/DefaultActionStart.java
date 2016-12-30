@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -43,6 +44,6 @@ public abstract class DefaultActionStart extends AbstractAction {
 		ActionUtils.setAcceleratorKey(this, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
 		ActionUtils.setSession(this, session);
 		ActionUtils.setActionGroup(this, ActionGroup.Operation);
-		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon("images/gif/execute.gif"));
+		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_execute));
 	}
 }

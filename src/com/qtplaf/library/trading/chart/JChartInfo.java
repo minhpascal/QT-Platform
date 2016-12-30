@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.util.Icons;
 
 /**
  * A panel located at the top of the container, aimed to contain an info panel and necessary controls like the close
@@ -151,7 +152,7 @@ public class JChartInfo extends JPanel {
 		 */
 		ActionCloseButton() {
 			super();
-			ActionUtils.setSmallIcon(this, "images/png/titlebar_close_tab_active.gif");
+			ActionUtils.setSmallIcon(this, Icons.chart_16x16_titlebar_close_tab);
 		}
 
 		/**

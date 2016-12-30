@@ -34,6 +34,7 @@ import com.qtplaf.library.swing.JDialogColumns;
 import com.qtplaf.library.swing.JTableRecord;
 import com.qtplaf.library.swing.SwingUtils;
 import com.qtplaf.library.swing.TableModelRecord;
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -65,7 +66,7 @@ public class ActionSortTable extends AbstractAction {
 		ActionUtils.setAcceleratorKey(this, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
 		ActionUtils.setSession(this, tableRecord.getSession());
 		ActionUtils.setActionGroup(this, ActionGroup.Operation);
-		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon("images/gif/sort.gif"));
+		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_sort));
 	}
 
 	/**

@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -37,7 +38,7 @@ public class TabTitle extends JPanel {
 		try {
 			// Add the button with icon title bar chart
 			buttonChart = new JButton(title, 
-				ImageIconUtils.getImageIcon("images/png/titlebar_chart_inactive.png"));
+				ImageIconUtils.getImageIcon(Icons.chart_16x16_titlebar_chart_inactive));
 			buttonChart.setName("ButtonChart");
 			buttonChart.setContentAreaFilled(false);
 			buttonChart.setFocusable(false);
@@ -56,7 +57,7 @@ public class TabTitle extends JPanel {
 
 			// Add the the button with the close icon
 			buttonClose = new JButton(
-				ImageIconUtils.getImageIcon("images/png/titlebar_close_tab_active.gif"));
+				ImageIconUtils.getImageIcon(Icons.chart_16x16_titlebar_close_tab));
 			buttonClose.setName("ButtonClose");
 			buttonClose.setContentAreaFilled(false);
 			buttonClose.setFocusable(false);

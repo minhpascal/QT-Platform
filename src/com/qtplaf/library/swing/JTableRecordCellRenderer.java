@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -83,8 +84,8 @@ public class JTableRecordCellRenderer extends DefaultTableCellRenderer {
 		this.session = session;
 		this.field = field;
 		setHorizontalAlignment(field.getHorizontalAlignment().getSwingAlignment());
-		this.iconChecked = ImageIconUtils.getImageIcon("images/gif/checked.png");
-		this.iconUnchecked = ImageIconUtils.getImageIcon("images/gif/unchecked.png");
+		this.iconChecked = ImageIconUtils.getImageIcon(Icons.app_16x16_checked);
+		this.iconUnchecked = ImageIconUtils.getImageIcon(Icons.app_16x16_unchecked);
 	}
 
 	/**

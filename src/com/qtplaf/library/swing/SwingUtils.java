@@ -574,6 +574,24 @@ public class SwingUtils {
 	}
 
 	/**
+	 * Returns the component with the given name contained in the top component, or null if it does not contain a
+	 * component with that name.
+	 * 
+	 * @param topComponent The top component.
+	 * @param name The name of the component to search.
+	 * @return The component with the name or null.
+	 */
+	public static Component getComponent(Component topComponent, String name) {
+		List<Component> components = getAllComponents(topComponent);
+		for (Component component : components) {
+			if (component.getName() != null && component.getName().equals(name)) {
+				return component;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Returns an array with all JButton components contained in a top component.
 	 * 
 	 * @param topComponent The top component to scan.

@@ -26,6 +26,7 @@ import javax.swing.JToolBar;
 import com.dukascopy.api.Period;
 import com.dukascopy.api.Unit;
 import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 
 /**
@@ -163,7 +164,7 @@ public class JFrameChart extends JFrame {
 
 			JButton buttonDrawings = new JButton();
 			buttonDrawings.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
-			buttonDrawings.setIcon(ImageIconUtils.getImageIcon("images/png/toolbar_drawings_active.png"));
+			buttonDrawings.setIcon(ImageIconUtils.getImageIcon(Icons.chart_16x16_toolbar_drawings));
 			buttonDrawings.setToolTipText("Drawings");
 			buttonDrawings.setMargin(new Insets(1, 1, 1, 1));
 			buttonDrawings.addActionListener(new ActionListenerDrawingsButton(chartManager));
@@ -171,7 +172,7 @@ public class JFrameChart extends JFrame {
 
 			JButton buttonCursor = new JButton();
 			buttonCursor.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
-			buttonCursor.setIcon(ImageIconUtils.getImageIcon("images/png/toolbar_cursor_active.png"));
+			buttonCursor.setIcon(ImageIconUtils.getImageIcon(Icons.chart_16x16_toolbar_cursor));
 			buttonCursor.setToolTipText("Set cursor pointer");
 			buttonCursor.setMargin(new Insets(1, 1, 1, 1));
 			buttonCursor.addActionListener(new ActionListenerCursorButton(chartManager));
@@ -180,7 +181,7 @@ public class JFrameChart extends JFrame {
 			JButton buttonIndicators = new JButton();
 			buttonIndicators.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
 			buttonIndicators.setIcon(
-				ImageIconUtils.getImageIcon("images/png/toolbar_indicators_active.png"));
+				ImageIconUtils.getImageIcon(Icons.chart_16x16_toolbar_indicators));
 			buttonIndicators.setToolTipText("Indicators");
 			buttonIndicators.setMargin(new Insets(1, 1, 1, 1));
 			buttonIndicators.addActionListener(new ActionListenerIndicatorsButton(chartManager));
@@ -188,7 +189,7 @@ public class JFrameChart extends JFrame {
 
 			JButton buttonOHLC = new JButton();
 			buttonOHLC.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
-			buttonOHLC.setIcon(ImageIconUtils.getImageIcon("images/png/toolbar_ohlc_active.png"));
+			buttonOHLC.setIcon(ImageIconUtils.getImageIcon(Icons.chart_16x16_toolbar_ohlc));
 			buttonOHLC.setToolTipText("OHLC");
 			buttonOHLC.setMargin(new Insets(1, 1, 1, 1));
 			buttonOHLC.addActionListener(new ActionListenerOHLCButton(chartManager));
@@ -236,7 +237,7 @@ public class JFrameChart extends JFrame {
 	public void addTab(String title) {
 		try {
 			tabbedPaneCharts.addTab(title, 
-				ImageIconUtils.getImageIcon("images/png/titlebar_chart_inactive.png"), new JPanel());
+				ImageIconUtils.getImageIcon(Icons.chart_16x16_titlebar_chart_inactive), new JPanel());
 			int tabCount = tabbedPaneCharts.getTabCount();
 			tabbedPaneCharts.setTabComponentAt(tabCount - 1, new TabTitle(title, ""));
 			// tabbedPaneCharts.setTabComponentAt(tabCount-1, new ButtonTabComponent(tabbedPaneCharts));

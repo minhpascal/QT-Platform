@@ -62,6 +62,7 @@
 	<entry key="actionExitName">Exit</entry>
 	<entry key="actionCancelName">Cancel</entry>
 	<entry key="actionCloseName">Close</entry>
+	<entry key="actionClearName">Clear</entry>
 	<entry key="actionSelectName">Select</entry>
 	<entry key="actionAcceptName">Accept</entry>
 	<entry key="actionColumnsName">Columns</entry>
@@ -285,5 +286,12 @@
 	<!-- General security messages. -->
 	
 	<entry key="securityAccessToFileDenied">Access to file denied.</entry>
+	
+	<!-- Frame menu (application) -->
+	
+	<entry key="frameMenuExitApplication">Exit the application?</entry>
+	<entry key="frameMenuTabMenuLabel">Menu</entry>
+	<entry key="frameMenuTabMenuTooltip">Main application menu</entry>
+	<entry key="frameMenuTabConsole">Console</entry>
 	
 </properties>
