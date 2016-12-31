@@ -882,6 +882,27 @@ public class SwingUtils {
 	}
 
 	/**
+	 * Removes the accelerator key listener in the tree of components where the argument component is included, starting
+	 * in the first parent <i>JFrame</i> or <i>JDialog</i> parent.
+	 * 
+	 * @param cmp The starting components in the tree.
+	 */
+	public static void removeAcceleratorKeyListener(Component cmp) {
+		Component parent = getFirstParentFrameOrDialog(cmp);
+		List<Component> components = getAllComponents(parent);
+		for (Component component : components) {
+			KeyListener[] keyListeners = component.getKeyListeners();
+			if (keyListeners != null) {
+				for (KeyListener keyListener : keyListeners) {
+					if (keyListener instanceof AcceleratorKeyListener) {
+						component.removeKeyListener(keyListener);
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Installs the key listener in the tree of components where the argument component is included, starting in the
 	 * first parent <i>JFrame</i> or <i>JDialog</i> parent.
 	 * 

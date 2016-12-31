@@ -22,6 +22,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.qtplaf.library.util.Alignment;
+
 /**
  * A panel to contain an arbitrary number of buttons defined by actions, wrapping them as necessary depending on the
  * number and the panel size.
@@ -53,9 +55,9 @@ public class JPanelButtons extends JPanel {
 	 * 
 	 * @param align The alignment.
 	 */
-	public JPanelButtons(int align) {
+	public JPanelButtons(Alignment align) {
 		super();
-		setLayout(align);
+		setLayout(align.getSwingAlignment());
 		setOpaque(false);
 	}
 
@@ -66,6 +68,14 @@ public class JPanelButtons extends JPanel {
 	 */
 	public void add(Action action) {
 		actions.add(action);
+		layoutButtons();
+	}
+
+	/**
+	 * Clear the list of actions (buttons).
+	 */
+	public void clear() {
+		actions.clear();
 		layoutButtons();
 	}
 
@@ -202,5 +212,8 @@ public class JPanelButtons extends JPanel {
 			super.add(currentButton);
 		}
 		SwingUtils.setMnemonics(buttons);
+		
+		// Repaint the component.
+		repaint();
 	}
 }

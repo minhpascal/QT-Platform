@@ -292,6 +292,7 @@
 	<entry key="frameMenuExitApplication">Exit the application?</entry>
 	<entry key="frameMenuTabMenuLabel">Menu</entry>
 	<entry key="frameMenuTabMenuTooltip">Main application menu</entry>
-	<entry key="frameMenuTabConsole">Console</entry>
+	<entry key="frameMenuTabConsoleLabel">Console</entry>
+	<entry key="frameMenuTabConsoleTooltip">Out and err console</entry>
 	
 </properties>

@@ -117,7 +117,7 @@ public class FileCopy extends TaskRunner {
 			// Copy the source file.
 			if (file.isFile()) {
 				// The destination root directory.
-				File destinationDirectory = map.get(sourceDirectory);
+				File destinationDirectory = mapDirectories.get(sourceDirectory);
 				// The destination file.
 				File destinationFile = FileUtils.getDestinationFile(sourceDirectory, file, destinationDirectory);
 				
@@ -295,7 +295,11 @@ public class FileCopy extends TaskRunner {
 	/**
 	 * The map of source and destination directories.
 	 */
-	private Map<File, File> map = new LinkedHashMap<>();
+	private Map<File, File> mapDirectories = new LinkedHashMap<>();
+	/**
+	 * The map of source and destination files.
+	 */
+	private Map<File, File> mapFiles = new LinkedHashMap<>();
 	/**
 	 * List of source files (sub-directories or files) to exclude from copy.
 	 */
@@ -356,10 +360,10 @@ public class FileCopy extends TaskRunner {
 	 * @return The source dirfectory.
 	 */
 	private File getSourceDirectory(File destinationDirectory) {
-		Iterator<File> keys = map.keySet().iterator();
+		Iterator<File> keys = mapDirectories.keySet().iterator();
 		while (keys.hasNext()) {
 			File source = keys.next();
-			File destination = map.get(source);
+			File destination = mapDirectories.get(source);
 			if (destination.equals(destinationDirectory)) {
 				return source;
 			}
@@ -374,7 +378,17 @@ public class FileCopy extends TaskRunner {
 	 * @param destinationDirectory The destination directory.
 	 */
 	public void addDirectories(File sourceDirectory, File destinationDirectory) {
-		map.put(sourceDirectory, destinationDirectory);
+		mapDirectories.put(sourceDirectory, destinationDirectory);
+	}
+
+	/**
+	 * Add source and destination files to be copied.
+	 * 
+	 * @param sourceFile The source file.
+	 * @param destinationFile The destination file.
+	 */
+	public void addFiles(File sourceFile, File destinationFile) {
+		mapFiles.put(sourceFile, destinationFile);
 	}
 
 	/**
@@ -484,10 +498,10 @@ public class FileCopy extends TaskRunner {
 
 			// The scanner to count the destination.
 			FileScanner scanner = new FileScanner(getSession());
-			Iterator<File> keys = map.keySet().iterator();
+			Iterator<File> keys = mapDirectories.keySet().iterator();
 			while (keys.hasNext()) {
 				File source = keys.next();
-				scanner.addSourceDirectory(map.get(source));
+				scanner.addSourceDirectory(mapDirectories.get(source));
 			}
 			scanner.setScanSubDirectories(isProcessSubDirectories());
 
@@ -512,12 +526,17 @@ public class FileCopy extends TaskRunner {
 
 		// The scanner to count the source.
 		FileScanner scanner = new FileScanner(getSession());
-		Iterator<File> keys = map.keySet().iterator();
-		while (keys.hasNext()) {
-			File source = keys.next();
+		Iterator<File> keysDirectories = mapDirectories.keySet().iterator();
+		while (keysDirectories.hasNext()) {
+			File source = keysDirectories.next();
 			scanner.addSourceDirectory(source);
 		}
 		scanner.setScanSubDirectories(isProcessSubDirectories());
+		Iterator<File> keysFiles = mapFiles.keySet().iterator();
+		while (keysFiles.hasNext()) {
+			File source = keysFiles.next();
+			scanner.addSourceFile(source);
+		}
 
 		// The counter listener.
 		CountListener counterListener = new CountListener(false);
@@ -565,10 +584,10 @@ public class FileCopy extends TaskRunner {
 
 			// The scanner to countForPurge source.
 			FileScanner scanner = new FileScanner(getSession());
-			Iterator<File> keys = map.keySet().iterator();
+			Iterator<File> keys = mapDirectories.keySet().iterator();
 			while (keys.hasNext()) {
 				File source = keys.next();
-				scanner.addSourceDirectory(map.get(source));
+				scanner.addSourceDirectory(mapDirectories.get(source));
 			}
 			scanner.setScanSubDirectories(isProcessSubDirectories());
 
@@ -593,12 +612,17 @@ public class FileCopy extends TaskRunner {
 
 		// The scanner to copy source.
 		FileScanner scanner = new FileScanner(getSession());
-		Iterator<File> keys = map.keySet().iterator();
-		while (keys.hasNext()) {
-			File source = keys.next();
+		Iterator<File> keysDirectories = mapDirectories.keySet().iterator();
+		while (keysDirectories.hasNext()) {
+			File source = keysDirectories.next();
 			scanner.addSourceDirectory(source);
 		}
 		scanner.setScanSubDirectories(isProcessSubDirectories());
+		Iterator<File> keysFiles = mapFiles.keySet().iterator();
+		while (keysFiles.hasNext()) {
+			File source = keysFiles.next();
+			scanner.addSourceFile(source);
+		}
 
 		// The copier listener.
 		CopyListener copyListener = new CopyListener();

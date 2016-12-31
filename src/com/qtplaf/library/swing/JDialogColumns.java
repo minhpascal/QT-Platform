@@ -310,7 +310,7 @@ public class JDialogColumns extends JDialogSession {
 		getContentPane().add(getPanelColumns(), constraints);
 
 		// Add a button panel
-		JPanelButtons panelButtons = new JPanelButtons(WrapLayout.CENTER);
+		JPanelButtons panelButtons = new JPanelButtons();
 		panelButtons.add(new ActionAccept());
 		panelButtons.add(new ActionCancel());
 		constraints = new GridBagConstraints();

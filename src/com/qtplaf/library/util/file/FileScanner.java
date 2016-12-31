@@ -32,6 +32,10 @@ import com.qtplaf.library.task.TaskRunner;
 public class FileScanner extends TaskRunner {
 
 	/**
+	 * List of source files to scan.
+	 */
+	private List<File> sourceFiles = new ArrayList<>();
+	/**
 	 * The list of source directories to scan.
 	 */
 	private List<File> sourceDirectories = new ArrayList<>();
@@ -77,6 +81,15 @@ public class FileScanner extends TaskRunner {
 	 */
 	public void addSourceDirectory(File sourceDirectory) {
 		sourceDirectories.add(sourceDirectory);
+	}
+
+	/**
+	 * Add a source file to the list of source files.
+	 * 
+	 * @param sourceFile The source directory.
+	 */
+	public void addSourceFile(File sourceFile) {
+		sourceFiles.add(sourceFile);
 	}
 
 	/**
@@ -159,32 +172,50 @@ public class FileScanner extends TaskRunner {
 	 */
 	@Override
 	public void execute() throws Exception {
-		
+
+		// Check source files.
+		for (File sourceFile : sourceFiles) {
+			if (!sourceFile.exists()) {
+				throw new IOException("Invalid source file " + sourceFile);
+			}
+			if (!sourceFile.isFile()) {
+				throw new IOException("Source is not a file " + sourceFile);
+			}
+		}
+
 		// Check source directories.
 		for (File sourceDirectory : sourceDirectories) {
 			if (!sourceDirectory.exists()) {
-				throw new IOException("Invalid source directory");
+				throw new IOException("Invalid source directory " + sourceDirectory);
 			}
 			if (!sourceDirectory.isDirectory()) {
-				throw new IOException("Source is not a directory");
+				throw new IOException("Source is not a directory " + sourceDirectory);
+			}
+		}
+
+		// Initialize the step.
+		step = 0;
+		
+		// Scan first the list of files.
+		for (File sourceFile : sourceFiles) {
+			// Notify file if applicable.
+			if (isNotifyFiles() && sourceFile.isFile()) {
+				notifyFile(sourceFile);
 			}
 		}
 		
-		// Initialize the step.
-		step = 0;
-
 		// Do scan.
 		for (File sourceDirectory : sourceDirectories) {
-			
+
 			// Check cancel.
 			if (checkCancel()) {
 				break;
 			}
-			
+
 			currentSourceDirectory = sourceDirectory;
 			scan(sourceDirectory);
 		}
-		
+
 		if (cancelRequested()) {
 			notifyCancelled();
 		}
@@ -200,29 +231,29 @@ public class FileScanner extends TaskRunner {
 	private void scan(File directory) throws IOException {
 		File[] files = directory.listFiles();
 		for (File file : files) {
-			
+
 			// Check cancel.
 			if (checkCancel()) {
 				break;
 			}
-			
+
 			// Notify directory if applicable.
 			if (isNotifyDirectories() && file.isDirectory()) {
 				notifyFile(file);
 			}
-			
+
 			// Notify file if applicable.
 			if (isNotifyFiles() && file.isFile()) {
 				notifyFile(file);
 			}
-			
+
 			// Scan sub-directories if applicable.
 			if (isScanSubDirectories() && file.isDirectory()) {
 				scan(file);
 			}
 		}
 	}
-	
+
 	/**
 	 * Pause the scan by sleeping the thread..
 	 * 
@@ -236,7 +267,6 @@ public class FileScanner extends TaskRunner {
 		}
 	}
 
-
 	/**
 	 * Notify the file to listeners.
 	 * 
@@ -244,18 +274,17 @@ public class FileScanner extends TaskRunner {
 	 * @throws IOException If any error occurs when the listeners process the events.
 	 */
 	private void notifyFile(File file) throws IOException {
-		
+
 		// Check cancel.
 		if (checkCancel()) {
 			return;
 		}
-		
+
 		// Check pause.
-		while(checkPause()) {
+		while (checkPause()) {
 			pause();
 		}
-		
-		
+
 		notifyStepStart(++step, "");
 		for (FileScannerListener listener : listeners) {
 			listener.file(currentSourceDirectory, file);

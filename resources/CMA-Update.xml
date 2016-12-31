@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<copy-files>
+
+	<task title="Update CMA Central image" purge-destination="true">
+	
+		<!-- XVR COM Lib -->
+	
+		<copy
+			source-directory="c:\Development\Eclipse Workspaces\Roca\workspace-head\XVR COM Lib\bin"
+			destination-directory="c:\Development\Eclipse Workspaces\Roca\cma-head\CMA_Central\mads\library\bin"/>
+		<copy
+			source-directory="c:\Development\Eclipse Workspaces\Roca\workspace-head\XVR COM Lib\res"
+			destination-directory="c:\Development\Eclipse Workspaces\Roca\cma-head\CMA_Central\mads\library\res"/>
+		<copy
+			source-directory="c:\Development\Eclipse Workspaces\Roca\workspace-head\XVR COM Lib\xsd"
+			destination-directory="c:\Development\Eclipse Workspaces\Roca\cma-head\CMA_Central\mads\library\xsd"/>
+		<copy
+			source-directory="c:\Development\Eclipse Workspaces\Roca\workspace-head\XVR COM Lib\xml"
+			destination-directory="c:\Development\Eclipse Workspaces\Roca\cma-head\CMA_Central\mads\library\xml"/>
+	
+		<!-- XVR COM Module Budget Dictionary -->
+	
+		<copy
+			source-directory="c:\Development\Eclipse Workspaces\Roca\workspace-head\XVR COM Module Budget Dictionary\bin"
+			destination-directory="c:\Development\Eclipse Workspaces\Roca\cma-head\CMA_Central\mads\module_budget_dictionary\bin"/>
+	
+		<copy
+			source-file="c:\Development\Eclipse Workspaces\Roca\workspace-head\XVR COM Module Budget Dictionary\res\Budget_Dictionary_DBSchema.txt"
+			destination-file="c:\Development\Eclipse Workspaces\Roca\cma-head\CMA_Central\mads\module_budget_dictionary\res\Budget_Dictionary_DBSchema.txt"/>
+	</task>
+
+
+</copy-files>

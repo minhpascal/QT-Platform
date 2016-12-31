@@ -325,7 +325,7 @@ public class JLookupRecords extends JDialogSession {
 		getContentPane().add(panelTableRecord, constraints);
 
 		// Add a button panel
-		JPanelButtons panelButtons = new JPanelButtons(WrapLayout.CENTER);
+		JPanelButtons panelButtons = new JPanelButtons();
 		panelButtons.add(new ActionSelect());
 		panelButtons.add(new ActionCancel());
 		panelButtons.add(new ActionSelectColumns(tableRecord));

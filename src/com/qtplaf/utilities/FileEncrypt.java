@@ -35,7 +35,7 @@ public class FileEncrypt {
 	 */
 	public static void main(String[] args) {
 
-		// String s and session.
+		// Strings and session.
 		TextServer.addBaseResource("SysString.xml");
 		Session session = new Session(Locale.UK);
 		Locale.setDefault(Locale.UK);

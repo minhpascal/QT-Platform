@@ -14,16 +14,22 @@
 
 package com.qtplaf.library.swing;
 
-import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.util.List;
+import java.awt.event.WindowEvent;
 
 import javax.swing.Action;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.action.DefaultActionClear;
 import com.qtplaf.library.swing.action.DefaultActionExit;
+import com.qtplaf.library.swing.event.WindowHandler;
+import com.qtplaf.library.util.Alignment;
 
 /**
  * The frame that handles a tree menu and a console.
@@ -50,7 +56,7 @@ public class JFrameMenu extends JFrameSession {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String message = getSession().getString("frameMenuExitApplication");
-			if (MessageBox.question(getSession(), message, MessageBox.yesNo) == MessageBox.yes) {
+			if (MessageBox.question(getSession(), message, MessageBox.yesNo, MessageBox.yes) == MessageBox.yes) {
 				if (getPreExitAction() != null) {
 					getPreExitAction().actionPerformed(e);
 				}
@@ -81,6 +87,30 @@ public class JFrameMenu extends JFrameSession {
 	}
 
 	/**
+	 * Change listener to listen to tab selection.
+	 */
+	class TabChangeListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			setupPanelButtons();
+		}
+	}
+	
+	/**
+	 * Window adapter to handle closing.
+	 */
+	class WindowAdapter extends WindowHandler {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			getActionExit().actionPerformed(new ActionEvent(e.getSource(), 0, "EXIT APP"));
+		}
+		@Override
+		public void windowGainedFocus(WindowEvent e) {
+			setupPanelButtons();
+		}
+	}
+
+	/**
 	 * Tree menu panel.
 	 */
 	private JPanelTreeMenu panelMenu;
@@ -98,6 +128,14 @@ public class JFrameMenu extends JFrameSession {
 	private JTabbedPane tabbedPane;
 
 	/**
+	 * Action exit.
+	 */
+	private ActionExit actionExit;
+	/**
+	 * Action clear.
+	 */
+	private ActionClear actionClear;
+	/**
 	 * An optional action to be executed prior to exit the application.
 	 */
 	private Action preExitAction;
@@ -109,16 +147,83 @@ public class JFrameMenu extends JFrameSession {
 	 */
 	public JFrameMenu(Session session) {
 		super(session);
+		layoutComponents();
 	}
 
 	/**
 	 * Layout components.
 	 */
 	private void layoutComponents() {
-		
+
 		// Configure tabbed pane.
 		getTabbedPane().removeAll();
 
+		// Menu pane.
+		String menuTitle = getSession().getString("frameMenuTabMenuLabel");
+		String menuTooltip = getSession().getString("frameMenuTabMenuTooltip");
+		getTabbedPane().addTab(menuTitle, null, getPanelTreeMenu(), menuTooltip);
+
+		// Console pane.
+		String consoleTitle = getSession().getString("frameMenuTabConsoleLabel");
+		String consoleTooltip = getSession().getString("frameMenuTabConsoleTooltip");
+		getTabbedPane().addTab(consoleTitle, null, getConsole(), consoleTooltip);
+
+		// Set the content pane.
+		getContentPane().setLayout(new GridBagLayout());
+		GridBagConstraints constraints = null;
+
+		// Tabbed pane.
+		constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.NORTH;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.insets = new Insets(0, 0, 0, 0);
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		getContentPane().add(getTabbedPane(), constraints);
+
+		// Buttons panel.
+		constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.NORTH;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.insets = new Insets(0, 10, 0, 10);
+		constraints.weightx = 0;
+		constraints.weighty = 0;
+		constraints.gridx = 0;
+		constraints.gridy = 4;
+		getContentPane().add(getPanelButtons(), constraints);
+		
+		// This window listener.
+		WindowAdapter windowAdapter = new WindowAdapter();
+		addWindowListener(windowAdapter);
+		addWindowFocusListener(windowAdapter);
+	}
+
+	/**
+	 * Setup the buttons panel depending on the seletected tab.
+	 */
+	private void setupPanelButtons() {
+		getPanelButtons().clear();
+		int index = getTabbedPane().getSelectedIndex();
+		if (index < 0) {
+			return;
+		}
+
+		// Selected tab is menu: action exit.
+		if (index == getTabbedPane().indexOfComponent(getPanelTreeMenu())) {
+			getPanelButtons().add(getActionExit());
+		}
+
+		// Selected tab is console: actions clear and exit.
+		if (index == getTabbedPane().indexOfComponent(getConsole())) {
+			getPanelButtons().add(getActionClear());
+			getPanelButtons().add(getActionExit());
+		}
+
+		// Setup accelerator key listeners.
+		SwingUtils.removeAcceleratorKeyListener(this);
+		SwingUtils.installAcceleratorKeyListener(this);
 	}
 
 	/**
@@ -126,7 +231,7 @@ public class JFrameMenu extends JFrameSession {
 	 * 
 	 * @return The tree menu panel.
 	 */
-	protected JPanelTreeMenu getPanelTreeMenu() {
+	public JPanelTreeMenu getPanelTreeMenu() {
 		if (panelMenu == null) {
 			panelMenu = new JPanelTreeMenu(getSession());
 		}
@@ -138,7 +243,7 @@ public class JFrameMenu extends JFrameSession {
 	 * 
 	 * @return The console.
 	 */
-	protected JConsole getConsole() {
+	public JConsole getConsole() {
 		if (console == null) {
 			console = new JConsole();
 		}
@@ -152,7 +257,7 @@ public class JFrameMenu extends JFrameSession {
 	 */
 	protected JPanelButtons getPanelButtons() {
 		if (panelButtons == null) {
-			panelButtons = new JPanelButtons();
+			panelButtons = new JPanelButtons(Alignment.Right);
 		}
 		return panelButtons;
 	}
@@ -165,8 +270,33 @@ public class JFrameMenu extends JFrameSession {
 	protected JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+			tabbedPane.addChangeListener(new TabChangeListener());
 		}
 		return tabbedPane;
+	}
+
+	/**
+	 * Returns the exit action.
+	 * 
+	 * @return The exit action.
+	 */
+	private ActionExit getActionExit() {
+		if (actionExit == null) {
+			actionExit = new ActionExit();
+		}
+		return actionExit;
+	}
+
+	/**
+	 * Returns the clear action.
+	 * 
+	 * @return The clear action.
+	 */
+	private ActionClear getActionClear() {
+		if (actionClear == null) {
+			actionClear = new ActionClear();
+		}
+		return actionClear;
 	}
 
 	/**
