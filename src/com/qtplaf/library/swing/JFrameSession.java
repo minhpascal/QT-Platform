@@ -82,4 +82,19 @@ public class JFrameSession extends JFrame {
 		addWindowListener(handler);
 		addWindowStateListener(handler);
 	}
+
+	/**
+	 * Set this frame visible.
+	 * 
+	 * @param b A boolean.
+	 */
+	@Override
+	public void setVisible(boolean b) {
+		if (b) {
+			WindowManager.add(this);
+		} else {
+			WindowManager.remove(this);
+		}
+		super.setVisible(b);
+	}
 }

@@ -35,8 +35,9 @@ public interface Task extends Runnable {
 	 * If the task supports pre-counting steps, a call to this method forces counting (and storing) the number of steps.
 	 * 
 	 * @return The number of steps.
+	 * @throws Exception If an unrecoverable error occurs during execution.
 	 */
-	long countSteps();
+	long countSteps() throws Exception;
 
 	/**
 	 * Executes the underlying task processing.

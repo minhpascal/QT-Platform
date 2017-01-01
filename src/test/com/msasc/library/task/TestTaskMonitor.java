@@ -14,6 +14,7 @@
 
 package test.com.msasc.library.task;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -39,8 +40,9 @@ public class TestTaskMonitor {
 		TextServer.addBaseResource("SysString.xml");
 		Session session = new Session(Locale.UK);
 
-		JPanelProgressGroup panelGroup = new JPanelProgressGroup(session);
-		JScrollPane scrollPane = new JScrollPane(panelGroup);
+		JPanelProgressGroup monitor = new JPanelProgressGroup(session);
+		monitor.setPreferredSize(new Dimension(800,400));
+		JScrollPane scrollPane = new JScrollPane(monitor);
 
 		List<TaskRunnerList> processes = new ArrayList<>();
 
@@ -53,7 +55,8 @@ public class TestTaskMonitor {
 			process.setName("I-"+StringUtils.leftPad(Integer.toString(i+1), 2, "0"));
 			process.setDescription("Test process " + (i+1));
 			process.setNotifyModulus(1);
-			process.setMonitor(panelGroup);
+			monitor.add(process);
+			process.setMonitor(monitor);
 			processes.add(process);
 
 			for (int j = 0; j < taskCount; j++) {
@@ -77,10 +80,13 @@ public class TestTaskMonitor {
 
 		}
 
-		for (int i = 0; i < processes.size(); i++) {
-			TaskRunnerList process = processes.get(i);
-			new Thread(process, process.toString()).start();
-		}
+//		for (int i = 0; i < processes.size(); i++) {
+//			TaskRunnerList process = processes.get(i);
+//			new Thread(process, process.toString()).start();
+//		}
+		try {
+			Thread.sleep(500);
+		} catch (Exception ignored) {}
 
 		TestBox.show(scrollPane);
 		System.exit(0);

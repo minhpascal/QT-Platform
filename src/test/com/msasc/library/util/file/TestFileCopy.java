@@ -14,6 +14,7 @@
 
 package test.com.msasc.library.util.file;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.util.Locale;
 
@@ -37,8 +38,8 @@ public class TestFileCopy {
 	 */
 	public static void main(String[] args) {
 		TextServer.addBaseResource("SysString.xml");
-		File source = new File("C:\\Development\\Eclipse Workspaces\\Trading\\workspace-trading-bk");
-		File destination = new File("C:\\Development\\Eclipse Workspaces\\Trading\\workspace-trading-dk");
+		File source = new File("C:\\Development\\Eclipse Workspaces\\Trading\\workspace-trading-backup");
+		File destination = new File("C:\\Development\\Eclipse Workspaces\\Trading\\workspace-trading-backup-2");
 //		File source = new File("C:\\Development\\Eclipse Workspaces\\Roca\\cma-head\\CMA_Central");
 //		File destination = new File("C:\\Development\\ZTest\\CMA_Central");
 //		File destination = new File("Z:\\CMA\\CMA_Central\\mads");
@@ -53,9 +54,8 @@ public class TestFileCopy {
 		fileCopy.setPurgeDestination(true);
 		
 		JPanelProgressGroup panelGroup = new JPanelProgressGroup(session);
-		JPanelProgress panelProgress = new JPanelProgress(session);
-		panelGroup.add(panelProgress);
-		panelProgress.monitorTask(fileCopy);
+		panelGroup.setPanelProgressWidth(1000);
+		panelGroup.add(fileCopy);
 		
 //		new Thread(fileCopy,"File copy util").start();
 		

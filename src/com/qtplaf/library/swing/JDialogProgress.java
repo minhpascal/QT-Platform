@@ -97,6 +97,8 @@ public class JDialogProgress extends JDialogSession {
 
 		// Add the panel progress group.
 		JPanelProgressGroup panelGroup = new JPanelProgressGroup(getSession());
+		panelGroup.setName("ProgressGroup");
+
 		GridBagConstraints constraintsGroup = new GridBagConstraints();
 		constraintsGroup.anchor = GridBagConstraints.NORTH;
 		constraintsGroup.fill = GridBagConstraints.BOTH;
@@ -111,7 +113,23 @@ public class JDialogProgress extends JDialogSession {
 
 		// Panel buttons.
 		JPanelButtons panelButtons = new JPanelButtons();
+		panelButtons.setName("PanelButtons");
 		panelButtons.add(new ActionClose());
 
+	}
+
+	/**
+	 * Set this dialog visible.
+	 * 
+	 * @param b A boolean.
+	 */
+	@Override
+	public void setVisible(boolean b) {
+		if (b) {
+			WindowManager.add(this);
+		} else {
+			WindowManager.remove(this);
+		}
+		super.setVisible(b);
 	}
 }

@@ -182,6 +182,7 @@ public class JOptionDialog extends JDialogSession {
 	public JOptionDialog(Session session) {
 		super(session);
 		setWindowHandler(new WindowAdapter());
+		setModal(true);
 	}
 
 	/**
@@ -193,6 +194,7 @@ public class JOptionDialog extends JDialogSession {
 	public JOptionDialog(Session session, Window owner) {
 		super(session, owner);
 		setWindowHandler(new WindowAdapter());
+		setModal(true);
 	}
 
 	/**
@@ -411,7 +413,6 @@ public class JOptionDialog extends JDialogSession {
 
 		// Show it.
 		setResizable(resizable);
-		setModal(true);
 		setVisible(true);
 		requestFocus();
 

@@ -25,6 +25,7 @@ import com.qtplaf.library.swing.action.DefaultActionAccept;
  */
 public class TestBox {
 	public static void show(Object component) {
+		
 		JOptionPane pane = new JOptionPane();
 		pane.setMessage(component);
 		pane.setMessageType(JOptionPane.INFORMATION_MESSAGE);

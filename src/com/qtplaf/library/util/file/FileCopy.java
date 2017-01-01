@@ -116,11 +116,17 @@ public class FileCopy extends TaskRunner {
 
 			// Copy the source file.
 			if (file.isFile()) {
-				// The destination root directory.
-				File destinationDirectory = mapDirectories.get(sourceDirectory);
-				// The destination file.
-				File destinationFile = FileUtils.getDestinationFile(sourceDirectory, file, destinationDirectory);
-				
+
+				// Take the appropriate destination file. First check direct file copy, then build the destination file
+				// using source and destination directories.
+				File destinationFile = mapFiles.get(file);
+				if (destinationFile == null) {
+					// The destination root directory.
+					File destinationDirectory = mapDirectories.get(sourceDirectory);
+					// The destination file.
+					destinationFile = FileUtils.getDestinationFile(sourceDirectory, file, destinationDirectory);
+				}
+
 				String from = getSession().getString("tokenFrom") + ": " + file.getAbsolutePath();
 				String to = getSession().getString("tokenTo") + ": " + destinationFile.getAbsolutePath();
 				notifyLabel(labelFrom, from);
@@ -282,7 +288,7 @@ public class FileCopy extends TaskRunner {
 			return FileCopy.this.resumeRequested();
 		}
 	}
-	
+
 	/**
 	 * Additional label to show the from file.
 	 */
@@ -337,7 +343,7 @@ public class FileCopy extends TaskRunner {
 		addAdditionalLabel(labelFrom);
 		addAdditionalLabel(labelTo);
 	}
-	
+
 	/**
 	 * Purge the destination file if not exists in the source.
 	 * 
@@ -480,12 +486,50 @@ public class FileCopy extends TaskRunner {
 	}
 
 	/**
-	 * Count the number of steps.
+	 * Returns the scanner for purge (destination directories).
+	 * 
+	 * @return The scanner for purge.
+	 */
+	private FileScanner getScannerForPurge() {
+		FileScanner scanner = new FileScanner(getSession());
+		scanner.setScanSubDirectories(isProcessSubDirectories());
+		Iterator<File> keys = mapDirectories.keySet().iterator();
+		while (keys.hasNext()) {
+			File source = keys.next();
+			scanner.addSourceDirectory(mapDirectories.get(source));
+		}
+		return scanner;
+	}
+
+	/**
+	 * Returns the source scanner.
+	 * 
+	 * @return The scanner.
+	 */
+	private FileScanner getScanner() {
+		FileScanner scanner = new FileScanner(getSession());
+		scanner.setScanSubDirectories(isProcessSubDirectories());
+		Iterator<File> keysDirectories = mapDirectories.keySet().iterator();
+		while (keysDirectories.hasNext()) {
+			File source = keysDirectories.next();
+			scanner.addSourceDirectory(source);
+		}
+		Iterator<File> keysFiles = mapFiles.keySet().iterator();
+		while (keysFiles.hasNext()) {
+			File source = keysFiles.next();
+			scanner.addSourceFile(source);
+		}
+		return scanner;
+	}
+
+	/**
+	 * Count the number of steps. Returns -1 if counting has been cancelled.
 	 * 
 	 * @return The number of steps.
+	 * @throws Exception If an unrecoverable error occurs during execution.
 	 */
 	@Override
-	public long countSteps() {
+	public long countSteps() throws Exception {
 
 		// Notify counting.
 		notifyCounting();
@@ -497,13 +541,7 @@ public class FileCopy extends TaskRunner {
 		if (isPurgeDestination()) {
 
 			// The scanner to count the destination.
-			FileScanner scanner = new FileScanner(getSession());
-			Iterator<File> keys = mapDirectories.keySet().iterator();
-			while (keys.hasNext()) {
-				File source = keys.next();
-				scanner.addSourceDirectory(mapDirectories.get(source));
-			}
-			scanner.setScanSubDirectories(isProcessSubDirectories());
+			FileScanner scanner = getScannerForPurge();
 
 			// The counter listener.
 			CountListener counterListener = new CountListener(true);
@@ -513,11 +551,9 @@ public class FileCopy extends TaskRunner {
 			scanner.addListener(new ScanListener());
 
 			// Do scan.
-			new Thread(scanner, "File countForPurge counter").start();
-
-			// Wait until terminated.
-			while (!scanner.isTerminated()) {
-				Thread.yield();
+			scanner.run();
+			if (scanner.isCancelled()) {
+				return -1;
 			}
 
 			// Read steps.
@@ -525,18 +561,7 @@ public class FileCopy extends TaskRunner {
 		}
 
 		// The scanner to count the source.
-		FileScanner scanner = new FileScanner(getSession());
-		Iterator<File> keysDirectories = mapDirectories.keySet().iterator();
-		while (keysDirectories.hasNext()) {
-			File source = keysDirectories.next();
-			scanner.addSourceDirectory(source);
-		}
-		scanner.setScanSubDirectories(isProcessSubDirectories());
-		Iterator<File> keysFiles = mapFiles.keySet().iterator();
-		while (keysFiles.hasNext()) {
-			File source = keysFiles.next();
-			scanner.addSourceFile(source);
-		}
+		FileScanner scanner = getScanner();
 
 		// The counter listener.
 		CountListener counterListener = new CountListener(false);
@@ -546,11 +571,9 @@ public class FileCopy extends TaskRunner {
 		scanner.addListener(new ScanListener());
 
 		// Do scan.
-		new Thread(scanner, "File counter").start();
-
-		// Wait until terminated.
-		while (!scanner.isTerminated()) {
-			Thread.yield();
+		scanner.run();
+		if (scanner.isCancelled()) {
+			return -1;
 		}
 
 		// Read steps.
@@ -574,22 +597,19 @@ public class FileCopy extends TaskRunner {
 		bytesProcessed = 0;
 
 		// Count steps.
-		countSteps();
+		if (countSteps() == -1) {
+			notifyCancelled();
+			return;
+		}
 
 		// If required, the scanner to countForPurge destination.
 		if (isPurgeDestination()) {
-			
+
 			// Clear labels.
 			clearAdditionalLabels();
 
 			// The scanner to countForPurge source.
-			FileScanner scanner = new FileScanner(getSession());
-			Iterator<File> keys = mapDirectories.keySet().iterator();
-			while (keys.hasNext()) {
-				File source = keys.next();
-				scanner.addSourceDirectory(mapDirectories.get(source));
-			}
-			scanner.setScanSubDirectories(isProcessSubDirectories());
+			FileScanner scanner = getScannerForPurge();
 
 			// The countForPurge listener.
 			PurgeListener purgeListener = new PurgeListener();
@@ -599,30 +619,19 @@ public class FileCopy extends TaskRunner {
 			scanner.addListener(new ScanListener());
 
 			// Do scan.
-			new Thread(scanner, "File purger").start();
-
-			// Wait until terminated.
-			while (!scanner.isTerminated()) {
-				Thread.yield();
+			scanner.run();
+			if (scanner.isCancelled()) {
+				clearAdditionalLabels();
+				notifyCancelled();
+				return;
 			}
 		}
-		
+
 		// Clear labels.
 		clearAdditionalLabels();
 
 		// The scanner to copy source.
-		FileScanner scanner = new FileScanner(getSession());
-		Iterator<File> keysDirectories = mapDirectories.keySet().iterator();
-		while (keysDirectories.hasNext()) {
-			File source = keysDirectories.next();
-			scanner.addSourceDirectory(source);
-		}
-		scanner.setScanSubDirectories(isProcessSubDirectories());
-		Iterator<File> keysFiles = mapFiles.keySet().iterator();
-		while (keysFiles.hasNext()) {
-			File source = keysFiles.next();
-			scanner.addSourceFile(source);
-		}
+		FileScanner scanner = getScanner();
 
 		// The copier listener.
 		CopyListener copyListener = new CopyListener();
@@ -632,11 +641,16 @@ public class FileCopy extends TaskRunner {
 		scanner.addListener(new ScanListener());
 
 		// Scan in the same thread.
-		scanner.execute();
-		
+		scanner.run();
+		if (scanner.isCancelled()) {
+			clearAdditionalLabels();
+			notifyCancelled();
+			return;
+		}
+
 		// Clear labels.
 		clearAdditionalLabels();
-		
+
 		// If there are files not copied, notify it with an error.
 		if (!getExceptions().isEmpty()) {
 			StringBuilder b = new StringBuilder();

@@ -296,6 +296,10 @@ public class JPanelProgress extends JPanel {
 			synchronized (lock) {
 				// Cancel requested is no longer valid.
 				cancelRequested = false;
+				// If the bar is indeterminate, reset it.
+				if (getProgressBar().isIndeterminate()) {
+					getProgressBar().setIndeterminate(false);
+				}
 				// Disable cancel and pause/resume buttons.
 				getButtonCancel().setEnabled(false);
 				getButtonPauseResume().setEnabled(false);
@@ -636,7 +640,7 @@ public class JPanelProgress extends JPanel {
 				addAdditionalLabel(label);
 			}
 		}
-		
+
 		// Do layout.
 		layoutComponents();
 
@@ -1434,6 +1438,24 @@ public class JPanelProgress extends JPanel {
 	 */
 	public Session getSession() {
 		return session;
+	}
+
+	/**
+	 * Returns the panel progress width.
+	 * 
+	 * @return The panel progress width.
+	 */
+	public int getPanelProgressWidth() {
+		return panelProgressWidth;
+	}
+
+	/**
+	 * Sets the panel progress width.
+	 * 
+	 * @param panelProgressWidth The panel progress width.
+	 */
+	public void setPanelProgressWidth(int panelProgressWidth) {
+		this.panelProgressWidth = panelProgressWidth;
 	}
 
 }

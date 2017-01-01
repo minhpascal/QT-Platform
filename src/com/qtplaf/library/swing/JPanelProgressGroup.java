@@ -69,6 +69,8 @@ public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 	private int columns = 1;
 	/** Working session. */
 	private Session session;
+	/** Initial panel width. */
+	private int panelProgressWidth = 500;
 
 	/**
 	 * Constructor.
@@ -89,9 +91,33 @@ public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 	 */
 	@Override
 	synchronized public void add(Task task) {
+		// Check already added.
+		if (containsTask(task)) {
+			return;
+		}
 		JPanelProgress panelProgress = new JPanelProgress(getSession());
+		panelProgress.setPanelProgressWidth(getPanelProgressWidth());
 		panelProgress.monitorTask(task);
 		add(panelProgress);
+	}
+
+	/**
+	 * Check if this monitor already constains the task.
+	 * 
+	 * @param task The task to check.
+	 * @return A boolean.
+	 */
+	private boolean containsTask(Task task) {
+		List<Component> components = SwingUtils.getAllComponents(this);
+		for (Component component : components) {
+			if (component instanceof JPanelProgress) {
+				JPanelProgress panelProgress = (JPanelProgress) component;
+				if (panelProgress.getMonitoringTask() == task) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -297,4 +323,22 @@ public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 		return session;
 	}
 
+
+	/**
+	 * Returns the panel progress width.
+	 * 
+	 * @return The panel progress width.
+	 */
+	public int getPanelProgressWidth() {
+		return panelProgressWidth;
+	}
+
+	/**
+	 * Sets the panel progress width.
+	 * 
+	 * @param panelProgressWidth The panel progress width.
+	 */
+	public void setPanelProgressWidth(int panelProgressWidth) {
+		this.panelProgressWidth = panelProgressWidth;
+	}
 }

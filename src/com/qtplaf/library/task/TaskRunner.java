@@ -425,13 +425,13 @@ public abstract class TaskRunner implements Task {
 			terminated = false;
 			exception = null;
 
+			// Processing started.
+			processing = true;
+
 			// If there is a monitor available, add the task.
 			if (getMonitor() != null) {
 				getMonitor().add(this);
 			}
-
-			// Processing started.
-			processing = true;
 		}
 		// Notify listeners that processing has started.
 		notifyProcessing();
@@ -783,7 +783,7 @@ public abstract class TaskRunner implements Task {
 	public void addAdditionalLabel(String label) {
 		additionalLabels.add(label);
 	}
-	
+
 	/**
 	 * Clear the text of additional labels.
 	 */

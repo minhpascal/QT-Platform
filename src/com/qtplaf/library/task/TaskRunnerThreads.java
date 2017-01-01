@@ -778,7 +778,7 @@ public class TaskRunnerThreads extends TaskRunner {
 	 */
 	@Override
 	public boolean isCountStepsSupported() {
-		return isNotifyStepsUnknown();
+		return isNotifyStepsKnown();
 	}
 
 }

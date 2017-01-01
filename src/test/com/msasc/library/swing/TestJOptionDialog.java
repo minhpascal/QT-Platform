@@ -35,9 +35,7 @@ public class TestJOptionDialog {
 		
 		Icon icon = UIManager.getIcon("OptionPane.questionIcon");
 		dlg.setIcon(icon);
-		
-		MessageBox.question(session, b.toString());
-
+		dlg.setModal(false);
 		String option = dlg.showDialog();
 		System.out.println(option);
 
