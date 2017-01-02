@@ -29,8 +29,7 @@ import com.qtplaf.library.swing.JPanelProgressGroup;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.file.FileCopy;
-
-import test.com.msasc.library.swing.TestBox;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * This is an utility class to update a project (CMA), quality and production, that is external from QT-Platform.
@@ -66,9 +65,13 @@ public class CMAUpdate {
 		// - local
 		Argument argModules =
 			new Argument("modules", "Modules: central/dictionary/local", true, true, "central", "dictionary", "local");
+		
+		// Command line argument: purge (flag)
+		Argument argPurge =
+			new Argument("purge", "Purge destination directories", false, false, false);
 
 		// Argument manager.
-		ArgumentManager argMngr = new ArgumentManager(argEnvironment, argTarget, argModules);
+		ArgumentManager argMngr = new ArgumentManager(argEnvironment, argTarget, argModules, argPurge);
 		if (!argMngr.parse(args)) {
 			for (String error : argMngr.getErrors()) {
 				System.out.println(error);
@@ -108,60 +111,98 @@ public class CMAUpdate {
 		List<Task> tasks = new ArrayList<>();
 
 		// Environment and target.
+		boolean purge = argMngr.isPassed("purge");
 		boolean production = argMngr.getValue("environment").equals("production");
 		boolean local = argMngr.getValue("target").equals("local");
+		boolean remote = !local;
 
-		// Central.
-		if (local && argMngr.getValues("modules").contains("central")) {
-			FileCopy fc = new FileCopy(session);
-			fc.setName(getName(production, local, "C"));
-			fc.setDescription(getDescription(production, local, "central"));
-			addLocalLibrary(fc, production, "CMA_Central");
-			addLocalModuleBudgetDictionary(fc, production, "CMA_Central");
-			addLocalModuleBudgetLocal(fc, production, "CMA_Central", false);
-			addLocalModuleMarginsCentral(fc, production, "CMA_Central", true);
-			addLocalModuleMarginsDictionary(fc, production, "CMA_Central", false);
-			addLocalModuleMarginsLibrary(fc, production, "CMA_Central");
-			addLocalModuleMarginsLocal(fc, production, "CMA_Central");
-			addLocalModuleStrategicPlanCentral(fc, production, "CMA_Central");
-			addLocalModuleStrategicPlanLocal(fc, production, "CMA_Central");
-			addLocalModuleWorkingCapitalCentral(fc, production, "CMA_Central");
-			addLocalModuleWorkingCapitalLocal(fc, production, "CMA_Central");
-			tasks.add(fc);
+		// Local: copy from workspace to exec image.
+		if (local) {
+
+			// Central.
+			if (argMngr.getValues("modules").contains("central")) {
+				FileCopy fc = new FileCopy(session);
+				fc.setName(getName(production, local, "C"));
+				fc.setDescription(getDescription(production, local, "central"));
+				fc.setPurgeDestination(purge);
+				addLocalLibrary(fc, production, "CMA_Central");
+				addLocalModuleBudgetDictionary(fc, production, "CMA_Central");
+				addLocalModuleBudgetLocal(fc, production, "CMA_Central", false);
+				addLocalModuleMarginsCentral(fc, production, "CMA_Central", true);
+				addLocalModuleMarginsDictionary(fc, production, "CMA_Central", false);
+				addLocalModuleMarginsLibrary(fc, production, "CMA_Central");
+				addLocalModuleMarginsLocal(fc, production, "CMA_Central");
+				addLocalModuleStrategicPlanCentral(fc, production, "CMA_Central");
+				addLocalModuleStrategicPlanLocal(fc, production, "CMA_Central");
+				addLocalModuleWorkingCapitalCentral(fc, production, "CMA_Central");
+				addLocalModuleWorkingCapitalLocal(fc, production, "CMA_Central");
+				tasks.add(fc);
+			}
+
+			// Dictionary
+			if (argMngr.getValues("modules").contains("dictionary")) {
+				FileCopy fc = new FileCopy(session);
+				fc.setName(getName(production, local, "D"));
+				fc.setDescription(getDescription(production, local, "dictionary"));
+				fc.setPurgeDestination(purge);
+				addLocalLibrary(fc, production, "CMA_Dictionary");
+				addLocalModuleBudgetDictionary(fc, production, "CMA_Dictionary");
+				addLocalModuleMarginsCentral(fc, production, "CMA_Dictionary", false);
+				addLocalModuleMarginsDictionary(fc, production, "CMA_Dictionary", true);
+				addLocalModuleMarginsLibrary(fc, production, "CMA_Dictionary");
+				addLocalModuleMarginsLocal(fc, production, "CMA_Dictionary");
+				tasks.add(fc);
+			}
+
+			// Local.
+			if (argMngr.getValues("modules").contains("local")) {
+				FileCopy fc = new FileCopy(session);
+				fc.setName(getName(production, local, "L"));
+				fc.setDescription(getDescription(production, local, "local"));
+				fc.setPurgeDestination(purge);
+				addLocalLibrary(fc, production, "CMA_Local");
+				addLocalModuleBudgetDictionary(fc, production, "CMA_Local");
+				addLocalModuleBudgetLocal(fc, production, "CMA_Local", true);
+				addLocalModuleMarginsCentral(fc, production, "CMA_Local", false);
+				addLocalModuleMarginsDictionary(fc, production, "CMA_Local", false);
+				addLocalModuleMarginsLibrary(fc, production, "CMA_Local");
+				addLocalModuleMarginsLocal(fc, production, "CMA_Local");
+				addLocalModuleStrategicPlanLocal(fc, production, "CMA_Local");
+				addLocalModuleWorkingCapitalCentral(fc, production, "CMA_Local");
+				addLocalModuleWorkingCapitalLocal(fc, production, "CMA_Local");
+				tasks.add(fc);
+			}
 		}
-		
-		// Dictionary
-		if (local && argMngr.getValues("modules").contains("dictionary")) {
-			FileCopy fc = new FileCopy(session);
-			fc.setName(getName(production, local, "D"));
-			fc.setDescription(getDescription(production, local, "dictionary"));
-			addLocalLibrary(fc, production, "CMA_Dictionary");
-			addLocalModuleBudgetDictionary(fc, production, "CMA_Dictionary");
-			addLocalModuleMarginsCentral(fc, production, "CMA_Dictionary", false);
-			addLocalModuleMarginsDictionary(fc, production, "CMA_Dictionary", true);
-			addLocalModuleMarginsLibrary(fc, production, "CMA_Dictionary");
-			addLocalModuleMarginsLocal(fc, production, "CMA_Dictionary");
-			tasks.add(fc);
+
+		// Remote: copy from exec image to destination drives.
+		if (remote) {
+
+			// The list of destination drives.
+			List<String> drives = new ArrayList<>();
+			if (production) {
+				drives.addAll(ListUtils.asList("U", "V", "W", "X", "Y", "Z"));
+			} else {
+				drives.addAll(ListUtils.asList("T"));
+			}
+
+			// Central.
+			if (argMngr.getValues("modules").contains("central")) {
+				for (String drive : drives) {
+					FileCopy fc = new FileCopy(session);
+					fc.setName(getName(production, local, "C"));
+					fc.setDescription(getDescription(production, local, "central"));
+					fc.setPurgeDestination(purge);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "library", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_budget_dictionary", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_budget_local", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_central", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_dictionary", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_library", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_local", drive);
+					tasks.add(fc);
+				}
+			}
 		}
-		
-		// Local.
-		if (local && argMngr.getValues("modules").contains("local")) {
-			FileCopy fc = new FileCopy(session);
-			fc.setName(getName(production, local, "L"));
-			fc.setDescription(getDescription(production, local, "local"));
-			addLocalLibrary(fc, production, "CMA_Local");
-			addLocalModuleBudgetDictionary(fc, production, "CMA_Local");
-			addLocalModuleBudgetLocal(fc, production, "CMA_Local", true);
-			addLocalModuleMarginsCentral(fc, production, "CMA_Local", false);
-			addLocalModuleMarginsDictionary(fc, production, "CMA_Local", false);
-			addLocalModuleMarginsLibrary(fc, production, "CMA_Local");
-			addLocalModuleMarginsLocal(fc, production, "CMA_Local");
-			addLocalModuleStrategicPlanLocal(fc, production, "CMA_Local");
-			addLocalModuleWorkingCapitalCentral(fc, production, "CMA_Local");
-			addLocalModuleWorkingCapitalLocal(fc, production, "CMA_Local");
-			tasks.add(fc);
-		}
-		
 
 		return tasks;
 	}
@@ -485,6 +526,24 @@ public class CMAUpdate {
 	}
 
 	/**
+	 * Add directories for a remote copy task.
+	 * 
+	 * @param fc The file copy.
+	 * @param prod Production/Development.
+	 * @param parent Source (for instance CMA_Central\\mads)
+	 * @param name Last directory name.
+	 * @param drive Destination drive.
+	 */
+	private static void addRemoteDirs(FileCopy fc, boolean prod, String parent, String name, String drive) {
+		File fileSrcRoot = new File(getSrcRootRemote(prod));
+		File fileSrcParent = new File(fileSrcRoot, parent);
+		File fileSrc = new File(fileSrcParent, name);
+		File fileDstParent = new File(drive + ":\\" + parent);
+		File fileDst = new File(fileDstParent, name);
+		fc.addDirectories(fileSrc, fileDst);
+	}
+
+	/**
 	 * Add local directories to the copy task.
 	 * 
 	 * @param fc The file copy.
@@ -566,4 +625,13 @@ public class CMAUpdate {
 		return dstRoot;
 	}
 
+	/**
+	 * Returns the source root for a remote target task.
+	 * 
+	 * @param prod Production/Development
+	 * @return The source root.
+	 */
+	private static String getSrcRootRemote(boolean prod) {
+		return getDstRootLocal(prod);
+	}
 }

@@ -60,6 +60,9 @@ public class FileCopy extends TaskRunner {
 		 */
 		@Override
 		public void file(File sourceDirectory, File file) {
+			
+			// Display file in the first label.
+			notifyLabel(labelFrom, file.toString());
 
 			// Check exclude.
 			if (countForPurge) {
@@ -559,6 +562,9 @@ public class FileCopy extends TaskRunner {
 			// Read steps.
 			count += counterListener.getCount();
 		}
+		
+		// Clear labels.
+		clearAdditionalLabels();
 
 		// The scanner to count the source.
 		FileScanner scanner = getScanner();
@@ -578,6 +584,9 @@ public class FileCopy extends TaskRunner {
 
 		// Read steps.
 		count += counterListener.getCount();
+		
+		// Clear labels.
+		clearAdditionalLabels();
 
 		// Notify.
 		notifyStepCount(count);
