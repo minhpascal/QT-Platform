@@ -14,12 +14,10 @@
 
 package test.com.msasc.library.util.file;
 
-import java.awt.Dimension;
 import java.io.File;
 import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JPanelProgress;
 import com.qtplaf.library.swing.JPanelProgressGroup;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.file.FileCopy;

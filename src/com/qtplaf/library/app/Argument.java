@@ -94,9 +94,6 @@ public class Argument {
 		this.name = name;
 		this.description = description;
 		this.required = required;
-		if (!valuesRequired && multipleValues) {
-			throw new IllegalArgumentException("Not compatible 'valuesRequired' and 'multipleValues'");
-		}
 		this.valuesRequired = true;
 		this.multipleValues = multipleValues;
 		this.possibleValues.addAll(ListUtils.asList(values));

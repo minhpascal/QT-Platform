@@ -220,9 +220,22 @@ public class FileUtils {
 	 * 
 	 * @param sourceFile The source file.
 	 * @param destinationFile The destination file.
+	 * @param bufferSize IO buffer size.
 	 * @throws IOException
 	 */
 	public static void copy(File sourceFile, File destinationFile) throws IOException {
+		copy(sourceFile, destinationFile, 8192);
+	}
+
+	/**
+	 * Copy a source file to a destination file.
+	 * 
+	 * @param sourceFile The source file.
+	 * @param destinationFile The destination file.
+	 * @param bufferSize IO buffer size.
+	 * @throws IOException
+	 */
+	public static void copy(File sourceFile, File destinationFile, int bufferSize) throws IOException {
 
 		// Check source exists.
 		if (!sourceFile.exists()) {
@@ -241,11 +254,11 @@ public class FileUtils {
 		
 		// Source.
 		FileInputStream fi = new FileInputStream(sourceFile);
-		BufferedInputStream bi = new BufferedInputStream(fi);
+		BufferedInputStream bi = new BufferedInputStream(fi, bufferSize);
 
 		// Destination.
 		FileOutputStream fo = new FileOutputStream(destinationFile);
-		BufferedOutputStream bo = new BufferedOutputStream(fo);
+		BufferedOutputStream bo = new BufferedOutputStream(fo, bufferSize);
 
 		// Do copy.
 		int b;

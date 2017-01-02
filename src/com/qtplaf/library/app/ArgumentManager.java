@@ -173,7 +173,7 @@ public class ArgumentManager {
 	private List<String> parseValues(Argument argument, String arg) {
 		List<String> values = new ArrayList<>();
 		if (getArg(arg).toLowerCase().startsWith(argument.getName().toLowerCase() + ":")) {
-			String valueString = arg.substring((argument.getName() + ":").length() + 1);
+			String valueString = arg.substring((argument.getName() + ":").length());
 			String[] valueArray = StringUtils.parse(valueString, "+");
 			values.addAll(ListUtils.asList(valueArray));
 		}

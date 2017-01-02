@@ -109,7 +109,7 @@ public class JOptionDialog extends JDialogSession {
 		 */
 		@Override
 		public void keyReleased(KeyEvent e) {
-			
+
 			// Key data.
 			int keyCode = e.getKeyCode();
 			int modifiers = e.getModifiers();
@@ -117,7 +117,7 @@ public class JOptionDialog extends JDialogSession {
 
 			// Get all buttons to process the key on them.
 			List<JButton> buttons = SwingUtils.getAllButtons(JOptionDialog.this);
-			
+
 			// Accelerator key.
 			for (JButton button : buttons) {
 				Action action = button.getAction();
@@ -129,8 +129,8 @@ public class JOptionDialog extends JDialogSession {
 						return;
 					}
 				}
-			}			
-			
+			}
+
 			// Escape.
 			if (keyCode == KeyEvent.VK_ESCAPE && modifiers == 0) {
 				e.consume();
@@ -138,7 +138,7 @@ public class JOptionDialog extends JDialogSession {
 				dispose();
 				return;
 			}
-			
+
 			// Enter.
 			if (keyCode == KeyEvent.VK_ENTER && modifiers == 0) {
 				e.consume();
@@ -245,7 +245,9 @@ public class JOptionDialog extends JDialogSession {
 	}
 
 	/**
-	 * @param icon the icon to set
+	 * Sets the optional icon.
+	 * 
+	 * @param icon The optional icon.
 	 */
 	public void setIcon(Icon icon) {
 		this.icon = icon;
@@ -373,12 +375,12 @@ public class JOptionDialog extends JDialogSession {
 		// Component.
 		GridBagConstraints constraintsComponent = new GridBagConstraints();
 		constraintsComponent.anchor = GridBagConstraints.CENTER;
-		constraintsComponent.fill = GridBagConstraints.NONE;
+		constraintsComponent.fill = GridBagConstraints.BOTH;
 		constraintsComponent.gridheight = 1;
 		constraintsComponent.gridwidth = 1;
 		constraintsComponent.gridx = (icon == null ? 0 : 1);
 		constraintsComponent.gridy = 0;
-		constraintsComponent.insets = new Insets(5, 5, 5, 15);
+		constraintsComponent.insets = new Insets(5, 5, 5, (icon != null ? 15 : 5));
 		constraintsComponent.weightx = 1;
 		constraintsComponent.weighty = 1;
 
@@ -394,7 +396,7 @@ public class JOptionDialog extends JDialogSession {
 		constraintsButtons.gridy = 1;
 		constraintsButtons.insets = new Insets(0, 5, 5, 5);
 		constraintsButtons.weightx = 1;
-		constraintsButtons.weighty = 1;
+		constraintsButtons.weighty = 0;
 
 		JPanelButtons panelButtons = new JPanelButtons();
 		for (Action action : actions) {
