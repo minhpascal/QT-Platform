@@ -21,6 +21,8 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.task.TaskRunner;
+import com.qtplaf.library.util.list.ArrayDelist;
+import com.qtplaf.library.util.list.Delist;
 
 /**
  * A <code>FileScanner</code> scans the source directory and optionally its sub-directories, notifying each file or
@@ -32,13 +34,9 @@ import com.qtplaf.library.task.TaskRunner;
 public class FileScanner extends TaskRunner {
 
 	/**
-	 * List of source files to scan.
+	 * The list of source directories or files to scan.
 	 */
 	private List<File> sourceFiles = new ArrayList<>();
-	/**
-	 * The list of source directories to scan.
-	 */
-	private List<File> sourceDirectories = new ArrayList<>();
 	/**
 	 * A boolean to indicate if sub-directories should be scanned.
 	 */
@@ -75,21 +73,12 @@ public class FileScanner extends TaskRunner {
 	}
 
 	/**
-	 * Add a source directory to the list of source directories.
+	 * Add a source directory or file to the list of source directories or files to scan.
 	 * 
-	 * @param sourceDirectory The source directory.
+	 * @param file The source directory or file.
 	 */
-	public void addSourceDirectory(File sourceDirectory) {
-		sourceDirectories.add(sourceDirectory);
-	}
-
-	/**
-	 * Add a source file to the list of source files.
-	 * 
-	 * @param sourceFile The source directory.
-	 */
-	public void addSourceFile(File sourceFile) {
-		sourceFiles.add(sourceFile);
+	public void addSource(File file) {
+		sourceFiles.add(file);
 	}
 
 	/**
@@ -174,97 +163,88 @@ public class FileScanner extends TaskRunner {
 	public void execute() throws Exception {
 
 		// Check source files.
-		for (File sourceFile : sourceFiles) {
-			if (!sourceFile.exists()) {
-				throw new IOException("Invalid source file " + sourceFile);
+		for (File file : sourceFiles) {
+			if (file.isFile()) {
+				if (!file.exists()) {
+					throw new IOException("Invalid source file " + file);
+				}
 			}
-			if (!sourceFile.isFile()) {
-				throw new IOException("Source is not a file " + sourceFile);
+			if (file.isDirectory()) {
+				if (!file.exists()) {
+					throw new IOException("Invalid source directory " + file);
+				}
 			}
 		}
 
-		// Check source directories.
-		for (File sourceDirectory : sourceDirectories) {
-			if (!sourceDirectory.exists()) {
-				throw new IOException("Invalid source directory " + sourceDirectory);
-			}
-			if (!sourceDirectory.isDirectory()) {
-				throw new IOException("Source is not a directory " + sourceDirectory);
-			}
+		// The delist with scanning files.
+		Delist<File> files = new ArrayDelist<>();
+		for (File file : sourceFiles) {
+			files.addLast(file);
 		}
 
 		// Initialize the step.
 		step = 0;
-		
-		// Scan first the list of files.
-		for (File sourceFile : sourceFiles) {
-			// Notify file if applicable.
-			if (isNotifyFiles() && sourceFile.isFile()) {
-				notifyFile(sourceFile);
-			}
-		}
-		
-		// Do scan.
-		for (File sourceDirectory : sourceDirectories) {
+
+		// Scan while files left.
+		while (!files.isEmpty()) {
 
 			// Check cancel.
 			if (checkCancel()) {
 				break;
 			}
+			// Check pause.
+			if (checkPause()) {
+				continue;
+			}
 
-			currentSourceDirectory = sourceDirectory;
-			scan(sourceDirectory);
+			// If last file is a file, notify if applicable and remove it.
+			if (files.getLast().isFile()) {
+				if (isNotifyFiles()) {
+					try {
+						notifyFile(files.getLast());
+					} catch (Exception exc) {
+						System.out.println();
+					}
+				}
+				files.removeLast();
+				continue;
+			}
+
+			// If last file is a directory, first notify if applicable, remove it and if should scan subdirectories, add
+			// the directory files.
+			if (files.getLast().isDirectory()) {
+				
+				// Current source directory must be in the list of source files.
+				if (sourceFiles.contains(files.getLast())) {
+					currentSourceDirectory = files.getLast();
+				}
+				
+				// Notify directory if applicable.
+				if (isNotifyDirectories()) {
+					notifyFile(files.getLast());
+				}
+				
+				// Remove.
+				File directory = files.removeLast();
+				
+				// Add children if should scan deeper.
+				if (isScanSubDirectories()) {
+					File[] children = directory.listFiles();
+					for (File child : children) {
+						files.addLast(child);
+					}
+				}
+				
+				continue;
+			}
+
 		}
 
+		// Notify cancelled.
 		if (cancelRequested()) {
 			notifyCancelled();
 		}
 
-	}
-
-	/**
-	 * Deeply scan.
-	 * 
-	 * @param directory The parent directory.
-	 * @throws IOException
-	 */
-	private void scan(File directory) throws IOException {
-		File[] files = directory.listFiles();
-		for (File file : files) {
-
-			// Check cancel.
-			if (checkCancel()) {
-				break;
-			}
-
-			// Notify directory if applicable.
-			if (isNotifyDirectories() && file.isDirectory()) {
-				notifyFile(file);
-			}
-
-			// Notify file if applicable.
-			if (isNotifyFiles() && file.isFile()) {
-				notifyFile(file);
-			}
-
-			// Scan sub-directories if applicable.
-			if (isScanSubDirectories() && file.isDirectory()) {
-				scan(file);
-			}
-		}
-	}
-
-	/**
-	 * Pause the scan by sleeping the thread..
-	 * 
-	 * @param millis Milliseconds
-	 */
-	private void pause() {
-		try {
-			Thread.sleep(50);
-			Thread.yield();
-		} catch (InterruptedException ignore) {
-		}
 	}
 
 	/**
@@ -274,17 +254,6 @@ public class FileScanner extends TaskRunner {
 	 * @throws IOException If any error occurs when the listeners process the events.
 	 */
 	private void notifyFile(File file) throws IOException {
-
-		// Check cancel.
-		if (checkCancel()) {
-			return;
-		}
-
-		// Check pause.
-		while (checkPause()) {
-			pause();
-		}
-
 		notifyStepStart(++step, "");
 		for (FileScannerListener listener : listeners) {
 			listener.file(currentSourceDirectory, file);

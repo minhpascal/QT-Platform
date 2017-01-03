@@ -15,9 +15,14 @@
 package com.qtplaf.library.swing;
 
 import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.qtplaf.library.util.list.ArrayDelist;
-import com.qtplaf.library.util.list.Delist;
+import javax.swing.KeyStroke;
+
+import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.event.KeyHandler;
 
 /**
  * The window manager keeps track of dialogs and frames that extend <tt>JDialogSession</tt> or <tt>JFrameSession</tt>.
@@ -27,17 +32,55 @@ import com.qtplaf.library.util.list.Delist;
 public class WindowManager {
 
 	/**
+	 * Windows key.
+	 */
+	public static final KeyStroke keyWindows =
+		KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK);
+
+	/**
+	 * Key listener to show the windows list.
+	 */
+	static class KeyAdapter extends KeyHandler {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if (KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()).equals(keyWindows)) {
+				StringBuilder b = new StringBuilder();
+				Session session = null;
+				for (Window window : windows) {
+					if (window instanceof JFrameSession) {
+						JFrameSession frame = (JFrameSession) window;
+						session = frame.getSession();
+						b.append(frame.getTitle() + "\n");
+					}
+					if (window instanceof JDialogSession) {
+						JDialogSession dialog = (JDialogSession) window;
+						session = dialog.getSession();
+						b.append(dialog.getTitle() + "\n");
+					}
+				}
+				MessageBox.info(session, b.toString());
+			}
+		}
+
+	}
+
+	/**
 	 * The list of windows.
 	 */
-	private static Delist<Window> windows = new ArrayDelist<>();
+	private static List<Window> windows = new ArrayList<>();
+	/**
+	 * Key listener.
+	 */
+	private static KeyAdapter keyListener = new KeyAdapter();
 
 	/**
 	 * Add a window.
 	 * 
 	 * @param window The window to add.
 	 */
-	public static synchronized void add(Window window) {
-		windows.addLast(window);
+	synchronized public static void add(Window window) {
+		SwingUtils.installKeyListener(window, keyListener);
+		windows.add(window);
 	}
 
 	/**
@@ -45,12 +88,12 @@ public class WindowManager {
 	 * 
 	 * @param window The window to remove.
 	 */
-	public static synchronized void remove(Window window) {
+	synchronized public static void remove(Window window) {
 		windows.remove(window);
 	}
 
 	/**
-	 * Accept only static methods.
+	 * Only static methods.
 	 */
 	private WindowManager() {
 	}

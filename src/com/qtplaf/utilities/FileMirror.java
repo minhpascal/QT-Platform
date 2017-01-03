@@ -35,7 +35,7 @@ public class FileMirror {
 	public static void main(String[] args) {
 		
 		// System text resources and session.
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 
 		// Frame menu.

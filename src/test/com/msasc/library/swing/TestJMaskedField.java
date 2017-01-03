@@ -24,7 +24,7 @@ public class TestJMaskedField {
 
 	public static void main(String[] args) {
 
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 
 		FieldList fieldList = Util.getFieldList();
 		Record record = new Record(fieldList);

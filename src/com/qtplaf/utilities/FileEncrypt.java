@@ -17,8 +17,6 @@ package com.qtplaf.utilities;
 import java.io.File;
 import java.util.Locale;
 
-import javax.swing.JOptionPane;
-
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.JFileChooser;
 import com.qtplaf.library.util.TextServer;
@@ -36,28 +34,14 @@ public class FileEncrypt {
 	public static void main(String[] args) {
 
 		// Strings and session.
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 		Locale.setDefault(Locale.UK);
 
-		// Ask whether to encrypt or decrypt.
-		String title = "Please, indicate the option.";
-		String message = "Encrypt or decrypt a file?";
-		int messageType = JOptionPane.QUESTION_MESSAGE;
-		String[] options = new String[] { "Encrypt", "Decrypt", "Cancel" };
-		String initialOption = "Encrypt";
-		String cancelOption = "Cancel";
-
-		String option = OptionDialog.show(message, title, messageType, options, initialOption, cancelOption);
-		if (option.equals("Cancel")) {
-			System.exit(0);
-			return;
-		}
-		boolean encrypt = option.equals("Encrypt");
 
 		// Select the source file.
 		JFileChooser chooserSource = new JFileChooser(session);
-		chooserSource.setDialogTitle("Please, select the source file to "+(encrypt ? "encrypt" : "decrypt"));
+		chooserSource.setDialogTitle("Please, select the source file to encrypt");
 		chooserSource.setDialogType(JFileChooser.OPEN_DIALOG);
 		chooserSource.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooserSource.setAcceptAllFileFilterUsed(true);

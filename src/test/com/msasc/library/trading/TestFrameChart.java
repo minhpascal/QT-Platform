@@ -47,7 +47,7 @@ public class TestFrameChart {
 	public static void main(String[] args) throws Exception {
 		Locale.setDefault(Locale.US);
 
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 
 		JFrameChartTest frame = new JFrameChartTest();
 

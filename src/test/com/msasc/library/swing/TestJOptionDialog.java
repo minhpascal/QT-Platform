@@ -13,7 +13,7 @@ import com.qtplaf.library.util.TextServer;
 public class TestJOptionDialog {
 
 	public static void main(String[] args) {
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 
 		JOptionDialog dlg = new JOptionDialog(session);

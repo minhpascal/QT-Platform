@@ -14,7 +14,7 @@ public class TestJMaskedFieldDate {
 
 		Locale.setDefault(new Locale("en", "GB"));
 
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 
 		FieldList fieldList = Util.getFieldList();
 		Record record = new Record(fieldList);

@@ -9,7 +9,7 @@ import com.qtplaf.library.util.TextServer;
 public class TestXMLReader {
 
 	public static void main(String[] args) {
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		try {
 			File file = null;
 			if (file == null) {

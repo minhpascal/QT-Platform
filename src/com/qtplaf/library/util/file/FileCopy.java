@@ -499,7 +499,7 @@ public class FileCopy extends TaskRunner {
 		Iterator<File> keys = mapDirectories.keySet().iterator();
 		while (keys.hasNext()) {
 			File source = keys.next();
-			scanner.addSourceDirectory(mapDirectories.get(source));
+			scanner.addSource(mapDirectories.get(source));
 		}
 		return scanner;
 	}
@@ -515,12 +515,12 @@ public class FileCopy extends TaskRunner {
 		Iterator<File> keysDirectories = mapDirectories.keySet().iterator();
 		while (keysDirectories.hasNext()) {
 			File source = keysDirectories.next();
-			scanner.addSourceDirectory(source);
+			scanner.addSource(source);
 		}
 		Iterator<File> keysFiles = mapFiles.keySet().iterator();
 		while (keysFiles.hasNext()) {
 			File source = keysFiles.next();
-			scanner.addSourceFile(source);
+			scanner.addSource(source);
 		}
 		return scanner;
 	}
@@ -558,6 +558,9 @@ public class FileCopy extends TaskRunner {
 			if (scanner.isCancelled()) {
 				return -1;
 			}
+			if (scanner.isException()) {
+				throw new Exception(scanner.getException());
+			}
 
 			// Read steps.
 			count += counterListener.getCount();
@@ -580,6 +583,9 @@ public class FileCopy extends TaskRunner {
 		scanner.run();
 		if (scanner.isCancelled()) {
 			return -1;
+		}
+		if (scanner.isException()) {
+			throw new Exception(scanner.getException());
 		}
 
 		// Read steps.
@@ -634,6 +640,9 @@ public class FileCopy extends TaskRunner {
 				notifyCancelled();
 				return;
 			}
+			if (scanner.isException()) {
+				throw new Exception(scanner.getException());
+			}
 		}
 
 		// Clear labels.
@@ -655,6 +664,9 @@ public class FileCopy extends TaskRunner {
 			clearAdditionalLabels();
 			notifyCancelled();
 			return;
+		}
+		if (scanner.isException()) {
+			throw new Exception(scanner.getException());
 		}
 
 		// Clear labels.

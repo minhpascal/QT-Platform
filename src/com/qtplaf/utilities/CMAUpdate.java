@@ -44,7 +44,7 @@ public class CMAUpdate {
 	public static void main(String[] args) {
 
 		// System text resources and session.
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 
 		// Command line argument: environment
@@ -65,7 +65,7 @@ public class CMAUpdate {
 		// - local
 		Argument argModules =
 			new Argument("modules", "Modules: central/dictionary/local", true, true, "central", "dictionary", "local");
-		
+
 		// Command line argument: purge (flag)
 		Argument argPurge =
 			new Argument("purge", "Purge destination directories", false, false, false);
@@ -93,7 +93,7 @@ public class CMAUpdate {
 		JOptionDialog dialog = new JOptionDialog(session);
 		dialog.setTitle("CMA Update utility");
 		dialog.setComponent(new JScrollPane(panelGroup));
-		dialog.addOption("Close");
+		dialog.addOption("Close", true);
 		dialog.showDialog(true);
 
 		System.exit(0);
@@ -136,6 +136,7 @@ public class CMAUpdate {
 				addLocalModuleStrategicPlanLocal(fc, production, "CMA_Central");
 				addLocalModuleWorkingCapitalCentral(fc, production, "CMA_Central");
 				addLocalModuleWorkingCapitalLocal(fc, production, "CMA_Central");
+				addLocalModuleSecurity(fc, production, "CMA_Central");
 				tasks.add(fc);
 			}
 
@@ -151,6 +152,7 @@ public class CMAUpdate {
 				addLocalModuleMarginsDictionary(fc, production, "CMA_Dictionary", true);
 				addLocalModuleMarginsLibrary(fc, production, "CMA_Dictionary");
 				addLocalModuleMarginsLocal(fc, production, "CMA_Dictionary");
+				addLocalModuleSecurity(fc, production, "CMA_Dictionary");
 				tasks.add(fc);
 			}
 
@@ -170,6 +172,7 @@ public class CMAUpdate {
 				addLocalModuleStrategicPlanLocal(fc, production, "CMA_Local");
 				addLocalModuleWorkingCapitalCentral(fc, production, "CMA_Local");
 				addLocalModuleWorkingCapitalLocal(fc, production, "CMA_Local");
+				addLocalModuleSecurity(fc, production, "CMA_Local");
 				tasks.add(fc);
 			}
 		}
@@ -199,6 +202,58 @@ public class CMAUpdate {
 					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_dictionary", drive);
 					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_library", drive);
 					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_margins_local", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_security", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_stplan_central", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_stplan_local", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_wcapital_central", drive);
+					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_wcapital_local", drive);
+					addRemoteFiles(fc, production, "CMA_Central", "CMA_Central.cmd", drive);
+					addRemoteFiles(fc, production, "CMA_Central", "JLoad.cmd", drive);
+					tasks.add(fc);
+				}
+			}
+
+			// Dictionary.
+			if (argMngr.getValues("modules").contains("dictionary")) {
+				for (String drive : drives) {
+					FileCopy fc = new FileCopy(session);
+					fc.setName(getName(production, local, "D"));
+					fc.setDescription(getDescription(production, local, "dictionary"));
+					fc.setPurgeDestination(purge);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "library", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_budget_dictionary", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_budget_local", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_central", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_dictionary", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_library", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_local", drive);
+					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_security", drive);
+					addRemoteFiles(fc, production, "CMA_Dictionary", "CMA_Dictionary.cmd", drive);
+					addRemoteFiles(fc, production, "CMA_Dictionary", "JLoad.cmd", drive);
+					tasks.add(fc);
+				}
+			}
+
+			// Local.
+			if (argMngr.getValues("modules").contains("local")) {
+				for (String drive : drives) {
+					FileCopy fc = new FileCopy(session);
+					fc.setName(getName(production, local, "L"));
+					fc.setDescription(getDescription(production, local, "local"));
+					fc.setPurgeDestination(purge);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "library", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_budget_dictionary", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_budget_local", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_margins_central", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_margins_dictionary", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_margins_library", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_margins_local", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_security", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_stplan_local", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_wcapital_central", drive);
+					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_wcapital_local", drive);
+					addRemoteFiles(fc, production, "CMA_Local", "CMA_Local.cmd", drive);
+					addRemoteFiles(fc, production, "CMA_Local", "JLoad.cmd", drive);
 					tasks.add(fc);
 				}
 			}
@@ -476,6 +531,41 @@ public class CMAUpdate {
 	}
 
 	/**
+	 * Add the local security module copy task.
+	 * 
+	 * @param fc File copy.
+	 * @param production Production/Development.
+	 * @param module Module (CMA_Central/CMA_Dictionary/CMA_Local)
+	 */
+	private static void addLocalModuleSecurity(FileCopy fc, boolean production, String module) {
+		String srcParent = "XVR COM Module Seguridad";
+		String dstParent = module + "\\mads\\module_security";
+		// bin
+		addLocalDirs(fc, production, srcParent, dstParent, "bin");
+		// res
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Module_Seguridad_DBSchema.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Module_Seguridad_DBSchema_en.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Module_Seguridad_Descriptor.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Module_Seguridad_Descriptor_en.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Module_Seguridad_Strings.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Module_Seguridad_Strings_en.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_DBSchema.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_DBSchema_en.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_DBSchema_es.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_Descriptor.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_Descriptor_en.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_Descriptor_es.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_Domains.txt");
+		addLocalFiles(fc, production, srcParent, dstParent, "res\\Seguridad_Strings.txt");
+		// xml
+		addLocalFiles(fc, production, srcParent, dstParent, "xml\\Module_Seguridad_Descriptor.xml");
+		addLocalFiles(fc, production, srcParent, dstParent, "xml\\Seguridad_DBSchema.xml");
+		addLocalFiles(fc, production, srcParent, dstParent, "xml\\Seguridad_Descriptor.xml");
+		addLocalFiles(fc, production, srcParent, dstParent, "xml\\Seguridad_Domains.xml");
+		addLocalFiles(fc, production, srcParent, dstParent, "xml\\Seguridad_Strings.xml");
+	}
+
+	/**
 	 * Returns a suitable name.
 	 * 
 	 * @param production Production/Quality
@@ -514,7 +604,7 @@ public class CMAUpdate {
 		if (production) {
 			b.append(" environment:production");
 		} else {
-			b.append(" environment:developmenty");
+			b.append(" environment:quality");
 		}
 		if (local) {
 			b.append(" target:local");
@@ -541,6 +631,24 @@ public class CMAUpdate {
 		File fileDstParent = new File(drive + ":\\" + parent);
 		File fileDst = new File(fileDstParent, name);
 		fc.addDirectories(fileSrc, fileDst);
+	}
+
+	/**
+	 * Add files for a remote copy task.
+	 * 
+	 * @param fc The file copy.
+	 * @param prod Production/Development.
+	 * @param parent Source (for instance CMA_Central\\mads)
+	 * @param name Last directory name.
+	 * @param drive Destination drive.
+	 */
+	private static void addRemoteFiles(FileCopy fc, boolean prod, String parent, String name, String drive) {
+		File fileSrcRoot = new File(getSrcRootRemote(prod));
+		File fileSrcParent = new File(fileSrcRoot, parent);
+		File fileSrc = new File(fileSrcParent, name);
+		File fileDstParent = new File(drive + ":\\" + parent);
+		File fileDst = new File(fileDstParent, name);
+		fc.addFiles(fileSrc, fileDst);
 	}
 
 	/**

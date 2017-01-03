@@ -427,7 +427,7 @@ public class JPanelProgress extends JPanel {
 				// Check error if applicable.
 				updateStatusError(task);
 				// Reset progress bar if indeterminate.
-				if (task.isIndeterminate()) {
+				if (task.isIndeterminate() || getProgressBar().isIndeterminate()) {
 					getProgressBar().setIndeterminate(false);
 				}
 				// Enable close button.

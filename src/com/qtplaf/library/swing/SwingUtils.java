@@ -904,6 +904,17 @@ public class SwingUtils {
 
 	/**
 	 * Installs the key listener in the tree of components where the argument component is included, starting in the
+	 * first parent <i>JFrame</i> or <i>JDialog</i> parent, without removing previous key listeners.
+	 * 
+	 * @param cmp The starting components in the tree.
+	 * @param keyListener The key listener to install.
+	 */
+	public static void installKeyListener(Component cmp, KeyListener keyListener) {
+		installKeyListener(cmp, keyListener, false);
+	}
+
+	/**
+	 * Installs the key listener in the tree of components where the argument component is included, starting in the
 	 * first parent <i>JFrame</i> or <i>JDialog</i> parent.
 	 * 
 	 * @param cmp The starting components in the tree.

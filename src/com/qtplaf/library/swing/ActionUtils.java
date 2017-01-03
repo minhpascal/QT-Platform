@@ -76,6 +76,10 @@ public class ActionUtils {
 	private static final Integer KeyVisibleInButtonsPanel = Integer.valueOf(index++);
 	/** A boolean that indicates if the action (button action) is visible in a popup menu. Default is true. */
 	private static final Integer KeyVisibleInPopupMenu = Integer.valueOf(index++);
+	/** A boolean to indicate that the action is the default close action in dialog and frames. */
+	private static final Integer KeyDefaultCloseAction = Integer.valueOf(index++);
+	/** A generic user object. */
+	private static final Integer KeyUserObject = Integer.valueOf(index++);
 
 	/**
 	 * Returns the sort index value.
@@ -173,6 +177,16 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Returns a boolean indicating whethe the action is a default close action.
+	 * 
+	 * @param action The action.
+	 * @return A boolean.
+	 */
+	public static boolean isDefaultCloseAction(Action action) {
+		return getProperties(action).getBoolean(KeyDefaultCloseAction);
+	}
+
+	/**
 	 * Returns the edit context value.
 	 * 
 	 * @param action The action.
@@ -240,6 +254,16 @@ public class ActionUtils {
 	 */
 	public static String getSourceName(Action action) {
 		return getProperties(action).getString(KeySourceName);
+	}
+
+	/**
+	 * Returns the user object installed in the action.
+	 * 
+	 * @param action The action.
+	 * @return The user object or null.
+	 */
+	public static Object getUserObject(Action action) {
+		return getProperties(action).getObject(KeyUserObject);
 	}
 
 	/**
@@ -384,6 +408,16 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Set a generic user object.
+	 * 
+	 * @param action The action.
+	 * @param userObject The user object.
+	 */
+	public static void setUserObject(Action action, Object userObject) {
+		getProperties(action).setObject(KeyUserObject, userObject);
+	}
+
+	/**
 	 * Set the menu item source text value.
 	 * 
 	 * @param action The action.
@@ -452,7 +486,17 @@ public class ActionUtils {
 	public static void setMultipleSelection(Action action, boolean multipleSelection) {
 		getProperties(action).setBoolean(KeyMultipleSelection, multipleSelection);
 	}
-
+	
+	/**
+	 * Set the action as default close action..
+	 * 
+	 * @param action The action.
+	 * @param defaultClose A boolean.
+	 */
+	public static void setDefaultCloseAction(Action action, boolean defaultClose) {
+		getProperties(action).setBoolean(KeyDefaultCloseAction, defaultClose);
+	}
+	
 	/**
 	 * Set the button value.
 	 * 

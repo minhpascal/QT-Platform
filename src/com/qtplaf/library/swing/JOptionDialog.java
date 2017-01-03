@@ -72,6 +72,14 @@ public class JOptionDialog extends JDialogSession {
 
 		@Override
 		public void windowClosing(WindowEvent e) {
+			// First look for the default close action.
+			for (Action action : actions) {
+				if (ActionUtils.isDefaultCloseAction(action)) {
+					ActionUtils.getButton(action).doClick();
+					return;
+				}
+			}
+			// Not found, strait close.
 			setVisible(false);
 			dispose();
 		}
@@ -203,7 +211,17 @@ public class JOptionDialog extends JDialogSession {
 	 * @param option The option to add.
 	 */
 	public void addOption(String option) {
-		addOption(option, null, null, null);
+		addOption(option, null, null, null, false);
+	}
+
+	/**
+	 * Add an option to the list of options.
+	 * 
+	 * @param option The option to add.
+	 * @param defaultClose A boolean that indicates if the option is the default close option.
+	 */
+	public void addOption(String option, boolean defaultClose) {
+		addOption(option, null, null, null, defaultClose);
 	}
 
 	/**
@@ -213,8 +231,15 @@ public class JOptionDialog extends JDialogSession {
 	 * @param description The optional option description.
 	 * @param smallIcon The optional option small icon.
 	 * @param acceleratorKey The optional option accelerator key.
+	 * @param defaultClose A boolean that indicates if the option is the default close option.
 	 */
-	public void addOption(String option, String description, Icon smallIcon, KeyStroke acceleratorKey) {
+	public void addOption(
+		String option,
+		String description,
+		Icon smallIcon,
+		KeyStroke acceleratorKey,
+		boolean defaultClose) {
+
 		if (option == null) {
 			throw new NullPointerException("The option can not be null");
 		}
@@ -231,7 +256,22 @@ public class JOptionDialog extends JDialogSession {
 		}
 		ActionUtils.setSession(action, getSession());
 		ActionUtils.setActionGroup(action, ActionGroup.Edit);
+		ActionUtils.setDefaultCloseAction(action, defaultClose);
 
+		actions.add(action);
+	}
+
+	/**
+	 * Add an option in the for of an action that is expected to have a name or source name at least. It can also have
+	 * the common attributes, short description, accelerator key, action group.
+	 * <p>
+	 * This option dialog is set as the user object, so it can be retrieved when the action is executed.
+	 * 
+	 * @param action The action. One of them should be the default close action.
+	 */
+	public void addOption(Action action) {
+		ActionUtils.setSession(action, getSession());
+		ActionUtils.setUserObject(action, this);
 		actions.add(action);
 	}
 
@@ -324,6 +364,22 @@ public class JOptionDialog extends JDialogSession {
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		this.component = scrollPane;
+	}
+
+	/**
+	 * Returns the message if the component is a simple message.
+	 * 
+	 * @return The message.
+	 */
+	public String getMessage() {
+		if (component instanceof JScrollPane) {
+			JScrollPane scrollPane = (JScrollPane) component;
+			if (scrollPane.getViewport().getView() instanceof JTextArea) {
+				JTextArea textArea = (JTextArea) scrollPane.getViewport().getView();
+				return textArea.getText();
+			}
+		}
+		return null;
 	}
 
 	/**

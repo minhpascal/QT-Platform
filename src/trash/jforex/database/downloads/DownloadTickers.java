@@ -65,7 +65,7 @@ public class DownloadTickers {
 	public void processDownload() throws Exception {
 		
 		// Initialize text server 
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		
 		// Retrieve the database engine that will be used overall
 //		DBEngine dbEngine = DBEngineFactory.getDBEngineForex();

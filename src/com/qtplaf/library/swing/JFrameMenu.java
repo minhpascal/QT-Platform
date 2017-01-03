@@ -95,7 +95,7 @@ public class JFrameMenu extends JFrameSession {
 			setupPanelButtons();
 		}
 	}
-	
+
 	/**
 	 * Window adapter to handle closing.
 	 */
@@ -104,6 +104,7 @@ public class JFrameMenu extends JFrameSession {
 		public void windowClosing(WindowEvent e) {
 			getActionExit().actionPerformed(new ActionEvent(e.getSource(), 0, "EXIT APP"));
 		}
+
 		@Override
 		public void windowGainedFocus(WindowEvent e) {
 			setupPanelButtons();
@@ -193,7 +194,7 @@ public class JFrameMenu extends JFrameSession {
 		constraints.gridx = 0;
 		constraints.gridy = 4;
 		getContentPane().add(getPanelButtons(), constraints);
-		
+
 		// This window listener.
 		WindowAdapter windowAdapter = new WindowAdapter();
 		addWindowListener(windowAdapter);
@@ -315,5 +316,21 @@ public class JFrameMenu extends JFrameSession {
 	 */
 	public void setPreExitAction(Action preExitAction) {
 		this.preExitAction = preExitAction;
+	}
+
+	/**
+	 * Show the console.
+	 */
+	public void showConsole() {
+		getTabbedPane().setSelectedComponent(getConsole());
+		setupPanelButtons();
+	}
+
+	/**
+	 * Show the tree menu.
+	 */
+	public void showTreeMenu() {
+		getTabbedPane().setSelectedComponent(getPanelTreeMenu());
+		setupPanelButtons();
 	}
 }

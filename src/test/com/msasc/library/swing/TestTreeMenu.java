@@ -73,7 +73,7 @@ public class TestTreeMenu {
 	 */
 	public static void main(String[] args) {
 		
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 		
 		KeyStroke[] keyStrokes = new KeyStroke[]{

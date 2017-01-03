@@ -5,8 +5,8 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
-import com.qtplaf.library.trading.server.database.Names;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
+import com.qtplaf.platform.database.Names;
 
 public class TestNames {
 

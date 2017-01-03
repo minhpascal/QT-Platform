@@ -12,7 +12,7 @@ import com.qtplaf.library.util.TextServer;
 public class TestJFileChooser {
 
 	public static void main(String[] args) {
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 		Locale.setDefault(Locale.UK);
 		

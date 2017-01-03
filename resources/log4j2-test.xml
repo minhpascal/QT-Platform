@@ -28,6 +28,8 @@
 	<Loggers>
 		<Root level="trace">
 			<AppenderRef ref="Console" />
+		</Root>
+		<Root level="error">
 			<AppenderRef ref="RollingFile" />
 		</Root>
 	</Loggers>

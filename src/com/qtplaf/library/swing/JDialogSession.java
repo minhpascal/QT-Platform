@@ -95,4 +95,19 @@ public class JDialogSession extends JDialog {
 		addWindowListener(handler);
 		addWindowStateListener(handler);
 	}
+
+	/**
+	 * Set this window visible.
+	 * 
+	 * @param b A boolean.
+	 */
+	@Override
+	public void setVisible(boolean b) {
+		if (b) {
+			WindowManager.add(this);
+		} else {
+			WindowManager.remove(this);
+		}
+		super.setVisible(b);
+	}
 }

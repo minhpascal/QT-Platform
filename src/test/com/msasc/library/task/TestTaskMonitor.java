@@ -37,7 +37,7 @@ import test.com.msasc.library.swing.TestBox;
  */
 public class TestTaskMonitor {
 	public static void main(String[] args) {
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
 
 		JPanelProgressGroup monitor = new JPanelProgressGroup(session);

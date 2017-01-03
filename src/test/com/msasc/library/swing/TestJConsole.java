@@ -36,7 +36,7 @@ public class TestJConsole {
 	}
 
 	public static void main(String[] args) {
-		TextServer.addBaseResource("SysString.xml");
+		TextServer.addBaseResource("StringsLibrary.xml");
 		
 		JConsole console = new JConsole(10000);
 		JScrollPane scrollPane = new JScrollPane(console);
