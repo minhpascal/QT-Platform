@@ -262,10 +262,10 @@ public class JPanelProgress extends JPanel {
 		 * @param task The task.
 		 */
 		public void counting(Task task) {
+			// Register counting.
+			counting = true;
 			// Update status counting.
 			updateStatusCounting();
-			// Temporarily set the progress bar indeterminate.
-			getProgressBar().setIndeterminate(true);
 		}
 
 		/**
@@ -315,8 +315,6 @@ public class JPanelProgress extends JPanel {
 				updateTimeElapsed();
 				// Update error with cancelled.
 				updateErrorCancelledByUser(task);
-				// Update popup menu.
-				updatePopupMenu();
 			}
 		}
 
@@ -344,12 +342,10 @@ public class JPanelProgress extends JPanel {
 				// Set the proper icon to the start/pause/resume button.
 				setActionRunProperties(Run.Resume);
 				// If is indeterminate, stop the progress bar.
-				if (task.isIndeterminate()) {
+				if (task.isIndeterminate() || counting) {
 					getProgressBar().setIndeterminate(false);
 					updateStatusPaused();
 				}
-				// Update popup menu.
-				updatePopupMenu();
 			}
 		}
 
@@ -378,12 +374,14 @@ public class JPanelProgress extends JPanel {
 				// Set the proper icon to the pause/resume button.
 				setActionRunProperties(Run.Pause);
 				// If is indeterminate, restart the progress bar.
-				if (task.isIndeterminate()) {
+				if (task.isIndeterminate() || counting) {
 					getProgressBar().setIndeterminate(true);
-					updateStatusProcessing();
+					if (counting) {
+						updateStatusCounting();
+					} else {
+						updateStatusProcessing();
+					}
 				}
-				// Update popup menu.
-				updatePopupMenu();
 			}
 		}
 
@@ -432,8 +430,6 @@ public class JPanelProgress extends JPanel {
 				}
 				// Enable close button.
 				getButtonClose().setEnabled(true);
-				// Update popup menu.
-				updatePopupMenu();
 			}
 		}
 
@@ -444,6 +440,8 @@ public class JPanelProgress extends JPanel {
 		 */
 		@Override
 		public void stepCount(Task task) {
+			// Counting is no more valid.
+			counting = false;
 			// Reset the progress bar to determinate.
 			getProgressBar().setIndeterminate(false);
 			// Update the progress bar.
@@ -569,8 +567,11 @@ public class JPanelProgress extends JPanel {
 	/** The task to monitor. */
 	private Task monitoringTask;
 
-	/** The popup menu. */
-	private JPopupMenu popupMenu;
+	/**
+	 * A boolean that indicates that the task is counting. Set to <tt>true</tt> when notified counting, and to
+	 * <tt>false</tt> when notified step count.
+	 */
+	private boolean counting = false;
 
 	/**
 	 * Default constructor.
@@ -1269,6 +1270,7 @@ public class JPanelProgress extends JPanel {
 	 */
 	private void updateStatusCounting() {
 		getLabelStatus().setText(getSession().getString("panelProgressCounting") + "...");
+		getProgressBar().setIndeterminate(true);
 	}
 
 	/**
@@ -1378,19 +1380,16 @@ public class JPanelProgress extends JPanel {
 	 */
 	private JPopupMenu getPopupMenu() {
 
-		if (popupMenu == null) {
+		// Sorted actions.
+		List<Action> itemActions = actions.getActions();
 
-			// Sorted actions.
-			List<Action> itemActions = actions.getActions();
+		// Popup menu.
+		JPopupMenu popupMenu = new JPopupMenu();
 
-			// Popup menu.
-			popupMenu = new JPopupMenu();
-
-			// Add items.
-			for (int i = 0; i < itemActions.size(); i++) {
-				Action action = itemActions.get(i);
-				popupMenu.add(getMenuItem(actions.getButton(action)));
-			}
+		// Add items.
+		for (int i = 0; i < itemActions.size(); i++) {
+			Action action = itemActions.get(i);
+			popupMenu.add(getMenuItem(actions.getButton(action)));
 		}
 
 		return popupMenu;
@@ -1413,22 +1412,6 @@ public class JPanelProgress extends JPanel {
 		menuItem.setEnabled(button.isEnabled());
 		menuItem.setBackground(Color.WHITE);
 		return menuItem;
-	}
-
-	/**
-	 * Updates the popup menu with status.
-	 */
-	private void updatePopupMenu() {
-		for (int i = 0; i < getPopupMenu().getComponentCount(); i++) {
-			JMenuItem menuItem = (JMenuItem) getPopupMenu().getComponent(i);
-			Action action = actions.get(i);
-			JButton button = actions.getButton(action);
-			menuItem.setIcon(button.getIcon());
-			menuItem.setText(ActionUtils.getMenuItemSourceText(action));
-			menuItem.setToolTipText(button.getToolTipText());
-			menuItem.setVisible(button.isVisible());
-			menuItem.setEnabled(button.isEnabled());
-		}
 	}
 
 	/**

@@ -133,7 +133,7 @@ public class ActionUtils {
 	 * @return The edit mode value.
 	 */
 	public static EditMode getEditMode(Action action) {
-		return getProperties(action).getEditMode(KeyEditMode);
+		return (EditMode) getProperties(action).getObject(KeyEditMode);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class ActionUtils {
 	 * @return The current value.
 	 */
 	public static Value getCurrentValue(Action action) {
-		return getProperties(action).getValue(KeyCurrentValue);
+		return (Value) getProperties(action).getObject(KeyCurrentValue);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class ActionUtils {
 	 * @return The previous value.
 	 */
 	public static Value getPreviousValue(Action action) {
-		return getProperties(action).getValue(KeyPreviousValue);
+		return (Value) getProperties(action).getObject(KeyPreviousValue);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class ActionUtils {
 	 * @return The edit context value.
 	 */
 	public static EditContext getEditContext(Action action) {
-		return getProperties(action).getEditContext(KeyEditContext);
+		return (EditContext) getProperties(action).getObject(KeyEditContext);
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class ActionUtils {
 	 * @return The session value.
 	 */
 	public static Session getSession(Action action) {
-		return getProperties(action).getSession(KeySession);
+		return (Session) getProperties(action).getObject(KeySession);
 	}
 
 	/**
@@ -303,7 +303,7 @@ public class ActionUtils {
 	 * @return The action group value.
 	 */
 	public static ActionGroup getActionGroup(Action action) {
-		return getProperties(action).getActionGroup(KeyActionGroup);
+		return (ActionGroup) getProperties(action).getObject(KeyActionGroup);
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class ActionUtils {
 	 * @return The button value.
 	 */
 	public static JButton getButton(Action action) {
-		return getProperties(action).getButton(KeyButton);
+		return (JButton) getProperties(action).getObject(KeyButton);
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class ActionUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Record> getValueSelectedRecords(Action action) {
-		return (List<Record>) getProperties(action).getList(KeySelectedRecords);
+		return (List<Record>) getProperties(action).getObject(KeySelectedRecords);
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class ActionUtils {
 	 * @param editMode The edit mode value.
 	 */
 	public static void setEditMode(Action action, EditMode editMode) {
-		getProperties(action).setEditMode(KeyEditMode, editMode);
+		getProperties(action).setObject(KeyEditMode, editMode);
 	}
 
 	/**
@@ -354,7 +354,7 @@ public class ActionUtils {
 	 * @param editContext The edit context value.
 	 */
 	public static void setEditContext(Action action, EditContext editContext) {
-		getProperties(action).setEditContext(KeyEditContext, editContext);
+		getProperties(action).setObject(KeyEditContext, editContext);
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class ActionUtils {
 	 * @param value The value.
 	 */
 	public static void setCurrentValue(Action action, Value value) {
-		getProperties(action).setValue(KeyCurrentValue, value);
+		getProperties(action).setObject(KeyCurrentValue, value);
 	}
 
 	/**
@@ -374,7 +374,7 @@ public class ActionUtils {
 	 * @param value The value.
 	 */
 	public static void setPreviousValue(Action action, Value value) {
-		getProperties(action).setValue(KeyPreviousValue, value);
+		getProperties(action).setObject(KeyPreviousValue, value);
 	}
 
 	/**
@@ -384,7 +384,7 @@ public class ActionUtils {
 	 * @param session The session.
 	 */
 	public static void setSession(Action action, Session session) {
-		getProperties(action).setSession(KeySession, session);
+		getProperties(action).setObject(KeySession, session);
 	}
 
 	/**
@@ -504,7 +504,7 @@ public class ActionUtils {
 	 * @param button The button value.
 	 */
 	public static void setButton(Action action, JButton button) {
-		getProperties(action).setButton(KeyButton, button);
+		getProperties(action).setObject(KeyButton, button);
 	}
 
 	/**
@@ -524,7 +524,7 @@ public class ActionUtils {
 	 * @param actionGroup The action group value.
 	 */
 	public static void setActionGroup(Action action, ActionGroup actionGroup) {
-		getProperties(action).setActionGroup(KeyActionGroup, actionGroup);
+		getProperties(action).setObject(KeyActionGroup, actionGroup);
 	}
 
 	/**
@@ -544,7 +544,7 @@ public class ActionUtils {
 	 * @param selectedRecords The list of selected records value.
 	 */
 	public static void setSelectedRecords(Action action, List<Record> selectedRecords) {
-		getProperties(action).setList(KeySelectedRecords, selectedRecords);
+		getProperties(action).setObject(KeySelectedRecords, selectedRecords);
 	}
 
 	/**

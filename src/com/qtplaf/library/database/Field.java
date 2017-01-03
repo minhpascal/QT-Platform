@@ -262,7 +262,7 @@ public class Field implements Comparable<Object> {
 	 * @return The type.
 	 */
 	public Types getType() {
-		return properties.getType(KeyType);
+		return (Types) properties.getObject(KeyType);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class Field implements Comparable<Object> {
 	 * @param type The type.
 	 */
 	public void setType(Types type) {
-		properties.setType(KeyType, type);
+		properties.setObject(KeyType, type);
 		switch (type) {
 		case String:
 			setHorizontalAlignment(Alignment.Left);
@@ -315,7 +315,7 @@ public class Field implements Comparable<Object> {
 	 * @return The maximum value.
 	 */
 	public Value getMaximumValue() {
-		return properties.getValue(KeyMaximumValue);
+		return (Value) properties.getObject(KeyMaximumValue);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setMaximumValue(Value maximumValue) {
 		validateValueType(maximumValue);
-		properties.setValue(KeyMaximumValue, maximumValue);
+		properties.setObject(KeyMaximumValue, maximumValue);
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class Field implements Comparable<Object> {
 	 * @return The minimum value.
 	 */
 	public Value getMinimumValue() {
-		return properties.getValue(KeyMinimumValue);
+		return (Value) properties.getObject(KeyMinimumValue);
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setMinimumValue(Value minimumValue) {
 		validateValueType(minimumValue);
-		properties.setValue(KeyMinimumValue, minimumValue);
+		properties.setObject(KeyMinimumValue, minimumValue);
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class Field implements Comparable<Object> {
 		List<Value> possibleValues = getPossibleValues();
 		if (possibleValues == null) {
 			possibleValues = new ArrayList<>();
-			properties.setList(KeyPossibleValues, possibleValues);
+			properties.setObject(KeyPossibleValues, possibleValues);
 		}
 		validateValueType(value);
 		if (!possibleValues.contains(value)) {
@@ -392,7 +392,7 @@ public class Field implements Comparable<Object> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Value> getPossibleValues() {
-		return (List<Value>) properties.getList(KeyPossibleValues);
+		return (List<Value>) properties.getObject(KeyPossibleValues);
 	}
 
 	/**
@@ -653,7 +653,7 @@ public class Field implements Comparable<Object> {
 	 * @return The initial value.
 	 */
 	public Value getInitialValue() {
-		return properties.getValue(KeyInitialValue);
+		return (Value) properties.getObject(KeyInitialValue);
 	}
 
 	/**
@@ -663,7 +663,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setInitialValue(Value initialValue) {
 		validateValueType(initialValue);
-		properties.setValue(KeyInitialValue, initialValue);
+		properties.setObject(KeyInitialValue, initialValue);
 	}
 
 	/**
@@ -792,7 +792,7 @@ public class Field implements Comparable<Object> {
 	 * @return The horizontal alignment.
 	 */
 	public Alignment getHorizontalAlignment() {
-		return properties.getAlignment(KeyHorizontalAlignment, Alignment.Left);
+		return (Alignment) properties.getObject(KeyHorizontalAlignment, Alignment.Left);
 	}
 
 	/**
@@ -807,7 +807,7 @@ public class Field implements Comparable<Object> {
 		if (!horizontalAlignment.isHorizontal()) {
 			throw new IllegalArgumentException(horizontalAlignment.toString());
 		}
-		properties.setAlignment(KeyHorizontalAlignment, horizontalAlignment);
+		properties.setObject(KeyHorizontalAlignment, horizontalAlignment);
 	}
 
 	/**
@@ -816,7 +816,7 @@ public class Field implements Comparable<Object> {
 	 * @return The vertical alignment.
 	 */
 	public Alignment getVerticalAlignment() {
-		return properties.getAlignment(KeyVerticalAlignment, Alignment.Center);
+		return (Alignment) properties.getObject(KeyVerticalAlignment, Alignment.Center);
 	}
 
 	/**
@@ -831,7 +831,7 @@ public class Field implements Comparable<Object> {
 		if (!verticalAlignment.isVertical()) {
 			throw new IllegalArgumentException(verticalAlignment.toString());
 		}
-		properties.setAlignment(KeyVerticalAlignment, verticalAlignment);
+		properties.setObject(KeyVerticalAlignment, verticalAlignment);
 	}
 
 	/**
@@ -1483,7 +1483,7 @@ public class Field implements Comparable<Object> {
 	 * @return The parent table.
 	 */
 	public Table getParentTable() {
-		return properties.getTable(KeyParentTable);
+		return (Table) properties.getObject(KeyParentTable);
 	}
 
 	/**
@@ -1492,7 +1492,7 @@ public class Field implements Comparable<Object> {
 	 * @param parentTable The parent table.
 	 */
 	public void setParentTable(Table parentTable) {
-		properties.setTable(KeyParentTable, parentTable);
+		properties.setObject(KeyParentTable, parentTable);
 	}
 
 	/**
@@ -1501,7 +1501,7 @@ public class Field implements Comparable<Object> {
 	 * @return The parent view
 	 */
 	public View getParentView() {
-		return properties.getView(KeyParentView);
+		return (View) properties.getObject(KeyParentView);
 	}
 
 	/**
@@ -1510,7 +1510,7 @@ public class Field implements Comparable<Object> {
 	 * @param parentView The parent view
 	 */
 	public void setParentView(View parentView) {
-		properties.setView(KeyParentView, parentView);
+		properties.setObject(KeyParentView, parentView);
 	}
 
 	/**
@@ -1537,7 +1537,7 @@ public class Field implements Comparable<Object> {
 	 * @return The working session.
 	 */
 	public Session getSession() {
-		return properties.getSession(KeySession);
+		return (Session) properties.getObject(KeySession);
 	}
 
 	/**
@@ -1546,7 +1546,7 @@ public class Field implements Comparable<Object> {
 	 * @param session The working session.
 	 */
 	public void setSession(Session session) {
-		properties.setSession(KeySession, session);
+		properties.setObject(KeySession, session);
 	}
 
 	/**

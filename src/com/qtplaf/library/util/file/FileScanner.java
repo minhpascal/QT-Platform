@@ -200,11 +200,7 @@ public class FileScanner extends TaskRunner {
 			// If last file is a file, notify if applicable and remove it.
 			if (files.getLast().isFile()) {
 				if (isNotifyFiles()) {
-					try {
-						notifyFile(files.getLast());
-					} catch (Exception exc) {
-						System.out.println();
-					}
+					notifyFile(files.getLast());
 				}
 				files.removeLast();
 				continue;
@@ -230,8 +226,10 @@ public class FileScanner extends TaskRunner {
 				// Add children if should scan deeper.
 				if (isScanSubDirectories()) {
 					File[] children = directory.listFiles();
-					for (File child : children) {
-						files.addLast(child);
+					if (children != null) {
+						for (File child : children) {
+							files.addLast(child);
+						}
 					}
 				}
 				
@@ -241,9 +239,9 @@ public class FileScanner extends TaskRunner {
 		}
 
 		// Notify cancelled.
-		if (cancelRequested()) {
-			notifyCancelled();
-		}
+//		if (cancelRequested()) {
+//			notifyCancelled();
+//		}
 
 	}
 

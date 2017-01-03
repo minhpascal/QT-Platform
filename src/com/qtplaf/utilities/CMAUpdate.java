@@ -14,6 +14,7 @@
 
 package com.qtplaf.utilities;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,11 @@ import javax.swing.JScrollPane;
 import com.qtplaf.library.app.Argument;
 import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.JOptionDialog;
 import com.qtplaf.library.swing.JPanelProgressGroup;
+import com.qtplaf.library.swing.MessageBox;
+import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.file.FileCopy;
@@ -37,6 +41,36 @@ import com.qtplaf.library.util.list.ListUtils;
  * @author Miquel Sas
  */
 public class CMAUpdate {
+
+	/**
+	 * Action close.
+	 */
+	static class ActionClose extends DefaultActionClose {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionClose(Session session) {
+			super(session);
+			ActionUtils.setDefaultCloseAction(this, true);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Session session = ActionUtils.getSession(this);
+			String message = "Close and stop any executing task?";
+			if (MessageBox.question(session, message, MessageBox.yesNo, MessageBox.no) == MessageBox.yes) {
+				JOptionDialog dialog = (JOptionDialog) ActionUtils.getUserObject(this);
+				dialog.setVisible(false);
+				dialog.dispose();
+			}
+		}
+
+	}
 
 	/**
 	 * @param args
@@ -93,7 +127,7 @@ public class CMAUpdate {
 		JOptionDialog dialog = new JOptionDialog(session);
 		dialog.setTitle("CMA Update utility");
 		dialog.setComponent(new JScrollPane(panelGroup));
-		dialog.addOption("Close", true);
+		dialog.addOption(new ActionClose(session));
 		dialog.showDialog(true);
 
 		System.exit(0);
