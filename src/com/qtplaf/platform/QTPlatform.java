@@ -16,6 +16,9 @@ package com.qtplaf.platform;
 
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.JFrameMenu;
 import com.qtplaf.library.util.TextServer;
@@ -31,6 +34,9 @@ public class QTPlatform {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		// Logger system property.
+		System.setProperty("log4j.configurationFile", "LoggerQTPlatform.xml");
 
 		// Text resources and session.
 		TextServer.addBaseResource("StringsLibrary.xml");
@@ -41,56 +47,34 @@ public class QTPlatform {
 		JFrameMenu frameMenu = new JFrameMenu(session);
 		frameMenu.setTitle(session.getString("qtMenuTitle"));
 		frameMenu.setLocation(20, 20);
-		frameMenu.setSize(0.25, 0.65);
-		
-		// Start showing the console.
-		frameMenu.showConsole();
+		frameMenu.setSize(0.4, 0.8);
 		
 		// Re-direct out and err.
 		System.setOut(frameMenu.getConsole().getPrintStream());
 		System.setErr(frameMenu.getConsole().getPrintStream());
+		
+		// Start showing the console.
+		frameMenu.showConsole();
 		
 		// Show the menu.
 		frameMenu.setVisible(true);
 		
 		try { Thread.sleep(100); } catch (Exception ignore) {}
 		
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
-		System.out.println("Hello console");
-		try {Thread.sleep(50);} catch (Exception ignore) {}
+		Logger logger = LogManager.getLogger();
+		long time = System.currentTimeMillis();
+		while (true) {
+			logger.trace("TRACE");
+			logger.debug("DEBUG");
+			logger.info("INFO");
+			logger.warn("WARNING");
+			logger.error("ERROR");
+			logger.fatal("FATAL");
+			try { Thread.sleep(10); } catch (Exception ignore) {}
+			if (System.currentTimeMillis() - time > 1000 * 6) {
+				break;
+			}
+		}
 		
 		// Show the menu.
 		frameMenu.showTreeMenu();

@@ -31,7 +31,7 @@ public class TestFileScanner {
 	public static void main(String[] args) {
 		Session session = new Session(Locale.UK);
 		try {
-			File source = new File("C:\\Development\\Eclipse Workspaces\\Roca");
+			File source = new File("C:\\Development\\Eclipse-Workspaces\\Roca");
 			FileScanner scanner = new FileScanner(session);
 			scanner.addSource(source);
 			scanner.addListener(new Listener());

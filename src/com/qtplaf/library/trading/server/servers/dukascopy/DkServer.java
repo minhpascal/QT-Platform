@@ -25,8 +25,8 @@ import com.qtplaf.library.trading.server.ConnectionManager;
 import com.qtplaf.library.trading.server.FeedManager;
 import com.qtplaf.library.trading.server.HistoryManager;
 import com.qtplaf.library.trading.server.OrderManager;
-import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.trading.server.ServerException;
+import com.qtplaf.library.trading.server.servers.AbstractServer;
 import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkStrategyListener;
 import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkSystemListener;
 
@@ -35,7 +35,7 @@ import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkSystemLis
  * 
  * @author Miquel Sas
  */
-public class DkServer implements Server {
+public class DkServer extends AbstractServer {
 
 	/**
 	 * Client interface.
@@ -87,6 +87,11 @@ public class DkServer implements Server {
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
+		
+		// Name, id, title.
+		setName("Dukascopy");
+		setId("DKCP");
+		setTitle("Dukascopy Bank SA");
 	}
 
 	/**

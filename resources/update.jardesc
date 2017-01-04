@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="C:/Development/Eclipse Workspaces/Roca/update/update.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/QT-Platform/resources/update.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=QT-Platform/src&lt;com.qtplaf.utilities{CMAUpdate.java[CMAUpdate" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.math"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.util.xml"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.server.servers.dukascopy.listeners"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.data"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.chart.plotter"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.function.error"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.function.input"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.persistence"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.data.mnist"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.util.list"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.data.info"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.server.feed"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.app"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.chart"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.app.sec"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database.rdbms"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.data.indicators.validators"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.function.output"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.swing.formatters"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database.rdbms.connection"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database.rdbms.sql"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.server.servers.dukascopy"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.task.sample"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.server.servers.ib"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.data.indicators"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.util.file"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.server"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database.providers"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.swing.action"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.swing"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.task"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.rlearning"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.utilities"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.platform.database"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.learning.stop"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.util"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.chart.plotter.drawings"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database.rdbms.adapters"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.platform"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.learning"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.trading.data.readers"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.database.rdbms.adapters.sql"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.ai.nnet.function"/>
+        <javaElement handleIdentifier="=QT-Platform/src&lt;com.qtplaf.library.swing.event"/>
+    </selectedElements>
+</jardesc>

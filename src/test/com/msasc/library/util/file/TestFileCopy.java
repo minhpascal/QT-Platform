@@ -36,9 +36,9 @@ public class TestFileCopy {
 	 */
 	public static void main(String[] args) {
 		TextServer.addBaseResource("StringsLibrary.xml");
-		File source = new File("C:\\Development\\Eclipse Workspaces\\Trading\\workspace-trading-backup");
-		File destination = new File("C:\\Development\\Eclipse Workspaces\\Trading\\workspace-trading-backup-2");
-//		File source = new File("C:\\Development\\Eclipse Workspaces\\Roca\\cma-head\\CMA_Central");
+		File source = new File("C:\\Development\\Eclipse-Workspaces\\Trading\\workspace-trading-backup");
+		File destination = new File("C:\\Development\\Eclipse-Workspaces\\Trading\\workspace-trading-backup-2");
+//		File source = new File("C:\\Development\\Eclipse-Workspaces\\Roca\\cma-head\\CMA_Central");
 //		File destination = new File("C:\\Development\\ZTest\\CMA_Central");
 //		File destination = new File("Z:\\CMA\\CMA_Central\\mads");
 

@@ -1,22 +1,24 @@
 /*
  * Copyright (C) 2015 Miquel Sas
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package com.qtplaf.library.database.rdbms.connection;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+
 import com.qtplaf.library.util.StringUtils;
+import com.qtplaf.library.util.SystemUtils;
 
 /**
  * The ConnectionInfo class packs the necessary information to connect to a database using JDBC.
@@ -24,6 +26,28 @@ import com.qtplaf.library.util.StringUtils;
  * @author Miquel Sas
  */
 public class ConnectionInfo {
+
+	/**
+	 * Returns a connection info definition from an xml file with the properties xml format and standard keys:
+	 * <tt>id</tt>, <tt>description</tt>, <tt>driver</tt>, <tt>database</tt>, <tt>schema</tt>, <tt>user</tt> and
+	 * <tt>password</tt>.
+	 * 
+	 * @param file The xml file.
+	 * @return The connection info.
+	 * @throws IOException
+	 */
+	public static ConnectionInfo getConnectionInfo(File file) throws IOException {
+		Properties properties = SystemUtils.getProperties(file);
+		ConnectionInfo cnInfo = new ConnectionInfo();
+		cnInfo.setId(properties.getProperty("id"));
+		cnInfo.setId(properties.getProperty("description"));
+		cnInfo.setId(properties.getProperty("driver"));
+		cnInfo.setId(properties.getProperty("database"));
+		cnInfo.setId(properties.getProperty("schema"));
+		cnInfo.setId(properties.getProperty("user"));
+		cnInfo.setId(properties.getProperty("password"));
+		return cnInfo;
+	}
 
 	/**
 	 * Connection id.

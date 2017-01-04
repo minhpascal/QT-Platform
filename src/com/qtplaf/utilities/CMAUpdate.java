@@ -67,6 +67,7 @@ public class CMAUpdate {
 				JOptionDialog dialog = (JOptionDialog) ActionUtils.getUserObject(this);
 				dialog.setVisible(false);
 				dialog.dispose();
+				System.exit(0);
 			}
 		}
 
@@ -76,7 +77,7 @@ public class CMAUpdate {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
+		
 		// System text resources and session.
 		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
@@ -128,9 +129,8 @@ public class CMAUpdate {
 		dialog.setTitle("CMA Update utility");
 		dialog.setComponent(new JScrollPane(panelGroup));
 		dialog.addOption(new ActionClose(session));
+		dialog.setModal(false);
 		dialog.showDialog(true);
-
-		System.exit(0);
 	}
 
 	/**
@@ -744,9 +744,9 @@ public class CMAUpdate {
 	private static String getSrcRootLocal(boolean prod) {
 		String srcRoot;
 		if (prod) {
-			srcRoot = "c:\\Development\\Eclipse Workspaces\\Roca\\workspace-head";
+			srcRoot = "c:\\Development\\Eclipse-Workspaces\\Roca\\workspace-head";
 		} else {
-			srcRoot = "c:\\Development\\Eclipse Workspaces\\Roca\\workspace-development";
+			srcRoot = "c:\\Development\\Eclipse-Workspaces\\Roca\\workspace-development";
 		}
 		return srcRoot;
 	}
@@ -760,9 +760,9 @@ public class CMAUpdate {
 	private static String getDstRootLocal(boolean prod) {
 		String dstRoot;
 		if (prod) {
-			dstRoot = "c:\\Development\\Eclipse Workspaces\\Roca\\cma-head";
+			dstRoot = "c:\\Development\\Eclipse-Workspaces\\Roca\\cma-head";
 		} else {
-			dstRoot = "c:\\Development\\Eclipse Workspaces\\Roca\\cma-development";
+			dstRoot = "c:\\Development\\Eclipse-Workspaces\\Roca\\cma-development";
 		}
 		return dstRoot;
 	}

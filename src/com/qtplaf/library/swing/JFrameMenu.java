@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
 import javax.swing.Action;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -167,8 +168,8 @@ public class JFrameMenu extends JFrameSession {
 		// Console pane.
 		String consoleTitle = getSession().getString("frameMenuTabConsoleLabel");
 		String consoleTooltip = getSession().getString("frameMenuTabConsoleTooltip");
-		getTabbedPane().addTab(consoleTitle, null, getConsole(), consoleTooltip);
-
+		getTabbedPane().addTab(consoleTitle, null, new JScrollPane(getConsole()), consoleTooltip);
+		
 		// Set the content pane.
 		getContentPane().setLayout(new GridBagLayout());
 		GridBagConstraints constraints = null;
@@ -322,7 +323,7 @@ public class JFrameMenu extends JFrameSession {
 	 * Show the console.
 	 */
 	public void showConsole() {
-		getTabbedPane().setSelectedComponent(getConsole());
+		getTabbedPane().setSelectedComponent(getConsole().getParent().getParent());
 		setupPanelButtons();
 	}
 

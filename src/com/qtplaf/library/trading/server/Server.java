@@ -25,6 +25,27 @@ import com.qtplaf.library.trading.data.Instrument;
 public interface Server {
 
 	/**
+	 * Returns the name of the server.
+	 * 
+	 * @return The name of the server.
+	 */
+	String getName();
+
+	/**
+	 * Returns an unique and short id.
+	 * 
+	 * @return The server id.
+	 */
+	String getId();
+
+	/**
+	 * Returns the server title or long name.
+	 * 
+	 * @return The server title or long name.
+	 */
+	String getTitle();
+
+	/**
 	 * Returns a list with all available instruments.
 	 * 
 	 * @return A list with all available instruments.

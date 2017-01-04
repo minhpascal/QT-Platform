@@ -2,17 +2,15 @@
 
 <Configuration status="warn">
 	<Appenders>
-		<Console name="Console" target="SYSTEM_OUT">
+		<Console name="Console" direct="false" follow="true">
 			<PatternLayout>
-				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n
-				</Pattern>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n</Pattern>
 			</PatternLayout>
 		</Console>
 		<RollingFile name="RollingFile" fileName="logs/jfx.log"
 			filePattern="logs/jfx-%d{yyyy-MM-dd}.log">
 			<PatternLayout>
-				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n
-				</Pattern>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger - %msg%n</Pattern>
 			</PatternLayout>
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" />
@@ -27,10 +25,8 @@
 	</Appenders>
 	<Loggers>
 		<Root level="trace">
-			<AppenderRef ref="Console" />
-		</Root>
-		<Root level="error">
-			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" level="trace" />
+			<AppenderRef ref="RollingFile" level="error" />
 		</Root>
 	</Loggers>
 </Configuration>
