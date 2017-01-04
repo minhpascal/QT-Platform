@@ -5,12 +5,13 @@
 
 	<!-- Generic fields (domains). -->
 
-	<entry key="fieldBrokerCodeTitle">Broker code</entry>
-	<entry key="fieldBrokerCodeLabel">Broker code</entry>
-	<entry key="fieldBrokerCodeHeader">Broker code</entry>
+	<entry key="fieldBrokerIdTitle">Broker short identification code</entry>
+	<entry key="fieldBrokerIdHeader">Broker id</entry>
 	
-	<entry key="fieldBrokerNameTitle">Broker name</entry>
-	<entry key="fieldBrokerNameLabel">Broker name</entry>
+	<entry key="fieldBrokerNameTitle">Broker official name</entry>
 	<entry key="fieldBrokerNameHeader">Broker name</entry>
+	
+	<entry key="fieldBrokerTitleTitle">Broker title</entry>
+	<entry key="fieldBrokerTitleHeader">Broker title</entry>
 
 </properties>

@@ -14,6 +14,7 @@
 
 package com.qtplaf.library.swing;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -201,6 +202,14 @@ public class JFrameMenu extends JFrameSession {
 		addWindowListener(windowAdapter);
 		addWindowFocusListener(windowAdapter);
 	}
+	
+	/**
+	 * Returns the console component (JScrollPane) installed in the tabbed pane.
+	 * @return The console component.
+	 */
+	private Component getConsoleComponent() {
+		return getConsole().getParent().getParent();
+	}
 
 	/**
 	 * Setup the buttons panel depending on the seletected tab.
@@ -218,9 +227,11 @@ public class JFrameMenu extends JFrameSession {
 		}
 
 		// Selected tab is console: actions clear and exit.
-		if (index == getTabbedPane().indexOfComponent(getConsole())) {
-			getPanelButtons().add(getActionClear());
-			getPanelButtons().add(getActionExit());
+		if (getConsole().getParent() != null) {
+			if (index == getTabbedPane().indexOfComponent(getConsoleComponent())) {
+				getPanelButtons().add(getActionClear());
+				getPanelButtons().add(getActionExit());
+			}
 		}
 
 		// Setup accelerator key listeners.
@@ -323,7 +334,7 @@ public class JFrameMenu extends JFrameSession {
 	 * Show the console.
 	 */
 	public void showConsole() {
-		getTabbedPane().setSelectedComponent(getConsole().getParent().getParent());
+		getTabbedPane().setSelectedComponent(getConsoleComponent());
 		setupPanelButtons();
 	}
 

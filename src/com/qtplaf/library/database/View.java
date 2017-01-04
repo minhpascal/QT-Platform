@@ -16,6 +16,8 @@ package com.qtplaf.library.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.app.Session;
+
 /**
  * An SQL database view, build with a master table and relations. When defining a view, fields must belong to tables of
  * the relations or be non persistent.
@@ -76,12 +78,44 @@ public class View implements Comparable<Object> {
 	 * The persistor that provides persistence to this table.
 	 */
 	private Persistor persistor;
+	/**
+	 * Optional working session.
+	 */
+	private Session session;
 
 	/**
 	 * Default constructor.
 	 */
 	public View() {
 		super();
+	}
+
+	/**
+	 * Constructor assigning the working session.
+	 * 
+	 * @param session The working session.
+	 */
+	public View(Session session) {
+		super();
+		this.session = session;
+	}
+
+	/**
+	 * Returns the working session.
+	 * 
+	 * @return The working session.
+	 */
+	public Session getSession() {
+		return session;
+	}
+
+	/**
+	 * Sets the working session.
+	 * 
+	 * @param session The working session.
+	 */
+	public void setSession(Session session) {
+		this.session = session;
 	}
 
 	/**

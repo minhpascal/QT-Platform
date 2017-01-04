@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey.Segment;
 
 /**
@@ -96,12 +97,44 @@ public class Table implements Comparable<Object> {
 	 * The persistor that provides persistence to this table.
 	 */
 	private Persistor persistor;
+	/**
+	 * Optional working session, not strictly necessary.
+	 */
+	private Session session;
 
 	/**
 	 * Default constructor.
 	 */
 	public Table() {
 		super();
+	}
+
+	/**
+	 * Constructor assigning the session.
+	 * 
+	 * @param session The working session.
+	 */
+	public Table(Session session) {
+		super();
+		this.session = session;
+	}
+
+	/**
+	 * Returns the working session.
+	 * 
+	 * @return The working session.
+	 */
+	public Session getSession() {
+		return session;
+	}
+
+	/**
+	 * Sets the working session.
+	 * 
+	 * @param session The working session.
+	 */
+	public void setSession(Session session) {
+		this.session = session;
 	}
 
 	/**
@@ -276,7 +309,8 @@ public class Table implements Comparable<Object> {
 		try {
 			table = (Table) o;
 		} catch (ClassCastException exc) {
-			throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
+			throw new UnsupportedOperationException(
+				MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		return getNameFrom().compareTo(table.getNameFrom());
 	}
@@ -644,7 +678,7 @@ public class Table implements Comparable<Object> {
 	 * @param orderBy The order by index.
 	 */
 	public View getSimpleView(Order orderBy) {
-		View view = new View();
+		View view = new View(getSession());
 		view.setMasterTable(this);
 		for (int i = 0; i < getFieldCount(); i++) {
 			Field field = new Field(getField(i));
