@@ -150,10 +150,11 @@ public class ArgumentManager {
 					if (error) {
 						continue;
 					}
-					// Store the values.
-					valuesMap.put(argument.getName().toLowerCase(), values);
-					continue;
 				}
+				
+				// Store the values.
+				valuesMap.put(argument.getName().toLowerCase(), values);
+				continue;
 			}
 			
 			// Should never come here.

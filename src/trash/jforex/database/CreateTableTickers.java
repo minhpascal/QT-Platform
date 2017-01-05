@@ -4,8 +4,7 @@
 package trash.jforex.database;
 
 import com.qtplaf.library.database.rdbms.DBEngine;
-
-import trash.jforex.database.tables.Tickers;
+import com.qtplaf.platform.database.tables.Tickers;
 
 /**
  * @author Miquel Sas

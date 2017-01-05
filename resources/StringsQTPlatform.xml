@@ -4,5 +4,6 @@
 	<comment>QT Platform strings</comment>
 
 	<entry key="qtMenuTitle">QT Platform</entry>
+	<entry key="qtMenuBrokers">Brokers</entry>
 	
 </properties>

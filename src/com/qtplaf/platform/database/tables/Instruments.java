@@ -1,7 +1,7 @@
 /**
  * 
  */
-package trash.jforex.database.tables;
+package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Table;

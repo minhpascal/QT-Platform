@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.platform.database;
+package com.qtplaf.platform.database.tables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,7 @@ import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
+import com.qtplaf.platform.database.Names;
 
 /**
  * A table to store OHLCV elements.

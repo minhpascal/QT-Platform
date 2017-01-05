@@ -40,12 +40,12 @@ public class ConnectionInfo {
 		Properties properties = SystemUtils.getProperties(file);
 		ConnectionInfo cnInfo = new ConnectionInfo();
 		cnInfo.setId(properties.getProperty("id"));
-		cnInfo.setId(properties.getProperty("description"));
-		cnInfo.setId(properties.getProperty("driver"));
-		cnInfo.setId(properties.getProperty("database"));
-		cnInfo.setId(properties.getProperty("schema"));
-		cnInfo.setId(properties.getProperty("user"));
-		cnInfo.setId(properties.getProperty("password"));
+		cnInfo.setDescription(properties.getProperty("description"));
+		cnInfo.setDriver(properties.getProperty("driver"));
+		cnInfo.setDatabase(properties.getProperty("database"));
+		cnInfo.setSchema(properties.getProperty("schema"));
+		cnInfo.setUser(properties.getProperty("user"));
+		cnInfo.setPassword(properties.getProperty("password"));
 		return cnInfo;
 	}
 

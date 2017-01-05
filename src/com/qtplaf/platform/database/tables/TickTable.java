@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.platform.database;
+package com.qtplaf.platform.database.tables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Tick;
+import com.qtplaf.platform.database.Names;
 
 /**
  * A table to store tick elements.

@@ -7,8 +7,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.sql.Select;
-
-import trash.jforex.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.Instruments;
 
 /**
  * @author Miquel Sas

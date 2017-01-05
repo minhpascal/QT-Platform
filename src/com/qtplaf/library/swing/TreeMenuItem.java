@@ -22,6 +22,7 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +37,102 @@ import com.qtplaf.library.app.Session;
  * @author Miquel Sas
  */
 public class TreeMenuItem {
+
+	/**
+	 * Returns the tree menu item, without indicating icons useful for parent menus.
+	 * 
+	 * @param session Working session.
+	 * @param labels List of labels.
+	 * @return The menu item.
+	 */
+	public static TreeMenuItem getMenuItem(Session session, String... labels) {
+		return getMenuItem(session, true, labels);
+	}
+
+	/**
+	 * Returns the tree menu item, without indicating icons useful for parent menus.
+	 * 
+	 * @param session Working session.
+	 * @param level A boolean that indicates whether the level should be displayed.
+	 * @param labels List of labels.
+	 * @return The menu item.
+	 */
+	public static TreeMenuItem getMenuItem(Session session, boolean level, String... labels) {
+		return getMenuItem(session, null, null, null, level, null, null, labels);
+	}
+
+	/**
+	 * Returns the tree menu item, without indicating icons and default level display.
+	 * 
+	 * @param session Working session.
+	 * @param actionClass The action to be executed.
+	 * @param accKey Accelerator key.
+	 * @param labels List of labels.
+	 * @return
+	 */
+	public static TreeMenuItem getMenuItem(
+		Session session,
+		Class<? extends Action> actionClass,
+		KeyStroke accKey,
+		String... labels) {
+		return getMenuItem(session, true, actionClass, accKey, labels);
+	}
+
+	/**
+	 * Returns the tree menu item, without indicating icons.
+	 * 
+	 * @param session Working session.
+	 * @param level A boolean that indicates whether the level should be displayed.
+	 * @param actionClass The action to be executed.
+	 * @param accKey Accelerator key.
+	 * @param labels List of labels.
+	 * @return
+	 */
+	public static TreeMenuItem getMenuItem(
+		Session session,
+		boolean level,
+		Class<? extends Action> actionClass,
+		KeyStroke accKey,
+		String... labels) {
+		return getMenuItem(session, null, null, null, level, actionClass, accKey, labels);
+	}
+
+	/**
+	 * Returns the tree menu item.
+	 * 
+	 * @param session Working session.
+	 * @param open Open icon.
+	 * @param close Close icon.
+	 * @param leaf Leaf icon.
+	 * @param level A boolean that indicates whether the level should be displayed.
+	 * @param actionClass The action to be executed.
+	 * @param accKey Accelerator key.
+	 * @param labels List of labels.
+	 * @return
+	 */
+	public static
+		TreeMenuItem
+		getMenuItem(
+			Session session,
+			Icon open,
+			Icon close,
+			Icon leaf,
+			boolean level,
+			Class<? extends Action> actionClass,
+			KeyStroke accKey,
+			String... labels) {
+
+		TreeMenuItem item = new TreeMenuItem(session);
+		item.setOpenIcon(open);
+		item.setClosedIcon(close);
+		item.setLeafIcon(UIManager.getIcon("WARNING_MESSAGE"));
+		item.setDisplayLevel(level);
+		item.setActionClass(actionClass);
+		item.setAcceleratorKey(accKey);
+		item.addLabels(labels);
+
+		return item;
+	}
 
 	/**
 	 * Logger.
@@ -243,16 +340,16 @@ public class TreeMenuItem {
 			try {
 				Constructor<? extends Action> constructor = getActionClass().getConstructor();
 				Action action = (Action) constructor.newInstance();
-				
+
 				// Set the session.
 				ActionUtils.setSession(action, getSession());
-				
+
 				// Access mode readonly to edit mode readonly.
 				AccessMode accessMode = getSession().getAccessMode(getAccessKey());
 				if (accessMode.equals(AccessMode.ReadOnly)) {
 					ActionUtils.setEditMode(action, EditMode.ReadOnly);
 				}
-				
+
 				return action;
 			} catch (Exception exc) {
 				logger.catching(exc);

@@ -4,14 +4,25 @@
 	<comment>Database strings</comment>
 
 	<!-- Generic fields (domains). -->
+	
+	<!-- Broker -->
 
-	<entry key="fieldBrokerIdTitle">Broker short identification code</entry>
+	<entry key="fieldBrokerIdLabel">Broker id</entry>
 	<entry key="fieldBrokerIdHeader">Broker id</entry>
-	
-	<entry key="fieldBrokerNameTitle">Broker official name</entry>
+	<entry key="fieldBrokerNameLabel">Broker official name</entry>
 	<entry key="fieldBrokerNameHeader">Broker name</entry>
-	
-	<entry key="fieldBrokerTitleTitle">Broker title</entry>
+	<entry key="fieldBrokerTitleLabel">Broker title</entry>
 	<entry key="fieldBrokerTitleHeader">Broker title</entry>
+	
+	<!-- Instrument -->
+
+	<entry key="fieldInstrumentIdLabel">Instrument id</entry>
+	<entry key="fieldInstrumentIdHeader">Instrument</entry>
+	<entry key="fieldInstrumentDescLabel">Instrument description</entry>
+	<entry key="fieldInstrumentDescHeader">Instrument description</entry>
+	<entry key="fieldInstrumentPipValueLabel">Instrument pip value</entry>
+	<entry key="fieldInstrumentPipValueHeader">Pip value</entry>
+	<entry key="fieldInstrumentPipScaleLabel">Instrument pip scale</entry>
+	<entry key="fieldInstrumentPipScaleHeader">Pip scale</entry>
 
 </properties>
