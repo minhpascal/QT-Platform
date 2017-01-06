@@ -228,7 +228,6 @@ public class MetaData {
 	private RecordSet readRecordSet(ResultSet rs, FieldList fieldList) throws SQLException {
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(fieldList);
-		;
 		while (rs.next()) {
 			Record record = DBUtils.readRecord(fieldList, rs);
 			recordSet.add(record);
@@ -269,7 +268,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getSchemas();
-			readRecordSet(rs, getFieldListSchemaInfo());
+			recordSet = readRecordSet(rs, getFieldListSchemaInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();

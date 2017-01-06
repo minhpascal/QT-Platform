@@ -17,6 +17,7 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
+import com.qtplaf.library.trading.server.Server;
 
 /**
  * An utility to generate names based on instruments, periods, filters and offer sides.
@@ -24,6 +25,26 @@ import com.qtplaf.library.trading.server.OfferSide;
  * @author Miquel Sas
  */
 public class Names {
+
+	/**
+	 * Returns the system schema name.
+	 * 
+	 * @return The system schema name.
+	 */
+	public static String getSchema() {
+		return "qtp";
+	}
+
+	/**
+	 * Returns the schema name for a given server.
+	 * 
+	 * @param server The server.
+	 * @return The schema name.
+	 */
+	public static String getSchema(Server server) {
+		return getSchema() + "_" + server.getId();
+	}
+
 	/**
 	 * Returns a standard name for the arguments.
 	 * 
@@ -80,7 +101,9 @@ public class Names {
 	 * @param offerSide The offer side.
 	 * @return The standard file name.
 	 */
-	public static String getName(String prefix, Instrument instrument, Period period, Filter filter, OfferSide offerSide) {
+	public static
+		String
+		getName(String prefix, Instrument instrument, Period period, Filter filter, OfferSide offerSide) {
 		StringBuilder b = new StringBuilder();
 		if (prefix != null) {
 			b.append(prefix);

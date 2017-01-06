@@ -33,6 +33,10 @@ import trash.jforex.chart.JFrameChart;
 import trash.jforex.indicators.PeriodStrength;
 
 public class TestJFrame {
+	/** Logger configuration. */
+//	static {
+//		System.setProperty("log4j.configurationFile", "LoggerQTPlatform.xml");
+//	}
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestJFrame.class);
 
 	public static void main(String[] args) throws Exception {
@@ -74,6 +78,12 @@ public class TestJFrame {
 		if (!client.isConnected()) {
 			LOGGER.error("Failed to connect Dukascopy servers");
 			System.exit(1);
+		}
+		
+		// Available instruments.
+		Set<Instrument> avInstrs = client.getAvailableInstruments();
+		for (Instrument instr : avInstrs) {
+			System.out.println(instr.toString());
 		}
 
 		// subscribe to the instruments

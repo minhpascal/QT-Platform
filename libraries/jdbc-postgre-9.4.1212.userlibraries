@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="jdbc-postgre-9.4.1212" systemlibrary="false">
+        <archive path="/QT-Platform/libraries/jdbc/postgresql/postgresql-9.4.1212.jar"/>
+    </library>
+</eclipse-userlibraries>

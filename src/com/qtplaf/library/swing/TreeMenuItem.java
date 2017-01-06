@@ -172,6 +172,10 @@ public class TreeMenuItem {
 	 */
 	private Class<? extends Action> actionClass;
 	/**
+	 * Optional launch arguments.
+	 */
+	private Object launchArgs;
+	/**
 	 * The access key to check security access.
 	 */
 	private String accessKey;
@@ -343,6 +347,11 @@ public class TreeMenuItem {
 
 				// Set the session.
 				ActionUtils.setSession(action, getSession());
+				
+				// Launch arguments if present.
+				if (getLaunchArgs() != null) {
+					ActionUtils.setLaunchArgs(action, getLaunchArgs());
+				}
 
 				// Access mode readonly to edit mode readonly.
 				AccessMode accessMode = getSession().getAccessMode(getAccessKey());
@@ -374,6 +383,24 @@ public class TreeMenuItem {
 	 */
 	public void setActionClass(Class<? extends Action> actionClass) {
 		this.actionClass = actionClass;
+	}
+
+	/**
+	 * Returns the launch arguments.
+	 * 
+	 * @return The launch arguments.
+	 */
+	public Object getLaunchArgs() {
+		return launchArgs;
+	}
+
+	/**
+	 * Sets the launch arguments.
+	 * 
+	 * @param launchArgs The launch arguments.
+	 */
+	public void setLaunchArgs(Object launchArgs) {
+		this.launchArgs = launchArgs;
 	}
 
 	/**

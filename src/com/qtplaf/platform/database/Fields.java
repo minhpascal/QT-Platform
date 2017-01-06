@@ -19,8 +19,7 @@ import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Types;
 
 /**
- * Centralizes master field definitions (domains). These definitions do not include table attributes like persistence or
- * primary key.
+ * Centralizes master field definitions (domains). These definitions do not include table attributes like primary key.
  * 
  * @author Miquel Sas
  */
@@ -33,6 +32,11 @@ public class Fields {
 	public static final String InstrumentDesc = "INSTR_DESC";
 	public static final String InstrumentPipValue = "INSTR_PIPV";
 	public static final String InstrumentPipScale = "INSTR_PIPS";
+	public static final String InstrumentTickValue = "INSTR_TICKV";
+	public static final String InstrumentTickScale = "INSTR_TICKS";
+	public static final String InstrumentVolumeScale = "INSTR_VOLS";
+	public static final String InstrumentPrimaryCurrency = "INSTR_CURRP";
+	public static final String InstrumentSecondaryCurrency = "INSTR_CURRS";
 
 	/**
 	 * Returns <b><i>BrokerId</i></b> <tt>BROKER_ID</tt> the field definition.
@@ -156,6 +160,41 @@ public class Fields {
 		field.setHeader(session.getString("fieldInstrumentPipScaleHeader"));
 		field.setLabel(session.getString("fieldInstrumentPipScaleLabel"));
 		field.setTitle(session.getString("fieldInstrumentPipScaleLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>InstrumentTickValue</i></b> <tt>INSTR_TICKV</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldInstrumentTickValue(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(InstrumentTickValue);
+		field.setType(Types.Double);
+		field.setHeader(session.getString("fieldInstrumentTickValueHeader"));
+		field.setLabel(session.getString("fieldInstrumentTickValueLabel"));
+		field.setTitle(session.getString("fieldInstrumentTickValueLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>InstrumentTickScale</i></b> <tt>INSTR_TICKS</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldInstrumentTickScale(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(InstrumentTickScale);
+		field.setType(Types.Integer);
+		field.setLength(2);
+		field.setHeader(session.getString("fieldInstrumentTickScaleHeader"));
+		field.setLabel(session.getString("fieldInstrumentTickScaleLabel"));
+		field.setTitle(session.getString("fieldInstrumentTickScaleLabel"));
 		return field;
 	}
 

@@ -15,6 +15,7 @@
 package com.qtplaf.platform;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +25,9 @@ import com.qtplaf.library.app.Argument;
 import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.MetaData;
+import com.qtplaf.library.database.OrderKey;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
 import com.qtplaf.library.database.rdbms.adapters.PostgreSQLAdapter;
@@ -33,8 +36,12 @@ import com.qtplaf.library.swing.JFrameMenu;
 import com.qtplaf.library.swing.JPanelTreeMenu;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.TreeMenuItem;
+import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
+import com.qtplaf.platform.action.ActionAvailableInstruments;
+import com.qtplaf.platform.database.Names;
 
 /**
  * Main entry of the QT-Platform.
@@ -60,6 +67,7 @@ public class QTPlatform {
 		// Text resources and session.
 		TextServer.addBaseResource("StringsLibrary.xml");
 		TextServer.addBaseResource("StringsQTPlatform.xml");
+		TextServer.addBaseResource("StringsQTPlatformDB.xml");
 		Session session = new Session(Locale.UK);
 
 		// Frame menu.
@@ -77,7 +85,7 @@ public class QTPlatform {
 
 		// Show the menu.
 		frameMenu.setVisible(true);
-		
+
 		// Command line argument: database connection (xml file name).
 		Argument argConnection = new Argument("connectionFile", "Database connection file", true, true, false);
 		ArgumentManager argMngr = new ArgumentManager(argConnection);
@@ -89,24 +97,30 @@ public class QTPlatform {
 		}
 
 		try {
-			
+
 			// Ensure database.
+			logger.info("Database checking...");
 			configureDatabase(argMngr.getValue("connectionFile"));
+			logger.info("Database checked");
 
 			// Configure the menu.
+			logger.info("Configuring menu...");
 			configureMenu(frameMenu.getPanelTreeMenu());
-			
 
 			// Show the menu.
 			frameMenu.showTreeMenu();
-			
+
 		} catch (Exception exc) {
 			logger.catching(exc);
 		}
 	}
 
 	/**
-	 * Ensure the database connection and requires schemas.
+	 * Ensure the database connection and required schemas.
+	 * <ul>
+	 * <li>QT-Platform system schema <tt>QTP</tt></li>
+	 * <li>One schema for each supported server, for instance <tt>QTP_DKCP</tt></li>
+	 * </ul>
 	 * 
 	 * @param connectionFile The connection file name.
 	 * @throws Exception
@@ -115,16 +129,28 @@ public class QTPlatform {
 
 		// Connection file.
 		File cnFile = SystemUtils.getFileFromClassPathEntries(connectionFile);
-		// Connection info.
+
+		// Connection info and db engine.
 		ConnectionInfo cnInfo = ConnectionInfo.getConnectionInfo(cnFile);
-		// DBEngine.
 		DBEngineAdapter adapter = new PostgreSQLAdapter();
 		DBEngine dbEngine = new DBEngine(adapter, cnInfo);
-		// Meta data to chekc that the necessary schemas exists.
+
+		// Meta data to check that the necessary schemas exists.
 		MetaData metaData = new MetaData(dbEngine);
 		RecordSet rsSchemas = metaData.getRecordSetSchemas();
-		
-		System.out.println(cnInfo);
+
+		// Check for the system schema.
+		if (!rsSchemas.contains(new OrderKey(new Value(Names.getSchema())))) {
+			dbEngine.executeCreateSchema(Names.getSchema());
+		}
+		// Check for supported servers schemas.
+		List<Server> servers = ServerFactory.getSupportedServers();
+		for (Server server : servers) {
+			String schema = Names.getSchema(server);
+			if (!rsSchemas.contains(new OrderKey(new Value(schema)))) {
+				dbEngine.executeCreateSchema(schema);
+			}
+		}
 	}
 
 	/**
@@ -137,9 +163,25 @@ public class QTPlatform {
 
 		Session session = menu.getSession();
 
-		// Brokers.
-		TreeMenuItem itemBrokers = TreeMenuItem.getMenuItem(session, session.getString("qtMenuBrokers"));
-		menu.addMenuItem(itemBrokers);
+		// Broker servers.
+		TreeMenuItem itemServers = TreeMenuItem.getMenuItem(session, session.getString("qtMenuBrokers"));
+		menu.addMenuItem(itemServers);
+
+		// One menu item for each supported server.
+		List<Server> servers = ServerFactory.getSupportedServers();
+		for (Server server : servers) {
+			String name = server.getName();
+			String title = server.getTitle();
+			String id = server.getId();
+			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
+			menu.addMenuItem(itemServers, itemServer);
+			
+			// Server options.
+			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuBrokersAvInst"));
+			itemSrvAvInst.setActionClass(ActionAvailableInstruments.class);
+			itemSrvAvInst.setLaunchArgs(server);
+			menu.addMenuItem(itemServer, itemSrvAvInst);
+		}
 
 		menu.refreshTree();
 	}

@@ -50,7 +50,7 @@ public interface Server {
 	 * 
 	 * @return A list with all available instruments.
 	 */
-	List<Instrument> getAvailableInstruments();
+	List<Instrument> getAvailableInstruments() throws ServerException;
 
 	/**
 	 * Returns the connection manager associated to this server.

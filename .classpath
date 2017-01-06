@@ -11,5 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/javax-jnlp-1.6"/>
 	<classpathentry kind="lib" path="libraries/images/images.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JForex-SDK"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jdbc-postgre-9.4.1212"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

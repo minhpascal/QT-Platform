@@ -90,7 +90,7 @@ public class DkServer extends AbstractServer {
 		
 		// Name, id, title.
 		setName("Dukascopy");
-		setId("DKCP");
+		setId("dkcp");
 		setTitle("Dukascopy Bank SA");
 	}
 

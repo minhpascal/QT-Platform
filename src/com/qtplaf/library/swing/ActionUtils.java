@@ -78,6 +78,8 @@ public class ActionUtils {
 	private static final Integer KeyVisibleInPopupMenu = Integer.valueOf(index++);
 	/** A boolean to indicate that the action is the default close action in dialog and frames. */
 	private static final Integer KeyDefaultCloseAction = Integer.valueOf(index++);
+	/** A an object used as launch arguments fromm the menu. */
+	private static final Integer KeyLauchArgs = Integer.valueOf(index++);
 	/** A generic user object. */
 	private static final Integer KeyUserObject = Integer.valueOf(index++);
 
@@ -267,6 +269,16 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Returns the launch argument object.
+	 * 
+	 * @param action The action.
+	 * @return The launch argument object or null.
+	 */
+	public static Object getLaunchArgs(Action action) {
+		return getProperties(action).getObject(KeyLauchArgs);
+	}
+
+	/**
 	 * Returns the small icon.
 	 * 
 	 * @param action The action.
@@ -415,6 +427,16 @@ public class ActionUtils {
 	 */
 	public static void setUserObject(Action action, Object userObject) {
 		getProperties(action).setObject(KeyUserObject, userObject);
+	}
+
+	/**
+	 * Sets the launch arguments object.
+	 * 
+	 * @param action The action.
+	 * @param launchArgs The launch arguments object.
+	 */
+	public static void setLaunchArgs(Action action, Object launchArgs) {
+		getProperties(action).setObject(KeyLauchArgs, launchArgs);
 	}
 
 	/**

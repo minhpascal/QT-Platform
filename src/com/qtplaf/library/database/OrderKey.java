@@ -67,7 +67,8 @@ public class OrderKey extends ArrayList<OrderKey.Segment> implements Comparable<
 			try {
 				segment = (Segment) o;
 			} catch (ClassCastException exc) {
-				throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
+				throw new UnsupportedOperationException(
+					MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 			}
 			int compare = value.compareTo(segment.value);
 			if (compare != 0) {
@@ -84,14 +85,7 @@ public class OrderKey extends ArrayList<OrderKey.Segment> implements Comparable<
 		 */
 		@Override
 		public boolean equals(Object o) {
-			if (o == null) {
-				return false;
-			}
-			if (getClass() != o.getClass()) {
-				return false;
-			}
-			final Segment segment = (Segment) o;
-			return value.equals(segment.value) && asc == segment.asc;
+			return compareTo(o) == 0;
 		}
 
 		/**
@@ -180,6 +174,18 @@ public class OrderKey extends ArrayList<OrderKey.Segment> implements Comparable<
 	 */
 	public OrderKey(int initialCapacity) {
 		super(initialCapacity);
+	}
+
+	/**
+	 * Constructor assigning a list of values in ascending order.
+	 * 
+	 * @param values The list of values.
+	 */
+	public OrderKey(Value... values) {
+		super();
+		for (Value value : values) {
+			add(value, true);
+		}
 	}
 
 	/**

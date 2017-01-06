@@ -605,11 +605,22 @@ public class Record implements Comparable<Object> {
 		try {
 			record = (Record) o;
 		} catch (ClassCastException exc) {
-			throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
+			throw new UnsupportedOperationException(
+				MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		// Compare using the primary key pointers.
 		RecordComparator comparator = new RecordComparator(getPrimaryKeyPointers());
 		return comparator.compare(this, record);
+	}
+
+	/**
+	 * Compares for equality. A record is considered to be equal if the primary keys are equal not considering the
+	 * asc/desc flag.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
 	}
 
 	/**

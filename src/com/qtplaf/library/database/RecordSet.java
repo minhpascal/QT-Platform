@@ -228,6 +228,41 @@ public class RecordSet implements Iterable<Record> {
 	}
 
 	/**
+	 * Find the index of the given key.
+	 *
+	 * @param key The key to find its index.
+	 * @return The index of the record with the given key.
+	 */
+	public int indexOf(OrderKey key) {
+		for (int i = 0; i < size(); i++) {
+			if (get(i).getPrimaryKey().equals(key)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Check if the recordset contains the record.
+	 * 
+	 * @param record The record to check.
+	 * @return A boolean.
+	 */
+	public boolean contains(Record record) {
+		return indexOf(record) >= 0;
+	}
+
+	/**
+	 * Check if the recordset contains a record with the given primary key.
+	 * 
+	 * @param key The key to look for.
+	 * @return A boolean.
+	 */
+	public boolean contains(OrderKey key) {
+		return indexOf(key) >= 0;
+	}
+
+	/**
 	 * @return If the record set is empty.
 	 * @see java.util.ArrayList#isEmpty()
 	 */
@@ -334,5 +369,21 @@ public class RecordSet implements Iterable<Record> {
 			}
 		}
 		return recordSet;
+	}
+
+	/**
+	 * Returns a string representation with the number of records listed limited to 500.
+	 * 
+	 * @return A string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		for (int i = 0; i < Math.min(size(), 500); i++) {
+			if (i > 0)
+				b.append("\n");
+			b.append(get(i));
+		}
+		return b.toString();
 	}
 }

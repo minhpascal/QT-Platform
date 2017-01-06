@@ -24,5 +24,9 @@
 	<entry key="fieldInstrumentPipValueHeader">Pip value</entry>
 	<entry key="fieldInstrumentPipScaleLabel">Instrument pip scale</entry>
 	<entry key="fieldInstrumentPipScaleHeader">Pip scale</entry>
+	<entry key="fieldInstrumentTickValueLabel">Instrument tick value</entry>
+	<entry key="fieldInstrumentTickValueHeader">Tick value</entry>
+	<entry key="fieldInstrumentTickScaleLabel">Instrument tick scale</entry>
+	<entry key="fieldInstrumentTickScaleHeader">Tick scale</entry>
 
 </properties>

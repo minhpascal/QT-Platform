@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,7 +60,7 @@ public class ConnectionPool {
 	/**
 	 * The list of connections in the pool.
 	 */
-	private final ArrayList<PoolableConnection> connections = new ArrayList<>();
+	private final List<PoolableConnection> connections = new ArrayList<>();
 	/**
 	 * Lock to scan connections.
 	 */
@@ -104,7 +105,8 @@ public class ConnectionPool {
 	private void closeConnections() throws SQLException {
 		long time = System.currentTimeMillis();
 		synchronized (lock) {
-			for (PoolableConnection connection : connections) {
+			for (int i = 0; i < connections.size(); i++) {
+				PoolableConnection connection = connections.get(i);
 				if (connection.isClosed()) {
 					if (time - connection.getTimeLastUsed() >= timeoutClosed) {
 						connection.reallyClose();

@@ -297,7 +297,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean
 	 */
 	public boolean isPersistent() {
-		return properties.getBoolean(KeyPersistent);
+		return properties.getBoolean(KeyPersistent, true);
 	}
 
 	/**

@@ -337,6 +337,17 @@ public class DBEngine {
 	}
 
 	/**
+	 * Executes a create schema statement.
+	 * 
+	 * @param schema The schema.
+	 * @return The number of rows updated of zero if not applicable.
+	 * @throws SQLException
+	 */
+	public int executeCreateSchema(String schema) throws SQLException {
+		return executeStatement(getDBEngineAdapter().getStatementCreateSchema(schema));
+	}
+
+	/**
 	 * Executes a create table statement.
 	 *
 	 * @param table The table.
