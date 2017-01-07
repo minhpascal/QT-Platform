@@ -37,6 +37,9 @@ public class Fields {
 	public static final String InstrumentVolumeScale = "INSTR_VOLS";
 	public static final String InstrumentPrimaryCurrency = "INSTR_CURRP";
 	public static final String InstrumentSecondaryCurrency = "INSTR_CURRS";
+	public static final String UnitId = "UNIT_ID";
+	public static final String UnitName = "UNIT_NAME";
+	public static final String PeriodSize = "PERIOD_SIZE";
 
 	/**
 	 * Returns <b><i>BrokerId</i></b> <tt>BROKER_ID</tt> the field definition.
@@ -251,6 +254,60 @@ public class Fields {
 		field.setHeader(session.getString("fieldInstrumentSecondaryCurrencyHeader"));
 		field.setLabel(session.getString("fieldInstrumentSecondaryCurrencyLabel"));
 		field.setTitle(session.getString("fieldInstrumentSecondaryCurrencyLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>UnitId</i></b> <tt>UNIT_ID</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldUnitId(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(UnitId);
+		field.setType(Types.String);
+		field.setLength(2);
+		field.setHeader(session.getString("fieldUnitIdHeader"));
+		field.setLabel(session.getString("fieldUnitIdLabel"));
+		field.setTitle(session.getString("fieldUnitIdLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>UnitName</i></b> <tt>UNIT_NAME</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldUnitName(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(UnitName);
+		field.setType(Types.String);
+		field.setLength(15);
+		field.setHeader(session.getString("fieldUnitNameHeader"));
+		field.setLabel(session.getString("fieldUnitNameLabel"));
+		field.setTitle(session.getString("fieldUnitNameLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>PeriodSize</i></b> <tt>PERIOD_SIZE</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldPeriodSize(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(PeriodSize);
+		field.setType(Types.Integer);
+		field.setLength(3);
+		field.setHeader(session.getString("fieldPeriodSizeHeader"));
+		field.setLabel(session.getString("fieldPeriodSizeLabel"));
+		field.setTitle(session.getString("fieldPeriodSizeLabel"));
 		return field;
 	}
 }

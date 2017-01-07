@@ -98,7 +98,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);
-				frame.setTitle(server.getName() + " availabe instruments");
+				frame.setTitle(server.getName() + " " + session.getString("qtMenuBrokersAvInst").toLowerCase());
 				frame.setComponent(panelTableRecord);
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);

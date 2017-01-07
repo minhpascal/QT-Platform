@@ -34,5 +34,17 @@
 	<entry key="fieldInstrumentPrimaryCurrencyHeader">Primary currency</entry>
 	<entry key="fieldInstrumentSecondaryCurrencyLabel">Secondary currency</entry>
 	<entry key="fieldInstrumentSecondaryCurrencyHeader">Secondary currency</entry>
+	
+	<!-- Time unit -->
+
+	<entry key="fieldUnitIdLabel">Unit id</entry>
+	<entry key="fieldUnitIdHeader">Unit id</entry>
+	<entry key="fieldUnitNameLabel">Unit name</entry>
+	<entry key="fieldUnitNameHeader">Unit name</entry>
+	
+	<!-- Period -->
+	
+	<entry key="fieldPeriodSizeLabel">Period size</entry>
+	<entry key="fieldPeriodSizeHeader">Period size</entry>
 
 </properties>

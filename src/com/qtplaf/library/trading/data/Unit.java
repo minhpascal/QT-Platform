@@ -32,6 +32,22 @@ public enum Unit {
 	Month("MT"),
 	Year("YR");
 
+	/**
+	 * Returns the unit of the given id.
+	 * 
+	 * @param id The unit id.
+	 * @return The unit.
+	 */
+	public static Unit get(String id) {
+		Unit[] units = values();
+		for (Unit unit : units) {
+			if (unit.getId().equals(id.toUpperCase())) {
+				return unit;
+			}
+		}
+		throw new IllegalArgumentException("Invalid unit id: " + id);
+	}
+
 	/** 2 char id. */
 	private String id;
 
