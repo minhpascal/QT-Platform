@@ -68,24 +68,15 @@ public class JPanelTreeMenu extends JPanel {
 				getTree().expandPath(path);
 				ActionEvent accEv = new ActionEvent(e.getSource(), 0, null, System.currentTimeMillis(), 0);
 				getMenuItem(nodeAccKey).execute(accEv);
+				return;
 			}
 
 			// Enter: try expand/collapse/execute.
 			if (keyCode == KeyEvent.VK_ENTER && modifiers == 0) {
-				DefaultMutableTreeNode node = getSelectedNode();
-				if (node != null) {
-					if (node.isLeaf()) {
-						execute(node);
-					} else {
-						TreePath path = getTreePath(node);
-						if (getTree().isExpanded(path)) {
-							getTree().collapsePath(path);
-						} else {
-							getTree().expandPath(path);
-						}
-					}
-					return;
+				if (isProcessExecute()) {
+					processExecute();
 				}
+				return;
 			}
 		}
 	}
@@ -120,6 +111,11 @@ public class JPanelTreeMenu extends JPanel {
 	 * The working session.
 	 */
 	private Session session = null;
+	/**
+	 * A boolean to control if process execute should be performed. This would normally set to false if a parent does
+	 * it.
+	 */
+	private boolean processExecute = true;
 
 	/**
 	 * Constructor.
@@ -145,6 +141,43 @@ public class JPanelTreeMenu extends JPanel {
 		getTree().addMouseListener(mouseAdapter);
 		KeyAdapter keyAdapter = new KeyAdapter();
 		getTree().addKeyListener(keyAdapter);
+	}
+
+	/**
+	 * Returns a boolean indicating if execute will be processed with the normal VK_ENTER.
+	 * 
+	 * @return A boolean indicating if execute will be processed with the normal VK_ENTER.
+	 */
+	public boolean isProcessExecute() {
+		return processExecute;
+	}
+
+	/**
+	 * Sets a boolean indicating if execute will be processed with the normal VK_ENTER.
+	 * 
+	 * @param processExecute A boolean indicating if execute will be processed with the normal VK_ENTER.
+	 */
+	public void setProcessExecute(boolean processExecute) {
+		this.processExecute = processExecute;
+	}
+
+	/**
+	 * Proce execute (VK_ENTER), expanding, collapsing or executing the option.
+	 */
+	public void processExecute() {
+		DefaultMutableTreeNode node = getSelectedNode();
+		if (node != null) {
+			if (node.isLeaf()) {
+				execute(node);
+			} else {
+				TreePath path = getTreePath(node);
+				if (getTree().isExpanded(path)) {
+					getTree().collapsePath(path);
+				} else {
+					getTree().expandPath(path);
+				}
+			}
+		}
 	}
 
 	/**

@@ -114,7 +114,7 @@ public class DkStrategyListener implements IStrategy {
 	}
 
 	/**
-	 * Forwards the current bar on every tick to the listeners intereted in.
+	 * Forwards the current bar on every tick to the listeners interested in.
 	 * 
 	 * @param dkInstrument The instrument.
 	 * @throws JFException

@@ -14,9 +14,12 @@
 
 package com.qtplaf.platform;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
+
+import javax.swing.AbstractAction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,6 +59,26 @@ public class QTPlatform {
 	}
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
+	
+	/**
+	 * Pre-exit action, disconnect any connectred servers.
+	 */
+	static class PreExitAction extends AbstractAction {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				List<Server> servers = ServerFactory.getSupportedServers();
+				for (Server server : servers) {
+					if (server.getConnectionManager().isConnected()) {
+						server.getConnectionManager().disconnect();
+					}
+				}
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+		
+	}
 
 	/**
 	 * main entry.
@@ -75,6 +98,7 @@ public class QTPlatform {
 		frameMenu.setTitle(session.getString("qtMenuTitle"));
 		frameMenu.setLocation(20, 20);
 		frameMenu.setSize(0.4, 0.8);
+		frameMenu.setPreExitAction(new PreExitAction());
 
 		// Re-direct out and err.
 		System.setOut(frameMenu.getConsole().getPrintStream());
@@ -83,7 +107,7 @@ public class QTPlatform {
 		// Start showing the console.
 		frameMenu.showConsole();
 
-		// Show the menu.
+		// RunShow the menu.
 		frameMenu.setVisible(true);
 
 		// Command line argument: database connection (xml file name).
@@ -107,7 +131,7 @@ public class QTPlatform {
 			logger.info("Configuring menu...");
 			configureMenu(frameMenu.getPanelTreeMenu());
 
-			// Show the menu.
+			// RunShow the menu.
 			frameMenu.showTreeMenu();
 
 		} catch (Exception exc) {

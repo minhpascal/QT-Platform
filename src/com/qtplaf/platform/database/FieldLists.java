@@ -40,6 +40,9 @@ public class FieldLists {
 		fieldList.addField(Fields.getFieldInstrumentPipScale(session));
 		fieldList.addField(Fields.getFieldInstrumentTickValue(session));
 		fieldList.addField(Fields.getFieldInstrumentTickScale(session));
+		fieldList.addField(Fields.getFieldInstrumentVolumeScale(session));
+		fieldList.addField(Fields.getFieldInstrumentPrimaryCurrency(session));
+		fieldList.addField(Fields.getFieldInstrumentSecondaryCurrency(session));
 		return fieldList;
 	}
 }

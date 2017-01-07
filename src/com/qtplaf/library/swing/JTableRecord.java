@@ -186,16 +186,26 @@ public class JTableRecord extends JTable {
 	private boolean sortingEnabled = true;
 
 	/**
-	 * Constructor.
+	 * Constructor with default list selection mode multiple interval.
 	 * 
 	 * @param session The working session.
 	 */
 	public JTableRecord(Session session) {
+		this(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param session The working session.
+	 * @param selectionMode The list selection mode.
+	 */
+	public JTableRecord(Session session, int selectionMode) {
 		super();
 		this.session = session;
 
-		// Default selection model: multiple interval.
-		setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		// Default selection model.
+		setSelectionMode(selectionMode);
 		// Selection listener.
 		getSelectionModel().addListSelectionListener(new SelectionHandler());
 
@@ -332,7 +342,7 @@ public class JTableRecord extends JTable {
 			if (backgroundColor != null || foregroundColor != null) {
 				JTableRecordCellRenderer renderer = new JTableRecordCellRenderer(getSession(), model.getField(column));
 				if (renderer instanceof Component) {
-					Component component = (Component)renderer;
+					Component component = (Component) renderer;
 					if (value.getBackgroundColor() != null) {
 						component.setBackground(value.getBackgroundColor());
 					}

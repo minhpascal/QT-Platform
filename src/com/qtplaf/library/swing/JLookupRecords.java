@@ -242,7 +242,7 @@ public class JLookupRecords extends JDialogSession {
 	}
 
 	/**
-	 * Show the list of records and let lookup (select).
+	 * RunShow the list of records and let lookup (select).
 	 * 
 	 * @param recordSet The record set or list of records.
 	 * @return The selected records.
@@ -271,7 +271,7 @@ public class JLookupRecords extends JDialogSession {
 			getTableRecord().setSelectedRecords(selectedRecords);
 		}
 
-		// Show it
+		// RunShow it
 		setModal(true);
 		setVisible(true);
 

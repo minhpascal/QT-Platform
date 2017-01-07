@@ -60,6 +60,7 @@
 	<entry key="actionStartName">Start</entry>
 	<entry key="actionStopName">Stop</entry>
 	<entry key="actionExitName">Exit</entry>
+	<entry key="actionExecuteName">Execute</entry>
 	<entry key="actionCancelName">Cancel</entry>
 	<entry key="actionCloseName">Close</entry>
 	<entry key="actionClearName">Clear</entry>

@@ -1194,7 +1194,7 @@ public class JPanelProgress extends JPanel {
 	}
 
 	/**
-	 * Show the error description.
+	 * RunShow the error description.
 	 */
 	private void showErrorDescription() {
 

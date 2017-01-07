@@ -28,5 +28,11 @@
 	<entry key="fieldInstrumentTickValueHeader">Tick value</entry>
 	<entry key="fieldInstrumentTickScaleLabel">Instrument tick scale</entry>
 	<entry key="fieldInstrumentTickScaleHeader">Tick scale</entry>
+	<entry key="fieldInstrumentVolumeScaleLabel">Volume scale</entry>
+	<entry key="fieldInstrumentVolumeScaleHeader">Volume scale</entry>
+	<entry key="fieldInstrumentPrimaryCurrencyLabel">Primary currency</entry>
+	<entry key="fieldInstrumentPrimaryCurrencyHeader">Primary currency</entry>
+	<entry key="fieldInstrumentSecondaryCurrencyLabel">Secondary currency</entry>
+	<entry key="fieldInstrumentSecondaryCurrencyHeader">Secondary currency</entry>
 
 </properties>

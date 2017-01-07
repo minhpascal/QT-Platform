@@ -29,6 +29,7 @@ import javax.swing.event.ChangeListener;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.action.DefaultActionClear;
+import com.qtplaf.library.swing.action.DefaultActionExecute;
 import com.qtplaf.library.swing.action.DefaultActionExit;
 import com.qtplaf.library.swing.event.WindowHandler;
 import com.qtplaf.library.util.Alignment;
@@ -39,6 +40,28 @@ import com.qtplaf.library.util.Alignment;
  * @author Miquel Sas
  */
 public class JFrameMenu extends JFrameSession {
+	
+	/**
+	 * Execute action.
+	 */
+	class ActionExecute extends DefaultActionExecute {
+
+		/**
+		 * Constructor.
+		 */
+		ActionExecute() {
+			super(getSession());
+		}
+
+		/**
+		 * Perform the action, execute the selected menu option if applicable.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			getPanelTreeMenu().processExecute();
+		}
+		
+	}
 
 	/**
 	 * Exit action.
@@ -131,6 +154,10 @@ public class JFrameMenu extends JFrameSession {
 	private JTabbedPane tabbedPane;
 
 	/**
+	 * Action execute.
+	 */
+	private ActionExecute actionExecute;
+	/**
 	 * Action exit.
 	 */
 	private ActionExit actionExit;
@@ -218,11 +245,14 @@ public class JFrameMenu extends JFrameSession {
 		getPanelButtons().clear();
 		int index = getTabbedPane().getSelectedIndex();
 		if (index < 0) {
+			getPanelButtons().add(getActionExecute());
+			getPanelButtons().add(getActionExit());
 			return;
 		}
 
-		// Selected tab is menu: action exit.
+		// Selected tab is menu: actions execute and exit.
 		if (index == getTabbedPane().indexOfComponent(getPanelTreeMenu())) {
+			getPanelButtons().add(getActionExecute());
 			getPanelButtons().add(getActionExit());
 		}
 
@@ -247,6 +277,7 @@ public class JFrameMenu extends JFrameSession {
 	public JPanelTreeMenu getPanelTreeMenu() {
 		if (panelMenu == null) {
 			panelMenu = new JPanelTreeMenu(getSession());
+			panelMenu.setProcessExecute(false);
 		}
 		return panelMenu;
 	}
@@ -286,6 +317,18 @@ public class JFrameMenu extends JFrameSession {
 			tabbedPane.addChangeListener(new TabChangeListener());
 		}
 		return tabbedPane;
+	}
+
+	/**
+	 * Returns the execute action.
+	 * 
+	 * @return The execute action.
+	 */
+	private ActionExecute getActionExecute() {
+		if (actionExecute == null) {
+			actionExecute = new ActionExecute();
+		}
+		return actionExecute;
 	}
 
 	/**
@@ -331,7 +374,7 @@ public class JFrameMenu extends JFrameSession {
 	}
 
 	/**
-	 * Show the console.
+	 * RunShow the console.
 	 */
 	public void showConsole() {
 		getTabbedPane().setSelectedComponent(getConsoleComponent());
@@ -339,7 +382,7 @@ public class JFrameMenu extends JFrameSession {
 	}
 
 	/**
-	 * Show the tree menu.
+	 * RunShow the tree menu.
 	 */
 	public void showTreeMenu() {
 		getTabbedPane().setSelectedComponent(getPanelTreeMenu());

@@ -18,7 +18,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -42,12 +41,12 @@ import com.qtplaf.library.swing.event.KeyHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
- * An option dialog in the fashion of the <code>JOptionPane</code>, more friendly and under the total control of this
+ * An option frame in the fashion of the <code>JOptionPane</code>, more friendly and under the total control of this
  * library.
  * 
  * @author Miquel Sas
  */
-public class JOptionDialog extends JDialogSession {
+public class JOptionFrame extends JFrameSession {
 
 	/**
 	 * Window adapter to handle the close operation.
@@ -101,7 +100,6 @@ public class JOptionDialog extends JDialogSession {
 		 * Perform the action, just close the window.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			selectedOption = ActionUtils.getSourceName(this);
 			setVisible(false);
 			dispose();
 		}
@@ -124,7 +122,7 @@ public class JOptionDialog extends JDialogSession {
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode, modifiers);
 
 			// Get all buttons to process the key on them.
-			List<JButton> buttons = SwingUtils.getAllButtons(JOptionDialog.this);
+			List<JButton> buttons = SwingUtils.getAllButtons(JOptionFrame.this);
 
 			// Accelerator key.
 			for (JButton button : buttons) {
@@ -177,99 +175,26 @@ public class JOptionDialog extends JDialogSession {
 	 * Initial option.
 	 */
 	private String initialOption;
-	/**
-	 * Selected option.
-	 */
-	private String selectedOption;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param session The working session.
 	 */
-	public JOptionDialog(Session session) {
+	public JOptionFrame(Session session) {
 		super(session);
 		setWindowHandler(new WindowAdapter());
-		setModal(true);
 	}
 
 	/**
-	 * Constructor.
-	 * 
-	 * @param session The working session.
-	 * @param owner The window that owns this dialog.
-	 */
-	public JOptionDialog(Session session, Window owner) {
-		super(session, owner);
-		setWindowHandler(new WindowAdapter());
-		setModal(true);
-	}
-
-	/**
-	 * Add an option to the list of options.
-	 * 
-	 * @param option The option to add.
-	 */
-	public void addOption(String option) {
-		addOption(option, null, null, null, false);
-	}
-
-	/**
-	 * Add an option to the list of options.
-	 * 
-	 * @param option The option to add.
-	 * @param defaultClose A boolean that indicates if the option is the default close option.
-	 */
-	public void addOption(String option, boolean defaultClose) {
-		addOption(option, null, null, null, defaultClose);
-	}
-
-	/**
-	 * Adds an option.
-	 * 
-	 * @param option The option name or string.
-	 * @param description The optional option description.
-	 * @param smallIcon The optional option small icon.
-	 * @param acceleratorKey The optional option accelerator key.
-	 * @param defaultClose A boolean that indicates if the option is the default close option.
-	 */
-	public void addOption(
-		String option,
-		String description,
-		Icon smallIcon,
-		KeyStroke acceleratorKey,
-		boolean defaultClose) {
-
-		if (option == null) {
-			throw new NullPointerException("The option can not be null");
-		}
-		Action action = new ActionClose();
-		ActionUtils.setSourceName(action, option);
-		if (description != null) {
-			ActionUtils.setShortDescription(action, description);
-		}
-		if (smallIcon != null) {
-			ActionUtils.setSmallIcon(action, smallIcon);
-		}
-		if (acceleratorKey != null) {
-			ActionUtils.setAcceleratorKey(action, acceleratorKey);
-		}
-		ActionUtils.setSession(action, getSession());
-		ActionUtils.setActionGroup(action, ActionGroup.Edit);
-		ActionUtils.setDefaultCloseAction(action, defaultClose);
-
-		actions.add(action);
-	}
-
-	/**
-	 * Add an option in the for of an action that is expected to have a name or source name at least. It can also have
-	 * the common attributes, short description, accelerator key, action group.
+	 * Add an action that is expected to have a name or source name at least. It can also have the common attributes,
+	 * short description, accelerator key, action group.
 	 * <p>
-	 * This option dialog is set as the user object, so it can be retrieved when the action is executed.
+	 * This option frame is set as the user object, so it can be retrieved when the action is executed.
 	 * 
 	 * @param action The action. One of them should be the default close action.
 	 */
-	public void addOption(Action action) {
+	public void addAction(Action action) {
 		ActionUtils.setSession(action, getSession());
 		ActionUtils.setUserObject(action, this);
 		actions.add(action);
@@ -383,21 +308,18 @@ public class JOptionDialog extends JDialogSession {
 	}
 
 	/**
-	 * RunShow the dialog and return the selected option or null if the dialog was closed without selecting any option.
-	 * 
-	 * @return The selected option.
+	 * Show the frame resizable.
 	 */
-	public String showDialog() {
-		return showDialog(false);
+	public void showFrame() {
+		showFrame(true);
 	}
 
 	/**
-	 * RunShow the dialog and return the selected option or null if the dialog was closed without selecting any option.
+	 * Show the frame..
 	 * 
-	 * @param resizable A boolean that indicates if the dialog is resizable.
-	 * @return The selected option.
+	 * @param resizable A boolean that indicates if the frame is resizable.
 	 */
-	public String showDialog(boolean resizable) {
+	public void showFrame(boolean resizable) {
 
 		// Validate that component and actions has been set.
 		if (component == null || actions.isEmpty()) {
@@ -475,7 +397,5 @@ public class JOptionDialog extends JDialogSession {
 		setResizable(resizable);
 		setVisible(true);
 		requestFocus();
-
-		return selectedOption;
 	}
 }

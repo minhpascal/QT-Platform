@@ -41,13 +41,22 @@ public class RecordSets {
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
 		
-		server.getConnectionManager().connect("msasc2EU", "C1a2r3l4a5", ConnectionType.Demo);
+		if (!server.getConnectionManager().isConnected()) {
+			server.getConnectionManager().connect("msasc2EU", "C1a2r3l4a5", ConnectionType.Demo);
+		}
 		
 		FieldList fieldList = FieldLists.getFieldListInstrument(session);
 		
+		// Track max pip and tick scale to set their values decimals.
+		int maxPipScale = 0;
+		int maxTickScale = 0;
 		RecordSet recordSet = new RecordSet(fieldList);
 		List<Instrument> instruments = server.getAvailableInstruments();
 		for (Instrument instrument : instruments) {
+			
+			maxPipScale = Math.max(maxPipScale, instrument.getPipScale());
+			maxTickScale = Math.max(maxTickScale, instrument.getPipScale());
+			
 			Record record = new Record(fieldList);
 			record.setValue(Fields.InstrumentId, instrument.getId());
 			record.setValue(Fields.InstrumentDesc, instrument.getDescription());
@@ -55,8 +64,15 @@ public class RecordSets {
 			record.setValue(Fields.InstrumentPipScale, instrument.getPipScale());
 			record.setValue(Fields.InstrumentTickValue, instrument.getTickValue());
 			record.setValue(Fields.InstrumentTickScale, instrument.getTickScale());
+			record.setValue(Fields.InstrumentVolumeScale, instrument.getVolumeScale());
+			record.setValue(Fields.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
+			record.setValue(Fields.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
 			recordSet.add(record);
 		}
+		recordSet.sort();
+		
+		fieldList.getField(Fields.InstrumentPipValue).setDecimals(maxPipScale);
+		fieldList.getField(Fields.InstrumentTickValue).setDecimals(maxTickScale);
 		
 		return recordSet;
 	}

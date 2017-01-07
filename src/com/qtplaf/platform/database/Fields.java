@@ -138,7 +138,8 @@ public class Fields {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(InstrumentPipValue);
-		field.setType(Types.Double);
+		field.setType(Types.Decimal);
+		field.setDecimals(4);
 		field.setHeader(session.getString("fieldInstrumentPipValueHeader"));
 		field.setLabel(session.getString("fieldInstrumentPipValueLabel"));
 		field.setTitle(session.getString("fieldInstrumentPipValueLabel"));
@@ -173,7 +174,8 @@ public class Fields {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(InstrumentTickValue);
-		field.setType(Types.Double);
+		field.setType(Types.Decimal);
+		field.setDecimals(4);
 		field.setHeader(session.getString("fieldInstrumentTickValueHeader"));
 		field.setLabel(session.getString("fieldInstrumentTickValueLabel"));
 		field.setTitle(session.getString("fieldInstrumentTickValueLabel"));
@@ -198,4 +200,57 @@ public class Fields {
 		return field;
 	}
 
+	/**
+	 * Returns <b><i>InstrumentVolumeScale</i></b> <tt>INSTR_VOLS</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldInstrumentVolumeScale(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(InstrumentVolumeScale);
+		field.setType(Types.Integer);
+		field.setLength(2);
+		field.setHeader(session.getString("fieldInstrumentVolumeScaleHeader"));
+		field.setLabel(session.getString("fieldInstrumentVolumeScaleLabel"));
+		field.setTitle(session.getString("fieldInstrumentVolumeScaleLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>InstrumentPrimaryCurrency</i></b> <tt>INSTR_CURRP</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldInstrumentPrimaryCurrency(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(InstrumentPrimaryCurrency);
+		field.setType(Types.String);
+		field.setLength(6);
+		field.setHeader(session.getString("fieldInstrumentPrimaryCurrencyHeader"));
+		field.setLabel(session.getString("fieldInstrumentPrimaryCurrencyLabel"));
+		field.setTitle(session.getString("fieldInstrumentPrimaryCurrencyLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>InstrumentSecondaryCurrency</i></b> <tt>INSTR_CURRP</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldInstrumentSecondaryCurrency(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(InstrumentSecondaryCurrency);
+		field.setType(Types.String);
+		field.setLength(6);
+		field.setHeader(session.getString("fieldInstrumentSecondaryCurrencyHeader"));
+		field.setLabel(session.getString("fieldInstrumentSecondaryCurrencyLabel"));
+		field.setTitle(session.getString("fieldInstrumentSecondaryCurrencyLabel"));
+		return field;
+	}
 }

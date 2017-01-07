@@ -16,6 +16,8 @@ package com.qtplaf.library.trading.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 
@@ -25,6 +27,15 @@ import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
  * @author Miquel Sas
  */
 public class ServerFactory {
+	
+	/** Dukascopy server key. */
+	private static final String Dukascopy = "dkcp";
+
+	/**
+	 * The map to catch servers.
+	 */
+	private static Map<String, Server> mapServers = new ConcurrentHashMap<>();
+	
 
 	/**
 	 * Returns a list with an instance of each supported server.
@@ -45,7 +56,12 @@ public class ServerFactory {
 	 * @throws ServerException
 	 */
 	public static Server getServerDukascopy() throws ServerException {
-		return new DkServer();
+		Server server = mapServers.get(Dukascopy);
+		if (server == null) {
+			server = new DkServer();
+			mapServers.put(Dukascopy, server);
+		}
+		return server;
 	}
 
 	/**
