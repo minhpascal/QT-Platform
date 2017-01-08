@@ -26,6 +26,13 @@ import com.qtplaf.library.database.rdbms.DBUtils;
  * @author Miquel Sas
  */
 public class MetaData {
+	
+	public static final String TableCatalog = "TABLE_CAT";
+	public static final String TableSchema = "TABLE_SCHEM";
+	public static final String TableName = "TABLE_NAME";
+	public static final String ColumnName = "COLUMN_NAME";
+	public static final String DataType = "DATA_TYPE";
+	public static final String TypeName = "TYPE_NAME";
 
 	/**
 	 * Helper to rapidly create fields.
@@ -49,7 +56,7 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListCatalogInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TABLE_CAT", "Catalog", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableCatalog, "Catalog", Types.String, 40, 0, true));
 		return fieldList;
 	}
 
@@ -60,12 +67,12 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListColumnInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TABLE_CAT", "Catalog", Types.String, 40, 0, true));
-		fieldList.addField(createField("TABLE_SCHEM", "Schema", Types.String, 40, 0, true));
-		fieldList.addField(createField("TABLE_NAME", "Table", Types.String, 40, 0, false));
-		fieldList.addField(createField("COLUMN_NAME", "Column", Types.String, 40, 0, false));
-		fieldList.addField(createField("DATA_TYPE", "Data type", Types.Integer, 0, 0, false));
-		fieldList.addField(createField("TYPE_NAME", "Type name", Types.String, 20, 0, false));
+		fieldList.addField(createField(TableCatalog, "Catalog", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableSchema, "Schema", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableName, "Table", Types.String, 40, 0, false));
+		fieldList.addField(createField(ColumnName, "Column", Types.String, 40, 0, false));
+		fieldList.addField(createField(DataType, "Data type", Types.Integer, 0, 0, false));
+		fieldList.addField(createField(TypeName, "Type name", Types.String, 20, 0, false));
 		fieldList.addField(createField("COLUMN_SIZE", "Column size", Types.Long, 0, 0, false));
 		fieldList.addField(createField("BUFFER_LENGTH", "Buffer length", Types.Integer, 0, 0, false));
 		fieldList.addField(createField("DECIMAL_DIGITS", "Decimal digits", Types.Integer, 0, 0, false));
@@ -89,15 +96,15 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListIndexInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TABLE_CAT", "Catalog", Types.String, 40, 0, true));
-		fieldList.addField(createField("TABLE_SCHEM", "Schema", Types.String, 40, 0, true));
-		fieldList.addField(createField("TABLE_NAME", "Table", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableCatalog, "Catalog", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableSchema, "Schema", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableName, "Table", Types.String, 40, 0, true));
 		fieldList.addField(createField("NON_UNIQUE", "Non unique", Types.Boolean, 1, 0, false));
 		fieldList.addField(createField("INDEX_QUALIFIER", "Index qualifier", Types.String, 40, 0, false));
 		fieldList.addField(createField("INDEX_NAME", "Index name", Types.String, 40, 0, false));
 		fieldList.addField(createField("TYPE", "Index type", Types.Integer, 40, 0, false));
 		fieldList.addField(createField("ORDINAL_POSITION", "Ordinal position", Types.Integer, 0, 0, false));
-		fieldList.addField(createField("COLUMN_NAME", "Column name", Types.String, 0, 0, false));
+		fieldList.addField(createField(ColumnName, "Column name", Types.String, 0, 0, false));
 		fieldList.addField(createField("ASC_OR_DESC", "Asc/desc", Types.String, 2, 0, false));
 		fieldList.addField(createField("CARDINALITY", "Cardinality", Types.Integer, 0, 0, false));
 		fieldList.addField(createField("PAGES", "Pages", Types.Integer, 0, 0, false));
@@ -113,9 +120,9 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListTableInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TABLE_CAT", "Catalog", Types.String, 40, 0, false));
-		fieldList.addField(createField("TABLE_SCHEM", "Schema", Types.String, 40, 0, false));
-		fieldList.addField(createField("TABLE_NAME", "Table", Types.String, 40, 0, false));
+		fieldList.addField(createField(TableCatalog, "Catalog", Types.String, 40, 0, false));
+		fieldList.addField(createField(TableSchema, "Schema", Types.String, 40, 0, false));
+		fieldList.addField(createField(TableName, "Table", Types.String, 40, 0, false));
 		fieldList.addField(createField("TABLE_TYPE", "Table type", Types.String, 40, 0, false));
 		fieldList.addField(createField("REMARKS", "Remarks", Types.String, 128, 0, false));
 		return fieldList;
@@ -128,10 +135,10 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListPrimaryKeyInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TABLE_CAT", "Catalog", Types.String, 40, 0, true));
-		fieldList.addField(createField("TABLE_SCHEM", "Schema", Types.String, 40, 0, true));
-		fieldList.addField(createField("TABLE_NAME", "Table", Types.String, 40, 0, true));
-		fieldList.addField(createField("COLUMN_NAME", "Column", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableCatalog, "Catalog", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableSchema, "Schema", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableName, "Table", Types.String, 40, 0, true));
+		fieldList.addField(createField(ColumnName, "Column", Types.String, 40, 0, true));
 		fieldList.addField(createField("KEY_SEQ", "Key seq", Types.Integer, 4, 0, true));
 		fieldList.addField(createField("PK_NAME", "PK name", Types.String, 40, 0, false));
 		return fieldList;
@@ -144,7 +151,7 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListSchemaInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TABLE_SCHEM", "Schema", Types.String, 40, 0, true));
+		fieldList.addField(createField(TableSchema, "Schema", Types.String, 40, 0, true));
 		return fieldList;
 	}
 
@@ -155,8 +162,8 @@ public class MetaData {
 	 */
 	public static FieldList getFieldListTypeInfo() {
 		FieldList fieldList = new FieldList();
-		fieldList.addField(createField("TYPE_NAME", "Type name", Types.String, 20, 0, true));
-		fieldList.addField(createField("DATA_TYPE", "Data type", Types.Integer, 0, 0, false));
+		fieldList.addField(createField(TypeName, "Type name", Types.String, 20, 0, true));
+		fieldList.addField(createField(DataType, "Data type", Types.Integer, 0, 0, false));
 		fieldList.addField(createField("PRECISION", "Precision", Types.Long, 0, 0, false));
 		fieldList.addField(createField("LITERAL_PREFIX", "Literal prefix", Types.String, 5, 0, false));
 		fieldList.addField(createField("LITERAL_SUFFIX", "Literal suffix", Types.String, 5, 0, false));
@@ -248,7 +255,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getCatalogs();
-			readRecordSet(rs, getFieldListCatalogInfo());
+			recordSet = readRecordSet(rs, getFieldListCatalogInfo());
 			return recordSet;
 		} finally {
 			if (cn != null && !cn.isClosed())
@@ -277,6 +284,29 @@ public class MetaData {
 	}
 
 	/**
+	 * Returns the table recordset (only TABLE types).
+	 *
+	 * @param schema The table schema or null
+	 * @return A recordset with table definition.
+	 * @throws SQLException
+	 */
+	public RecordSet getRecordSetTables(String schema) throws SQLException {
+		return getRecordSetTables(null, schema, null, "TABLE");
+	}
+
+	/**
+	 * Returns the table recordset (only TABLE types).
+	 *
+	 * @param schema The table schema or null
+	 * @param table The table name prefix or null
+	 * @return A recordset with table definition.
+	 * @throws SQLException
+	 */
+	public RecordSet getRecordSetTables(String schema, String table) throws SQLException {
+		return getRecordSetTables(null, schema, table, "TABLE");
+	}
+
+	/**
 	 * Returns the table recordset.
 	 *
 	 * @param catalog The table catalog or null
@@ -286,13 +316,13 @@ public class MetaData {
 	 * @return A recordset with table definition.
 	 * @throws SQLException
 	 */
-	public RecordSet getRecordSetTables(String catalog, String schema, String table, String[] types) throws SQLException {
+	public RecordSet getRecordSetTables(String catalog, String schema, String table, String... types) throws SQLException {
 		Connection cn = null;
 		RecordSet recordSet = null;
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getTables(catalog, schema, table, types);
-			readRecordSet(rs, getFieldListTableInfo());
+			recordSet = readRecordSet(rs, getFieldListTableInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();
@@ -315,7 +345,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getColumns(catalog, schema, table, null);
-			readRecordSet(rs, getFieldListColumnInfo());
+			recordSet = readRecordSet(rs, getFieldListColumnInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();
@@ -338,7 +368,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getIndexInfo(catalog, schema, table, false, false);
-			readRecordSet(rs, getFieldListIndexInfo());
+			recordSet = readRecordSet(rs, getFieldListIndexInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();
@@ -361,7 +391,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getPrimaryKeys(catalog, schema, table);
-			readRecordSet(rs, getFieldListPrimaryKeyInfo());
+			recordSet = readRecordSet(rs, getFieldListPrimaryKeyInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();
@@ -385,7 +415,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getImportedKeys(catalog, schema, table);
-			readRecordSet(rs, getFieldListForeignKeyInfo());
+			recordSet = readRecordSet(rs, getFieldListForeignKeyInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();
@@ -409,7 +439,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getExportedKeys(catalog, schema, table);
-			readRecordSet(rs, getFieldListForeignKeyInfo());
+			recordSet = readRecordSet(rs, getFieldListForeignKeyInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();
@@ -429,7 +459,7 @@ public class MetaData {
 		try {
 			cn = dbEngine.getConnection();
 			ResultSet rs = cn.getMetaData().getTypeInfo();
-			readRecordSet(rs, getFieldListTypeInfo());
+			recordSet = readRecordSet(rs, getFieldListTypeInfo());
 		} finally {
 			if (cn != null && !cn.isClosed())
 				cn.close();

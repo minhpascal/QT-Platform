@@ -346,6 +346,39 @@ public class DBEngine {
 	public int executeCreateSchema(String schema) throws SQLException {
 		return executeStatement(getDBEngineAdapter().getStatementCreateSchema(schema));
 	}
+	
+	/**
+	 * Executes a create table statement, with primary key, indexes, persistent foreign keys and constraints.
+	 *
+	 * @param table The table.
+	 * @return The number of rows updated of zero if not applicable.
+	 * @throws SQLException
+	 */
+	public int executeBuildTable(Table table) throws SQLException {
+		int updated = 0;
+		
+		// Create the table.
+		updated += executeCreateTable(table);
+		
+		// Add the primary key.
+		if (table.getPrimaryKey() != null) {
+			updated += executeAddPrimaryKey(table);
+		}
+		
+		// Add secondary indexes.
+		for (int i = 0; i < table.getIndexCount(); i++) {
+			updated += executeCreateIndex(table.getIndex(i));
+		}
+		
+		// Persistent foreign keys.
+		for (int i = 0; i < table.getForeignKeyCount(); i++) {
+			if (table.getForeignKey(i).isPersistent()) {
+				updated += executeAddForeignKey(table, table.getForeignKey(i));
+			}
+		}
+		
+		return updated;
+	}
 
 	/**
 	 * Executes a create table statement.
@@ -597,17 +630,33 @@ public class DBEngine {
 	 * @throws SQLException
 	 */
 	public Cursor executeSelectCursor(Select select, boolean forwardOnly, Connection cn) throws SQLException {
-		boolean closeConnection = (cn == null);
-		try {
-			if (closeConnection) {
-				cn = getConnection();
-			}
-			return new Cursor(this, cn, select, forwardOnly);
-		} finally {
-			if (closeConnection && cn != null) {
-				cn.close();
-			}
+		if (cn == null) {
+			cn = getConnection();
 		}
+		return new Cursor(this, cn, select, forwardOnly);
+	}
+
+	/**
+	 * Executes a select recordset.
+	 *
+	 * @param view The view.
+	 * @return The recordset.
+	 * @throws SQLException
+	 */
+	public RecordSet executeSelectRecordSet(View view) throws SQLException {
+		return executeSelectRecordSet(getDBEngineAdapter().getQuerySelect(view));
+	}
+
+	/**
+	 * Executes a select recordset.
+	 *
+	 * @param view The view.
+	 * @param filter The filter.
+	 * @return The recordset.
+	 * @throws SQLException
+	 */
+	public RecordSet executeSelectRecordSet(View view, Filter filter) throws SQLException {
+		return executeSelectRecordSet(getDBEngineAdapter().getQuerySelect(view, filter));
 	}
 
 	/**

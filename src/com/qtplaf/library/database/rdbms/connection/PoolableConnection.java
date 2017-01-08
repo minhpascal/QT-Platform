@@ -125,13 +125,19 @@ public class PoolableConnection implements Connection {
 
 	private void closeStatements() throws SQLException {
 		while (!callableStatements.isEmpty()) {
-			callableStatements.get(0).close();
+			if (!callableStatements.get(0).isClosed()) {
+				callableStatements.get(0).close();
+			}
 		}
 		while (!preparedStatements.isEmpty()) {
-			preparedStatements.get(0).close();
+			if (!preparedStatements.get(0).isClosed()) {
+				preparedStatements.get(0).close();
+			}
 		}
 		while (!statements.isEmpty()) {
-			statements.get(0).close();
+			if (!statements.get(0).isClosed()) {
+				statements.get(0).close();
+			}
 		}
 	}
 

@@ -46,5 +46,20 @@
 	
 	<entry key="fieldPeriodSizeLabel">Period size</entry>
 	<entry key="fieldPeriodSizeHeader">Period size</entry>
+	
+	<!-- Table -->
+	
+	<entry key="fieldTableNameLabel">Table name</entry>
+	<entry key="fieldTableNameHeader">Table name</entry>
+
+	<!-- Data filter -->
+	
+	<entry key="fieldDataFilterLabel">Data filter</entry>
+	<entry key="fieldDataFilterHeader">Filter</entry>
+
+	<!-- Offeer side -->
+	
+	<entry key="fieldOfferSideLabel">Offer side</entry>
+	<entry key="fieldOfferSideHeader">Offer side</entry>
 
 </properties>

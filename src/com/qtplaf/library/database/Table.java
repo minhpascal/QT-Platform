@@ -90,10 +90,6 @@ public class Table implements Comparable<Object> {
 	 */
 	private final List<ForeignKey> foreignKeys = new ArrayList<>();
 	/**
-	 * A cache of the list of primary key fields
-	 */
-	private List<Field> primaryKeyFields;
-	/**
 	 * The persistor that provides persistence to this table.
 	 */
 	private Persistor persistor;
@@ -287,10 +283,6 @@ public class Table implements Comparable<Object> {
 			primaryKey.clear();
 		}
 		primaryKey = null;
-		if (primaryKeyFields != null) {
-			primaryKeyFields.clear();
-		}
-		primaryKeyFields = null;
 		indexes.clear();
 		foreignKeys.clear();
 	}
@@ -354,6 +346,26 @@ public class Table implements Comparable<Object> {
 		field.setParentTable(this);
 		fields.addField(field);
 		clearFieldMap();
+	}
+
+	/**
+	 * Add a list of fields.
+	 * 
+	 * @param fields The list of fields.
+	 */
+	public void addFields(List<Field> fields) {
+		for (Field field : fields) {
+			addField(field);
+		}
+	}
+
+	/**
+	 * Add a list of fields.
+	 * 
+	 * @param fields The list of fields.
+	 */
+	public void addFields(FieldList fields) {
+		addFields(fields.getFields());
 	}
 
 	/**
@@ -460,14 +472,7 @@ public class Table implements Comparable<Object> {
 	 * @return The list of primary key fields.
 	 */
 	public List<Field> getPrimaryKeyFields() {
-		if (primaryKeyFields == null) {
-			primaryKeyFields = new ArrayList<>();
-			List<Field> primaryKeyFields = fields.getPrimaryKeyFields();
-			for (Field field : primaryKeyFields) {
-				primaryKeyFields.add(field);
-			}
-		}
-		return primaryKeyFields;
+		return fields.getPrimaryKeyFields();
 	}
 
 	/**
@@ -523,8 +528,7 @@ public class Table implements Comparable<Object> {
 			primaryKey.setName(getName() + "_PK");
 			primaryKey.setSchema(getSchema());
 			primaryKey.setDescription(getName() + " primary key");
-			List<KeyPointer> primaryKeyPointers = fields
-				.getPrimaryKeyPointers();
+			List<KeyPointer> primaryKeyPointers = fields.getPrimaryKeyPointers();
 			for (KeyPointer pointer : primaryKeyPointers) {
 				primaryKey.add(getField(pointer.getIndex()));
 			}

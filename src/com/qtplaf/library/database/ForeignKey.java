@@ -242,27 +242,38 @@ public class ForeignKey extends ArrayList<ForeignKey.Segment> {
 	 * The name of this constraint.
 	 */
 	private String name = null;
-
 	/**
 	 * The local table.
 	 */
 	private Table localTable = null;
-
 	/**
 	 * The foreign table.
 	 */
 	private Table foreignTable = null;
-
 	/**
 	 * The type of deletion restriction: default RESTRICT.
 	 */
 	private OnDelete deleteRestriction = OnDelete.RESTRICT;
+	/**
+	 * A boolean that indicates if the foreing key is persistent.
+	 */
+	private boolean persistent = false;
 
 	/**
 	 * Default constructor.
 	 */
 	public ForeignKey() {
 		super();
+	}
+
+	/**
+	 * Constructor indicating if this foreign key is persisten.
+	 * 
+	 * @param persistent A boolean that indicates if the foreing key is persistent.
+	 */
+	public ForeignKey(boolean persistent) {
+		super();
+		this.persistent = persistent;
 	}
 
 	/**
@@ -351,6 +362,24 @@ public class ForeignKey extends ArrayList<ForeignKey.Segment> {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Returns a boolean that indicates if the foreing key is persistent.
+	 * 
+	 * @return A boolean that indicates if the foreing key is persistent.
+	 */
+	public boolean isPersistent() {
+		return persistent;
+	}
+
+	/**
+	 * Sets a boolean that indicates if the foreing key is persistent.
+	 * 
+	 * @param persistent A boolean that indicates if the foreing key is persistent.
+	 */
+	public void setPersistent(boolean persistent) {
+		this.persistent = persistent;
 	}
 
 	/**

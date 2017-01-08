@@ -23,6 +23,25 @@ import com.qtplaf.library.database.FieldList;
  * @author Miquel Sas
  */
 public class FieldLists {
+	
+	/**
+	 * Returns the list of fields for the brokers table.
+	 * 
+	 * @param session The working session.
+	 * @return The field list.
+	 */
+	public static FieldList getFieldListBroker(Session session) {
+		
+		FieldList fieldList = new FieldList();
+		
+		fieldList.addField(Fields.getFieldBrokerId(session));
+		fieldList.addField(Fields.getFieldBrokerName(session));
+		fieldList.addField(Fields.getFieldBrokerTitle(session));
+		
+		fieldList.getField(Fields.BrokerId).setPrimaryKey(true);
+		
+		return fieldList;
+	}
 
 	/**
 	 * Returns the list of fields for downloaded tickers per broker.
@@ -31,15 +50,22 @@ public class FieldLists {
 	 * @return The field list.
 	 */
 	public static FieldList getFieldListTicker(Session session) {
+		
 		FieldList fieldList = new FieldList();
+		
 		fieldList.addField(Fields.getFieldBrokerId(session));
 		fieldList.addField(Fields.getFieldInstrumentId(session));
 		fieldList.addField(Fields.getFieldPeriodSize(session));
 		fieldList.addField(Fields.getFieldUnitName(session));
+		fieldList.addField(Fields.getFieldOfferSide(session));
+		fieldList.addField(Fields.getFieldDataFilter(session));
+		fieldList.addField(Fields.getFieldTableName(session));
+		
 		fieldList.getField(Fields.BrokerId).setPrimaryKey(true);
 		fieldList.getField(Fields.InstrumentId).setPrimaryKey(true);
 		fieldList.getField(Fields.PeriodSize).setPrimaryKey(true);
 		fieldList.getField(Fields.UnitName).setPrimaryKey(true);
+		
 		return fieldList;
 	}
 
@@ -50,7 +76,9 @@ public class FieldLists {
 	 * @return The field list.
 	 */
 	public static FieldList getFieldListInstrument(Session session) {
+		
 		FieldList fieldList = new FieldList();
+		
 		fieldList.addField(Fields.getFieldInstrumentId(session));
 		fieldList.addField(Fields.getFieldInstrumentDesc(session));
 		fieldList.addField(Fields.getFieldInstrumentPipValue(session));
@@ -61,6 +89,7 @@ public class FieldLists {
 		fieldList.addField(Fields.getFieldInstrumentPrimaryCurrency(session));
 		fieldList.addField(Fields.getFieldInstrumentSecondaryCurrency(session));
 		fieldList.getField(Fields.InstrumentId).setPrimaryKey(true);
+		
 		return fieldList;
 	}
 }

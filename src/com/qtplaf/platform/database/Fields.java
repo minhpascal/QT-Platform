@@ -40,6 +40,9 @@ public class Fields {
 	public static final String UnitId = "UNIT_ID";
 	public static final String UnitName = "UNIT_NAME";
 	public static final String PeriodSize = "PERIOD_SIZE";
+	public static final String TableName = "TABLE_NAME";
+	public static final String DataFilter = "DATA_FILTER";
+	public static final String OfferSide = "OFFER_SIDE";
 
 	/**
 	 * Returns <b><i>BrokerId</i></b> <tt>BROKER_ID</tt> the field definition.
@@ -308,6 +311,60 @@ public class Fields {
 		field.setHeader(session.getString("fieldPeriodSizeHeader"));
 		field.setLabel(session.getString("fieldPeriodSizeLabel"));
 		field.setTitle(session.getString("fieldPeriodSizeLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>TableName</i></b> <tt>TABLE_NAME</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldTableName(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(TableName);
+		field.setType(Types.String);
+		field.setLength(60);
+		field.setHeader(session.getString("fieldTableNameHeader"));
+		field.setLabel(session.getString("fieldTableNameLabel"));
+		field.setTitle(session.getString("fieldTableNameLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>DataFilter</i></b> <tt>DATA_FILTER</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldDataFilter(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(DataFilter);
+		field.setType(Types.String);
+		field.setLength(10);
+		field.setHeader(session.getString("fieldDataFilterHeader"));
+		field.setLabel(session.getString("fieldDataFilterLabel"));
+		field.setTitle(session.getString("fieldDataFilterLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns <b><i>OfferSide</i></b> <tt>OFFER_SIDE</tt> the field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldOfferSide(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(OfferSide);
+		field.setType(Types.String);
+		field.setLength(3);
+		field.setHeader(session.getString("fieldOfferSideHeader"));
+		field.setLabel(session.getString("fieldOfferSideLabel"));
+		field.setTitle(session.getString("fieldOfferSideLabel"));
 		return field;
 	}
 }

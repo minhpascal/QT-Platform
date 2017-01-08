@@ -29,8 +29,11 @@ import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.MetaData;
 import com.qtplaf.library.database.OrderKey;
+import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.database.View;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
 import com.qtplaf.library.database.rdbms.adapters.PostgreSQLAdapter;
@@ -44,7 +47,9 @@ import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
+import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Tables;
 
 /**
  * Main entry of the QT-Platform.
@@ -59,7 +64,7 @@ public class QTPlatform {
 	}
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-	
+
 	/**
 	 * Pre-exit action, disconnect any connectred servers.
 	 */
@@ -77,7 +82,7 @@ public class QTPlatform {
 				logger.catching(exc);
 			}
 		}
-		
+
 	}
 
 	/**
@@ -124,7 +129,7 @@ public class QTPlatform {
 
 			// Ensure database.
 			logger.info("Database checking...");
-			configureDatabase(argMngr.getValue("connectionFile"));
+			configureDatabase(session, argMngr.getValue("connectionFile"));
 			logger.info("Database checked");
 
 			// Configure the menu.
@@ -145,11 +150,12 @@ public class QTPlatform {
 	 * <li>QT-Platform system schema <tt>QTP</tt></li>
 	 * <li>One schema for each supported server, for instance <tt>QTP_DKCP</tt></li>
 	 * </ul>
-	 * 
+	 *
+	 * @param session The working session.
 	 * @param connectionFile The connection file name.
 	 * @throws Exception
 	 */
-	private static void configureDatabase(String connectionFile) throws Exception {
+	private static void configureDatabase(Session session, String connectionFile) throws Exception {
 
 		// Connection file.
 		File cnFile = SystemUtils.getFileFromClassPathEntries(connectionFile);
@@ -167,12 +173,81 @@ public class QTPlatform {
 		if (!rsSchemas.contains(new OrderKey(new Value(Names.getSchema())))) {
 			dbEngine.executeCreateSchema(Names.getSchema());
 		}
+
 		// Check for supported servers schemas.
 		List<Server> servers = ServerFactory.getSupportedServers();
 		for (Server server : servers) {
 			String schema = Names.getSchema(server);
 			if (!rsSchemas.contains(new OrderKey(new Value(schema)))) {
 				dbEngine.executeCreateSchema(schema);
+			}
+		}
+		
+		// Check for necessary system schema tables.
+		RecordSet rsSysTables = metaData.getRecordSetTables(Names.getSchema());
+
+		// Check for necessary table Broker if the system schema.
+		if (!containsTable(rsSysTables, Tables.Broker)) {
+			dbEngine.executeBuildTable(Tables.getTableBroker(session));
+		}
+		synchronizeSupportedServers(session, dbEngine);
+	}
+
+	/**
+	 * Check if the meta data recordset of tables contains the table name.
+	 * 
+	 * @param rs The meta data recordset of tables.
+	 * @param tableName The table name.
+	 * @return A boolean.
+	 */
+	private static boolean containsTable(RecordSet rs, String tableName) {
+		for (int i = 0; i < rs.size(); i++) {
+			Record rc = rs.get(i);
+			if (rc.getValue(MetaData.TableName).toString().toLowerCase().equals(tableName.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static void synchronizeSupportedServers(Session session, DBEngine dbEngine) throws Exception {
+		List<Server> servers = ServerFactory.getSupportedServers();
+		Table table = Tables.getTableBroker(session);
+		View view = table.getSimpleView(table.getPrimaryKey());
+		RecordSet recordSet = dbEngine.executeSelectRecordSet(view);
+		
+		// Remove servers.
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record record = recordSet.get(i);
+			boolean remove = true;
+			for (Server server : servers) {
+				if (server.getId().toLowerCase().equals(record.getValue(Fields.BrokerId).toString().toLowerCase())) {
+					remove = false;
+					break;
+				}
+			}
+			if (remove) {
+				dbEngine.executeDelete(table, record);
+			}
+		}
+		
+		// Add servers.
+		for (Server server : servers) {
+			String id = server.getId().toLowerCase();
+			boolean included = false;
+			for (int i = 0; i < recordSet.size(); i++) {
+				Record record = recordSet.get(i);
+				if (record.getValue(Fields.BrokerId).toString().toLowerCase().equals(id)) {
+					included = true;
+					break;
+				}
+			}
+			if (!included) {
+				Record record = table.getDefaultRecord();
+				record.setValue(Fields.BrokerId, server.getId());
+				record.setValue(Fields.BrokerName, server.getName());
+				record.setValue(Fields.BrokerTitle, server.getTitle());
+				dbEngine.executeInsert(table, record);
 			}
 		}
 	}
@@ -199,7 +274,7 @@ public class QTPlatform {
 			String id = server.getId();
 			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
 			menu.addMenuItem(itemServers, itemServer);
-			
+
 			// Server options.
 			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuBrokersAvInst"));
 			itemSrvAvInst.setActionClass(ActionAvailableInstruments.class);
