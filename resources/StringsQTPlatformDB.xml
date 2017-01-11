@@ -7,12 +7,12 @@
 	
 	<!-- Broker -->
 
-	<entry key="fieldBrokerIdLabel">Broker id</entry>
-	<entry key="fieldBrokerIdHeader">Broker id</entry>
-	<entry key="fieldBrokerNameLabel">Broker official name</entry>
-	<entry key="fieldBrokerNameHeader">Broker name</entry>
-	<entry key="fieldBrokerTitleLabel">Broker title</entry>
-	<entry key="fieldBrokerTitleHeader">Broker title</entry>
+	<entry key="fieldServerIdLabel">Server id</entry>
+	<entry key="fieldServerIdHeader">Server id</entry>
+	<entry key="fieldServerNameLabel">Server official name</entry>
+	<entry key="fieldServerNameHeader">Server name</entry>
+	<entry key="fieldServerTitleLabel">Server title</entry>
+	<entry key="fieldServerTitleHeader">Server title</entry>
 	
 	<!-- Instrument -->
 
@@ -44,8 +44,10 @@
 	
 	<!-- Period -->
 	
-	<entry key="fieldPeriodSizeLabel">Period size</entry>
-	<entry key="fieldPeriodSizeHeader">Period size</entry>
+	<entry key="fieldPeriodIdLabel">Period id</entry>
+	<entry key="fieldPeriodIdHeader">Period id</entry>
+	<entry key="fieldPeriodNameLabel">Period name</entry>
+	<entry key="fieldPeriodNameHeader">Period name</entry>
 	
 	<!-- Table -->
 	
@@ -57,7 +59,7 @@
 	<entry key="fieldDataFilterLabel">Data filter</entry>
 	<entry key="fieldDataFilterHeader">Filter</entry>
 
-	<!-- Offeer side -->
+	<!-- Offer side -->
 	
 	<entry key="fieldOfferSideLabel">Offer side</entry>
 	<entry key="fieldOfferSideHeader">Offer side</entry>

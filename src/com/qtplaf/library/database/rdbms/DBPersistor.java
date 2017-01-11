@@ -24,6 +24,7 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.ValueMap;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.database.rdbms.sql.Select;
@@ -43,6 +44,18 @@ public class DBPersistor implements Persistor {
 	 * The underlying <code>View</code>.
 	 */
 	private View view;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param dbEngine The <code>DBEngine</code>.
+	 * @param table The <code>Table</code>.
+	 */
+	public DBPersistor(DBEngine dbEngine, Table table) {
+		super();
+		this.dbEngine = dbEngine;
+		this.view = table.getSimpleView(table.getPrimaryKey());
+	}
 
 	/**
 	 * Constructor.

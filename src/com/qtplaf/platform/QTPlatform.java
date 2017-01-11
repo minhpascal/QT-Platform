@@ -42,6 +42,7 @@ import com.qtplaf.library.swing.JFrameMenu;
 import com.qtplaf.library.swing.JPanelTreeMenu;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.TreeMenuItem;
+import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
@@ -49,6 +50,7 @@ import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
 
 /**
@@ -182,15 +184,26 @@ public class QTPlatform {
 				dbEngine.executeCreateSchema(schema);
 			}
 		}
-		
+
 		// Check for necessary system schema tables.
 		RecordSet rsSysTables = metaData.getRecordSetTables(Names.getSchema());
 
-		// Check for necessary table Broker if the system schema.
-		if (!containsTable(rsSysTables, Tables.Broker)) {
-			dbEngine.executeBuildTable(Tables.getTableBroker(session));
+		// Check for the necessary table Server in the system schema.
+		if (!containsTable(rsSysTables, Tables.Servers)) {
+			dbEngine.executeBuildTable(Tables.getTableServers(session, dbEngine));
 		}
-		synchronizeSupportedServers(session, dbEngine);
+		synchronizeSupportedServer(session, dbEngine);
+
+		// Check for the necessary table Periods in the system schema.
+		if (!containsTable(rsSysTables, Tables.Periods)) {
+			dbEngine.executeBuildTable(Tables.getTablePeriods(session, dbEngine));
+		}
+		synchronizeStandardPeriods(session, dbEngine);
+		
+		// Check for the necessary table Tickers in the system schema.
+		if (!containsTable(rsSysTables, Tables.Tickers)) {
+			dbEngine.executeBuildTable(Tables.getTableTickers(session, dbEngine));
+		}
 	}
 
 	/**
@@ -209,19 +222,44 @@ public class QTPlatform {
 		}
 		return false;
 	}
-	
-	private static void synchronizeSupportedServers(Session session, DBEngine dbEngine) throws Exception {
+
+	/**
+	 * Synchronize standard periods.
+	 * 
+	 * @param session The working session.
+	 * @param dbEngine The database engine.
+	 * @throws Exception
+	 */
+	private static void synchronizeStandardPeriods(Session session, DBEngine dbEngine) throws Exception {
+		List<Period> periods = Period.getStandardPeriods();
+		Table table = Tables.getTablePeriods(session, dbEngine);
+		for (Period period : periods) {
+			Record record = Records.getRecordPeriod(table.getDefaultRecord(), period);
+			if (!dbEngine.existsRecord(table, record)) {
+				dbEngine.executeInsert(table, Records.getRecordPeriod(table.getDefaultRecord(), period));
+			}
+		}
+	}
+
+	/**
+	 * Synchronize supported servers.
+	 * 
+	 * @param session The working session.
+	 * @param dbEngine The database engine.
+	 * @throws Exception
+	 */
+	private static void synchronizeSupportedServer(Session session, DBEngine dbEngine) throws Exception {
 		List<Server> servers = ServerFactory.getSupportedServers();
-		Table table = Tables.getTableBroker(session);
+		Table table = Tables.getTableServers(session, dbEngine);
 		View view = table.getSimpleView(table.getPrimaryKey());
 		RecordSet recordSet = dbEngine.executeSelectRecordSet(view);
-		
-		// Remove servers.
+
+		// Remove not supported servers.
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
 			boolean remove = true;
 			for (Server server : servers) {
-				if (server.getId().toLowerCase().equals(record.getValue(Fields.BrokerId).toString().toLowerCase())) {
+				if (server.getId().toLowerCase().equals(record.getValue(Fields.ServerId).toString().toLowerCase())) {
 					remove = false;
 					break;
 				}
@@ -230,24 +268,20 @@ public class QTPlatform {
 				dbEngine.executeDelete(table, record);
 			}
 		}
-		
-		// Add servers.
+
+		// Add add non-existing supported servers.
 		for (Server server : servers) {
 			String id = server.getId().toLowerCase();
 			boolean included = false;
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
-				if (record.getValue(Fields.BrokerId).toString().toLowerCase().equals(id)) {
+				if (record.getValue(Fields.ServerId).toString().toLowerCase().equals(id)) {
 					included = true;
 					break;
 				}
 			}
 			if (!included) {
-				Record record = table.getDefaultRecord();
-				record.setValue(Fields.BrokerId, server.getId());
-				record.setValue(Fields.BrokerName, server.getName());
-				record.setValue(Fields.BrokerTitle, server.getTitle());
-				dbEngine.executeInsert(table, record);
+				dbEngine.executeInsert(table, Records.getRecordServer(table.getDefaultRecord(), server));
 			}
 		}
 	}

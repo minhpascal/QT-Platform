@@ -49,6 +49,7 @@ import com.qtplaf.library.util.FormatUtils;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.library.util.StringUtils;
+import com.qtplaf.library.util.Timestamp;
 
 /**
  * A panel aimed to monitor the progress of a time consuming task normally executed in thread separated from the event
@@ -1157,8 +1158,26 @@ public class JPanelProgress extends JPanel {
 		b.append(getSession().getString("tokenRemaining").toLowerCase());
 		b.append(" ");
 		b.append(getTimeString(timeRemaining));
+		b.append(", ");
+		b.append(getSession().getString("panelProgressStartTime").toLowerCase());
+		b.append(" ");
+		b.append(getTimestampString((long)processStartTime));
+		b.append(", ");
+		b.append(getSession().getString("panelProgressEndTime").toLowerCase());
+		b.append(" ");
+		b.append(getTimestampString((long)(processStartTime + timeEstimated)));
 
 		return b.toString();
+	}
+
+	/**
+	 * Returns the formatted timestamp.
+	 * 
+	 * @param time The time in millis.
+	 * @return The formatted timestamp.
+	 */
+	private String getTimestampString(long time) {
+		return FormatUtils.formattedFromTimestamp(new Timestamp(time), getSession().getLocale());
 	}
 
 	/**

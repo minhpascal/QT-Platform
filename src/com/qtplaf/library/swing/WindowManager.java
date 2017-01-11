@@ -93,6 +93,15 @@ public class WindowManager {
 	}
 
 	/**
+	 * Returns the list of windows.
+	 * 
+	 * @return The list of windows.
+	 */
+	synchronized public static List<Window> getWindows() {
+		return new ArrayList<>(windows);
+	}
+	
+	/**
 	 * Only static methods.
 	 */
 	private WindowManager() {

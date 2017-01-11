@@ -196,6 +196,12 @@ public class FileScanner extends TaskRunner {
 			if (checkPause()) {
 				continue;
 			}
+			
+			// File does not exist (passed a non existing file to scan)
+			if (!files.getLast().exists()) {
+				files.removeLast();
+				continue;
+			}
 
 			// If last file is a file, notify if applicable and remove it.
 			if (files.getLast().isFile()) {

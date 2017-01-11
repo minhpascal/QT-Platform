@@ -38,7 +38,7 @@ public enum Unit {
 	 * @param id The unit id.
 	 * @return The unit.
 	 */
-	public static Unit get(String id) {
+	public static Unit parseId(String id) {
 		Unit[] units = values();
 		for (Unit unit : units) {
 			if (unit.getId().equals(id.toUpperCase())) {

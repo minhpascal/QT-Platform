@@ -16,6 +16,8 @@ package com.qtplaf.platform.database;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.database.rdbms.DBEngine;
+import com.qtplaf.library.database.rdbms.DBPersistor;
 
 /**
  * Centralizes table definitions.
@@ -23,23 +25,26 @@ import com.qtplaf.library.database.Table;
  * @author Miquel Sas
  */
 public class Tables {
-	
-	public static final String Broker = "BROKER";
-	public static final String Ticker = "TICKER";
-	
+
+	public static final String Servers = "servers";
+	public static final String Periods = "periods";
+	public static final String Tickers = "tickers";
+
 	/**
-	 * Returns the table definition for the list of supported brokers, located in the system schema.
+	 * Returns the table definition for the list of supported servers, located in the system schema.
 	 * 
 	 * @param session The working session.
+	 * @param dbEngine The database engine.
 	 * @return The table definition.
 	 */
-	public static Table getTableBroker(Session session) {
-		
+	public static Table getTableServers(Session session, DBEngine dbEngine) {
+
 		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListBroker(session));
-		table.setName(Broker);
+		table.addFields(FieldLists.getFieldListServer(session));
+		table.setName(Servers);
 		table.setSchema(Names.getSchema());
-		
+		table.setPersistor(new DBPersistor(dbEngine, table));
+
 		return table;
 	}
 
@@ -49,13 +54,35 @@ public class Tables {
 	 * broker.
 	 * 
 	 * @param session The working session.
+	 * @param dbEngine The database engine.
 	 * @return The table definition.
 	 */
-	public static Table getTableTicker(Session session) {
-		
+	public static Table getTableTickers(Session session, DBEngine dbEngine) {
+
 		Table table = new Table(session);
 		table.addFields(FieldLists.getFieldListTicker(session));
-		
-		return null;
+		table.setName(Tickers);
+		table.setSchema(Names.getSchema());
+		table.setPersistor(new DBPersistor(dbEngine, table));
+
+		return table;
+	}
+
+	/**
+	 * Returns the table definition for standard and user defined periods.
+	 * 
+	 * @param session The working session.
+	 * @param dbEngine The database engine.
+	 * @return The table definition.
+	 */
+	public static Table getTablePeriods(Session session, DBEngine dbEngine) {
+
+		Table table = new Table(session);
+		table.addFields(FieldLists.getFieldListPeriod(session));
+		table.setName(Periods);
+		table.setSchema(Names.getSchema());
+		table.setPersistor(new DBPersistor(dbEngine, table));
+
+		return table;
 	}
 }

@@ -77,7 +77,7 @@ public class CMAUpdate {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
 		// System text resources and session.
 		TextServer.addBaseResource("StringsLibrary.xml");
 		Session session = new Session(Locale.UK);
@@ -227,7 +227,7 @@ public class CMAUpdate {
 				for (String drive : drives) {
 					FileCopy fc = new FileCopy(session);
 					fc.setName(getName(production, local, "C"));
-					fc.setDescription(getDescription(production, local, "central"));
+					fc.setDescription(getDescription(production, local, "central") + " (" + drive + ")");
 					fc.setPurgeDestination(purge);
 					addRemoteDirs(fc, production, "CMA_Central\\mads", "library", drive);
 					addRemoteDirs(fc, production, "CMA_Central\\mads", "module_budget_dictionary", drive);
@@ -252,11 +252,10 @@ public class CMAUpdate {
 				for (String drive : drives) {
 					FileCopy fc = new FileCopy(session);
 					fc.setName(getName(production, local, "D"));
-					fc.setDescription(getDescription(production, local, "dictionary"));
+					fc.setDescription(getDescription(production, local, "dictionary") + " (" + drive + ")");
 					fc.setPurgeDestination(purge);
 					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "library", drive);
 					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_budget_dictionary", drive);
-					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_budget_local", drive);
 					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_central", drive);
 					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_dictionary", drive);
 					addRemoteDirs(fc, production, "CMA_Dictionary\\mads", "module_margins_library", drive);
@@ -273,7 +272,7 @@ public class CMAUpdate {
 				for (String drive : drives) {
 					FileCopy fc = new FileCopy(session);
 					fc.setName(getName(production, local, "L"));
-					fc.setDescription(getDescription(production, local, "local"));
+					fc.setDescription(getDescription(production, local, "local") + " (" + drive + ")");
 					fc.setPurgeDestination(purge);
 					addRemoteDirs(fc, production, "CMA_Local\\mads", "library", drive);
 					addRemoteDirs(fc, production, "CMA_Local\\mads", "module_budget_dictionary", drive);
@@ -662,7 +661,7 @@ public class CMAUpdate {
 		File fileSrcRoot = new File(getSrcRootRemote(prod));
 		File fileSrcParent = new File(fileSrcRoot, parent);
 		File fileSrc = new File(fileSrcParent, name);
-		File fileDstParent = new File(drive + ":\\" + parent);
+		File fileDstParent = new File(drive + ":" + (prod ? "\\CMA\\" : "\\") + parent);
 		File fileDst = new File(fileDstParent, name);
 		fc.addDirectories(fileSrc, fileDst);
 	}
@@ -680,7 +679,7 @@ public class CMAUpdate {
 		File fileSrcRoot = new File(getSrcRootRemote(prod));
 		File fileSrcParent = new File(fileSrcRoot, parent);
 		File fileSrc = new File(fileSrcParent, name);
-		File fileDstParent = new File(drive + ":\\" + parent);
+		File fileDstParent = new File(drive + ":" + (prod ? "\\CMA\\" : "\\") + parent);
 		File fileDst = new File(fileDstParent, name);
 		fc.addFiles(fileSrc, fileDst);
 	}

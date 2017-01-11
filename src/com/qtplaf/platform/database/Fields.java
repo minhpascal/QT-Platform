@@ -25,81 +25,82 @@ import com.qtplaf.library.database.Types;
  */
 public class Fields {
 
-	public static final String BrokerId = "BROKER_ID";
-	public static final String BrokerName = "BROKER_NAME";
-	public static final String BrokerTitle = "BROKER_TITLE";
-	public static final String InstrumentId = "INSTR_ID";
-	public static final String InstrumentDesc = "INSTR_DESC";
-	public static final String InstrumentPipValue = "INSTR_PIPV";
-	public static final String InstrumentPipScale = "INSTR_PIPS";
-	public static final String InstrumentTickValue = "INSTR_TICKV";
-	public static final String InstrumentTickScale = "INSTR_TICKS";
-	public static final String InstrumentVolumeScale = "INSTR_VOLS";
-	public static final String InstrumentPrimaryCurrency = "INSTR_CURRP";
-	public static final String InstrumentSecondaryCurrency = "INSTR_CURRS";
-	public static final String UnitId = "UNIT_ID";
-	public static final String UnitName = "UNIT_NAME";
-	public static final String PeriodSize = "PERIOD_SIZE";
-	public static final String TableName = "TABLE_NAME";
-	public static final String DataFilter = "DATA_FILTER";
-	public static final String OfferSide = "OFFER_SIDE";
+	public static final String ServerId = "server_id";
+	public static final String ServerName = "server_name";
+	public static final String ServerTitle = "server_title";
+	public static final String InstrumentId = "instr_id";
+	public static final String InstrumentDesc = "instr_desc";
+	public static final String InstrumentPipValue = "instr_pipv";
+	public static final String InstrumentPipScale = "instr_pips";
+	public static final String InstrumentTickValue = "instr_tickv";
+	public static final String InstrumentTickScale = "instr_ticks";
+	public static final String InstrumentVolumeScale = "instr_vols";
+	public static final String InstrumentPrimaryCurrency = "instr_currp";
+	public static final String InstrumentSecondaryCurrency = "instr_currs";
+	public static final String UnitId = "unit_id";
+	public static final String UnitName = "unit_name";
+	public static final String PeriodId = "period_id";
+	public static final String PeriodName = "period_name";
+	public static final String TableName = "table_name";
+	public static final String DataFilter = "data_filter";
+	public static final String OfferSide = "offer_side";
 
 	/**
-	 * Returns <b><i>BrokerId</i></b> <tt>BROKER_ID</tt> the field definition.
+	 * Returns the <b><i>ServerId</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldBrokerId(Session session) {
+	public static Field getFieldServerId(Session session) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(BrokerId);
+		field.setName(ServerId);
 		field.setType(Types.String);
 		field.setLength(20);
-		field.setHeader(session.getString("fieldBrokerIdHeader"));
-		field.setLabel(session.getString("fieldBrokerIdLabel"));
-		field.setTitle(session.getString("fieldBrokerIdLabel"));
+		field.setHeader(session.getString("fieldServerIdHeader"));
+		field.setLabel(session.getString("fieldServerIdLabel"));
+		field.setTitle(session.getString("fieldServerIdLabel"));
 		return field;
 	}
 
 	/**
-	 * Returns <b><i>BrokerName</i></b> <tt>BROKER_NAME</tt> the field definition.
+	 * Returns the <b><i>ServerName</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldBrokerName(Session session) {
+	public static Field getFieldServerName(Session session) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(BrokerName);
+		field.setName(ServerName);
 		field.setType(Types.String);
 		field.setLength(60);
-		field.setHeader(session.getString("fieldBrokerNameHeader"));
-		field.setLabel(session.getString("fieldBrokerNameLabel"));
-		field.setTitle(session.getString("fieldBrokerNameLabel"));
+		field.setHeader(session.getString("fieldServerNameHeader"));
+		field.setLabel(session.getString("fieldServerNameLabel"));
+		field.setTitle(session.getString("fieldServerNameLabel"));
 		return field;
 	}
 
 	/**
-	 * Returns <b><i>BrokerTitle</i></b> <tt>BROKER_TITLE</tt> the field definition.
+	 * Returns the <b><i>ServerTitle</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldBrokerTitle(Session session) {
+	public static Field getFieldServerTitle(Session session) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(BrokerTitle);
+		field.setName(ServerTitle);
 		field.setType(Types.String);
 		field.setLength(120);
-		field.setHeader(session.getString("fieldBrokerTitleHeader"));
-		field.setLabel(session.getString("fieldBrokerTitleLabel"));
-		field.setTitle(session.getString("fieldBrokerTitleLabel"));
+		field.setHeader(session.getString("fieldServerTitleHeader"));
+		field.setLabel(session.getString("fieldServerTitleLabel"));
+		field.setTitle(session.getString("fieldServerTitleLabel"));
 		return field;
 	}
 
 	/**
-	 * Returns <b><i>InstrumentId</i></b> <tt>INSTR_ID</tt> the field definition.
+	 * Returns the <b><i>InstrumentId</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -117,7 +118,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentDesc</i></b> <tt>INSTR_DESC</tt> the field definition.
+	 * Returns the <b><i>InstrumentDesc</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -135,7 +136,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentPipValue</i></b> <tt>INSTR_PIPV</tt> the field definition.
+	 * Returns the <b><i>InstrumentPipValue</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -153,7 +154,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentPipScale</i></b> <tt>INSTR_PIPS</tt> the field definition.
+	 * Returns the <b><i>InstrumentPipScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -171,7 +172,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentTickValue</i></b> <tt>INSTR_TICKV</tt> the field definition.
+	 * Returns the <b><i>InstrumentTickValue</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -189,7 +190,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentTickScale</i></b> <tt>INSTR_TICKS</tt> the field definition.
+	 * Returns the <b><i>InstrumentTickScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -207,7 +208,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentVolumeScale</i></b> <tt>INSTR_VOLS</tt> the field definition.
+	 * Returns the <b><i>InstrumentVolumeScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -225,7 +226,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentPrimaryCurrency</i></b> <tt>INSTR_CURRP</tt> the field definition.
+	 * Returns the <b><i>InstrumentPrimaryCurrency</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -243,7 +244,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>InstrumentSecondaryCurrency</i></b> <tt>INSTR_CURRP</tt> the field definition.
+	 * Returns the <b><i>InstrumentSecondaryCurrency</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -261,7 +262,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>UnitId</i></b> <tt>UNIT_ID</tt> the field definition.
+	 * Returns the <b><i>UnitId</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -279,7 +280,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>UnitName</i></b> <tt>UNIT_NAME</tt> the field definition.
+	 * Returns the <b><i>UnitName</i></b> the field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -297,20 +298,38 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>PeriodSize</i></b> <tt>PERIOD_SIZE</tt> the field definition.
+	 * Returns the <b><i>PeriodId</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldPeriodSize(Session session) {
+	public static Field getFieldPeriodId(Session session) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(PeriodSize);
-		field.setType(Types.Integer);
-		field.setLength(3);
-		field.setHeader(session.getString("fieldPeriodSizeHeader"));
-		field.setLabel(session.getString("fieldPeriodSizeLabel"));
-		field.setTitle(session.getString("fieldPeriodSizeLabel"));
+		field.setName(PeriodId);
+		field.setType(Types.String);
+		field.setLength(5);
+		field.setHeader(session.getString("fieldPeriodIdHeader"));
+		field.setLabel(session.getString("fieldPeriodIdLabel"));
+		field.setTitle(session.getString("fieldPeriodIdLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>PeriodName</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldPeriodName(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(PeriodName);
+		field.setType(Types.String);
+		field.setLength(15);
+		field.setHeader(session.getString("fieldPeriodNameHeader"));
+		field.setLabel(session.getString("fieldPeriodNameLabel"));
+		field.setTitle(session.getString("fieldPeriodNameLabel"));
 		return field;
 	}
 

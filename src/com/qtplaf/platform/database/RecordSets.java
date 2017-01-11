@@ -53,21 +53,9 @@ public class RecordSets {
 		RecordSet recordSet = new RecordSet(fieldList);
 		List<Instrument> instruments = server.getAvailableInstruments();
 		for (Instrument instrument : instruments) {
-			
 			maxPipScale = Math.max(maxPipScale, instrument.getPipScale());
 			maxTickScale = Math.max(maxTickScale, instrument.getPipScale());
-			
-			Record record = new Record(fieldList);
-			record.setValue(Fields.InstrumentId, instrument.getId());
-			record.setValue(Fields.InstrumentDesc, instrument.getDescription());
-			record.setValue(Fields.InstrumentPipValue, instrument.getPipValue());
-			record.setValue(Fields.InstrumentPipScale, instrument.getPipScale());
-			record.setValue(Fields.InstrumentTickValue, instrument.getTickValue());
-			record.setValue(Fields.InstrumentTickScale, instrument.getTickScale());
-			record.setValue(Fields.InstrumentVolumeScale, instrument.getVolumeScale());
-			record.setValue(Fields.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
-			record.setValue(Fields.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
-			recordSet.add(record);
+			recordSet.add(Records.getRecordInstrument(new Record(fieldList), instrument));
 		}
 		recordSet.sort();
 		

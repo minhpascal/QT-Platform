@@ -22,6 +22,7 @@ import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Relation;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 
 /**
@@ -133,6 +134,19 @@ public class Select extends Statement {
 	 */
 	public void setDistinct(boolean distinct) {
 		this.distinct = distinct;
+	}
+
+	/**
+	 * Returns the list of values to assign to parameters.
+	 *
+	 * @return The list of values to assign to parameters.
+	 */
+	@Override
+	public List<Value> getValues() {
+		if (getFilter() != null && !getFilter().isEmpty()) {
+			return getFilter().getValues();
+		}
+		return super.getValues();
 	}
 
 	/**

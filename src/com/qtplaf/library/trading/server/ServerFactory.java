@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 
 /**
@@ -27,6 +30,19 @@ import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
  * @author Miquel Sas
  */
 public class ServerFactory {
+	
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
+	
+	/**
+	 * Standard connection listener.
+	 */
+	static class ServerConnectionListener implements ConnectionListener {
+		@Override
+		public void status(ConnectionEvent e) {
+			logger.info(e.getMessage());
+		}
+	}
 	
 	/** Dukascopy server key. */
 	private static final String Dukascopy = "dkcp";
@@ -59,6 +75,7 @@ public class ServerFactory {
 		Server server = mapServers.get(Dukascopy);
 		if (server == null) {
 			server = new DkServer();
+			server.getConnectionManager().addListener(new ServerConnectionListener());
 			mapServers.put(Dukascopy, server);
 		}
 		return server;

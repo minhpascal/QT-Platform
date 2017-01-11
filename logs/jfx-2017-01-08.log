@@ -1,0 +1,53 @@
+2017-01-08 10:50:42 ERROR com.qtplaf.platform.QTPlatform - Catching
+java.lang.NullPointerException: null
+	at com.qtplaf.platform.QTPlatform.containsTable(QTPlatform.java:200) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.configureDatabase(QTPlatform.java:187) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.main(QTPlatform.java:129) [bin/:?]
+2017-01-08 11:28:37 ERROR com.qtplaf.platform.QTPlatform - Catching
+org.postgresql.util.PSQLException: This ResultSet is closed.
+	at org.postgresql.jdbc.PgResultSet.checkClosed(PgResultSet.java:2737) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at org.postgresql.jdbc.PgResultSet.next(PgResultSet.java:1814) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecords(Cursor.java:318) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:347) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:335) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:677) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:654) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.synchronizeSupportedServers(QTPlatform.java:217) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.configureDatabase(QTPlatform.java:193) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.main(QTPlatform.java:132) [bin/:?]
+2017-01-08 11:30:35 ERROR com.qtplaf.platform.QTPlatform - Catching
+org.postgresql.util.PSQLException: This ResultSet is closed.
+	at org.postgresql.jdbc.PgResultSet.checkClosed(PgResultSet.java:2737) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at org.postgresql.jdbc.PgResultSet.next(PgResultSet.java:1814) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecords(Cursor.java:318) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:347) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:335) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:677) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:654) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.synchronizeSupportedServers(QTPlatform.java:217) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.configureDatabase(QTPlatform.java:193) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.main(QTPlatform.java:132) [bin/:?]
+2017-01-08 11:33:03 ERROR com.qtplaf.platform.QTPlatform - Catching
+org.postgresql.util.PSQLException: This ResultSet is closed.
+	at org.postgresql.jdbc.PgResultSet.checkClosed(PgResultSet.java:2737) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at org.postgresql.jdbc.PgResultSet.next(PgResultSet.java:1814) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecords(Cursor.java:318) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:347) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:335) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:677) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:654) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.synchronizeSupportedServers(QTPlatform.java:217) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.configureDatabase(QTPlatform.java:193) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.main(QTPlatform.java:132) [bin/:?]
+2017-01-08 11:36:50 ERROR com.qtplaf.platform.QTPlatform - Catching
+org.postgresql.util.PSQLException: This ResultSet is closed.
+	at org.postgresql.jdbc.PgResultSet.checkClosed(PgResultSet.java:2737) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at org.postgresql.jdbc.PgResultSet.next(PgResultSet.java:1814) ~[postgresql-9.4.1212.jar:9.4.1212]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecords(Cursor.java:318) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:347) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.Cursor.getAllRecordsAndClose(Cursor.java:335) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:677) ~[bin/:?]
+	at com.qtplaf.library.database.rdbms.DBEngine.executeSelectRecordSet(DBEngine.java:654) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.synchronizeSupportedServers(QTPlatform.java:217) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.configureDatabase(QTPlatform.java:193) ~[bin/:?]
+	at com.qtplaf.platform.QTPlatform.main(QTPlatform.java:132) [bin/:?]

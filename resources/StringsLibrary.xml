@@ -266,6 +266,8 @@
 	<entry key="panelProgressCancelledByUserRequest">Cancelled by user resquest</entry>
 	<entry key="panelProgressHasBeenCancelledByUserRequest">Has been cancelled by user resquest.</entry>
 	<entry key="panelProgressError">Error occurred while processing</entry>
+	<entry key="panelProgressStartTime">started</entry>
+	<entry key="panelProgressEndTime">estimated end</entry>
 	
 	<!-- Task specific strings. -->
 	

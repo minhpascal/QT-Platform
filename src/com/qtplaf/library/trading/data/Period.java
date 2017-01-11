@@ -13,12 +13,81 @@
  */
 package com.qtplaf.library.trading.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qtplaf.library.util.StringUtils;
+
 /**
  * Periods of trading.
  * 
  * @author Miquel Sas
  */
 public class Period implements Comparable<Period> {
+
+	/** One minute period. */
+	public static final Period OneMin = new Period(Unit.Minute, 1);
+	/** Three minutes period. */
+	public static final Period ThreeMins = new Period(Unit.Minute, 3);
+	/** Five minutes period. */
+	public static final Period FiveMins = new Period(Unit.Minute, 5);
+	/** Fifteen minutes period. */
+	public static final Period FifteenMins = new Period(Unit.Minute, 15);
+	/** Thirty minutes period. */
+	public static final Period ThirtyMins = new Period(Unit.Minute, 30);
+	/** One hour period. */
+	public static final Period OneHour = new Period(Unit.Hour, 1);
+	/** Four hours period. */
+	public static final Period FourHours = new Period(Unit.Hour, 4);
+	/** Daily period. */
+	public static final Period Daily = new Period(Unit.Day, 1);
+	/** Weekly period. */
+	public static final Period Weekly = new Period(Unit.Week, 1);
+	/** Monthly period. */
+	public static final Period Monthly = new Period(Unit.Month, 1);
+
+	/**
+	 * Returns the list of standard pre-defined periods.
+	 * 
+	 * @return The list of standard pre-defined periods.
+	 */
+	public static List<Period> getStandardPeriods() {
+		List<Period> periods = new ArrayList<>();
+		periods.add(OneMin);
+		periods.add(ThreeMins);
+		periods.add(FiveMins);
+		periods.add(FifteenMins);
+		periods.add(ThirtyMins);
+		periods.add(OneHour);
+		periods.add(FourHours);
+		periods.add(Daily);
+		periods.add(Weekly);
+		periods.add(Monthly);
+		return periods;
+	}
+
+	/**
+	 * Parse a period id.
+	 * 
+	 * @param id The period id.
+	 * @return The period.
+	 */
+	public static Period parseId(String id) {
+		// Id length must be 5.
+		if (id.length() != 5) {
+			throw new IllegalArgumentException("Invalid period id");
+		}
+		// Strings unit and size.
+		String sunit = id.substring(0, 2);
+		String ssize = id.substring(2);
+		try {
+			Unit unit = Unit.parseId(sunit);
+			int size = Integer.parseInt(ssize);
+			return new Period(unit, size);
+		} catch (Exception exc) {
+			throw new IllegalArgumentException("Invalid period id");
+		}
+	}
 
 	/**
 	 * Unit.
@@ -42,16 +111,15 @@ public class Period implements Comparable<Period> {
 	}
 
 	/**
-	 * Returns a string key that uniquely identifies this period.
+	 * Returns a string id that uniquely identifies this period, by concatenating the unit id and the length padded to 3
+	 * chars.
 	 * 
-	 * @return A string key.
+	 * @return The period id.
 	 */
-	public String getKey() {
+	public String getId() {
 		StringBuilder b = new StringBuilder();
-		b.append(getUnit().name());
-		b.append("(");
-		b.append(getSize());
-		b.append(")");
+		b.append(getUnit().getId());
+		b.append(StringUtils.leftPad(Integer.toString(getSize()), 3, '0'));
 		return b.toString();
 	}
 
@@ -135,7 +203,7 @@ public class Period implements Comparable<Period> {
 		}
 		return b.toString();
 	}
-	
+
 	/**
 	 * Returns an XML element representation of this period.
 	 * 
@@ -149,4 +217,5 @@ public class Period implements Comparable<Period> {
 		b.append("/>");
 		return b.toString();
 	}
+
 }
