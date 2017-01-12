@@ -216,4 +216,5 @@ public class JPanelButtons extends JPanel {
 		// Repaint the component.
 		repaint();
 	}
+	
 }

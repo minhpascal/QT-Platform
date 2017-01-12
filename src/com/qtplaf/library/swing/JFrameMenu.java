@@ -184,6 +184,9 @@ public class JFrameMenu extends JFrameSession {
 	 * Layout components.
 	 */
 	private void layoutComponents() {
+		
+		// Ensure the panel buttons has been built.
+		getPanelButtons();
 
 		// Configure tabbed pane.
 		getTabbedPane().removeAll();
@@ -228,6 +231,9 @@ public class JFrameMenu extends JFrameSession {
 		WindowAdapter windowAdapter = new WindowAdapter();
 		addWindowListener(windowAdapter);
 		addWindowFocusListener(windowAdapter);
+		
+		// Setup panel buttons.
+		setupPanelButtons();
 	}
 	
 	/**
@@ -242,25 +248,21 @@ public class JFrameMenu extends JFrameSession {
 	 * Setup the buttons panel depending on the seletected tab.
 	 */
 	private void setupPanelButtons() {
-		getPanelButtons().clear();
 		int index = getTabbedPane().getSelectedIndex();
-		if (index < 0) {
-			getPanelButtons().add(getActionExecute());
-			getPanelButtons().add(getActionExit());
-			return;
-		}
 
 		// Selected tab is menu: actions execute and exit.
 		if (index == getTabbedPane().indexOfComponent(getPanelTreeMenu())) {
-			getPanelButtons().add(getActionExecute());
-			getPanelButtons().add(getActionExit());
+			ActionUtils.getButton(getActionExecute()).setVisible(true);
+			ActionUtils.getButton(getActionClear()).setVisible(false);
+			ActionUtils.getButton(getActionExit()).setVisible(true);
 		}
 
 		// Selected tab is console: actions clear and exit.
 		if (getConsole().getParent() != null) {
 			if (index == getTabbedPane().indexOfComponent(getConsoleComponent())) {
-				getPanelButtons().add(getActionClear());
-				getPanelButtons().add(getActionExit());
+				ActionUtils.getButton(getActionExecute()).setVisible(false);
+				ActionUtils.getButton(getActionClear()).setVisible(true);
+				ActionUtils.getButton(getActionExit()).setVisible(true);
 			}
 		}
 
@@ -302,6 +304,9 @@ public class JFrameMenu extends JFrameSession {
 	protected JPanelButtons getPanelButtons() {
 		if (panelButtons == null) {
 			panelButtons = new JPanelButtons(Alignment.Right);
+			panelButtons.add(getActionExecute());
+			panelButtons.add(getActionClear());
+			panelButtons.add(getActionExit());
 		}
 		return panelButtons;
 	}

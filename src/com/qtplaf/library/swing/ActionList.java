@@ -56,6 +56,15 @@ public class ActionList {
 	}
 
 	/**
+	 * Returns the size of the list of actions.
+	 * 
+	 * @return The size.
+	 */
+	public int size() {
+		return actions.size();
+	}
+
+	/**
 	 * Returns the action at the given index.
 	 * 
 	 * @param index The index.

@@ -166,6 +166,7 @@ public class QTPlatform {
 		ConnectionInfo cnInfo = ConnectionInfo.getConnectionInfo(cnFile);
 		DBEngineAdapter adapter = new PostgreSQLAdapter();
 		DBEngine dbEngine = new DBEngine(adapter, cnInfo);
+		Tables.setDBEngine(dbEngine);
 
 		// Meta data to check that the necessary schemas exists.
 		MetaData metaData = new MetaData(dbEngine);
@@ -190,19 +191,19 @@ public class QTPlatform {
 
 		// Check for the necessary table Server in the system schema.
 		if (!containsTable(rsSysTables, Tables.Servers)) {
-			dbEngine.executeBuildTable(Tables.getTableServers(session, dbEngine));
+			dbEngine.executeBuildTable(Tables.getTableServers(session));
 		}
 		synchronizeSupportedServer(session, dbEngine);
 
 		// Check for the necessary table Periods in the system schema.
 		if (!containsTable(rsSysTables, Tables.Periods)) {
-			dbEngine.executeBuildTable(Tables.getTablePeriods(session, dbEngine));
+			dbEngine.executeBuildTable(Tables.getTablePeriods(session));
 		}
 		synchronizeStandardPeriods(session, dbEngine);
 		
 		// Check for the necessary table Tickers in the system schema.
 		if (!containsTable(rsSysTables, Tables.Tickers)) {
-			dbEngine.executeBuildTable(Tables.getTableTickers(session, dbEngine));
+			dbEngine.executeBuildTable(Tables.getTableTickers(session));
 		}
 	}
 
@@ -232,7 +233,7 @@ public class QTPlatform {
 	 */
 	private static void synchronizeStandardPeriods(Session session, DBEngine dbEngine) throws Exception {
 		List<Period> periods = Period.getStandardPeriods();
-		Table table = Tables.getTablePeriods(session, dbEngine);
+		Table table = Tables.getTablePeriods(session);
 		for (Period period : periods) {
 			Record record = Records.getRecordPeriod(table.getDefaultRecord(), period);
 			if (!dbEngine.existsRecord(table, record)) {
@@ -250,7 +251,7 @@ public class QTPlatform {
 	 */
 	private static void synchronizeSupportedServer(Session session, DBEngine dbEngine) throws Exception {
 		List<Server> servers = ServerFactory.getSupportedServers();
-		Table table = Tables.getTableServers(session, dbEngine);
+		Table table = Tables.getTableServers(session);
 		View view = table.getSimpleView(table.getPrimaryKey());
 		RecordSet recordSet = dbEngine.executeSelectRecordSet(view);
 
