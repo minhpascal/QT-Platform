@@ -99,6 +99,8 @@ public class Records {
 	public static Record getRecordPeriod(Record record, Period period) {
 		record.setValue(Fields.PeriodId, period.getId());
 		record.setValue(Fields.PeriodName, period.toString());
+		record.setValue(Fields.PeriodSize, period.getSize());
+		record.setValue(Fields.PeriodUnitIndex, period.getUnit().ordinal());
 		return record;
 	}
 

@@ -103,6 +103,8 @@ public class FieldLists {
 		
 		fieldList.addField(Fields.getFieldPeriodId(session));
 		fieldList.addField(Fields.getFieldPeriodName(session));
+		fieldList.addField(Fields.getFieldPeriodUnitIndex(session));
+		fieldList.addField(Fields.getFieldPeriodSize(session));
 		fieldList.getField(Fields.PeriodId).setPrimaryKey(true);
 		
 		return fieldList;

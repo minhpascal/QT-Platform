@@ -16,6 +16,7 @@ package com.qtplaf.platform.database;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Table;
@@ -128,7 +129,13 @@ public class Tables {
 		table.addFields(FieldLists.getFieldListPeriods(session));
 		table.setName(Periods);
 		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(getDBEngine(), table));
+		
+		Index index = new Index();
+		index.add(table.getField(Fields.PeriodUnitIndex));
+		index.add(table.getField(Fields.PeriodSize));
+		table.addIndex(index);
+		
+		table.setPersistor(new DBPersistor(getDBEngine(), table.getComplexView(index)));
 
 		return table;
 	}

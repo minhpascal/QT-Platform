@@ -147,6 +147,10 @@ public class JPanelFormFields extends JPanel {
 	 * A boolean that indicates if main group panels should be scrolled, by default not.
 	 */
 	private boolean scrollGroupPanels = false;
+	/**
+	 * A boolean that indicates whether the layout has been made. After the layout, no more field can be added.
+	 */
+	private boolean layoutDone = false;
 
 	/**
 	 * Constructor.
@@ -194,6 +198,9 @@ public class JPanelFormFields extends JPanel {
 	 */
 	public void addField(String alias, int gridx, int gridy) {
 		checkRecord();
+		if (layoutDone) {
+			throw new IllegalStateException("No fields can be added after the layout is done.");
+		}
 		if (gridx < 0) {
 			throw new IllegalArgumentException("Invalid grid x coordinate.");
 		}
@@ -343,6 +350,11 @@ public class JPanelFormFields extends JPanel {
 	 * Auto-layout fields, attending at the group and grid definition.
 	 */
 	public void layoutFields() {
+		
+		// Check layout done.
+		if (layoutDone) {
+			return;
+		}
 
 		// Set the layout.
 		setLayout(new GridBagLayout());
@@ -385,6 +397,9 @@ public class JPanelFormFields extends JPanel {
 		}
 		
 		applyEditMode();
+		
+		// Layout if done.
+		layoutDone = true;
 	}
 
 	/**
@@ -1033,6 +1048,9 @@ public class JPanelFormFields extends JPanel {
 	 * @return A list with all edit fields.
 	 */
 	public List<EditField> getEditFields() {
+		if (!layoutDone) {
+			layoutFields();
+		}
 		List<EditField> editFields = new ArrayList<>();
 		List<Component> components = SwingUtils.getAllComponents(this);
 		for (Component component : components) {

@@ -615,6 +615,21 @@ public class Table implements Comparable<Object> {
 	}
 
 	/**
+	 * Returns the index of the given name or null.
+	 * 
+	 * @param name The name of the index.
+	 * @return The index or null.
+	 */
+	public Index getIndex(String name) {
+		for (Index index : indexes) {
+			if (index.getName().equals(name)) {
+				return index;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Add a foreign key to the list of foreign keys.
 	 *
 	 * @param foreignKey The foreign key to add.

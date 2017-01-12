@@ -15,8 +15,6 @@
 package com.qtplaf.platform.action;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.ListSelectionModel;
@@ -29,11 +27,12 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.EditMode;
+import com.qtplaf.library.swing.JFormRecord;
 import com.qtplaf.library.swing.JLookupRecords;
 import com.qtplaf.library.swing.JOptionFrame;
 import com.qtplaf.library.swing.JPanelTableRecord;
 import com.qtplaf.library.swing.JTableRecord;
-import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.TableModelRecord;
 import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.swing.action.DefaultActionCreate;
@@ -78,7 +77,7 @@ public class ActionTickers extends AbstractAction {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
+
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
@@ -86,6 +85,8 @@ public class ActionTickers extends AbstractAction {
 				if (instrument == null) {
 					return;
 				}
+				Record record = getTicker(session, server, instrument);
+				System.out.println(record);
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}
@@ -196,8 +197,39 @@ public class ActionTickers extends AbstractAction {
 		Record selected = lookup.lookupRecord(recordSet);
 		return Records.fromRecordInstrument(selected);
 	}
-	
-	private Record getTicker(Session session, Instrument instrument) {
+
+	/**
+	 * Returns the record to create a new ticker for the given server and instrument.
+	 * 
+	 * @param session Working session.
+	 * @param server Server.
+	 * @param instrument Instrument.
+	 * @return The ticker record.
+	 */
+	private Record getTicker(Session session, Server server, Instrument instrument) {
+		Persistor persistor = Tables.getTableTickers(session).getPersistor();
+		Record record = persistor.getDefaultRecord();
+		record.getValue(Fields.ServerId).setValue(server.getId());
+		record.getValue(Fields.InstrumentId).setValue(instrument.getId());
+		
+		JFormRecord form = new JFormRecord(session);
+		form.setRecord(record);
+		form.setTitle(session.getString("qtMenuServersTickersCreate"));
+		form.setEditMode(EditMode.Insert);
+		form.addField(Fields.ServerId);
+		form.addField(Fields.InstrumentId);
+		form.addField(Fields.PeriodId);
+		form.addField(Fields.PeriodName);
+		form.addField(Fields.OfferSide);
+		form.addField(Fields.DataFilter);
+		
+		form.getEditField(Fields.ServerId).setEnabled(false);
+		form.getEditField(Fields.InstrumentId).setEnabled(false);
+
+		if (form.edit()) {
+			return form.getRecord();
+		}
+		
 		return null;
 	}
 }

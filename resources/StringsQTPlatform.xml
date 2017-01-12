@@ -7,5 +7,6 @@
 	<entry key="qtMenuServers">Supported broker servers</entry>
 	<entry key="qtMenuServersAvInst">Available instruments</entry>
 	<entry key="qtMenuServersTickers">Tickers</entry>
+	<entry key="qtMenuServersTickersCreate">Create new ticker</entry>
 	
 </properties>

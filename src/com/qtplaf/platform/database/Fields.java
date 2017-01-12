@@ -41,6 +41,8 @@ public class Fields {
 	public static final String UnitName = "unit_name";
 	public static final String PeriodId = "period_id";
 	public static final String PeriodName = "period_name";
+	public static final String PeriodSize = "period_size";
+	public static final String PeriodUnitIndex = "period_unit_index";
 	public static final String TableName = "table_name";
 	public static final String DataFilter = "data_filter";
 	public static final String OfferSide = "offer_side";
@@ -330,6 +332,43 @@ public class Fields {
 		field.setHeader(session.getString("fieldPeriodNameHeader"));
 		field.setLabel(session.getString("fieldPeriodNameLabel"));
 		field.setTitle(session.getString("fieldPeriodNameLabel"));
+		field.setMainDescription(true);
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>PeriodSize</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldPeriodSize(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(PeriodSize);
+		field.setType(Types.Integer);
+		field.setLength(3);
+		field.setHeader(session.getString("fieldPeriodSizeHeader"));
+		field.setLabel(session.getString("fieldPeriodSizeLabel"));
+		field.setTitle(session.getString("fieldPeriodSizeLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>PeriodUnitIndex</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldPeriodUnitIndex(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(PeriodUnitIndex);
+		field.setType(Types.Integer);
+		field.setLength(2);
+		field.setHeader(session.getString("fieldPeriodUnitIndexHeader"));
+		field.setLabel(session.getString("fieldPeriodUnitIndexLabel"));
+		field.setTitle(session.getString("fieldPeriodUnitIndexLabel"));
 		return field;
 	}
 

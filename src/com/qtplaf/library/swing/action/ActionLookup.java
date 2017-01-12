@@ -418,11 +418,15 @@ public class ActionLookup extends AbstractAction {
 			// The selection order. If not set, buildit with the key fields.
 			Order selectionOrder;
 			if (order == null) {
-				selectionOrder = new Order();
-				for (int i = 0; i < keyAliases.size(); i++) {
-					String alias = keyAliases.get(i);
-					Field field = masterRecord.getField(alias);
-					selectionOrder.add(field);
+				if (getMasterRecord().getPersistor().getView().getOrderBy() != null) {
+					selectionOrder = getMasterRecord().getPersistor().getView().getOrderBy();
+				} else {
+					selectionOrder = new Order();
+					for (int i = 0; i < keyAliases.size(); i++) {
+						String alias = keyAliases.get(i);
+						Field field = masterRecord.getField(alias);
+						selectionOrder.add(field);
+					}
 				}
 			} else {
 				selectionOrder = order;

@@ -460,7 +460,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean
 	 */
 	public boolean isNullable() {
-		return properties.getBoolean(KeyNullable);
+		return properties.getBoolean(KeyNullable, true);
 	}
 
 	/**
