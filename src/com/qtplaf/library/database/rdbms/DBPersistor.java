@@ -17,6 +17,7 @@ package com.qtplaf.library.database.rdbms;
 import java.sql.SQLException;
 
 import com.qtplaf.library.database.Criteria;
+import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
@@ -68,6 +69,54 @@ public class DBPersistor implements Persistor {
 		this.dbEngine = dbEngine;
 		this.view = view;
 	}
+	
+	/**
+	 * Returns the underlying view of the persistor.
+	 * 
+	 * @return The view.
+	 */
+	public View getView() {
+		return view;
+	}
+
+	/**
+	 * Returns the default record of the underlying view.
+	 * 
+	 * @return The default record of the underlying view.
+	 */
+	public Record getDefaultRecord() {
+		return view.getDefaultRecord();
+	}
+
+	/**
+	 * Returns the number of fields this persistor manages.
+	 * 
+	 * @return The number of fields.
+	 */
+	public int getFieldCount() {
+		return view.getFieldCount();
+	}
+
+	/**
+	 * Returns a field by index.
+	 * 
+	 * @param index The field index.
+	 * @return The field or null.
+	 */
+	public Field getField(int index) {
+		return view.getField(index);
+	}
+
+	/**
+	 * Returns a field by alias.
+	 * 
+	 * @param alias The field alias.
+	 * @return The field or null.
+	 */
+	public Field getField(String alias) {
+		return view.getField(alias);
+	}
+	
 
 	/**
 	 * Count the number of records that agree with the criteria.

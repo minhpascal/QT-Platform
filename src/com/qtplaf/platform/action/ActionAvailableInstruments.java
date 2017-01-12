@@ -74,13 +74,13 @@ public class ActionAvailableInstruments extends AbstractAction {
 	/**
 	 * Runnable to launch it in a thread.
 	 */
-	class RunShow implements Runnable {
+	class RunAction implements Runnable {
 		@Override
 		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionAvailableInstruments.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionAvailableInstruments.this);
-				Record masterRecord = FieldLists.getFieldListInstrument(session).getDefaultRecord();
+				Record masterRecord = FieldLists.getFieldListInstruments(session).getDefaultRecord();
 
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
@@ -98,7 +98,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);
-				frame.setTitle(server.getName() + " " + session.getString("qtMenuBrokersAvInst").toLowerCase());
+				frame.setTitle(server.getName() + " " + session.getString("qtMenuServersAvInst").toLowerCase());
 				frame.setComponent(panelTableRecord);
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);
@@ -122,7 +122,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new Thread(new RunShow()).start();
+		new Thread(new RunAction()).start();
 	}
 
 }

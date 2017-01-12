@@ -17,9 +17,13 @@ package com.qtplaf.platform.database;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Condition;
+import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.FieldList;
+import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.ConnectionType;
 import com.qtplaf.library.trading.server.Server;
@@ -40,13 +44,13 @@ public class RecordSets {
 	 * @throws Exception
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
-		
+
 		if (!server.getConnectionManager().isConnected()) {
 			server.getConnectionManager().connect("msasc2EU", "C1a2r3l4a5", ConnectionType.Demo);
 		}
-		
-		FieldList fieldList = FieldLists.getFieldListInstrument(session);
-		
+
+		FieldList fieldList = FieldLists.getFieldListInstruments(session);
+
 		// Track max pip and tick scale to set their values decimals.
 		int maxPipScale = 0;
 		int maxTickScale = 0;
@@ -58,10 +62,26 @@ public class RecordSets {
 			recordSet.add(Records.getRecordInstrument(new Record(fieldList), instrument));
 		}
 		recordSet.sort();
-		
+
 		fieldList.getField(Fields.InstrumentPipValue).setDecimals(maxPipScale);
 		fieldList.getField(Fields.InstrumentTickValue).setDecimals(maxTickScale);
-		
+
+		return recordSet;
+	}
+
+	/**
+	 * Returns the tickers recordset for the given server.
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @return The tickers recordset.
+	 * @throws Exception
+	 */
+	public static RecordSet getRecordSetTickers(Session session, Server server) throws Exception {
+		Persistor persistor = Tables.getTableTickers(session).getPersistor();
+		Criteria criteria = new Criteria();
+		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
+		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}
 

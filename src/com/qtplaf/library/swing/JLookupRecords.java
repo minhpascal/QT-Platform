@@ -240,9 +240,23 @@ public class JLookupRecords extends JDialogSession {
 	public void setSelectedRecords(List<Record> records) {
 		selectedRecords.addAll(records);
 	}
+	
+	/**
+	 * Show the list of records and let select a single record. Used normally with single selection mode.
+	 * 
+	 * @param recordSet The record set or list of records.
+	 * @return The selected record or null.
+	 */
+	public Record lookupRecord(RecordSet recordSet) {
+		List<Record> records = lookupRecords(recordSet);
+		if (!records.isEmpty()) {
+			return records.get(0);
+		}
+		return null;
+	}
 
 	/**
-	 * RunShow the list of records and let lookup (select).
+	 * Show the list of records and let lookup (select).
 	 * 
 	 * @param recordSet The record set or list of records.
 	 * @return The selected records.
@@ -271,7 +285,7 @@ public class JLookupRecords extends JDialogSession {
 			getTableRecord().setSelectedRecords(selectedRecords);
 		}
 
-		// RunShow it
+		// RunAction it
 		setModal(true);
 		setVisible(true);
 

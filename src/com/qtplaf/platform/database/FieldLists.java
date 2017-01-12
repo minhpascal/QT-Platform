@@ -30,7 +30,7 @@ public class FieldLists {
 	 * @param session The working session.
 	 * @return The field list.
 	 */
-	public static FieldList getFieldListServer(Session session) {
+	public static FieldList getFieldListServers(Session session) {
 		
 		FieldList fieldList = new FieldList();
 		
@@ -49,7 +49,7 @@ public class FieldLists {
 	 * @param session The working session.
 	 * @return The field list.
 	 */
-	public static FieldList getFieldListTicker(Session session) {
+	public static FieldList getFieldListTickers(Session session) {
 		
 		FieldList fieldList = new FieldList();
 		
@@ -73,7 +73,7 @@ public class FieldLists {
 	 * @param session The working session.
 	 * @return The field list.
 	 */
-	public static FieldList getFieldListInstrument(Session session) {
+	public static FieldList getFieldListInstruments(Session session) {
 		
 		FieldList fieldList = new FieldList();
 		
@@ -97,13 +97,45 @@ public class FieldLists {
 	 * @param session The working session.
 	 * @return The field list.
 	 */
-	public static FieldList getFieldListPeriod(Session session) {
+	public static FieldList getFieldListPeriods(Session session) {
 		
 		FieldList fieldList = new FieldList();
 		
 		fieldList.addField(Fields.getFieldPeriodId(session));
 		fieldList.addField(Fields.getFieldPeriodName(session));
 		fieldList.getField(Fields.PeriodId).setPrimaryKey(true);
+		
+		return fieldList;
+	}
+	
+	/**
+	 * Returns the list of fields for the offer sides records.
+	 * 
+	 * @param session The working session.
+	 * @return The field list.
+	 */
+	public static FieldList getFieldListOfferSides(Session session) {
+		
+		FieldList fieldList = new FieldList();
+		
+		fieldList.addField(Fields.getFieldOfferSide(session));
+		fieldList.getField(Fields.OfferSide).setPrimaryKey(true);
+		
+		return fieldList;
+	}
+	
+	/**
+	 * Returns the list of fields for the data filters records.
+	 * 
+	 * @param session The working session.
+	 * @return The field list.
+	 */
+	public static FieldList getFieldListDataFilters(Session session) {
+		
+		FieldList fieldList = new FieldList();
+		
+		fieldList.addField(Fields.getFieldDataFilter(session));
+		fieldList.getField(Fields.DataFilter).setPrimaryKey(true);
 		
 		return fieldList;
 	}

@@ -94,7 +94,7 @@ public class JFileChooser extends javax.swing.JFileChooser {
 	}
 
 	/**
-	 * RunShow the dialog using the parameterized dialog type.
+	 * RunAction the dialog using the parameterized dialog type.
 	 * 
 	 * @return The return state.
 	 */
@@ -103,7 +103,7 @@ public class JFileChooser extends javax.swing.JFileChooser {
 	}
 
 	/**
-	 * RunShow the dialog using the parameterized dialog type.
+	 * RunAction the dialog using the parameterized dialog type.
 	 * 
 	 * @param parent The parent component or null.
 	 * @return The return state.

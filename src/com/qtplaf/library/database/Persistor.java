@@ -22,6 +22,43 @@ package com.qtplaf.library.database;
 public interface Persistor {
 
 	/**
+	 * Returns the underlying view of the persistor.
+	 * 
+	 * @return The view.
+	 */
+	View getView();
+
+	/**
+	 * Returns the default record of the underlying view.
+	 * 
+	 * @return The default record of the underlying view.
+	 */
+	Record getDefaultRecord();
+
+	/**
+	 * Returns the number of fields this persistor manages.
+	 * 
+	 * @return The number of fields.
+	 */
+	int getFieldCount();
+
+	/**
+	 * Returns a field by index.
+	 * 
+	 * @param index The field index.
+	 * @return The field or null.
+	 */
+	Field getField(int index);
+
+	/**
+	 * Returns a field by alias.
+	 * 
+	 * @param alias The field alias.
+	 * @return The field or null.
+	 */
+	Field getField(String alias);
+
+	/**
 	 * Count the number of records that agree with the criteria.
 	 * 
 	 * @param criteria The filter criteria.

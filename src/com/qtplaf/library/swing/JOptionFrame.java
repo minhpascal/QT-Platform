@@ -393,7 +393,7 @@ public class JOptionFrame extends JFrameSession {
 		}
 		SwingUtils.centerOnScreen(this);
 
-		// RunShow it.
+		// RunAction it.
 		setResizable(resizable);
 		setVisible(true);
 		requestFocus();

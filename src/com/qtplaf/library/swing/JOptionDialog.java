@@ -383,7 +383,7 @@ public class JOptionDialog extends JDialogSession {
 	}
 
 	/**
-	 * RunShow the dialog and return the selected option or null if the dialog was closed without selecting any option.
+	 * RunAction the dialog and return the selected option or null if the dialog was closed without selecting any option.
 	 * 
 	 * @return The selected option.
 	 */
@@ -392,7 +392,7 @@ public class JOptionDialog extends JDialogSession {
 	}
 
 	/**
-	 * RunShow the dialog and return the selected option or null if the dialog was closed without selecting any option.
+	 * RunAction the dialog and return the selected option or null if the dialog was closed without selecting any option.
 	 * 
 	 * @param resizable A boolean that indicates if the dialog is resizable.
 	 * @return The selected option.
@@ -471,7 +471,7 @@ public class JOptionDialog extends JDialogSession {
 		}
 		SwingUtils.centerOnScreen(this);
 
-		// RunShow it.
+		// RunAction it.
 		setResizable(resizable);
 		setVisible(true);
 		requestFocus();

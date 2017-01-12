@@ -379,7 +379,7 @@ public class JFrameMenu extends JFrameSession {
 	}
 
 	/**
-	 * RunShow the console.
+	 * RunAction the console.
 	 */
 	public void showConsole() {
 		getTabbedPane().setSelectedComponent(getConsoleComponent());
@@ -387,7 +387,7 @@ public class JFrameMenu extends JFrameSession {
 	}
 
 	/**
-	 * RunShow the tree menu.
+	 * RunAction the tree menu.
 	 */
 	public void showTreeMenu() {
 		getTabbedPane().setSelectedComponent(getPanelTreeMenu());

@@ -14,9 +14,13 @@
 
 package com.qtplaf.platform.database;
 
+import java.util.Currency;
+
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.Filter;
+import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 
 /**
@@ -61,6 +65,31 @@ public class Records {
 	}
 
 	/**
+	 * Returns the instrument definition given the instrument record.
+	 * 
+	 * @param record The instrument record.
+	 * @return The instrument definition.
+	 */
+	public static Instrument fromRecordInstrument(Record record) {
+		if (record == null) {
+			return null;
+		}
+		Instrument instrument = new Instrument();
+		instrument.setId(record.getValue(Fields.InstrumentId).getString());
+		instrument.setDescription(record.getValue(Fields.InstrumentDesc).getString());
+		instrument.setPipValue(record.getValue(Fields.InstrumentPipValue).getDouble());
+		instrument.setPipScale(record.getValue(Fields.InstrumentPipScale).getInteger());
+		instrument.setTickValue(record.getValue(Fields.InstrumentTickValue).getDouble());
+		instrument.setTickScale(record.getValue(Fields.InstrumentTickScale).getInteger());
+		instrument.setVolumeScale(record.getValue(Fields.InstrumentVolumeScale).getInteger());
+		String primaryCurrency = record.getValue(Fields.InstrumentPrimaryCurrency).getString();
+		instrument.setPrimaryCurrency(Currency.getInstance(primaryCurrency));
+		String secondaryCurrency = record.getValue(Fields.InstrumentSecondaryCurrency).getString();
+		instrument.setSecondaryCurrency(Currency.getInstance(secondaryCurrency));
+		return instrument;
+	}
+
+	/**
 	 * Returns the filled record for the period.
 	 * 
 	 * @param record The blank period record.
@@ -73,4 +102,27 @@ public class Records {
 		return record;
 	}
 
+	/**
+	 * Returns the filled record for the offer side.
+	 * 
+	 * @param record The blank offer side record.
+	 * @param offerSide The offer side.
+	 * @return The record.
+	 */
+	public static Record getRecordOfferSide(Record record, OfferSide offerSide) {
+		record.setValue(Fields.OfferSide, offerSide.name());
+		return record;
+	}
+
+	/**
+	 * Returns the filled record for the data filter.
+	 * 
+	 * @param record The blank offer side record.
+	 * @param dataFilter The data filter.
+	 * @return The record.
+	 */
+	public static Record getRecordDataFilter(Record record, Filter dataFilter) {
+		record.setValue(Fields.DataFilter, dataFilter.name());
+		return record;
+	}
 }

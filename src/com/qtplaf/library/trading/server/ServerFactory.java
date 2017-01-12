@@ -30,10 +30,10 @@ import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
  * @author Miquel Sas
  */
 public class ServerFactory {
-	
+
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-	
+
 	/**
 	 * Standard connection listener.
 	 */
@@ -43,7 +43,7 @@ public class ServerFactory {
 			logger.info(e.getMessage());
 		}
 	}
-	
+
 	/** Dukascopy server key. */
 	private static final String Dukascopy = "dkcp";
 
@@ -51,7 +51,6 @@ public class ServerFactory {
 	 * The map to catch servers.
 	 */
 	private static Map<String, Server> mapServers = new ConcurrentHashMap<>();
-	
 
 	/**
 	 * Returns a list with an instance of each supported server.
@@ -63,6 +62,23 @@ public class ServerFactory {
 		List<Server> servers = new ArrayList<>();
 		servers.add(getServerDukascopy());
 		return servers;
+	}
+
+	/**
+	 * Returns a supported server given its id.
+	 * 
+	 * @param id The server id.
+	 * @return The server.
+	 * @throws ServerException if the server is not supported.
+	 */
+	public static Server getServer(String id) throws ServerException {
+		List<Server> servers = getSupportedServers();
+		for (Server server : servers) {
+			if (server.getId().equals(id)) {
+				return server;
+			}
+		}
+		throw new ServerException("Server " + id + " not supported");
 	}
 
 	/**

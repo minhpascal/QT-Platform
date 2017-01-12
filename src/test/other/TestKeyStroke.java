@@ -199,7 +199,7 @@ public class TestKeyStroke {
 		
 		
 		
-		// RunShow it.
+		// RunAction it.
 		for (String tok : tokens) {
 			StringBuilder b = new StringBuilder();
 			b.append("<entry key=\"");

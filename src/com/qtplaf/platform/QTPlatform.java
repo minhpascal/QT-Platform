@@ -43,11 +43,14 @@ import com.qtplaf.library.swing.JPanelTreeMenu;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.TreeMenuItem;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.Filter;
+import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
+import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Records;
@@ -111,10 +114,7 @@ public class QTPlatform {
 		System.setOut(frameMenu.getConsole().getPrintStream());
 		System.setErr(frameMenu.getConsole().getPrintStream());
 
-		// Start showing the console.
-		frameMenu.showConsole();
-
-		// RunShow the menu.
+		// RunAction the menu.
 		frameMenu.setVisible(true);
 
 		// Command line argument: database connection (xml file name).
@@ -138,7 +138,7 @@ public class QTPlatform {
 			logger.info("Configuring menu...");
 			configureMenu(frameMenu.getPanelTreeMenu());
 
-			// RunShow the menu.
+			// RunAction the menu.
 			frameMenu.showTreeMenu();
 
 		} catch (Exception exc) {
@@ -200,7 +200,19 @@ public class QTPlatform {
 			dbEngine.executeBuildTable(Tables.getTablePeriods(session));
 		}
 		synchronizeStandardPeriods(session, dbEngine);
-		
+
+		// Check for the necessary table OfferSides in the system schema.
+		if (!containsTable(rsSysTables, Tables.OfferSides)) {
+			dbEngine.executeBuildTable(Tables.getTableOfferSides(session));
+		}
+		synchronizeStandardOfferSides(session, dbEngine);
+
+		// Check for the necessary table DataFilters in the system schema.
+		if (!containsTable(rsSysTables, Tables.DataFilters)) {
+			dbEngine.executeBuildTable(Tables.getTableDataFilters(session));
+		}
+		synchronizeStandardDataFilters(session, dbEngine);
+
 		// Check for the necessary table Tickers in the system schema.
 		if (!containsTable(rsSysTables, Tables.Tickers)) {
 			dbEngine.executeBuildTable(Tables.getTableTickers(session));
@@ -237,7 +249,43 @@ public class QTPlatform {
 		for (Period period : periods) {
 			Record record = Records.getRecordPeriod(table.getDefaultRecord(), period);
 			if (!dbEngine.existsRecord(table, record)) {
-				dbEngine.executeInsert(table, Records.getRecordPeriod(table.getDefaultRecord(), period));
+				dbEngine.executeInsert(table, record);
+			}
+		}
+	}
+
+	/**
+	 * Synchronize standard offer sides.
+	 * 
+	 * @param session The working session.
+	 * @param dbEngine The database engine.
+	 * @throws Exception
+	 */
+	private static void synchronizeStandardOfferSides(Session session, DBEngine dbEngine) throws Exception {
+		OfferSide[] offerSides = OfferSide.values();
+		Table table = Tables.getTableOfferSides(session);
+		for (OfferSide offerSide : offerSides) {
+			Record record = Records.getRecordOfferSide(table.getDefaultRecord(), offerSide);
+			if (!dbEngine.existsRecord(table, record)) {
+				dbEngine.executeInsert(table, record);
+			}
+		}
+	}
+
+	/**
+	 * Synchronize standard data filters.
+	 * 
+	 * @param session The working session.
+	 * @param dbEngine The database engine.
+	 * @throws Exception
+	 */
+	private static void synchronizeStandardDataFilters(Session session, DBEngine dbEngine) throws Exception {
+		Filter[] dataFilters = Filter.values();
+		Table table = Tables.getTableDataFilters(session);
+		for (Filter dataFilter : dataFilters) {
+			Record record = Records.getRecordDataFilter(table.getDefaultRecord(), dataFilter);
+			if (!dbEngine.existsRecord(table, record)) {
+				dbEngine.executeInsert(table, record);
 			}
 		}
 	}
@@ -298,7 +346,7 @@ public class QTPlatform {
 		Session session = menu.getSession();
 
 		// Broker servers.
-		TreeMenuItem itemServers = TreeMenuItem.getMenuItem(session, session.getString("qtMenuBrokers"));
+		TreeMenuItem itemServers = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServers"));
 		menu.addMenuItem(itemServers);
 
 		// One menu item for each supported server.
@@ -307,14 +355,23 @@ public class QTPlatform {
 			String name = server.getName();
 			String title = server.getTitle();
 			String id = server.getId();
-			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
-			menu.addMenuItem(itemServers, itemServer);
 
 			// Server options.
-			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuBrokersAvInst"));
+			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
+			itemServer.setLaunchArgs(server);
+			menu.addMenuItem(itemServers, itemServer);
+
+			// Available instruments
+			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersAvInst"));
 			itemSrvAvInst.setActionClass(ActionAvailableInstruments.class);
 			itemSrvAvInst.setLaunchArgs(server);
 			menu.addMenuItem(itemServer, itemSrvAvInst);
+
+			// Tickers
+			TreeMenuItem itemSrvTickers = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickers"));
+			itemSrvTickers.setActionClass(ActionTickers.class);
+			itemSrvTickers.setLaunchArgs(server);
+			menu.addMenuItem(itemServer, itemSrvTickers);
 		}
 
 		menu.refreshTree();

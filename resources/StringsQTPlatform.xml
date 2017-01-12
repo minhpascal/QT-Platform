@@ -4,7 +4,8 @@
 	<comment>QT Platform strings</comment>
 
 	<entry key="qtMenuTitle">QT Platform</entry>
-	<entry key="qtMenuBrokers">Supported broker servers</entry>
-	<entry key="qtMenuBrokersAvInst">Available instruments</entry>
+	<entry key="qtMenuServers">Supported broker servers</entry>
+	<entry key="qtMenuServersAvInst">Available instruments</entry>
+	<entry key="qtMenuServersTickers">Tickers</entry>
 	
 </properties>

@@ -210,7 +210,7 @@ public class TradersDynamicIndex implements IIndicator, IDrawingIndicator
                 new OptInputParameterInfo("Signal MAType", OptInputParameterInfo.Type.OTHER, new IntegerListDescription(MaType.SMA.ordinal(), maValues, maNames)),
                 new OptInputParameterInfo("Volatility Band", OptInputParameterInfo.Type.OTHER, new IntegerRangeDescription( volatility_band, 2, 100, 1)),
                 new OptInputParameterInfo("Volatility MAType", OptInputParameterInfo.Type.OTHER, new IntegerListDescription(MaType.SMA.ordinal(), maValues, maNames)),
-                new OptInputParameterInfo("RunShow BG Lines", OptInputParameterInfo.Type.OTHER, new BooleanOptInputDescription(showBGLines))
+                new OptInputParameterInfo("RunAction BG Lines", OptInputParameterInfo.Type.OTHER, new BooleanOptInputDescription(showBGLines))
         };
         
 

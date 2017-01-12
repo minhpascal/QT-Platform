@@ -48,7 +48,7 @@ public class FileMirror {
 		System.setOut(frameMenu.getConsole().getPrintStream());
 		System.setErr(frameMenu.getConsole().getPrintStream());
 		
-		// RunShow the menu.
+		// RunAction the menu.
 		frameMenu.setVisible(true);
 		
 		System.out.println("Hello console");
