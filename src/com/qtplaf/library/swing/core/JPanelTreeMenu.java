@@ -67,7 +67,7 @@ public class JPanelTreeMenu extends JPanel {
 				getTree().setSelectionPath(path);
 				getTree().expandPath(path);
 				ActionEvent accEv = new ActionEvent(e.getSource(), 0, null, System.currentTimeMillis(), 0);
-				getMenuItem(nodeAccKey).execute(accEv);
+				getMenuItem(nodeAccKey).execute(accEv, getStatusBar());
 				return;
 			}
 
@@ -112,10 +112,14 @@ public class JPanelTreeMenu extends JPanel {
 	 */
 	private Session session = null;
 	/**
-	 * A boolean to control if process execute should be performed. This would normally set to false if a parent does
-	 * it.
+	 * A boolean to control if process execute should be performed. This would normally be set to false if a parent like
+	 * a frame menu manages execute.
 	 */
 	private boolean processExecute = true;
+	/**
+	 * A status bar that will be passed to actions to optionally be used to monitor not very long tasks.
+	 */
+	private StatusBar statusBar;
 
 	/**
 	 * Constructor.
@@ -190,7 +194,7 @@ public class JPanelTreeMenu extends JPanel {
 			TreeMenuItem treeMenuItem = getSelectedMenuItem();
 			if (treeMenuItem != null) {
 				ActionEvent accEv = new ActionEvent(getTree(), 0, null, System.currentTimeMillis(), 0);
-				treeMenuItem.execute(accEv);
+				treeMenuItem.execute(accEv, getStatusBar());
 			}
 		}
 	}
@@ -454,5 +458,23 @@ public class JPanelTreeMenu extends JPanel {
 			node = node.getParent();
 		}
 		return new TreePath(path.toArray(new TreeNode[path.size()]));
+	}
+
+	/**
+	 * Returns the status bar.
+	 * 
+	 * @return The status bar.
+	 */
+	public StatusBar getStatusBar() {
+		return statusBar;
+	}
+
+	/**
+	 * Sets the status bar.
+	 * 
+	 * @param statusBar The status bar.
+	 */
+	public void setStatusBar(StatusBar statusBar) {
+		this.statusBar = statusBar;
 	}
 }

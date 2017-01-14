@@ -26,6 +26,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.core.JFormRecord;
+import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.util.ImageIconUtils;
@@ -85,6 +86,11 @@ public class ActionUtils {
 	private static final Integer KeyLauchArgs = Integer.valueOf(index++);
 	/** A list of tasks, used in the progress manager to pass the tasks to actions. */
 	private static final Integer KeyTasks = Integer.valueOf(index++);
+	/**
+	 * A status bar, normally installed in a frame or menu frame, useful to monitor fast tasks, passed to the lauched
+	 * action.
+	 */
+	private static final Integer KeyStatusBar = Integer.valueOf(index++);
 	/** A generic user object. */
 	private static final Integer KeyUserObject = Integer.valueOf(index++);
 
@@ -261,6 +267,16 @@ public class ActionUtils {
 	 */
 	public static String getSourceName(Action action) {
 		return getProperties(action).getString(KeySourceName);
+	}
+
+	/**
+	 * Returns the status bat if installed in the action, or null.
+	 * 
+	 * @param action The action.
+	 * @return The status bar.
+	 */
+	public static StatusBar getStatusBar(Action action) {
+		return (StatusBar) getProperties(action).getObject(KeyStatusBar);
 	}
 
 	/**
@@ -446,6 +462,16 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Set the status bar.
+	 * 
+	 * @param action The action.
+	 * @param statusBar The status bar.
+	 */
+	public static void setStatusBar(Action action, StatusBar statusBar) {
+		getProperties(action).setObject(KeyStatusBar, statusBar);
+	}
+
+	/**
 	 * Sets the launch arguments object.
 	 * 
 	 * @param action The action.
@@ -524,7 +550,7 @@ public class ActionUtils {
 	public static void setMultipleSelection(Action action, boolean multipleSelection) {
 		getProperties(action).setBoolean(KeyMultipleSelection, multipleSelection);
 	}
-	
+
 	/**
 	 * Set the action as default close action..
 	 * 
@@ -534,7 +560,7 @@ public class ActionUtils {
 	public static void setDefaultCloseAction(Action action, boolean defaultClose) {
 		getProperties(action).setBoolean(KeyDefaultCloseAction, defaultClose);
 	}
-	
+
 	/**
 	 * Set the button value.
 	 * 

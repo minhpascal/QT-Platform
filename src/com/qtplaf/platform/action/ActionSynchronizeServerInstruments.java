@@ -15,18 +15,25 @@
 package com.qtplaf.platform.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.JScrollPane;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Criteria;
+import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.Table;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.action.DefaultActionClose;
-import com.qtplaf.library.swing.core.JOptionDialog;
-import com.qtplaf.library.swing.core.JOptionFrame;
-import com.qtplaf.library.swing.core.JPanelProgressGroup;
+import com.qtplaf.library.swing.core.StatusBar;
+import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.task.SynchronizeServerInstruments;
+import com.qtplaf.platform.ServerConnector;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Tables;
 
 /**
  * Synchronize server available instruments.
@@ -35,30 +42,55 @@ import com.qtplaf.platform.task.SynchronizeServerInstruments;
  */
 public class ActionSynchronizeServerInstruments extends AbstractAction {
 
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
+	
 	/**
-	 * Action to close the frame.
+	 * Runnable to perform synchronizing.
 	 */
-	class ActionClose extends DefaultActionClose {
-		/**
-		 * Constructor.
-		 * 
-		 * @param session The working session.
-		 */
-		public ActionClose(Session session) {
-			super(session);
-			ActionUtils.setDefaultCloseAction(this, true);
-		}
+	class Synchronizer implements Runnable {
+		public void run() {
+			try {
+				Session session = ActionUtils.getSession(ActionSynchronizeServerInstruments.this);
+				Server server = (Server) ActionUtils.getLaunchArgs(ActionSynchronizeServerInstruments.this);
+				StatusBar statusBar = ActionUtils.getStatusBar(ActionSynchronizeServerInstruments.this);
+				
+				statusBar.setStatus("Connecting to server " + server.getName(), 1, 5);
+				ServerConnector.connect(server);
+				
+				statusBar.setStatus("Retrieving available instruments", 2, 5);
+				List<Instrument> instruments = server.getAvailableInstruments();
 
-		/**
-		 * Perform the action.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JOptionFrame frame = (JOptionFrame) ActionUtils.getUserObject(this);
-			frame.setVisible(false);
-			frame.dispose();
+				statusBar.setStatus("Deleting registered instruments", 3, 5);
+				Table table = Tables.getTableInstruments(session);
+				Persistor persistor = table.getPersistor();
+				persistor.delete((Criteria) null);
+				
+				statusBar.setStatus("Inserting available instruments", 4, 5);
+				for (Instrument instrument : instruments) {
+					Record record = table.getDefaultRecord();
+					record.setValue(Fields.ServerId, server.getId());
+					record.setValue(Fields.InstrumentId, instrument.getId());
+					record.setValue(Fields.InstrumentDesc, instrument.getDescription());
+					record.setValue(Fields.InstrumentPipValue, instrument.getPipValue());
+					record.setValue(Fields.InstrumentPipScale, instrument.getPipScale());
+					record.setValue(Fields.InstrumentTickValue, instrument.getTickValue());
+					record.setValue(Fields.InstrumentTickScale, instrument.getTickScale());
+					record.setValue(Fields.InstrumentVolumeScale, instrument.getVolumeScale());
+					record.setValue(Fields.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
+					record.setValue(Fields.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
+					persistor.insert(record);
+				}
+				
+				statusBar.setStatus("Disconnecting from server " + server.getName(), 5, 5);
+				ServerConnector.disconnect(server);
+				
+				statusBar.clearStatus();
+				
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
 		}
-
 	}
 
 	/**
@@ -73,21 +105,7 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Session session = ActionUtils.getSession(this);
-		Server server = (Server) ActionUtils.getLaunchArgs(this);
-		
-		// Progress group.
-		JPanelProgressGroup panelGroup = new JPanelProgressGroup(session);
-		SynchronizeServerInstruments task = new SynchronizeServerInstruments(session, server);
-		panelGroup.add(task);
-		
-		JOptionDialog dialog = new JOptionDialog(session);
-		dialog.setTitle("CMA Update utility");
-		dialog.setComponent(new JScrollPane(panelGroup));
-		dialog.addOption(new ActionClose(session));
-		dialog.setModal(false);
-		dialog.showDialog(true);
-		
+		new Thread(new Synchronizer()).start();
 	}
 
 }

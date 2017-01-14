@@ -31,7 +31,6 @@ import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.swing.action.DefaultActionAccept;
 import com.qtplaf.library.swing.action.DefaultActionCancel;
-import com.qtplaf.library.swing.core.JPanelColumns.Mode;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**

@@ -1672,4 +1672,16 @@ public class Value implements Comparable<Object> {
 		// Single value.
 		return FormatUtils.formattedFromValue(this, locale);
 	}
+
+	/**
+	 * Set the decimals, only supported for type decimal.
+	 * 
+	 * @param decimals The number of decimal places.
+	 */
+	public void setDecimals(int decimals) {
+		if (getType() != Types.Decimal) {
+			throw new UnsupportedOperationException("Not supported for types different than decimal.");
+		}
+		this.decimals = decimals;
+	}
 }

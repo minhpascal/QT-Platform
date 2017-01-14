@@ -34,6 +34,7 @@ import com.qtplaf.library.swing.action.DefaultActionExit;
 import com.qtplaf.library.swing.core.JConsole;
 import com.qtplaf.library.swing.core.JFrameSession;
 import com.qtplaf.library.swing.core.JPanelButtons;
+import com.qtplaf.library.swing.core.JPanelStatus;
 import com.qtplaf.library.swing.core.JPanelTreeMenu;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.swing.event.WindowHandler;
@@ -157,6 +158,10 @@ public class FrameMenu {
 	 * The tabbed pane.
 	 */
 	private JTabbedPane tabbedPane;
+	/**
+	 * The status panel.
+	 */
+	private JPanelStatus panelStatus;
 
 	/**
 	 * Action execute.
@@ -232,18 +237,29 @@ public class FrameMenu {
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 0;
 		frame.getContentPane().add(getTabbedPane(), constraints);
 
+		// Status panel.
+		constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.NORTH;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.insets = new Insets(0, 10, 0, 10);
+		constraints.weightx = 1;
+		constraints.weighty = 0;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		frame.getContentPane().add(getPanelStatus(), constraints);
+		
 		// Buttons panel.
 		constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.insets = new Insets(0, 10, 0, 10);
-		constraints.weightx = 0;
+		constraints.weightx = 1;
 		constraints.weighty = 0;
 		constraints.gridx = 0;
-		constraints.gridy = 4;
+		constraints.gridy = 2;
 		frame.getContentPane().add(getPanelButtons(), constraints);
 
 		// This window listener.
@@ -253,6 +269,9 @@ public class FrameMenu {
 
 		// Setup panel buttons.
 		setupPanelButtons();
+		
+		// Clear status.
+		clearStatus();
 	}
 
 	/**
@@ -299,6 +318,7 @@ public class FrameMenu {
 	public JPanelTreeMenu getPanelTreeMenu() {
 		if (panelMenu == null) {
 			panelMenu = new JPanelTreeMenu(getSession());
+			panelMenu.setStatusBar(getPanelStatus());
 			panelMenu.setProcessExecute(false);
 		}
 		return panelMenu;
@@ -342,6 +362,18 @@ public class FrameMenu {
 			tabbedPane.addChangeListener(new TabChangeListener());
 		}
 		return tabbedPane;
+	}
+
+	/**
+	 * Returns the status panel.
+	 * 
+	 * @return The status panel.
+	 */
+	protected JPanelStatus getPanelStatus() {
+		if (panelStatus == null) {
+			panelStatus = new JPanelStatus();
+		}
+		return panelStatus;
 	}
 
 	/**
@@ -450,5 +482,42 @@ public class FrameMenu {
 	 */
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
+	}
+
+	/**
+	 * Set the status string showing only the label.
+	 * 
+	 * @param status The status text.
+	 */
+	public void setStatus(String status) {
+		getPanelStatus().setStatus(status);
+	}
+
+	/**
+	 * Set the status message showing the progress bar with the current and maximum values. Current values range from
+	 * zero to maximum.
+	 * 
+	 * @param status The status text.
+	 * @param value The current progress value.
+	 * @param maximum The maximum value.
+	 */
+	public void setStatus(String status, int value, int maximum) {
+		getPanelStatus().setStatus(status, value, maximum);
+	}
+
+	/**
+	 * Set the status string with the progress bar indeterminate.
+	 * 
+	 * @param status The status text.
+	 */
+	public void setStatusIndeterminate(String status) {
+		getPanelStatus().setStatusIndeterminate(status);
+	}
+
+	/**
+	 * Clearthe status text.
+	 */
+	public void clearStatus() {
+		getPanelStatus().clearStatus();
 	}
 }

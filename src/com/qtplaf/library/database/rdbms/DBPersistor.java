@@ -321,7 +321,7 @@ public class DBPersistor implements Persistor {
 	 * @throws PersistorException
 	 */
 	public RecordSet select(Criteria criteria) throws PersistorException {
-		return select(criteria, null);
+		return select(criteria, view.getOrderBy());
 	}
 
 	/**

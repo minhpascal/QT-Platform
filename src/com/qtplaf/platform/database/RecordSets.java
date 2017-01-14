@@ -14,19 +14,14 @@
 
 package com.qtplaf.platform.database;
 
-import java.util.List;
-
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
-import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.ServerConnector;
 
 /**
  * Centralizes record sets generation.
@@ -45,24 +40,24 @@ public class RecordSets {
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
 
-		ServerConnector.connect(server);
-
-		FieldList fieldList = FieldLists.getFieldListInstruments(session);
+		Persistor persistor = Tables.getTableInstruments(session).getPersistor();
+		Criteria criteria = new Criteria();
+		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
+		RecordSet recordSet = persistor.select(criteria);
 
 		// Track max pip and tick scale to set their values decimals.
 		int maxPipScale = 0;
 		int maxTickScale = 0;
-		RecordSet recordSet = new RecordSet(fieldList);
-		List<Instrument> instruments = server.getAvailableInstruments();
-		for (Instrument instrument : instruments) {
-			maxPipScale = Math.max(maxPipScale, instrument.getPipScale());
-			maxTickScale = Math.max(maxTickScale, instrument.getPipScale());
-			recordSet.add(Records.getRecordInstrument(new Record(fieldList), instrument));
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record record = recordSet.get(i);
+			maxPipScale = Math.max(maxPipScale, record.getValue(Fields.InstrumentPipScale).getInteger());
+			maxTickScale = Math.max(maxTickScale, record.getValue(Fields.InstrumentTickScale).getInteger());
 		}
-		recordSet.sort();
-
-		fieldList.getField(Fields.InstrumentPipValue).setDecimals(maxPipScale);
-		fieldList.getField(Fields.InstrumentTickValue).setDecimals(maxTickScale);
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record record = recordSet.get(i);
+			record.getValue(Fields.InstrumentPipValue).setDecimals(maxPipScale);
+			record.getValue(Fields.InstrumentTickValue).setDecimals(maxTickScale);
+		}
 
 		return recordSet;
 	}

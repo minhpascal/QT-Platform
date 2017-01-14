@@ -114,6 +114,7 @@ public class CMAUpdate {
 
 		// Progress manager.
 		ProgressManager progressManager = new ProgressManager(session);
+		progressManager.setTitle("CMA Updater");
 		progressManager.setPanelProgressWidth(1000);
 		for (Task task : tasks) {
 			progressManager.addTask(task);

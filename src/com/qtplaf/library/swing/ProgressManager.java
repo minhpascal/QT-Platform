@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Action;
+import javax.swing.JScrollPane;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.action.DefaultActionClose;
@@ -61,6 +62,7 @@ public class ProgressManager {
 					ActionUtils.setTasks(action, tasks);
 					action.actionPerformed(e);
 				}
+				JOptionFrame frame = (JOptionFrame) ActionUtils.getUserObject(this);
 				frame.setVisible(false);
 				frame.dispose();
 			} catch (Exception ignore) {
@@ -73,13 +75,13 @@ public class ProgressManager {
 	 */
 	private JPanelProgressGroup progress;
 	/**
-	 * The option frame to display the progress group.
-	 */
-	private JOptionFrame frame;
-	/**
 	 * List of pre-close actions.
 	 */
 	private List<Action> preCloseActions = new ArrayList<>();
+	/**
+	 * The frame title.
+	 */
+	private String title;
 
 	/**
 	 * Constructor.
@@ -89,9 +91,6 @@ public class ProgressManager {
 	public ProgressManager(Session session) {
 		super();
 		progress = new JPanelProgressGroup(session);
-		frame = new JOptionFrame(session);
-		frame.setComponent(progress);
-		frame.addAction(new ActionClose(session));
 	}
 
 	/**
@@ -120,14 +119,23 @@ public class ProgressManager {
 	public Session getSession() {
 		return progress.getSession();
 	}
-	
+
 	/**
 	 * Sets the panel progress width.
 	 * 
 	 * @param panelProgressWidth The panel progress width.
 	 */
 	public void setPanelProgressWidth(int panelProgressWidth) {
-		progress.setPanelProgressWidth(panelProgressWidth);;
+		progress.setPanelProgressWidth(panelProgressWidth);
+	}
+	
+	/**
+	 * Set the frame title.
+	 * 
+	 * @param title The title.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	/**
@@ -143,6 +151,10 @@ public class ProgressManager {
 	 * @param resizable A boolean that indicates if the frame is resizable.
 	 */
 	public void showFrame(boolean resizable) {
+		JOptionFrame frame = new JOptionFrame(getSession());
+		frame.setTitle(title);
+		frame.setComponent(new JScrollPane(progress));
+		frame.addAction(new ActionClose(getSession()));
 		frame.showFrame(resizable);
 	}
 }

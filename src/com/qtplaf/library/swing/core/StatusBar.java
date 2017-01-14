@@ -12,34 +12,40 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.task;
-
-import java.util.List;
+package com.qtplaf.library.swing.core;
 
 /**
- * An abstract monitor of task progress.
+ * Simple status bar interface to monitor fast tasks or processes.
  * 
  * @author Miquel Sas
  */
-public interface TaskMonitor {
+public interface StatusBar {
 	/**
-	 * Add a task and monitor its progress.
+	 * Set the status string showing only the label.
 	 * 
-	 * @param task The task to monitor.
+	 * @param status The status text.
 	 */
-	void add(Task task);
+	void setStatus(String status);
 
 	/**
-	 * Remove the task and stop monitoring it.
+	 * Set the status message showing the progress bar with the current and maximum values. Current values range from
+	 * zero to maximum.
 	 * 
-	 * @param task The task to remove.
+	 * @param status The status text.
+	 * @param value The current progress value.
+	 * @param maximum The maximum value.
 	 */
-	void remove(Task task);
+	void setStatus(String status, int value, int maximum);
 
 	/**
-	 * Returns the list of current tasks.
+	 * Set the status string with the progress bar indeterminate.
 	 * 
-	 * @return The list of tasks.
+	 * @param status The status text.
 	 */
-	List<Task> getTasks();
+	void setStatusIndeterminate(String status);
+
+	/**
+	 * Clearthe status text.
+	 */
+	void clearStatus();
 }

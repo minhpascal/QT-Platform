@@ -217,11 +217,13 @@ public class TreeMenuItem {
 	 * Executes this menu item action if present.
 	 * 
 	 * @param e The action event that promoted this execution.
+	 * @param statusBar An optional status bar passed to the action to be used to monitor time consuming processes.
 	 */
-	public void execute(ActionEvent e) {
+	public void execute(ActionEvent e, StatusBar statusBar) {
 		if (getActionClass() != null) {
 			if (canExecute()) {
 				Action action = getAction();
+				ActionUtils.setStatusBar(action, statusBar);
 				action.actionPerformed(e);
 			}
 		} else {
