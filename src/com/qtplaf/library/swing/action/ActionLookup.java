@@ -38,8 +38,8 @@ import com.qtplaf.library.database.ValueArray;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditContext;
 import com.qtplaf.library.swing.EditField;
-import com.qtplaf.library.swing.JLookupRecords;
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.JLookupRecords;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.util.Alignment;
 import com.qtplaf.library.util.Icons;
 
@@ -287,7 +287,7 @@ public class ActionLookup extends AbstractAction {
 	 * @return The list of selected records.
 	 */
 	public List<Record> getSelectedRecords() {
-		return ActionUtils.getValueSelectedRecords(this);
+		return ActionUtils.getSelectedRecords(this);
 	}
 
 	/**

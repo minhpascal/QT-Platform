@@ -9,7 +9,7 @@ import java.util.TimeZone;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.library.trading.server.ConnectionType;
+import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.HistoryManager;
 import com.qtplaf.library.trading.server.OHLCVIterator;
@@ -41,7 +41,7 @@ public class TestDkOHLCVIterator {
 			
 			DkServer server = new DkServer();
 			server.getConnectionManager().addListener(new DkConnectionListener());
-			server.getConnectionManager().connect(userName, password, ConnectionType.Demo);
+			server.getConnectionManager().connect(userName, password, AccountType.Demo);
 
 			Filter filter = Filter.AllFlats;
 

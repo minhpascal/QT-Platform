@@ -25,6 +25,14 @@ import com.qtplaf.library.trading.data.Instrument;
 public interface Server {
 
 	/**
+	 * Returns the URL to connect to the given account type.
+	 * 
+	 * @param accountType The account type (Live/Demo)
+	 * @return The URL.
+	 */
+	String getURL(AccountType accountType);
+
+	/**
 	 * Returns the name of the server.
 	 * 
 	 * @return The name of the server.

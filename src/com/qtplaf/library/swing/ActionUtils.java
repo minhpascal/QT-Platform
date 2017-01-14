@@ -25,6 +25,9 @@ import javax.swing.KeyStroke;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.swing.core.JFormRecord;
+import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.task.Task;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.library.util.Properties;
 
@@ -80,6 +83,8 @@ public class ActionUtils {
 	private static final Integer KeyDefaultCloseAction = Integer.valueOf(index++);
 	/** A an object used as launch arguments fromm the menu. */
 	private static final Integer KeyLauchArgs = Integer.valueOf(index++);
+	/** A list of tasks, used in the progress manager to pass the tasks to actions. */
+	private static final Integer KeyTasks = Integer.valueOf(index++);
 	/** A generic user object. */
 	private static final Integer KeyUserObject = Integer.valueOf(index++);
 
@@ -335,8 +340,19 @@ public class ActionUtils {
 	 * @return The list of selected records.
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<Record> getValueSelectedRecords(Action action) {
+	public static List<Record> getSelectedRecords(Action action) {
 		return (List<Record>) getProperties(action).getObject(KeySelectedRecords);
+	}
+
+	/**
+	 * Returns the list of tasks.
+	 * 
+	 * @param action The action.
+	 * @return The list of tasks.
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<Task> getTasks(Action action) {
+		return (List<Task>) getProperties(action).getObject(KeyTasks);
 	}
 
 	/**
@@ -567,6 +583,16 @@ public class ActionUtils {
 	 */
 	public static void setSelectedRecords(Action action, List<Record> selectedRecords) {
 		getProperties(action).setObject(KeySelectedRecords, selectedRecords);
+	}
+
+	/**
+	 * Set the list of tasks.
+	 * 
+	 * @param action The action.
+	 * @param tasks The list of tasks.
+	 */
+	public static void setTasks(Action action, List<Task> tasks) {
+		getProperties(action).setObject(KeyTasks, tasks);
 	}
 
 	/**

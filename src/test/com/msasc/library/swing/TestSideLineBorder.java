@@ -5,8 +5,8 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.qtplaf.library.swing.LineBorderSides;
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.LineBorderSides;
+import com.qtplaf.library.swing.core.SwingUtils;
 
 public class TestSideLineBorder {
 

@@ -16,6 +16,7 @@ package com.qtplaf.library.swing;
 import javax.swing.UIManager;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.core.JOptionDialog;
 
 /**
  * Message box with standard options.

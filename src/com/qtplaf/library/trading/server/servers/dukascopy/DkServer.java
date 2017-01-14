@@ -21,6 +21,7 @@ import com.dukascopy.api.IContext;
 import com.dukascopy.api.system.ClientFactory;
 import com.dukascopy.api.system.IClient;
 import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.ConnectionManager;
 import com.qtplaf.library.trading.server.FeedManager;
 import com.qtplaf.library.trading.server.HistoryManager;
@@ -87,11 +88,27 @@ public class DkServer extends AbstractServer {
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
-		
+
 		// Name, id, title.
 		setName("Dukascopy");
 		setId("dkcp");
 		setTitle("Dukascopy Bank SA");
+	}
+
+	/**
+	 * Returns the URL to connect to the given account type.
+	 * 
+	 * @param accountType The account type (Live/Demo)
+	 * @return The URL.
+	 */
+	public String getURL(AccountType accountType) {
+		if (accountType.equals(AccountType.Live)) {
+			return "http://platform.dukascopy.com/live/jforex.jnlp";
+		}
+		if (accountType.equals(AccountType.Demo)) {
+			return "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
+		}
+		throw new IllegalArgumentException("Invalid account type " + accountType);
 	}
 
 	/**

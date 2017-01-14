@@ -5,8 +5,8 @@ import java.util.Locale;
 import javax.swing.JScrollPane;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JPanelProgress;
-import com.qtplaf.library.swing.JPanelProgressGroup;
+import com.qtplaf.library.swing.core.JPanelProgress;
+import com.qtplaf.library.swing.core.JPanelProgressGroup;
 import com.qtplaf.library.task.TaskRunnerThreads;
 import com.qtplaf.library.task.sample.SampleTask;
 import com.qtplaf.library.util.StringUtils;
@@ -29,9 +29,6 @@ public class TestJPanelProgressThreads {
 		int tasks = 200;
 		for (int i = 0; i < processes; i++) {
 
-			JPanelProgress panelProgress = new JPanelProgress(session);
-			panel.add(panelProgress);
-
 			TaskRunnerThreads taskThreads = new TaskRunnerThreads(session);
 			taskThreads.setName(StringUtils.leftPad(Integer.toString(i), 2, "0"));
 			taskThreads.setDescription("Test process " + i);
@@ -52,8 +49,7 @@ public class TestJPanelProgressThreads {
 				taskThreads.addTask(task);
 			}
 
-			panelProgress.monitorTask(taskThreads);
-			new Thread(taskThreads, "Progress process " + i).start();
+			panel.add(taskThreads);
 		}
 
 		TestBox.show(scrollPane);

@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Tick;
-import com.qtplaf.library.trading.server.ConnectionType;
+import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.HistoryManager;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
@@ -30,7 +30,7 @@ public class TestDkDownloadTicks {
 		try {
 			DkServer server = new DkServer();
 			server.getConnectionManager().addListener(new DkConnectionListener());
-			server.getConnectionManager().connect(userName, password, ConnectionType.Demo);
+			server.getConnectionManager().connect(userName, password, AccountType.Demo);
 
 			Instrument instrument = DkUtilities.fromDkInstrument(com.dukascopy.api.Instrument.EURUSD);
 

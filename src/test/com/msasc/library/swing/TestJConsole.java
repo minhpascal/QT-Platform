@@ -5,7 +5,7 @@ import java.io.PrintStream;
 
 import javax.swing.JScrollPane;
 
-import com.qtplaf.library.swing.JConsole;
+import com.qtplaf.library.swing.core.JConsole;
 import com.qtplaf.library.util.TextServer;
 
 public class TestJConsole {

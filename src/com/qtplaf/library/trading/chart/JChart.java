@@ -27,8 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.LineBorderSides;
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.LineBorderSides;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.PlotData;
 

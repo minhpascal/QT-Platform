@@ -7,8 +7,8 @@ import javax.swing.AbstractAction;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.JOptionDialog;
 import com.qtplaf.library.swing.MessageBox;
+import com.qtplaf.library.swing.core.JOptionDialog;
 import com.qtplaf.library.util.TextServer;
 
 public class TestJOptionDialogAction {

@@ -25,8 +25,8 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.server.ConnectionType;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.ServerConnector;
 
 /**
  * Centralizes record sets generation.
@@ -45,9 +45,7 @@ public class RecordSets {
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
 
-		if (!server.getConnectionManager().isConnected()) {
-			server.getConnectionManager().connect("msasc2EU", "C1a2r3l4a5", ConnectionType.Demo);
-		}
+		ServerConnector.connect(server);
 
 		FieldList fieldList = FieldLists.getFieldListInstruments(session);
 

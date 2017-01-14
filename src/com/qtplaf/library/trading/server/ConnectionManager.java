@@ -19,7 +19,7 @@ package com.qtplaf.library.trading.server;
  * @author Miquel Sas
  */
 public interface ConnectionManager {
-
+	
 	/**
 	 * Add a connection listener to receive connection events.
 	 * 
@@ -38,7 +38,7 @@ public interface ConnectionManager {
 	 * @param connectionType The type of connection.
 	 * @throws ServerException
 	 */
-	void connect(String username, String password, ConnectionType connectionType) throws ServerException;
+	void connect(String username, String password, AccountType connectionType) throws ServerException;
 
 	/**
 	 * Disconnect from the server.
@@ -52,7 +52,7 @@ public interface ConnectionManager {
 	 * 
 	 * @return The connection type.
 	 */
-	ConnectionType getConnectionType();
+	AccountType getConnectionType();
 
 	/**
 	 * Returns a boolean indicating if the client is correctly connected to the server.

@@ -6,8 +6,8 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JOptionDialog;
 import com.qtplaf.library.swing.MessageBox;
+import com.qtplaf.library.swing.core.JOptionDialog;
 import com.qtplaf.library.util.TextServer;
 
 public class TestJOptionDialog {

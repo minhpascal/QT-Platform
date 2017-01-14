@@ -25,6 +25,13 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.swing.core.JCheckBoxField;
+import com.qtplaf.library.swing.core.JComboBoxField;
+import com.qtplaf.library.swing.core.JLabelField;
+import com.qtplaf.library.swing.core.JMaskedField;
+import com.qtplaf.library.swing.core.JMaskedFieldButton;
+import com.qtplaf.library.swing.core.JMaskedFieldDate;
+import com.qtplaf.library.swing.core.JPassword;
 
 /**
  * A context that contains the necessary items to edit a record field.

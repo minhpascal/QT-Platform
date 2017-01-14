@@ -21,7 +21,7 @@ import java.awt.Insets;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.LineBorderSides;
+import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;

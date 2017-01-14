@@ -5,7 +5,7 @@ import java.util.Locale;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Record;
-import com.qtplaf.library.swing.JFormRecord;
+import com.qtplaf.library.swing.core.JFormRecord;
 import com.qtplaf.library.util.TextServer;
 
 public class TestFormRecord {

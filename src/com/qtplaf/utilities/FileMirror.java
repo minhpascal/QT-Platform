@@ -17,7 +17,7 @@ package com.qtplaf.utilities;
 import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JFrameMenu;
+import com.qtplaf.library.swing.FrameMenu;
 import com.qtplaf.library.util.TextServer;
 
 /**
@@ -39,7 +39,7 @@ public class FileMirror {
 		Session session = new Session(Locale.UK);
 
 		// Frame menu.
-		JFrameMenu frameMenu = new JFrameMenu(session);
+		FrameMenu frameMenu = new FrameMenu(session);
 		frameMenu.setTitle("Mirror utility");
 		frameMenu.setLocation(20, 20);
 		frameMenu.setSize(0.25, 0.65);

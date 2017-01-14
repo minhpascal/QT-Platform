@@ -25,7 +25,7 @@ import javax.swing.JToolBar;
 
 import com.dukascopy.api.Period;
 import com.dukascopy.api.Unit;
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 

@@ -22,7 +22,7 @@ import java.util.Locale;
 import javax.swing.JScrollPane;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JPanelProgressGroup;
+import com.qtplaf.library.swing.core.JPanelProgressGroup;
 import com.qtplaf.library.task.TaskRunnerList;
 import com.qtplaf.library.task.sample.SampleTask;
 import com.qtplaf.library.util.StringUtils;

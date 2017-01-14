@@ -30,10 +30,10 @@ import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.JDialogColumns;
-import com.qtplaf.library.swing.JTableRecord;
-import com.qtplaf.library.swing.SwingUtils;
-import com.qtplaf.library.swing.TableModelRecord;
+import com.qtplaf.library.swing.core.JDialogColumns;
+import com.qtplaf.library.swing.core.JTableRecord;
+import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 

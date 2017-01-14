@@ -12,7 +12,7 @@ import java.util.Locale;
 import javax.swing.JFrame;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.trading.chart.JChart;
 
 /**

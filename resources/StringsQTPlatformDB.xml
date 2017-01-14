@@ -48,6 +48,8 @@
 	<entry key="fieldPeriodIdHeader">Period id</entry>
 	<entry key="fieldPeriodNameLabel">Period name</entry>
 	<entry key="fieldPeriodNameHeader">Period name</entry>
+	<entry key="fieldPeriodUnitIndexLabel">Period unit index</entry>
+	<entry key="fieldPeriodUnitIndexHeader">Period unit index</entry>
 	<entry key="fieldPeriodSizeLabel">Period size</entry>
 	<entry key="fieldPeriodSizeHeader">Period size</entry>
 	

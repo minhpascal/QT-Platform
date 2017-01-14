@@ -5,7 +5,7 @@ import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.util.Date;
 import com.qtplaf.library.util.FormatUtils;
 import com.toedter.calendar.JDateChooser;

@@ -5,6 +5,7 @@
 
 	<entry key="qtMenuTitle">QT Platform</entry>
 	<entry key="qtMenuServers">Supported broker servers</entry>
+	<entry key="qtMenuServersSynchronizeInstruments">Synchronize available instruments</entry>
 	<entry key="qtMenuServersAvInst">Available instruments</entry>
 	<entry key="qtMenuServersTickers">Tickers</entry>
 	<entry key="qtMenuServersTickersCreate">Create new ticker</entry>

@@ -15,8 +15,8 @@ import javax.swing.JOptionPane;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.SwingUtils;
 import com.qtplaf.library.swing.action.DefaultActionAccept;
+import com.qtplaf.library.swing.core.SwingUtils;
 
 /**
  * Option pane to test a text field.

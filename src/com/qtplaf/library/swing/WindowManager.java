@@ -22,6 +22,9 @@ import java.util.List;
 import javax.swing.KeyStroke;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.core.JDialogSession;
+import com.qtplaf.library.swing.core.JFrameSession;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.swing.event.KeyHandler;
 
 /**

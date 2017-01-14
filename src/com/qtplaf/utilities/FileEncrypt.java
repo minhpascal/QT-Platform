@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JFileChooser;
+import com.qtplaf.library.swing.core.JFileChooser;
 import com.qtplaf.library.util.TextServer;
 
 /**

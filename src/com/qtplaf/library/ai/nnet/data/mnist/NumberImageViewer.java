@@ -33,7 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.util.SystemUtils;
 
 /**

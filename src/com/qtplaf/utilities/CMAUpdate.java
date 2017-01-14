@@ -20,15 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.JScrollPane;
-
 import com.qtplaf.library.app.Argument;
 import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.JOptionDialog;
-import com.qtplaf.library.swing.JPanelProgressGroup;
 import com.qtplaf.library.swing.MessageBox;
+import com.qtplaf.library.swing.ProgressManager;
 import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.util.TextServer;
@@ -64,11 +61,9 @@ public class CMAUpdate {
 			Session session = ActionUtils.getSession(this);
 			String message = "Close and stop any executing task?";
 			if (MessageBox.question(session, message, MessageBox.yesNo, MessageBox.no) == MessageBox.yes) {
-				JOptionDialog dialog = (JOptionDialog) ActionUtils.getUserObject(this);
-				dialog.setVisible(false);
-				dialog.dispose();
 				System.exit(0);
 			}
+			throw new IllegalStateException();
 		}
 
 	}
@@ -117,20 +112,14 @@ public class CMAUpdate {
 		// The list of tasks.
 		List<Task> tasks = getTaskList(session, argMngr);
 
-		// Progress group.
-		JPanelProgressGroup panelGroup = new JPanelProgressGroup(session);
-		panelGroup.setPanelProgressWidth(1000);
+		// Progress manager.
+		ProgressManager progressManager = new ProgressManager(session);
+		progressManager.setPanelProgressWidth(1000);
 		for (Task task : tasks) {
-			panelGroup.add(task);
+			progressManager.addTask(task);
 		}
-
-		// Option dialog.
-		JOptionDialog dialog = new JOptionDialog(session);
-		dialog.setTitle("CMA Update utility");
-		dialog.setComponent(new JScrollPane(panelGroup));
-		dialog.addOption(new ActionClose(session));
-		dialog.setModal(false);
-		dialog.showDialog(true);
+		progressManager.addPreCloseAction(new ActionClose(session));
+		progressManager.showFrame(true);
 	}
 
 	/**

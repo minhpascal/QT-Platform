@@ -6,7 +6,7 @@ import java.util.Locale;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.JFileChooser;
+import com.qtplaf.library.swing.core.JFileChooser;
 import com.qtplaf.library.util.TextServer;
 
 public class TestJFileChooser {

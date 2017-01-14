@@ -11,7 +11,7 @@ import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.swing.JLookupRecords;
+import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.util.TextServer;
 
 public class TestJLookupRecords {

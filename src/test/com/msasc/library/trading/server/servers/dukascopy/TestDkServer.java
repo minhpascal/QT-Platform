@@ -6,7 +6,7 @@ package test.com.msasc.library.trading.server.servers.dukascopy;
 import com.dukascopy.api.Instrument;
 import com.dukascopy.api.OfferSide;
 import com.dukascopy.api.Period;
-import com.qtplaf.library.trading.server.ConnectionType;
+import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 
 /**
@@ -24,7 +24,7 @@ public class TestDkServer {
 	public static void main(String[] args) throws Exception {
 		DkServer server = new DkServer();
 		server.getConnectionManager().addListener(new DkConnectionListener());
-		server.getConnectionManager().connect(userName, password, ConnectionType.Demo);
+		server.getConnectionManager().connect(userName, password, AccountType.Demo);
 		
 		Instrument dkInstrument = Instrument.EURUSD;
 		Period dkPeriod = Period.TEN_SECS;

@@ -38,10 +38,10 @@ import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
 import com.qtplaf.library.database.rdbms.adapters.PostgreSQLAdapter;
 import com.qtplaf.library.database.rdbms.connection.ConnectionInfo;
-import com.qtplaf.library.swing.JFrameMenu;
-import com.qtplaf.library.swing.JPanelTreeMenu;
+import com.qtplaf.library.swing.FrameMenu;
 import com.qtplaf.library.swing.MessageBox;
-import com.qtplaf.library.swing.TreeMenuItem;
+import com.qtplaf.library.swing.core.JPanelTreeMenu;
+import com.qtplaf.library.swing.core.TreeMenuItem;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
@@ -50,6 +50,7 @@ import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
+import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Names;
@@ -104,7 +105,7 @@ public class QTPlatform {
 		Session session = new Session(Locale.UK);
 
 		// Frame menu.
-		JFrameMenu frameMenu = new JFrameMenu(session);
+		FrameMenu frameMenu = new FrameMenu(session);
 		frameMenu.setTitle(session.getString("qtMenuTitle"));
 		frameMenu.setLocation(20, 20);
 		frameMenu.setSize(0.4, 0.8);
@@ -212,6 +213,11 @@ public class QTPlatform {
 			dbEngine.executeBuildTable(Tables.getTableDataFilters(session));
 		}
 		synchronizeStandardDataFilters(session, dbEngine);
+
+		// Check for the necessary table Instruments in the system schema.
+		if (!containsTable(rsSysTables, Tables.Instruments)) {
+			dbEngine.executeBuildTable(Tables.getTableInstruments(session));
+		}
 
 		// Check for the necessary table Tickers in the system schema.
 		if (!containsTable(rsSysTables, Tables.Tickers)) {
@@ -360,6 +366,13 @@ public class QTPlatform {
 			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
 			itemServer.setLaunchArgs(server);
 			menu.addMenuItem(itemServers, itemServer);
+
+			// Synchronize available instruments
+			TreeMenuItem itemSrvSyncInst =
+				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersSynchronizeInstruments"));
+			itemSrvSyncInst.setActionClass(ActionSynchronizeServerInstruments.class);
+			itemSrvSyncInst.setLaunchArgs(server);
+			menu.addMenuItem(itemServer, itemSrvSyncInst);
 
 			// Available instruments
 			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersAvInst"));

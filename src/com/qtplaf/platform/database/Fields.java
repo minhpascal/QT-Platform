@@ -148,7 +148,8 @@ public class Fields {
 		field.setSession(session);
 		field.setName(InstrumentPipValue);
 		field.setType(Types.Decimal);
-		field.setDecimals(4);
+		field.setLength(16);
+		field.setDecimals(8);
 		field.setHeader(session.getString("fieldInstrumentPipValueHeader"));
 		field.setLabel(session.getString("fieldInstrumentPipValueLabel"));
 		field.setTitle(session.getString("fieldInstrumentPipValueLabel"));
@@ -184,7 +185,8 @@ public class Fields {
 		field.setSession(session);
 		field.setName(InstrumentTickValue);
 		field.setType(Types.Decimal);
-		field.setDecimals(4);
+		field.setLength(16);
+		field.setDecimals(8);
 		field.setHeader(session.getString("fieldInstrumentTickValueHeader"));
 		field.setLabel(session.getString("fieldInstrumentTickValueLabel"));
 		field.setTitle(session.getString("fieldInstrumentTickValueLabel"));

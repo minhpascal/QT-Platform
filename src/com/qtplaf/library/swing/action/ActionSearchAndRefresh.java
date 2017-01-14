@@ -28,7 +28,7 @@ import javax.swing.text.JTextComponent;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditField;
-import com.qtplaf.library.swing.SwingUtils;
+import com.qtplaf.library.swing.core.SwingUtils;
 
 /**
  * Action aimed to search values to refresh edit fields, normally executed as a value action.

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.qtplaf.library.trading.server.ConnectionListener;
 import com.qtplaf.library.trading.server.ConnectionManager;
-import com.qtplaf.library.trading.server.ConnectionType;
+import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.ServerException;
 
 /**
@@ -40,7 +40,7 @@ public class DkConnectionManager implements ConnectionManager {
 	/**
 	 * The connection type.
 	 */
-	private ConnectionType connectionType;
+	private AccountType connectionType;
 
 	/**
 	 * Constructor assigning the reference server.
@@ -69,10 +69,10 @@ public class DkConnectionManager implements ConnectionManager {
 	 * 
 	 * @param username The user name.
 	 * @param password The password.
-	 * @param connectionType The type of connection.
+	 * @param accountType The type of connection.
 	 * @throws ServerException
 	 */
-	public void connect(String username, String password, ConnectionType connectionType) throws ServerException {
+	public void connect(String username, String password, AccountType accountType) throws ServerException {
 
 		// Check if already connected.
 		if (isConnected()) {
@@ -80,22 +80,10 @@ public class DkConnectionManager implements ConnectionManager {
 		}
 
 		// Remember the connection type.
-		this.connectionType = connectionType;
+		this.connectionType = accountType;
 
 		// Set the corresponding URL.
-		String url = null;
-		switch (connectionType) {
-		case Demo:
-			url = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
-			break;
-		case Live:
-			break;
-		case Test:
-			break;
-		default:
-			break;
-		}
-		// TODO: Correctly implement live and test.
+		String url = server.getURL(accountType);
 
 		// Do connect.
 		try {
@@ -134,7 +122,7 @@ public class DkConnectionManager implements ConnectionManager {
 	 * 
 	 * @return The connection type.
 	 */
-	public ConnectionType getConnectionType() {
+	public AccountType getConnectionType() {
 			return connectionType;
 	}
 

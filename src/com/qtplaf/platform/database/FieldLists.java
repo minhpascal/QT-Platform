@@ -77,6 +77,7 @@ public class FieldLists {
 		
 		FieldList fieldList = new FieldList();
 		
+		fieldList.addField(Fields.getFieldServerId(session));
 		fieldList.addField(Fields.getFieldInstrumentId(session));
 		fieldList.addField(Fields.getFieldInstrumentDesc(session));
 		fieldList.addField(Fields.getFieldInstrumentPipValue(session));
@@ -86,6 +87,7 @@ public class FieldLists {
 		fieldList.addField(Fields.getFieldInstrumentVolumeScale(session));
 		fieldList.addField(Fields.getFieldInstrumentPrimaryCurrency(session));
 		fieldList.addField(Fields.getFieldInstrumentSecondaryCurrency(session));
+		fieldList.getField(Fields.ServerId).setPrimaryKey(true);
 		fieldList.getField(Fields.InstrumentId).setPrimaryKey(true);
 		
 		return fieldList;
