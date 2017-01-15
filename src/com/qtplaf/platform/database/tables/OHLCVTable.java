@@ -136,7 +136,7 @@ public class OHLCVTable extends Table {
 		this.offerSide = offerSide;
 
 		// Set the standard name base on the parameters.
-		setName(Names.getOHLCVName(instrument, period, filter, offerSide));
+//		setName(Names.getOHLCVName(instrument, period, filter, offerSide));
 
 		// Configure the segments.
 

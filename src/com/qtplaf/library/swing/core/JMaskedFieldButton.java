@@ -214,4 +214,12 @@ public class JMaskedFieldButton extends JPanel implements EditField {
 		return this;
 	}
 
+	/**
+	 * Returns a string representation of this edit field.
+	 * 
+	 * @return A string representation.
+	 */
+	public String toString() {
+		return SwingUtils.toString(this);
+	}
 }

@@ -16,7 +16,11 @@ package com.qtplaf.platform.database;
 
 import java.util.Currency;
 
+import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
@@ -65,6 +69,27 @@ public class Records {
 	}
 
 	/**
+	 * Returns the instrument record from the database, given the server and instruments ids.
+	 * 
+	 * @param session The working session.
+	 * @param serverId The server id value.
+	 * @param instrumentId The instrument id value.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordInstrument(Session session, Value serverId, Value instrumentId)
+		throws PersistorException {
+		Persistor persistor = Tables.getTableInstruments(session).getPersistor();
+		Record record = persistor.getDefaultRecord();
+		record.setValue(Fields.ServerId, serverId);
+		record.setValue(Fields.InstrumentId, instrumentId);
+		if (persistor.refresh(record)) {
+			return record;
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the instrument definition given the instrument record.
 	 * 
 	 * @param record The instrument record.
@@ -102,6 +127,24 @@ public class Records {
 		record.setValue(Fields.PeriodSize, period.getSize());
 		record.setValue(Fields.PeriodUnitIndex, period.getUnit().ordinal());
 		return record;
+	}
+	
+	/**
+	 * Returns the period record from the database, given the period id.
+	 * 
+	 * @param session The working session.
+	 * @param periodId The period id value.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordPeriod(Session session, Value periodId) throws PersistorException {
+		Persistor persistor = Tables.getTablePeriods(session).getPersistor();
+		Record record = persistor.getDefaultRecord();
+		record.setValue(Fields.PeriodId, periodId);
+		if (persistor.refresh(record)) {
+			return record;
+		}
+		return null;
 	}
 
 	/**

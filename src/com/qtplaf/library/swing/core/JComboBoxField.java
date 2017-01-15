@@ -99,7 +99,7 @@ public class JComboBoxField extends JComboBox<JComboBoxField.Item> implements Ed
 	public JComboBoxField(EditContext editContext) {
 		super();
 		this.editContext = editContext;
-		
+
 		Field field = new Field(editContext.getField());
 		if (field.isBoolean()) {
 			field.addPossibleValues(getBooleanValues(getEditContext().isFilter()));
@@ -114,10 +114,10 @@ public class JComboBoxField extends JComboBox<JComboBoxField.Item> implements Ed
 		setPreferredSize(getPreferredDisplaySize());
 		setMaximumSize(getPreferredDisplaySize());
 		setMinimumSize(getPreferredDisplaySize());
-		
+
 		setEditable(false);
 		setBackground(Color.WHITE);
-		
+
 		updateUI();
 	}
 
@@ -158,21 +158,21 @@ public class JComboBoxField extends JComboBox<JComboBoxField.Item> implements Ed
 	 */
 	private List<Value> getBooleanValues(boolean filter) {
 		List<Value> values = new ArrayList<>();
-		
+
 		if (filter) {
 			Value valueEmpty = new Value((Boolean) null);
 			valueEmpty.setLabel("");
 			values.add(valueEmpty);
 		}
-		
+
 		Value valueYes = new Value(true);
 		valueYes.setLabel(getTokenYes());
 		values.add(valueYes);
-		
+
 		Value valueNo = new Value(false);
 		valueNo.setLabel(getTokenNo());
 		values.add(valueNo);
-		
+
 		return values;
 	}
 
@@ -308,5 +308,14 @@ public class JComboBoxField extends JComboBox<JComboBoxField.Item> implements Ed
 	@Override
 	public Component getComponent() {
 		return this;
+	}
+
+	/**
+	 * Returns a string representation of this edit field.
+	 * 
+	 * @return A string representation.
+	 */
+	public String toString() {
+		return SwingUtils.toString(this);
 	}
 }

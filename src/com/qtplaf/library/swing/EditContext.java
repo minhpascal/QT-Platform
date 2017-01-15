@@ -287,6 +287,7 @@ public class EditContext {
 	 */
 	public void addValueAction(Action action) {
 		ActionUtils.setSession(action, getSession());
+		ActionUtils.setEditContext(action, this);
 		valueActions.add(action);
 	}
 
@@ -307,7 +308,7 @@ public class EditContext {
 	}
 
 	/**
-	 * Fire vlue actions.
+	 * Fire value actions.
 	 * 
 	 * @param source The source component.
 	 * @param previousValue The previous value.

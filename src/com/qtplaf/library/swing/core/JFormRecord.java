@@ -55,19 +55,6 @@ public class JFormRecord extends JDialogSession {
 	}
 
 	/**
-	 * Customizer interface.
-	 */
-	public interface Customizer {
-		/**
-		 * Validates the form.
-		 * 
-		 * @param form The <code>JFormRecord</code> to validate.
-		 * @return A boolean indicating that the form values are valid.
-		 */
-		boolean validateForm(JFormRecord form);
-	}
-
-	/**
 	 * Accept action.
 	 */
 	class ActionAccept extends DefaultActionAccept {
@@ -142,7 +129,7 @@ public class JFormRecord extends JDialogSession {
 	/**
 	 * Optional form customizer.
 	 */
-	private Customizer customizer;
+	private JFormRecordCustomizer customizer;
 
 	/**
 	 * Constructor.
@@ -392,7 +379,7 @@ public class JFormRecord extends JDialogSession {
 	 * 
 	 * @return The form customizer.
 	 */
-	public Customizer getCustomizer() {
+	public JFormRecordCustomizer getCustomizer() {
 		return customizer;
 	}
 
@@ -401,7 +388,7 @@ public class JFormRecord extends JDialogSession {
 	 * 
 	 * @param customizer The form customizer.
 	 */
-	public void setCustomizer(Customizer customizer) {
+	public void setCustomizer(JFormRecordCustomizer customizer) {
 		this.customizer = customizer;
 	}
 

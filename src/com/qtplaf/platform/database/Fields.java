@@ -385,10 +385,11 @@ public class Fields {
 		field.setSession(session);
 		field.setName(TableName);
 		field.setType(Types.String);
-		field.setLength(60);
+		field.setLength(30);
 		field.setHeader(session.getString("fieldTableNameHeader"));
 		field.setLabel(session.getString("fieldTableNameLabel"));
 		field.setTitle(session.getString("fieldTableNameLabel"));
+		field.setFixedWidth(false);
 		return field;
 	}
 

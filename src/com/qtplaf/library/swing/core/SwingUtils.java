@@ -50,6 +50,7 @@ import javax.swing.SwingUtilities;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.EditField;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.library.util.StringUtils;
 import com.qtplaf.library.util.TextServer;
@@ -64,6 +65,50 @@ import com.qtplaf.library.util.TextServer;
  * @author Miquel Sas
  */
 public class SwingUtils {
+
+	/**
+	 * Returns the list of edit fields in the top component.
+	 * 
+	 * @param topComponent The top component.
+	 * @return The list of edit fields.
+	 */
+	public static List<EditField> getEditFields(Component topComponent) {
+		List<EditField> editFields = new ArrayList<>();
+		List<Component> components = SwingUtils.getAllComponents(topComponent);
+		for (Component component : components) {
+			if (component instanceof EditField) {
+				EditField editField = (EditField) component;
+				// Skip edit fields contained in another edit field (JMaskedFieldButton <- JMaskedFied),
+				// the internal edit field does not have a name.
+				if (editField.getName() != null) {
+					editFields.add(editField);
+				}
+			}
+		}
+		return editFields;
+	}
+
+	/**
+	 * Returns the string representation of an edit field.
+	 * 
+	 * @param editField The edit field.
+	 * @return The string representation.
+	 */
+	public static String toString(EditField editField) {
+		StringBuilder b = new StringBuilder();
+		if (editField.getEditContext() != null) {
+			b.append("[");
+			b.append(editField.getEditContext().getField());
+			b.append("]");
+			b.append("[");
+			b.append(editField.getEditContext().getValue());
+			b.append("]");
+		}
+		b.append("[");
+		b.append(editField.getClass());
+		b.append("]");
+		return b.toString();
+	}
 
 	/**
 	 * Remove key listeners form the argument component.

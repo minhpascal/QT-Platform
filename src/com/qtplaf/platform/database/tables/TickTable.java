@@ -23,7 +23,6 @@ import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Tick;
-import com.qtplaf.platform.database.Names;
 
 /**
  * A table to store tick elements.
@@ -91,7 +90,7 @@ public class TickTable extends Table {
 		this.instrument = instrument;
 
 		// Set the standard name base on the parameters.
-		setName(Names.getTickName(instrument));
+//		setName(Names.getTickName(instrument));
 
 		// Configure the segments.
 

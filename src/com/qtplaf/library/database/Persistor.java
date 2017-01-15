@@ -95,6 +95,15 @@ public interface Persistor {
 	boolean exists(Record record) throws PersistorException;
 
 	/**
+	 * Returns true if the record has successfully refreshed.
+	 * 
+	 * @param record The source record that must have set at least the primary key
+	 * @return A boolean indicating whether the record has successfully refreshed.
+	 * @throws PersistorException
+	 */
+	boolean refresh(Record record) throws PersistorException;
+
+	/**
 	 * Insert a record.
 	 * 
 	 * @param record The record to insert.

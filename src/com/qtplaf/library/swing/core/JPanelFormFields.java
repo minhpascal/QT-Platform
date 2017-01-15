@@ -353,7 +353,7 @@ public class JPanelFormFields extends JPanel {
 	 * Auto-layout fields, attending at the group and grid definition.
 	 */
 	public void layoutFields() {
-		
+
 		// Check layout done.
 		if (layoutDone) {
 			return;
@@ -364,10 +364,10 @@ public class JPanelFormFields extends JPanel {
 
 		// Get the list of fielfd groups.
 		List<FieldGroup> fieldGroups = getFieldGroups();
-		
+
 		// List of components (JPanel or JScrollPane) that will be further added.
 		List<JComponent> groupComponents = new ArrayList<>();
-		
+
 		for (FieldGroup fieldGroup : fieldGroups) {
 			JPanel panelGroup = getGroupItemPanel(getGroupItem(fieldGroup));
 			if (isScrollGroupPanels()) {
@@ -398,42 +398,49 @@ public class JPanelFormFields extends JPanel {
 			}
 			add(tabbedPane, getConstraintsPanelGroup());
 		}
-		
-		applyEditMode();
-		
+
 		// Layout if done.
 		layoutDone = true;
+		
+		// Last, apply edit mode.
+		applyEditMode();
 	}
 
 	/**
-	 * Apply the current edit mode.
+	 * Apply the current edit mode to edit fieñds.
 	 */
 	private void applyEditMode() {
-		List<Component> components = SwingUtils.getAllComponents(this);
-		for (Component component : components) {
-			if (component instanceof EditField) {
-				EditField editField = (EditField) component;
-				EditContext editContext = editField.getEditContext();
-				Field field = editContext.getField();
-				if (!field.isEditable() || field.isVirtual()) {
-					editField.setEnabled(false);
-					continue;
-				}
-				switch (editMode) {
-				case Insert:
-				case Filter:
-				case NoRestriction:
-					editField.setEnabled(true);
-					break;
-				case Update:
-					editField.setEnabled(!field.isPrimaryKey());
-					break;
-				case Delete:
-				case ReadOnly:
-					editField.setEnabled(false);
-					break;
-				}
-			}
+		List<EditField> editFields = getEditFields();
+		for (EditField editField : editFields) {
+			applyEditMode(editField);
+		}
+	}
+
+	/**
+	 * Apply the edit mode to a given edit field.
+	 * 
+	 * @param editField The edit field.
+	 */
+	private void applyEditMode(EditField editField) {
+		EditContext editContext = editField.getEditContext();
+		Field field = editContext.getField();
+		if (!field.isEditable() || field.isVirtual()) {
+			editField.setEnabled(false);
+			return;
+		}
+		switch (editMode) {
+		case Insert:
+		case Filter:
+		case NoRestriction:
+			editField.setEnabled(true);
+			break;
+		case Update:
+			editField.setEnabled(!field.isPrimaryKey());
+			break;
+		case Delete:
+		case ReadOnly:
+			editField.setEnabled(false);
+			break;
 		}
 	}
 
@@ -809,8 +816,18 @@ public class JPanelFormFields extends JPanel {
 		// Row number.
 		int row = -1;
 
+		// List of fields to layout.
 		List<Field> fields = getLayoutFields(gridItem.fields);
+		
+		// List of already laid out fields as foreign refresh fields.
+		List<Field> usedForeignRefreshFields = new ArrayList<>();
+		
 		for (Field field : fields) {
+			
+			// Skip used foreign refresh fields.
+			if (usedForeignRefreshFields.contains(field)) {
+				continue;
+			}
 
 			// The row number.
 			row++;
@@ -831,6 +848,9 @@ public class JPanelFormFields extends JPanel {
 			if (relation != null && relation.getType().equals(Relation.Type.Lookup)) {
 				fillKeyAndRefreshFields(fields, relation, localKeyFields, foreignKeyFields, foreignRefreshFields);
 			}
+			
+			// Register used foreign refresh fields.
+			usedForeignRefreshFields.addAll(foreignRefreshFields);
 
 			// Define the edit context.
 			EditContext editContext = new EditContext(getSession());
@@ -904,7 +924,7 @@ public class JPanelFormFields extends JPanel {
 				refreshContext.setAlias(refreshAlias);
 				refreshContext.getField().setEditable(false);
 				fill = (fixed ? GridBagConstraints.NONE : GridBagConstraints.HORIZONTAL);
-				panel.add(editContext.getEditField().getComponent(), getConstraintsField(2, row, fill, 1));
+				panel.add(refreshContext.getEditField().getComponent(), getConstraintsField(2, row, fill, 1));
 			}
 
 		}
@@ -1019,14 +1039,11 @@ public class JPanelFormFields extends JPanel {
 	 * Update the edit fields with the values from the record.
 	 */
 	public void updateEditFields() {
-		List<Component> components = SwingUtils.getAllComponents(this);
-		for (Component component : components) {
-			if (component instanceof EditField) {
-				EditField editField = (EditField) component;
-				String alias = editField.getEditContext().getAlias();
-				Value value = getRecord().getValue(alias);
-				editField.setValue(value);
-			}
+		List<EditField> editFields = getEditFields();
+		for (EditField editField : editFields) {
+			String alias = editField.getEditContext().getAlias();
+			Value value = getRecord().getValue(alias);
+			editField.setValue(value);
 		}
 	}
 
@@ -1034,14 +1051,11 @@ public class JPanelFormFields extends JPanel {
 	 * Update the record values from the edit fields.
 	 */
 	public void updateRecord() {
-		List<Component> components = SwingUtils.getAllComponents(this);
-		for (Component component : components) {
-			if (component instanceof EditField) {
-				EditField editField = (EditField) component;
-				Value value = editField.getValue();
-				String alias = editField.getEditContext().getAlias();
-				getRecord().setValue(alias, value);
-			}
+		List<EditField> editFields = getEditFields();
+		for (EditField editField : editFields) {
+			Value value = editField.getValue();
+			String alias = editField.getEditContext().getAlias();
+			getRecord().setValue(alias, value);
 		}
 	}
 
@@ -1054,15 +1068,7 @@ public class JPanelFormFields extends JPanel {
 		if (!layoutDone) {
 			layoutFields();
 		}
-		List<EditField> editFields = new ArrayList<>();
-		List<Component> components = SwingUtils.getAllComponents(this);
-		for (Component component : components) {
-			if (component instanceof EditField) {
-				EditField editField = (EditField) component;
-				editFields.add(editField);
-			}
-		}
-		return editFields;
+		return SwingUtils.getEditFields(this);
 	}
 
 	/**

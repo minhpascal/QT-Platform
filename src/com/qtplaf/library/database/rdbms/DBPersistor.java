@@ -179,6 +179,26 @@ public class DBPersistor implements Persistor {
 			throw new PersistorException(exc.getMessage(), exc);
 		}
 	}
+	
+	/**
+	 * Returns true if the record has successfully refreshed.
+	 * 
+	 * @param record The source record that must have set at least the primary key
+	 * @return A boolean indicating whether the record has successfully refreshed.
+	 * @throws PersistorException
+	 */
+	public boolean refresh(Record record) throws PersistorException {
+		try {
+			Record recordView = dbEngine.executeSelectPrimaryKey(view, record.getPrimaryKey());
+			if (recordView != null) {
+				Record.move(recordView, record);
+				return true;
+			}
+			return false;
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
 
 	/**
 	 * Insert a record.

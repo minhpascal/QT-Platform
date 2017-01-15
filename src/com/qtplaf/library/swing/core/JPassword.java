@@ -169,4 +169,12 @@ public class JPassword extends JPasswordField implements EditField, FocusListene
 		EventQueue.invokeLater(new SelectNothing());
 	}
 
+	/**
+	 * Returns a string representation of this edit field.
+	 * 
+	 * @return A string representation.
+	 */
+	public String toString() {
+		return SwingUtils.toString(this);
+	}
 }
