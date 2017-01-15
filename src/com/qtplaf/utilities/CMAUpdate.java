@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.AbstractAction;
+
 import com.qtplaf.library.app.Argument;
 import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.ProgressManager;
-import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.library.util.file.FileCopy;
@@ -42,14 +43,15 @@ public class CMAUpdate {
 	/**
 	 * Action close.
 	 */
-	static class ActionClose extends DefaultActionClose {
+	static class ActionClose extends AbstractAction {
 		/**
 		 * Constructor.
 		 * 
 		 * @param session The working session.
 		 */
 		public ActionClose(Session session) {
-			super(session);
+			super();
+			ActionUtils.configureClose(session, this);
 			ActionUtils.setDefaultCloseAction(this, true);
 		}
 

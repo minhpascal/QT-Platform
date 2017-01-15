@@ -25,6 +25,28 @@ import com.qtplaf.library.database.FieldList;
 public class FieldLists {
 	
 	/**
+	 * Returns the list of fields for the OHLCV table.
+	 * 
+	 * @param session The working session.
+	 * @return The field list.
+	 */
+	public static FieldList getFieldListOHLCV(Session session) {
+		
+		FieldList fieldList = new FieldList();
+		
+		fieldList.addField(Fields.getFieldTime(session));
+		fieldList.addField(Fields.getFieldOpen(session));
+		fieldList.addField(Fields.getFieldHigh(session));
+		fieldList.addField(Fields.getFieldLow(session));
+		fieldList.addField(Fields.getFieldClose(session));
+		fieldList.addField(Fields.getFieldVolume(session));
+		
+		fieldList.getField(Fields.Time).setPrimaryKey(true);
+		
+		return fieldList;
+	}
+
+	/**
 	 * Returns the list of fields for the servers table.
 	 * 
 	 * @param session The working session.

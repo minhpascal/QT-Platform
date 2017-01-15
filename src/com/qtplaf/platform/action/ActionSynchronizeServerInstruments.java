@@ -26,14 +26,13 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
-import com.qtplaf.library.database.Table;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.Fields;
-import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.Persistors;
 
 /**
  * Synchronize server available instruments.
@@ -62,13 +61,12 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 				List<Instrument> instruments = server.getAvailableInstruments();
 
 				statusBar.setStatus("Deleting registered instruments", 3, 5);
-				Table table = Tables.getTableInstruments(session);
-				Persistor persistor = table.getPersistor();
+				Persistor persistor = Persistors.getPersistorInstruments(session);
 				persistor.delete((Criteria) null);
 				
 				statusBar.setStatus("Inserting available instruments", 4, 5);
 				for (Instrument instrument : instruments) {
-					Record record = table.getDefaultRecord();
+					Record record = persistor.getDefaultRecord();
 					record.setValue(Fields.ServerId, server.getId());
 					record.setValue(Fields.InstrumentId, instrument.getId());
 					record.setValue(Fields.InstrumentDesc, instrument.getDescription());

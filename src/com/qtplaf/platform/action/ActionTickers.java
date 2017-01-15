@@ -15,6 +15,7 @@
 package com.qtplaf.platform.action;
 
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.ListSelectionModel;
@@ -26,28 +27,25 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
-import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditMode;
 import com.qtplaf.library.swing.MessageBox;
-import com.qtplaf.library.swing.action.DefaultActionClose;
-import com.qtplaf.library.swing.action.DefaultActionCreate;
+import com.qtplaf.library.swing.action.ActionTableOption;
 import com.qtplaf.library.swing.core.JFormRecord;
 import com.qtplaf.library.swing.core.JFormRecordCustomizer;
-import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.FieldLists;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
 import com.qtplaf.platform.database.Records;
-import com.qtplaf.platform.database.Tables;
 
 /**
  * Edit the list of server tickers.
@@ -75,10 +73,30 @@ public class ActionTickers extends AbstractAction {
 		public boolean validateForm(JFormRecord form) {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
+				String mustBeSet = session.getString("qtItemMustBeSet");
 				// Validate the period.
-				Value periodId = form.getEditField(Fields.PeriodId).getValue();
-				if (Records.getRecordPeriod(session, periodId) == null) {
-					MessageBox.error(session, "The period must be set");
+				Value period = form.getEditField(Fields.PeriodId).getValue();
+				if (Records.getRecordPeriod(session, period) == null) {
+					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemPeriod")));
+					return false;
+				}
+				// Validate offer side.
+				Value offerSide = form.getEditField(Fields.OfferSide).getValue();
+				if (Records.getRecordOfferSide(session, offerSide) == null) {
+					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemOfferSide")));
+					return false;
+				}
+				// Validate data filter.
+				Value dataFilter = form.getEditField(Fields.DataFilter).getValue();
+				if (Records.getRecordDataFilter(session, dataFilter) == null) {
+					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemDataFilter")));
+					return false;
+				}
+				// Check that the record does not exists.
+				Record record = form.getRecord();
+				Persistor persistor = record.getPersistor();
+				if (persistor.exists(record)) {
+					MessageBox.error(session, "Record already exists");
 					return false;
 				}
 			} catch (PersistorException exc) {
@@ -124,14 +142,15 @@ public class ActionTickers extends AbstractAction {
 	/**
 	 * Action to create a new ticker.
 	 */
-	class ActionCreate extends DefaultActionCreate {
+	class ActionCreate extends ActionTableOption {
 		/**
 		 * Constructor.
 		 * 
 		 * @param session The working session.
 		 */
 		public ActionCreate(Session session) {
-			super(session);
+			super();
+			ActionUtils.configureCreate(session, this);
 		}
 
 		/**
@@ -143,11 +162,44 @@ public class ActionTickers extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
-				Instrument instrument = selectIntrument(session, server);
+				Instrument instrument = Lookup.selectIntrument(session, server);
 				if (instrument == null) {
 					return;
 				}
 				Record record = getTicker(session, server, instrument);
+				if (record == null) {
+					return;
+				}
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+	}
+
+	/**
+	 * Action to create a new ticker.
+	 */
+	class ActionDelete extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionDelete(Session session) {
+			super();
+			ActionUtils.configureDelete(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			try {
+//				Session session = ActionUtils.getSession(ActionTickers.this);
+//				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Record record = getSelectedRecord();
 				System.out.println(record);
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -158,14 +210,15 @@ public class ActionTickers extends AbstractAction {
 	/**
 	 * Action to close the frame.
 	 */
-	class ActionClose extends DefaultActionClose {
+	class ActionClose extends AbstractAction {
 		/**
 		 * Constructor.
 		 * 
 		 * @param session The working session.
 		 */
 		public ActionClose(Session session) {
-			super(session);
+			super();
+			ActionUtils.configureClose(session, this);
 			ActionUtils.setDefaultCloseAction(this, true);
 		}
 
@@ -189,7 +242,7 @@ public class ActionTickers extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
-				Persistor persistor = Tables.getTableTickers(session).getPersistor();
+				Persistor persistor = Persistors.getPersistorTickers(session);
 				Record masterRecord = persistor.getDefaultRecord();
 
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -208,6 +261,7 @@ public class ActionTickers extends AbstractAction {
 				frame.setTitle(server.getName() + " " + session.getString("qtMenuServersTickers").toLowerCase());
 				frame.setComponent(panelTableRecord);
 				frame.addAction(new ActionCreate(session));
+				frame.addAction(new ActionDelete(session));
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);
 				frame.showFrame();
@@ -234,33 +288,6 @@ public class ActionTickers extends AbstractAction {
 	}
 
 	/**
-	 * Select the instrument.
-	 * 
-	 * @param session Working session.
-	 * @param server Server.
-	 * @return The selected instrument or null.
-	 * @throws Exception
-	 */
-	private Instrument selectIntrument(Session session, Server server) throws Exception {
-		RecordSet recordSet = RecordSets.getRecordSetAvailableInstruments(session, server);
-		Record masterRecord = FieldLists.getFieldListInstruments(session).getDefaultRecord();
-		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
-		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersAvInst").toLowerCase());
-		lookup.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lookup.addColumn(Fields.InstrumentId);
-		lookup.addColumn(Fields.InstrumentDesc);
-		lookup.addColumn(Fields.InstrumentPipValue);
-		lookup.addColumn(Fields.InstrumentPipScale);
-		lookup.addColumn(Fields.InstrumentTickValue);
-		lookup.addColumn(Fields.InstrumentTickScale);
-		lookup.addColumn(Fields.InstrumentVolumeScale);
-		lookup.addColumn(Fields.InstrumentPrimaryCurrency);
-		lookup.addColumn(Fields.InstrumentSecondaryCurrency);
-		Record selected = lookup.lookupRecord(recordSet);
-		return Records.fromRecordInstrument(selected);
-	}
-
-	/**
 	 * Returns the record to create a new ticker for the given server and instrument.
 	 * 
 	 * @param session Working session.
@@ -269,7 +296,7 @@ public class ActionTickers extends AbstractAction {
 	 * @return The ticker record.
 	 */
 	private Record getTicker(Session session, Server server, Instrument instrument) {
-		Persistor persistor = Tables.getTableTickers(session).getPersistor();
+		Persistor persistor = Persistors.getPersistorTickers(session);
 		Record record = persistor.getDefaultRecord();
 		record.getValue(Fields.ServerId).setValue(server.getId());
 		record.getValue(Fields.InstrumentId).setValue(instrument.getId());

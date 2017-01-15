@@ -21,6 +21,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -28,9 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.action.DefaultActionClear;
-import com.qtplaf.library.swing.action.DefaultActionExecute;
-import com.qtplaf.library.swing.action.DefaultActionExit;
 import com.qtplaf.library.swing.core.JConsole;
 import com.qtplaf.library.swing.core.JFrameSession;
 import com.qtplaf.library.swing.core.JPanelButtons;
@@ -50,13 +48,14 @@ public class FrameMenu {
 	/**
 	 * Execute action.
 	 */
-	class ActionExecute extends DefaultActionExecute {
+	class ActionExecute extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionExecute() {
-			super(getSession());
+			super();
+			ActionUtils.configureExecute(getSession(), this);
 		}
 
 		/**
@@ -72,13 +71,14 @@ public class FrameMenu {
 	/**
 	 * Exit action.
 	 */
-	class ActionExit extends DefaultActionExit {
+	class ActionExit extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionExit() {
-			super(getSession());
+			super();
+			ActionUtils.configureExit(getSession(), this);
 		}
 
 		/**
@@ -99,13 +99,14 @@ public class FrameMenu {
 	/**
 	 * Clear the console.
 	 */
-	class ActionClear extends DefaultActionClear {
+	class ActionClear extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionClear() {
-			super(getSession());
+			super();
+			ActionUtils.configureClear(getSession(), this);
 		}
 
 		/**
@@ -244,13 +245,13 @@ public class FrameMenu {
 		constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.insets = new Insets(0, 10, 0, 10);
+		constraints.insets = new Insets(2, 10, 2, 10);
 		constraints.weightx = 1;
 		constraints.weighty = 0;
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		frame.getContentPane().add(getPanelStatus(), constraints);
-		
+
 		// Buttons panel.
 		constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.NORTH;
@@ -269,7 +270,7 @@ public class FrameMenu {
 
 		// Setup panel buttons.
 		setupPanelButtons();
-		
+
 		// Clear status.
 		clearStatus();
 	}

@@ -23,6 +23,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -33,8 +34,6 @@ import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditField;
 import com.qtplaf.library.swing.EditMode;
 import com.qtplaf.library.swing.MessageBox;
-import com.qtplaf.library.swing.action.DefaultActionAccept;
-import com.qtplaf.library.swing.action.DefaultActionCancel;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
@@ -57,13 +56,14 @@ public class JFormRecord extends JDialogSession {
 	/**
 	 * Accept action.
 	 */
-	class ActionAccept extends DefaultActionAccept {
+	class ActionAccept extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionAccept() {
-			super(getSession());
+			super();
+			ActionUtils.configureAccept(getSession(), this);
 		}
 
 		/**
@@ -83,13 +83,14 @@ public class JFormRecord extends JDialogSession {
 	/**
 	 * Cancel action.
 	 */
-	class ActionCancel extends DefaultActionCancel {
+	class ActionCancel extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionCancel() {
-			super(getSession());
+			super();
+			ActionUtils.configureCancel(getSession(), this);
 		}
 
 		/**

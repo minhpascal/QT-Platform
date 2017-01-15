@@ -18,10 +18,10 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Order;
-import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBPersistor;
+import com.qtplaf.library.trading.server.Server;
 
 /**
  * Centralizes table definitions.
@@ -127,7 +127,7 @@ public class Tables {
 		index.add(table.getField(Fields.PeriodSize));
 		table.addIndex(index);
 
-		table.setPersistor(new DBPersistor(getDBEngine(), table.getComplexView(index)));
+		table.setPersistor(new DBPersistor(getDBEngine(), table.getSimpleView(index)));
 
 		return table;
 	}
@@ -186,9 +186,27 @@ public class Tables {
 		tableTickers.addForeignKey(fkDataFilters);
 
 		Order order = tableTickers.getPrimaryKey();
-		Persistor persistor = new DBPersistor(getDBEngine(), tableTickers.getComplexView(order));
-		tableTickers.setPersistor(persistor);
+		tableTickers.setPersistor(new DBPersistor(getDBEngine(), tableTickers.getComplexView(order)));
 
 		return tableTickers;
+	}
+	
+	/**
+	 * Returns the OHLCV table for the given server with the given name.
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param name The name of the table.
+	 * @return The table definition.
+	 */
+	public static Table getTableOHLCV(Session session, Server server, String name) {
+
+		Table table = new Table(session);
+		table.addFields(FieldLists.getFieldListOHLCV(session));
+		table.setName(name);
+		table.setSchema(Names.getSchema(server));
+		table.setPersistor(new DBPersistor(getDBEngine(), table));
+
+		return table;
+	
 	}
 }

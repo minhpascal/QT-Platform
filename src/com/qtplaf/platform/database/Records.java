@@ -28,7 +28,7 @@ import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 
 /**
- * Centralizes record generation.
+ * Centralizes record operations.
  * 
  * @author Miquel Sas
  */
@@ -72,21 +72,15 @@ public class Records {
 	 * Returns the instrument record from the database, given the server and instruments ids.
 	 * 
 	 * @param session The working session.
-	 * @param serverId The server id value.
-	 * @param instrumentId The instrument id value.
+	 * @param server The server id value.
+	 * @param instrument The instrument id value.
 	 * @return The record or null.
 	 * @throws PersistorException
 	 */
-	public static Record getRecordInstrument(Session session, Value serverId, Value instrumentId)
+	public static Record getRecordInstrument(Session session, Value server, Value instrument)
 		throws PersistorException {
-		Persistor persistor = Tables.getTableInstruments(session).getPersistor();
-		Record record = persistor.getDefaultRecord();
-		record.setValue(Fields.ServerId, serverId);
-		record.setValue(Fields.InstrumentId, instrumentId);
-		if (persistor.refresh(record)) {
-			return record;
-		}
-		return null;
+		Persistor persistor = Persistors.getPersistorInstruments(session);
+		return persistor.getRecord(server, instrument);
 	}
 
 	/**
@@ -128,23 +122,18 @@ public class Records {
 		record.setValue(Fields.PeriodUnitIndex, period.getUnit().ordinal());
 		return record;
 	}
-	
+
 	/**
 	 * Returns the period record from the database, given the period id.
 	 * 
 	 * @param session The working session.
-	 * @param periodId The period id value.
+	 * @param period The period id value.
 	 * @return The record or null.
 	 * @throws PersistorException
 	 */
-	public static Record getRecordPeriod(Session session, Value periodId) throws PersistorException {
-		Persistor persistor = Tables.getTablePeriods(session).getPersistor();
-		Record record = persistor.getDefaultRecord();
-		record.setValue(Fields.PeriodId, periodId);
-		if (persistor.refresh(record)) {
-			return record;
-		}
-		return null;
+	public static Record getRecordPeriod(Session session, Value period) throws PersistorException {
+		Persistor persistor = Persistors.getPersistorPeriods(session);
+		return persistor.getRecord(period);
 	}
 
 	/**
@@ -160,6 +149,19 @@ public class Records {
 	}
 
 	/**
+	 * Returns the offer side record from the database, given the offer side.
+	 * 
+	 * @param session The working session.
+	 * @param offerSide The period id value.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordOfferSide(Session session, Value offerSide) throws PersistorException {
+		Persistor persistor = Persistors.getPersistorOfferSides(session);
+		return persistor.getRecord(offerSide);
+	}
+
+	/**
 	 * Returns the filled record for the data filter.
 	 * 
 	 * @param record The blank offer side record.
@@ -170,4 +172,18 @@ public class Records {
 		record.setValue(Fields.DataFilter, dataFilter.name());
 		return record;
 	}
+
+	/**
+	 * Returns the data filter record from the database, given the filter.
+	 * 
+	 * @param session The working session.
+	 * @param dataFilter The period id value.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordDataFilter(Session session, Value dataFilter) throws PersistorException {
+		Persistor persistor = Persistors.getPersistorDataFilters(session);
+		return persistor.getRecord(dataFilter);
+	}
+
 }

@@ -15,6 +15,7 @@ package com.qtplaf.library.database;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.qtplaf.library.util.list.ListUtils;
 
@@ -182,6 +183,15 @@ public class OrderKey extends ArrayList<OrderKey.Segment> implements Comparable<
 	 * @param values The list of values.
 	 */
 	public OrderKey(Value... values) {
+		this(ListUtils.asList(values));
+	}
+
+	/**
+	 * Constructor assigning a list of values in ascending order.
+	 * 
+	 * @param values The list of values.
+	 */
+	public OrderKey(List<Value> values) {
 		super();
 		for (Value value : values) {
 			add(value, true);

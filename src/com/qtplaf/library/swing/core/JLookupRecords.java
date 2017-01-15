@@ -26,16 +26,16 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.action.ActionSelectColumns;
 import com.qtplaf.library.swing.action.ActionSortTable;
-import com.qtplaf.library.swing.action.DefaultActionCancel;
-import com.qtplaf.library.swing.action.DefaultActionSelect;
 import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
 import com.qtplaf.library.util.Alignment;
@@ -61,13 +61,14 @@ public class JLookupRecords extends JDialogSession {
 	/**
 	 * Cancel action.
 	 */
-	class ActionCancel extends DefaultActionCancel {
+	class ActionCancel extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionCancel() {
-			super(getSession());
+			super();
+			ActionUtils.configureCancel(getSession(), this);
 		}
 
 		/**
@@ -83,13 +84,14 @@ public class JLookupRecords extends JDialogSession {
 	/**
 	 * Select action.
 	 */
-	class ActionSelect extends DefaultActionSelect {
+	class ActionSelect extends AbstractAction {
 
 		/**
 		 * Constructor.
 		 */
 		ActionSelect() {
-			super(getSession());
+			super();
+			ActionUtils.configureSelect(getSession(), this);
 		}
 
 		/**
@@ -132,6 +134,14 @@ public class JLookupRecords extends JDialogSession {
 	 * Horizontal alignment.
 	 */
 	private Alignment horizontalAlignment = Alignment.Center;
+	/**
+	 * Minimum number of columns to show accolumns and sort and set a standard width.
+	 */
+	private int minimumColumns = 4;
+	/**
+	 * The minimum number of rows to set a standard height.
+	 */
+	private int minimumRows = 20;
 
 	/**
 	 * Constructor.
@@ -240,7 +250,7 @@ public class JLookupRecords extends JDialogSession {
 	public void setSelectedRecords(List<Record> records) {
 		selectedRecords.addAll(records);
 	}
-	
+
 	/**
 	 * Show the list of records and let select a single record. Used normally with single selection mode.
 	 * 
@@ -298,17 +308,27 @@ public class JLookupRecords extends JDialogSession {
 	private void setSizeAndAnchor() {
 
 		// If the size has not been set, set it to the default 0.5/0.8
+		boolean align = false;
 		if (getSize().getHeight() == 0 || getSize().getWidth() == 0) {
-			setSize(0.5, 0.8);
+			int columns = tableModelRecord.getColumnCount();
+			int rows = tableModelRecord.getRowCount();
+			if (columns > getMinimumColumns() && rows > getMinimumRows()) {
+				setSize(0.5, 0.8);
+				align = true;
+			} else {
+				pack();
+			}
 		}
 
 		// Anchor (align) the window.
 		Point point = SwingUtils.centerOnScreen(this);
-		if (getHorizontalAlignment().isRight()) {
-			int x = point.x + getSize().width;
-			point.x = point.x + (SwingUtils.getScreenSize(this).width - x);
-		} else if (getHorizontalAlignment().isLeft()) {
-			point.x = 0;
+		if (align) {
+			if (getHorizontalAlignment().isRight()) {
+				int x = point.x + getSize().width;
+				point.x = point.x + (SwingUtils.getScreenSize(this).width - x);
+			} else if (getHorizontalAlignment().isLeft()) {
+				point.x = 0;
+			}
 		}
 		setLocation(point);
 
@@ -342,8 +362,10 @@ public class JLookupRecords extends JDialogSession {
 		JPanelButtons panelButtons = new JPanelButtons();
 		panelButtons.add(new ActionSelect());
 		panelButtons.add(new ActionCancel());
-		panelButtons.add(new ActionSelectColumns(tableRecord));
-		panelButtons.add(new ActionSortTable(tableRecord));
+		if (tableModelRecord.getColumnCount() >= getMinimumColumns()) {
+			panelButtons.add(new ActionSelectColumns(tableRecord));
+			panelButtons.add(new ActionSortTable(tableRecord));
+		}
 		constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.SOUTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -369,5 +391,41 @@ public class JLookupRecords extends JDialogSession {
 			return (JTableRecord) components.get(0);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the minimum number of columns to show the actions columns and sort.
+	 * 
+	 * @return The minimum number of columns to show the actions columns and sort.
+	 */
+	public int getMinimumColumns() {
+		return minimumColumns;
+	}
+
+	/**
+	 * Sets the minimum number of columns to show the actions columns and sort.
+	 * 
+	 * @param minimumColumns The minimum number of columns to show the actions columns and sort.
+	 */
+	public void setMinimumColumns(int minimumColumns) {
+		this.minimumColumns = minimumColumns;
+	}
+
+	/**
+	 * Returns the minimum number of rows to set a standard height.
+	 * 
+	 * @return The minimum number of rows to set a standard height.
+	 */
+	public int getMinimumRows() {
+		return minimumRows;
+	}
+
+	/**
+	 * Sets the minimum number of rows to set a standard height.
+	 * 
+	 * @param minimumRows The minimum number of rows to set a standard height.
+	 */
+	public void setMinimumRows(int minimumRows) {
+		this.minimumRows = minimumRows;
 	}
 }

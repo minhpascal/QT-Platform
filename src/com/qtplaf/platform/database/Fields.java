@@ -47,6 +47,13 @@ public class Fields {
 	public static final String DataFilter = "data_filter";
 	public static final String OfferSide = "offer_side";
 
+	public static final String Time = "time";
+	public static final String Open = "open";
+	public static final String High = "high";
+	public static final String Low = "low";
+	public static final String Close = "close";
+	public static final String Volume = "volume";
+
 	/**
 	 * Returns the <b><i>ServerId</i></b> field definition.
 	 * 
@@ -375,7 +382,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>TableName</i></b> <tt>TABLE_NAME</tt> the field definition.
+	 * Returns the <b><i>TableName</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -394,7 +401,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>DataFilter</i></b> <tt>DATA_FILTER</tt> the field definition.
+	 * Returns the <b><i>DataFilter</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -412,7 +419,7 @@ public class Fields {
 	}
 
 	/**
-	 * Returns <b><i>OfferSide</i></b> <tt>OFFER_SIDE</tt> the field definition.
+	 * Returns the <b><i>OfferSide</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @return The field definition.
@@ -426,6 +433,108 @@ public class Fields {
 		field.setHeader(session.getString("fieldOfferSideHeader"));
 		field.setLabel(session.getString("fieldOfferSideLabel"));
 		field.setTitle(session.getString("fieldOfferSideLabel"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>Time</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldTime(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(Time);
+		field.setType(Types.Long);
+		field.setHeader(session.getString("fieldOHLCVTimeLabel"));
+		field.setLabel(session.getString("fieldOHLCVTimeLabel"));
+		field.setTitle(session.getString("fieldOHLCVTimeHeader"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>Open</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldOpen(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(Open);
+		field.setType(Types.Double);
+		field.setHeader(session.getString("fieldOHLCVOpenLabel"));
+		field.setLabel(session.getString("fieldOHLCVOpenLabel"));
+		field.setTitle(session.getString("fieldOHLCVOpenHeader"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>High</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldHigh(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(High);
+		field.setType(Types.Double);
+		field.setHeader(session.getString("fieldOHLCVHighLabel"));
+		field.setLabel(session.getString("fieldOHLCVHighLabel"));
+		field.setTitle(session.getString("fieldOHLCVHighHeader"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>Low</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldLow(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(Low);
+		field.setType(Types.Double);
+		field.setHeader(session.getString("fieldOHLCVLowLabel"));
+		field.setLabel(session.getString("fieldOHLCVLowLabel"));
+		field.setTitle(session.getString("fieldOHLCVLowHeader"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>Close</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldClose(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(Close);
+		field.setType(Types.Double);
+		field.setHeader(session.getString("fieldOHLCVCloseLabel"));
+		field.setLabel(session.getString("fieldOHLCVCloseLabel"));
+		field.setTitle(session.getString("fieldOHLCVCloseHeader"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>Volume</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @return The field definition.
+	 */
+	public static Field getFieldVolume(Session session) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(Volume);
+		field.setType(Types.Double);
+		field.setHeader(session.getString("fieldOHLCVVolumeLabel"));
+		field.setLabel(session.getString("fieldOHLCVVolumeLabel"));
+		field.setTitle(session.getString("fieldOHLCVVolumeHeader"));
 		return field;
 	}
 }

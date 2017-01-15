@@ -40,7 +40,7 @@ public class RecordSets {
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
 
-		Persistor persistor = Tables.getTableInstruments(session).getPersistor();
+		Persistor persistor = Persistors.getPersistorInstruments(session);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
@@ -71,7 +71,7 @@ public class RecordSets {
 	 * @throws Exception
 	 */
 	public static RecordSet getRecordSetTickers(Session session, Server server) throws Exception {
-		Persistor persistor = Tables.getTableTickers(session).getPersistor();
+		Persistor persistor = Persistors.getPersistorTickers(session);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);

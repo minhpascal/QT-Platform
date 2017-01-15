@@ -26,15 +26,14 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
-import com.qtplaf.platform.database.Tables;
 
 /**
  * Shows the list of available instruments for the server set as launch argument.
@@ -49,14 +48,15 @@ public class ActionAvailableInstruments extends AbstractAction {
 	/**
 	 * Action to close the frame.
 	 */
-	class ActionClose extends DefaultActionClose {
+	class ActionClose extends AbstractAction {
 		/**
 		 * Constructor.
 		 * 
 		 * @param session The working session.
 		 */
 		public ActionClose(Session session) {
-			super(session);
+			super();
+			ActionUtils.configureClose(session, this);
 			ActionUtils.setDefaultCloseAction(this, true);
 		}
 
@@ -81,7 +81,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionAvailableInstruments.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionAvailableInstruments.this);
-				Persistor persistor = Tables.getTableInstruments(session).getPersistor();
+				Persistor persistor = Persistors.getPersistorInstruments(session);
 				Record masterRecord = persistor.getDefaultRecord();
 
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);

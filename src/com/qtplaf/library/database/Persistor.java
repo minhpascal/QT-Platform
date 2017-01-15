@@ -14,6 +14,8 @@
 
 package com.qtplaf.library.database;
 
+import java.util.List;
+
 /**
  * Interface that should implement back end persistence engines that operate with records.
  * 
@@ -34,6 +36,32 @@ public interface Persistor {
 	 * @return The default record of the underlying view.
 	 */
 	Record getDefaultRecord();
+
+	/**
+	 * Returns the record given the primary key.
+	 * 
+	 * @param primaryKey The primary key.
+	 * @return The record or null.
+	 */
+	Record getRecord(OrderKey primaryKey) throws PersistorException;
+
+	/**
+	 * Returns the record given the list of primnary key values.
+	 * 
+	 * @param primaryKeyValues The list of primnary key values.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	Record getRecord(List<Value> primaryKeyValues) throws PersistorException;
+	
+	/**
+	 * Returns the record given the list of primnary key values.
+	 * 
+	 * @param primaryKeyValues The list of primnary key values.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	Record getRecord(Value... primaryKeyValues) throws PersistorException;
 
 	/**
 	 * Returns the number of fields this persistor manages.

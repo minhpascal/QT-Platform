@@ -10,4 +10,12 @@
 	<entry key="qtMenuServersTickers">Tickers</entry>
 	<entry key="qtMenuServersTickersCreate">Create new ticker</entry>
 	
+	<entry key="qtItemMustBeSet">The {0} must be set</entry>
+	
+	<entry key="qtItemServer">server</entry>
+	<entry key="qtItemInstrument">instrument</entry>
+	<entry key="qtItemPeriod">period</entry>
+	<entry key="qtItemOfferSide">offer side</entry>
+	<entry key="qtItemDataFilter">data filter</entry>
+	
 </properties>

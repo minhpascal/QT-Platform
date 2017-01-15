@@ -20,13 +20,12 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
-import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.Fields;
-import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.Persistors;
 
 /**
  * Task to synchronize server instruments.
@@ -78,13 +77,12 @@ public class SynchronizeServerInstruments extends TaskRunner {
 		List<Instrument> instruments = server.getAvailableInstruments();
 
 		notifyLabel(Trace, "Deleting registered instruments");
-		Table table = Tables.getTableInstruments(getSession());
-		Persistor persistor = table.getPersistor();
+		Persistor persistor = Persistors.getPersistorInstruments(getSession());
 		persistor.delete((Criteria) null);
 		
 		notifyLabel(Trace, "Inserting availablñe instruments");
 		for (Instrument instrument : instruments) {
-			Record record = table.getDefaultRecord();
+			Record record = persistor.getDefaultRecord();
 			record.setValue(Fields.ServerId, server.getId());
 			record.setValue(Fields.InstrumentId, instrument.getId());
 			record.setValue(Fields.InstrumentDesc, instrument.getDescription());

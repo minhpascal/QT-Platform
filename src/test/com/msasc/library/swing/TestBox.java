@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.action.DefaultActionAccept;
 import com.qtplaf.library.swing.core.SwingUtils;
 
 /**
@@ -51,9 +50,10 @@ public class TestBox {
 		}
 	}
 
-	static class ActionAccept extends DefaultActionAccept {
+	static class ActionAccept extends AbstractAction {
 		ActionAccept() {
-			super(new Session(Locale.UK));
+			super();
+			ActionUtils.configureAccept(new Session(Locale.UK), this);
 		}
 		public void actionPerformed(ActionEvent e) {
 			JButton button = ActionUtils.getButton(this);

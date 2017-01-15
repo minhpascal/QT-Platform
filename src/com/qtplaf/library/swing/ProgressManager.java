@@ -18,11 +18,11 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JScrollPane;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.action.DefaultActionClose;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelProgressGroup;
 import com.qtplaf.library.task.Task;
@@ -40,15 +40,15 @@ public class ProgressManager {
 	/**
 	 * Action close.
 	 */
-	class ActionClose extends DefaultActionClose {
+	class ActionClose extends AbstractAction {
 		/**
 		 * Constructor.
 		 * 
 		 * @param session The working session.
 		 */
 		public ActionClose(Session session) {
-			super(session);
-			ActionUtils.setDefaultCloseAction(this, true);
+			super();
+			ActionUtils.configureClose(session, this);
 		}
 
 		/**

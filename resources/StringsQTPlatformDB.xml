@@ -67,5 +67,25 @@
 	
 	<entry key="fieldOfferSideLabel">Offer side</entry>
 	<entry key="fieldOfferSideHeader">Offer side</entry>
+	
+	<!-- OHLCV -->
+	
+	<entry key="fieldOHLCVTimeLabel">Time start</entry>
+	<entry key="fieldOHLCVTimeHeader">Time</entry>
+	
+	<entry key="fieldOHLCVOpenLabel">Open value</entry>
+	<entry key="fieldOHLCVOpenHeader">Open</entry>
+	
+	<entry key="fieldOHLCVHighLabel">High value</entry>
+	<entry key="fieldOHLCVHighHeader">High</entry>
+	
+	<entry key="fieldOHLCVLowLabel">Low value</entry>
+	<entry key="fieldOHLCVLowHeader">Low</entry>
+	
+	<entry key="fieldOHLCVCloseLabel">Close value</entry>
+	<entry key="fieldOHLCVCloseHeader">Close</entry>
+	
+	<entry key="fieldOHLCVVolumeLabel">Volume</entry>
+	<entry key="fieldOHLCVVolumeHeader">Volume</entry>
 
 </properties>

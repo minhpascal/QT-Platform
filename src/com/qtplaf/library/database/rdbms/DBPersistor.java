@@ -15,17 +15,20 @@
 package com.qtplaf.library.database.rdbms;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Order;
+import com.qtplaf.library.database.OrderKey;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.ValueMap;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.database.rdbms.sql.Select;
@@ -56,6 +59,7 @@ public class DBPersistor implements Persistor {
 		super();
 		this.dbEngine = dbEngine;
 		this.view = table.getSimpleView(table.getPrimaryKey());
+		this.view.setPersistor(this);
 	}
 
 	/**
@@ -68,8 +72,9 @@ public class DBPersistor implements Persistor {
 		super();
 		this.dbEngine = dbEngine;
 		this.view = view;
+		this.view.setPersistor(this);
 	}
-	
+
 	/**
 	 * Returns the underlying view of the persistor.
 	 * 
@@ -86,6 +91,42 @@ public class DBPersistor implements Persistor {
 	 */
 	public Record getDefaultRecord() {
 		return view.getDefaultRecord();
+	}
+
+	/**
+	 * Returns the record given the primary key.
+	 * 
+	 * @param primaryKey The primary key.
+	 * @return The record or null.
+	 */
+	public Record getRecord(OrderKey primaryKey) throws PersistorException {
+		try {
+			return dbEngine.executeSelectPrimaryKey(view, primaryKey);
+		} catch (SQLException exc) {
+			throw new PersistorException(exc.getMessage(), exc);
+		}
+	}
+
+	/**
+	 * Returns the record given the list of primnary key values.
+	 * 
+	 * @param primaryKeyValues The list of primnary key values.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public Record getRecord(List<Value> primaryKeyValues) throws PersistorException {
+		return getRecord(new OrderKey(primaryKeyValues));
+	}
+
+	/**
+	 * Returns the record given the list of primnary key values.
+	 * 
+	 * @param primaryKeyValues The list of primnary key values.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public Record getRecord(Value... primaryKeyValues) throws PersistorException {
+		return getRecord(new OrderKey(primaryKeyValues));
 	}
 
 	/**
@@ -116,7 +157,6 @@ public class DBPersistor implements Persistor {
 	public Field getField(String alias) {
 		return view.getField(alias);
 	}
-	
 
 	/**
 	 * Count the number of records that agree with the criteria.
@@ -179,7 +219,7 @@ public class DBPersistor implements Persistor {
 			throw new PersistorException(exc.getMessage(), exc);
 		}
 	}
-	
+
 	/**
 	 * Returns true if the record has successfully refreshed.
 	 * 

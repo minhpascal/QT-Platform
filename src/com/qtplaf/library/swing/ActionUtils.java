@@ -14,6 +14,7 @@
 
 package com.qtplaf.library.swing;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,6 +30,7 @@ import com.qtplaf.library.swing.core.JFormRecord;
 import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.task.Task;
+import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.library.util.Properties;
 
@@ -649,13 +651,13 @@ public class ActionUtils {
 	 * @return
 	 */
 	public static String getActionName(Action action) {
-		Session session = ActionUtils.getSession(action);
+		Session session = getSession(action);
 		Locale locale = (session == null ? Locale.UK : session.getLocale());
 
 		StringBuilder b = new StringBuilder();
-		String name = ActionUtils.getName(action);
-		String sourceName = ActionUtils.getSourceName(action);
-		KeyStroke keyStroke = ActionUtils.getAcceleratorKey(action);
+		String name = getName(action);
+		String sourceName = getSourceName(action);
+		KeyStroke keyStroke = getAcceleratorKey(action);
 		if (sourceName != null) {
 			if (keyStroke == null) {
 				b.append(sourceName);
@@ -687,5 +689,173 @@ public class ActionUtils {
 	 */
 	public static void setActionName(Action action) {
 		setName(action, getActionName(action));
+	}
+
+	/**
+	 * Configure the action as an action accept.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureAccept(Session session, Action action) {
+		setSourceName(action, session.getString("actionAcceptName"));
+		setShortDescription(action, session.getString("actionAcceptName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_accept));
+	}
+
+	/**
+	 * Configure the action as an action cancel.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureCancel(Session session, Action action) {
+		setSourceName(action, session.getString("actionCancelName"));
+		setShortDescription(action, session.getString("actionCancelName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_cancel));
+	}
+
+	/**
+	 * Configure the action as an action clear.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureClear(Session session, Action action) {
+		setSourceName(action, session.getString("actionClearName"));
+		setShortDescription(action, session.getString("actionClearName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_clear));
+	}
+
+	/**
+	 * Configure the action as an action close.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureClose(Session session, Action action) {
+		setSession(action, session);
+		setSourceName(action, session.getString("actionCloseName"));
+		setShortDescription(action, session.getString("actionCloseName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Exit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_close));
+	}
+
+	/**
+	 * Configure the action as an action create.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureCreate(Session session, Action action) {
+		setSession(action, session);
+		setSourceName(action, session.getString("actionCreateName"));
+		setShortDescription(action, session.getString("actionCreateName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_create));
+	}
+
+	/**
+	 * Configure the action as an action delete.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureDelete(Session session, Action action) {
+		setSession(action, session);
+		setSourceName(action, session.getString("actionDeleteName"));
+		setShortDescription(action, session.getString("actionDeleteName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_delete));
+	}
+
+	/**
+	 * Configure the action as an action execute.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureExecute(Session session, Action action) {
+		setSourceName(action, session.getString("actionExecuteName"));
+		setShortDescription(action, session.getString("actionExecuteName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_execute));
+	}
+
+	/**
+	 * Configure the action as an action execute.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureExit(Session session, Action action) {
+		setSourceName(action, session.getString("actionExitName"));
+		setShortDescription(action, session.getString("actionExitName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Exit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_cancel));
+	}
+
+	/**
+	 * Configure the action as an action select.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureSelect(Session session, Action action) {
+		setSourceName(action, session.getString("actionSelectName"));
+		setShortDescription(action, session.getString("actionSelectName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_accept));
+	}
+
+	/**
+	 * Configure the action as an action start.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureStart(Session session, Action action) {
+		setSourceName(action, session.getString("actionStartName"));
+		setShortDescription(action, session.getString("actionStartName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_execute));
+	}
+
+	/**
+	 * Configure the action as an action stop.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureStop(Session session, Action action) {
+		setSourceName(action, session.getString("actionStopName"));
+		setShortDescription(action, session.getString("actionStopName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_stop));
 	}
 }
