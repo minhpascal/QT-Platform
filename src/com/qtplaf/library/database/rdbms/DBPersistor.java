@@ -23,6 +23,7 @@ import com.qtplaf.library.database.Filter;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.OrderKey;
 import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.PersistorDDL;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
@@ -75,6 +76,16 @@ public class DBPersistor implements Persistor {
 		this.view.setPersistor(this);
 	}
 
+
+	/**
+	 * Returns a suitable DDL.
+	 * 
+	 * @return The DDL.
+	 */
+	public PersistorDDL getDDL() {
+		return new DBPersistorDDL(dbEngine);
+	}
+	
 	/**
 	 * Returns the underlying view of the persistor.
 	 * 

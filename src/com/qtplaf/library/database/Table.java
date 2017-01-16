@@ -688,6 +688,15 @@ public class Table implements Comparable<Object> {
 	public List<ForeignKey> getForeignKeys() {
 		return foreignKeys;
 	}
+	
+	/**
+	 * Returns a simple view of this table, using the primary key as index.
+	 *
+	 * @return The most simple view.
+	 */
+	public View getSimpleView() {
+		return getSimpleView(getPrimaryKey());
+	}
 
 	/**
 	 * Returns a simple view of this table, using the argument index as the order by index. No relations are build based

@@ -27,13 +27,11 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.app.Argument;
 import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.MetaData;
-import com.qtplaf.library.database.OrderKey;
+import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.PersistorDDL;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.Value;
-import com.qtplaf.library.database.View;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
 import com.qtplaf.library.database.rdbms.adapters.PostgreSQLAdapter;
@@ -54,6 +52,7 @@ import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
 
@@ -167,95 +166,73 @@ public class QTPlatform {
 		ConnectionInfo cnInfo = ConnectionInfo.getConnectionInfo(cnFile);
 		DBEngineAdapter adapter = new PostgreSQLAdapter();
 		DBEngine dbEngine = new DBEngine(adapter, cnInfo);
-		Tables.setDBEngine(dbEngine);
-
-		// Meta data to check that the necessary schemas exists.
-		MetaData metaData = new MetaData(dbEngine);
-		RecordSet rsSchemas = metaData.getRecordSetSchemas();
+		Persistors.setDBEngine(dbEngine);
+		
+		// Persistor DDL.
+		PersistorDDL ddl = Persistors.getDDL();
 
 		// Check for the system schema.
-		if (!rsSchemas.contains(new OrderKey(new Value(Names.getSchema())))) {
-			dbEngine.executeCreateSchema(Names.getSchema());
+		if (!ddl.existsSchema(Names.getSchema())) {
+			ddl.createSchema(Names.getSchema());
 		}
 
 		// Check for supported servers schemas.
 		List<Server> servers = ServerFactory.getSupportedServers();
 		for (Server server : servers) {
 			String schema = Names.getSchema(server);
-			if (!rsSchemas.contains(new OrderKey(new Value(schema)))) {
-				dbEngine.executeCreateSchema(schema);
+			if (!ddl.existsSchema(schema)) {
+				ddl.createSchema(schema);
 			}
 		}
 
-		// Check for necessary system schema tables.
-		RecordSet rsSysTables = metaData.getRecordSetTables(Names.getSchema());
-
 		// Check for the necessary table Server in the system schema.
-		if (!containsTable(rsSysTables, Tables.Servers)) {
-			dbEngine.executeBuildTable(Tables.getTableServers(session));
+		if (!ddl.existsTable(Names.getSchema(), Tables.Servers)) {
+			ddl.buildTable(Tables.getTableServers(session));
 		}
-		synchronizeSupportedServer(session, dbEngine);
+		synchronizeSupportedServer(session);
 
 		// Check for the necessary table Periods in the system schema.
-		if (!containsTable(rsSysTables, Tables.Periods)) {
-			dbEngine.executeBuildTable(Tables.getTablePeriods(session));
+		if (!ddl.existsTable(Names.getSchema(), Tables.Periods)) {
+			ddl.buildTable(Tables.getTablePeriods(session));
 		}
-		synchronizeStandardPeriods(session, dbEngine);
+		synchronizeStandardPeriods(session);
 
 		// Check for the necessary table OfferSides in the system schema.
-		if (!containsTable(rsSysTables, Tables.OfferSides)) {
-			dbEngine.executeBuildTable(Tables.getTableOfferSides(session));
+		if (!ddl.existsTable(Names.getSchema(), Tables.OfferSides)) {
+			ddl.buildTable(Tables.getTableOfferSides(session));
 		}
 		synchronizeStandardOfferSides(session, dbEngine);
 
 		// Check for the necessary table DataFilters in the system schema.
-		if (!containsTable(rsSysTables, Tables.DataFilters)) {
-			dbEngine.executeBuildTable(Tables.getTableDataFilters(session));
+		if (!ddl.existsTable(Names.getSchema(), Tables.DataFilters)) {
+			ddl.buildTable(Tables.getTableDataFilters(session));
 		}
-		synchronizeStandardDataFilters(session, dbEngine);
+		synchronizeStandardDataFilters(session);
 
 		// Check for the necessary table Instruments in the system schema.
-		if (!containsTable(rsSysTables, Tables.Instruments)) {
-			dbEngine.executeBuildTable(Tables.getTableInstruments(session));
+		if (!ddl.existsTable(Names.getSchema(), Tables.Instruments)) {
+			ddl.buildTable(Tables.getTableInstruments(session));
 		}
 
 		// Check for the necessary table Tickers in the system schema.
-		if (!containsTable(rsSysTables, Tables.Tickers)) {
-			dbEngine.executeBuildTable(Tables.getTableTickers(session));
+		if (!ddl.existsTable(Names.getSchema(), Tables.Tickers)) {
+			ddl.buildTable(Tables.getTableTickers(session));
 		}
-	}
-
-	/**
-	 * Check if the meta data recordset of tables contains the table name.
-	 * 
-	 * @param rs The meta data recordset of tables.
-	 * @param tableName The table name.
-	 * @return A boolean.
-	 */
-	private static boolean containsTable(RecordSet rs, String tableName) {
-		for (int i = 0; i < rs.size(); i++) {
-			Record rc = rs.get(i);
-			if (rc.getValue(MetaData.TableName).toString().toLowerCase().equals(tableName.toLowerCase())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
 	 * Synchronize standard periods.
 	 * 
 	 * @param session The working session.
-	 * @param dbEngine The database engine.
 	 * @throws Exception
 	 */
-	private static void synchronizeStandardPeriods(Session session, DBEngine dbEngine) throws Exception {
+	private static void synchronizeStandardPeriods(Session session) throws Exception {
 		List<Period> periods = Period.getStandardPeriods();
-		Table table = Tables.getTablePeriods(session);
+		Persistor persistor = Persistors.getPersistorPeriods(session);
 		for (Period period : periods) {
-			Record record = Records.getRecordPeriod(table.getDefaultRecord(), period);
-			if (!dbEngine.existsRecord(table, record)) {
-				dbEngine.executeInsert(table, record);
+			Record record = Records.getRecordPeriod(persistor.getDefaultRecord(), period);
+			if (!persistor.exists(record)) {
+				persistor.insert(record);
 			}
 		}
 	}
@@ -282,16 +259,15 @@ public class QTPlatform {
 	 * Synchronize standard data filters.
 	 * 
 	 * @param session The working session.
-	 * @param dbEngine The database engine.
 	 * @throws Exception
 	 */
-	private static void synchronizeStandardDataFilters(Session session, DBEngine dbEngine) throws Exception {
+	private static void synchronizeStandardDataFilters(Session session) throws Exception {
 		Filter[] dataFilters = Filter.values();
-		Table table = Tables.getTableDataFilters(session);
+		Persistor persistor = Persistors.getPersistorDataFilters(session);
 		for (Filter dataFilter : dataFilters) {
-			Record record = Records.getRecordDataFilter(table.getDefaultRecord(), dataFilter);
-			if (!dbEngine.existsRecord(table, record)) {
-				dbEngine.executeInsert(table, record);
+			Record record = Records.getRecordDataFilter(persistor.getDefaultRecord(), dataFilter);
+			if (!persistor.exists(record)) {
+				persistor.insert(record);
 			}
 		}
 	}
@@ -300,14 +276,12 @@ public class QTPlatform {
 	 * Synchronize supported servers.
 	 * 
 	 * @param session The working session.
-	 * @param dbEngine The database engine.
 	 * @throws Exception
 	 */
-	private static void synchronizeSupportedServer(Session session, DBEngine dbEngine) throws Exception {
+	private static void synchronizeSupportedServer(Session session) throws Exception {
 		List<Server> servers = ServerFactory.getSupportedServers();
-		Table table = Tables.getTableServers(session);
-		View view = table.getSimpleView(table.getPrimaryKey());
-		RecordSet recordSet = dbEngine.executeSelectRecordSet(view);
+		Persistor persistor = Persistors.getPersistorServers(session);
+		RecordSet recordSet = persistor.select(null);
 
 		// Remove not supported servers.
 		for (int i = 0; i < recordSet.size(); i++) {
@@ -320,7 +294,7 @@ public class QTPlatform {
 				}
 			}
 			if (remove) {
-				dbEngine.executeDelete(table, record);
+				persistor.delete(record);
 			}
 		}
 
@@ -336,7 +310,7 @@ public class QTPlatform {
 				}
 			}
 			if (!included) {
-				dbEngine.executeInsert(table, Records.getRecordServer(table.getDefaultRecord(), server));
+				persistor.insert(Records.getRecordServer(persistor.getDefaultRecord(), server));
 			}
 		}
 	}

@@ -26,7 +26,7 @@ import com.qtplaf.library.database.rdbms.DBUtils;
  * @author Miquel Sas
  */
 public class MetaData {
-	
+
 	public static final String TableCatalog = "TABLE_CAT";
 	public static final String TableSchema = "TABLE_SCHEM";
 	public static final String TableName = "TABLE_NAME";
@@ -38,7 +38,12 @@ public class MetaData {
 	 * Helper to rapidly create fields.
 	 */
 	private static Field createField(
-		String name, String description, Types type, int length, int decimals, boolean primaryKey) {
+		String name,
+		String description,
+		Types type,
+		int length,
+		int decimals,
+		boolean primaryKey) {
 		Field field = new Field();
 		field.setName(name);
 		field.setAlias(name);
@@ -316,7 +321,8 @@ public class MetaData {
 	 * @return A recordset with table definition.
 	 * @throws SQLException
 	 */
-	public RecordSet getRecordSetTables(String catalog, String schema, String table, String... types) throws SQLException {
+	public RecordSet getRecordSetTables(String catalog, String schema, String table, String... types)
+		throws SQLException {
 		Connection cn = null;
 		RecordSet recordSet = null;
 		try {
@@ -465,5 +471,42 @@ public class MetaData {
 				cn.close();
 		}
 		return recordSet;
+	}
+
+	/**
+	 * Check if the schema exists, case insensitive.
+	 * 
+	 * @param schema The schema name.
+	 * @return A boolean.
+	 * @throws SQLException
+	 */
+	public boolean existsSchema(String schema) throws SQLException {
+		RecordSet recordSet = getRecordSetSchemas();
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record record = recordSet.get(i);
+			if (record.getValue(TableSchema).getString().toLowerCase().equals(schema.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check if the table exists, case insensitive.
+	 * 
+	 * @param schema The schema.
+	 * @param table The table name.
+	 * @return A boolean.
+	 * @throws SQLException
+	 */
+	public boolean existsTable(String schema, String table) throws SQLException {
+		RecordSet recordSet = getRecordSetTables(schema);
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record record = recordSet.get(i);
+			if (record.getValue(TableName).getString().toLowerCase().equals(table.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

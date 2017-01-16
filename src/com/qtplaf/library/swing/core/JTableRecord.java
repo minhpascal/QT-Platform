@@ -43,6 +43,7 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.EditContext;
 import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.util.StringUtils;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * Extends <code>JTable</code> to support lists of records. If the model set is not a <code>TableModelRecord</code>, it
@@ -480,6 +481,15 @@ public class JTableRecord extends JTable {
 	}
 
 	/**
+	 * Set the argument record as the selected record.
+	 * 
+	 * @param record The record to select.
+	 */
+	public void setSelectedRecord(Record record) {
+		setSelectedRecords(ListUtils.asList(record));
+	}
+
+	/**
 	 * Set the argument list of records as the list of selected records.
 	 * 
 	 * @param records The list of records to select.
@@ -493,6 +503,46 @@ public class JTableRecord extends JTable {
 				selectionModel.addSelectionInterval(index, index);
 			}
 		}
+		ensureSelectionVisible();
+	}
+
+	/**
+	 * Set the row as selected.
+	 * 
+	 * @param row The row to select.
+	 */
+	public void setSelectedRow(int row) {
+		setSelectedRows(row);
+	}
+
+	/**
+	 * Set the list of rows as the selected rows.
+	 * 
+	 * @param rows The list of rows.
+	 */
+	public void setSelectedRows(int... rows) {
+		setSelectedRows(ListUtils.asList(rows));
+	}
+
+	/**
+	 * Set the list of rows as the selected rows.
+	 * 
+	 * @param rows The list of rows.
+	 */
+	public void setSelectedRows(List<Integer> rows) {
+		ListSelectionModel selectionModel = getSelectionModel();
+		selectionModel.clearSelection();
+		for (Integer row : rows) {
+			selectionModel.addSelectionInterval(row, row);
+		}
+		ensureSelectionVisible();
+	}
+
+	/**
+	 * Ensure that the selection is visible.
+	 */
+	private void ensureSelectionVisible() {
+		ListSelectionModel selectionModel = getSelectionModel();
 		int index = selectionModel.getMinSelectionIndex();
 		if (index >= 0) {
 			selectionModel.setAnchorSelectionIndex(index);

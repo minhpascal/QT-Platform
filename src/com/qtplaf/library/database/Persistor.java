@@ -17,11 +17,18 @@ package com.qtplaf.library.database;
 import java.util.List;
 
 /**
- * Interface that should implement back end persistence engines that operate with records.
+ * Interface that should implement back end persistence engines that operate with records of views.
  * 
  * @author Miquel Sas
  */
 public interface Persistor {
+
+	/**
+	 * Returns a suitable DDL.
+	 * 
+	 * @return The DDL.
+	 */
+	PersistorDDL getDDL();
 
 	/**
 	 * Returns the underlying view of the persistor.
@@ -53,7 +60,7 @@ public interface Persistor {
 	 * @throws PersistorException
 	 */
 	Record getRecord(List<Value> primaryKeyValues) throws PersistorException;
-	
+
 	/**
 	 * Returns the record given the list of primnary key values.
 	 * 

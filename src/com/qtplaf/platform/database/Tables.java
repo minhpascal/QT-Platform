@@ -17,9 +17,7 @@ package com.qtplaf.platform.database;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Index;
-import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBPersistor;
 import com.qtplaf.library.trading.server.Server;
 
@@ -37,27 +35,6 @@ public class Tables {
 	public static final String Servers = "servers";
 	public static final String Tickers = "tickers";
 
-	/** The database engine used to set the persistor to tables. */
-	private static DBEngine dbEngine;
-
-	/**
-	 * Sets the database engine to assign the proper persistor to tables.
-	 * 
-	 * @param dbEngine The database engine.
-	 */
-	public static void setDBEngine(DBEngine dbEngine) {
-		Tables.dbEngine = dbEngine;
-	}
-
-	/**
-	 * Returns the database engine in use.
-	 * 
-	 * @return The database engine in use.
-	 */
-	public static DBEngine getDBEngine() {
-		return dbEngine;
-	}
-
 	/**
 	 * Returns the table definition for standard data filters.
 	 * 
@@ -70,8 +47,7 @@ public class Tables {
 		table.addFields(FieldLists.getFieldListDataFilters(session));
 		table.setName(DataFilters);
 		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(getDBEngine(), table));
-
+		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
 		return table;
 	}
 
@@ -87,7 +63,7 @@ public class Tables {
 		table.addFields(FieldLists.getFieldListInstruments(session));
 		table.setName(Instruments);
 		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(getDBEngine(), table));
+		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
 
 		return table;
 	}
@@ -104,7 +80,7 @@ public class Tables {
 		table.addFields(FieldLists.getFieldListOfferSides(session));
 		table.setName(OfferSides);
 		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(getDBEngine(), table));
+		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
 
 		return table;
 	}
@@ -127,7 +103,7 @@ public class Tables {
 		index.add(table.getField(Fields.PeriodSize));
 		table.addIndex(index);
 
-		table.setPersistor(new DBPersistor(getDBEngine(), table.getSimpleView(index)));
+		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table.getSimpleView(index)));
 
 		return table;
 	}
@@ -144,7 +120,7 @@ public class Tables {
 		table.addFields(FieldLists.getFieldListServers(session));
 		table.setName(Servers);
 		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(getDBEngine(), table));
+		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table.getSimpleView()));
 
 		return table;
 	}
@@ -185,14 +161,15 @@ public class Tables {
 		fkDataFilters.add(tableTickers.getField(Fields.DataFilter), tableDataFilters.getField(Fields.DataFilter));
 		tableTickers.addForeignKey(fkDataFilters);
 
-		Order order = tableTickers.getPrimaryKey();
-		tableTickers.setPersistor(new DBPersistor(getDBEngine(), tableTickers.getComplexView(order)));
+		tableTickers.setPersistor(
+			new DBPersistor(Persistors.getDBEngine(), tableTickers.getComplexView(tableTickers.getPrimaryKey())));
 
 		return tableTickers;
 	}
-	
+
 	/**
 	 * Returns the OHLCV table for the given server with the given name.
+	 * 
 	 * @param session Working session.
 	 * @param server The server.
 	 * @param name The name of the table.
@@ -204,9 +181,9 @@ public class Tables {
 		table.addFields(FieldLists.getFieldListOHLCV(session));
 		table.setName(name);
 		table.setSchema(Names.getSchema(server));
-		table.setPersistor(new DBPersistor(getDBEngine(), table));
+		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
 
 		return table;
-	
+
 	}
 }

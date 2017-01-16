@@ -27,6 +27,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditMode;
@@ -46,6 +47,7 @@ import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
 import com.qtplaf.platform.database.Records;
+import com.qtplaf.platform.database.Tables;
 
 /**
  * Edit the list of server tickers.
@@ -170,6 +172,15 @@ public class ActionTickers extends AbstractAction {
 				if (record == null) {
 					return;
 				}
+				// Create the ticker record.
+				Persistor persistor = Persistors.getPersistorTickers(session);
+				persistor.insert(record);
+				// Create the table.
+				String tableName = record.getValue(Fields.TableName).getString();
+				Table table = Tables.getTableOHLCV(session, server, tableName);
+				persistor.getDDL().buildTable(table);
+				getTableModel().insertRecord(record);
+				getTableRecord().setSelectedRecord(record);
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}

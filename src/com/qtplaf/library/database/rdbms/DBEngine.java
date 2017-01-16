@@ -14,9 +14,7 @@
 package com.qtplaf.library.database.rdbms;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -1237,51 +1235,5 @@ public class DBEngine {
 	 */
 	public boolean existsRecord(Table table, Record record, Connection cn) throws SQLException {
 		return existsRecord(table, record.getPrimaryKey(), cn);
-	}
-
-	/**
-	 * Check if the table exists.
-	 * 
-	 * @param table The table.
-	 * @return A boolean.
-	 * @throws SQLException
-	 */
-	public boolean existsTable(Table table) throws SQLException {
-		return existsTable(table, (Connection) null);
-	}
-
-	/**
-	 * Check if the table exists.
-	 * 
-	 * @param table The table
-	 * @param cn The connection
-	 * @return A boolean
-	 * @throws SQLException
-	 */
-	public boolean existsTable(Table table, Connection cn) throws SQLException {
-		DatabaseMetaData md = cn.getMetaData();
-		String tableCatalog = null;
-		String tableSchema = (table.getSchema() != null ? table.getSchema() : null);
-		String tableName = table.getName();
-		String[] tableTypes = { "TABLE" };
-
-		boolean closeConnection = false;
-		ResultSet rs = null;
-		try {
-			rs = md.getTables(tableCatalog, tableSchema, tableName, tableTypes);
-			boolean exists = false;
-			while (rs.next()) {
-				exists = true;
-				break;
-			}
-			return exists;
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (closeConnection && cn != null) {
-				cn.close();
-			}
-		}
 	}
 }

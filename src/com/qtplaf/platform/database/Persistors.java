@@ -16,6 +16,9 @@ package com.qtplaf.platform.database;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.PersistorDDL;
+import com.qtplaf.library.database.rdbms.DBEngine;
+import com.qtplaf.library.database.rdbms.DBPersistorDDL;
 import com.qtplaf.library.trading.server.Server;
 
 /**
@@ -24,6 +27,36 @@ import com.qtplaf.library.trading.server.Server;
  * @author Miquel Sas
  */
 public class Persistors {
+
+	/** The database engine used to set the persistor to tables. */
+	private static DBEngine dbEngine;
+
+	/**
+	 * Sets the database engine to assign the proper persistor to tables.
+	 * 
+	 * @param dbEngine The database engine.
+	 */
+	public static void setDBEngine(DBEngine dbEngine) {
+		Persistors.dbEngine = dbEngine;
+	}
+
+	/**
+	 * Returns the database engine in use.
+	 * 
+	 * @return The database engine in use.
+	 */
+	public static DBEngine getDBEngine() {
+		return dbEngine;
+	}
+
+	
+	/**
+	 * Returns a suitable DDL.
+	 * @return The DDL.
+	 */
+	public static PersistorDDL getDDL() {
+		return new DBPersistorDDL(getDBEngine());
+	}
 
 	/**
 	 * Returns the OHLCV persistor.
@@ -53,6 +86,16 @@ public class Persistors {
 	 */
 	public static Persistor getPersistorPeriods(Session session) {
 		return Tables.getTablePeriods(session).getPersistor();
+	}
+
+	/**
+	 * Returns the servers persistor.
+	 * 
+	 * @param session Working session.
+	 * @return The persistor.
+	 */
+	public static Persistor getPersistorServers(Session session) {
+		return Tables.getTableServers(session).getPersistor();
 	}
 
 	/**
