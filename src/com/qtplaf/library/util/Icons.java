@@ -47,6 +47,7 @@ public interface Icons {
 	String app_16x16_columns = "images/app/16x16/columns.png";
 	String app_16x16_create = "images/app/16x16/new.png";
 	String app_16x16_delete = "images/app/16x16/delete.png";
+	String app_16x16_download = "images/app/16x16/download.png";
 	String app_16x16_execute = "images/app/16x16/execute.png";
 	String app_16x16_list = "images/app/16x16/list.png";
 	String app_16x16_new = "images/app/16x16/new.png";

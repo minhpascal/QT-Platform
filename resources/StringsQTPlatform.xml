@@ -18,4 +18,6 @@
 	<entry key="qtItemOfferSide">offer side</entry>
 	<entry key="qtItemDataFilter">data filter</entry>
 	
+	<entry key="qtAskDeleteTicker">Delete current ticker and downloaded data?</entry>
+	
 </properties>

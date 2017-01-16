@@ -591,7 +591,7 @@ public class DBEngine {
 	 * @throws SQLException
 	 */
 	public Cursor executeSelectCursor(Select select) throws SQLException {
-		return executeSelectCursor(select, false, (Connection) null);
+		return executeSelectCursor(select, true, (Connection) null);
 	}
 
 	/**

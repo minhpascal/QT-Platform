@@ -711,6 +711,17 @@ public abstract class TaskRunner implements Task {
 			b.append(getDescription());
 		return b.toString();
 	}
+	
+	/**
+	 * Convenient method to get a step of steps message.
+	 * 
+	 * @param step The current step
+	 * @param steps The number of steps.
+	 * @return The default step message.
+	 */
+	public String getStepMessage(long step, long steps) {
+		return getStepMessage(step, steps, null, null);
+	}
 
 	/**
 	 * Convenient method to get a step of steps message.

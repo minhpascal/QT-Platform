@@ -14,6 +14,7 @@
 
 package com.qtplaf.library.swing.core;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -286,6 +287,21 @@ public class JOptionFrame extends JFrameSession {
 	}
 
 	/**
+	 * Returns the panel buttons.
+	 * 
+	 * @return The panel buttons.
+	 */
+	public JPanelButtons getPanelButtons() {
+		List<Component> components = SwingUtils.getAllComponents(this);
+		for (Component component : components) {
+			if (component instanceof JPanelButtons) {
+				return (JPanelButtons) component;
+			}
+		}
+		throw new IllegalStateException("Panel buttons not set.");
+	}
+
+	/**
 	 * Show the frame resizable.
 	 */
 	public void showFrame() {
@@ -361,7 +377,7 @@ public class JOptionFrame extends JFrameSession {
 
 		add(panelButtons, constraintsButtons);
 
-		// Install key listener.
+		// Install key and mouse listeners.
 		KeyAdapter keyAdapter = new KeyAdapter();
 		SwingUtils.installKeyListener(this, keyAdapter, true);
 

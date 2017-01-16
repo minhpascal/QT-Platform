@@ -17,6 +17,7 @@ package com.qtplaf.library.swing;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.KeyStroke;
 
 /**
  * Manages a list of unique actions.
@@ -130,6 +132,25 @@ public class ActionList {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the list of actions that should be visible in a popup menu, conveniently sorted.
+	 * 
+	 * @return The list of visible actions.
+	 */
+	public List<Action> getActionsVisibleInPopupMenu() {
+		List<Action> visibleActions = new ArrayList<>();
+		for (Action action : actions) {
+			if (ActionUtils.isVisibleInPopupMenu(action)) {
+				// Do not show in a popup menu actions with VK_ESCAPE acceleretor key.
+				if (ActionUtils.getAcceleratorKey(action).equals(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0))) {
+					continue;
+				}
+				visibleActions.add(action);
+			}
+		}
+		return visibleActions;
 	}
 
 	/**

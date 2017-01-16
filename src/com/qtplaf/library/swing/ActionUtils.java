@@ -785,6 +785,23 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Configure the action as an action download.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureDownload(Session session, Action action) {
+		setSourceName(action, session.getString("actionDownloadName"));
+		setShortDescription(action, session.getString("actionDownloadName"));
+		setAcceleratorKey(
+			action,
+			KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_download));
+	}
+
+	/**
 	 * Configure the action as an action execute.
 	 * 
 	 * @param session Working session.

@@ -13,6 +13,10 @@
  */
 package com.qtplaf.platform.database;
 
+import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.Filter;
+import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 
 /**
@@ -39,6 +43,19 @@ public class Names {
 	 */
 	public static String getSchema(Server server) {
 		return getSchema() + "_" + server.getId();
+	}
+
+	/**
+	 * Returns the name for a table of OHLCV data.
+	 * 
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @param filter The data filter.
+	 * @param offerSide The offer side.
+	 * @return The name for a table of OHLCV data.
+	 */
+	public static String getName(Instrument instrument, Period period, Filter filter, OfferSide offerSide) {
+		return getName(instrument.getId(), period.getId(), filter.name(), offerSide.name());
 	}
 
 	/**

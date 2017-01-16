@@ -22,6 +22,7 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
@@ -184,6 +185,23 @@ public class Records {
 	public static Record getRecordDataFilter(Session session, Value dataFilter) throws PersistorException {
 		Persistor persistor = Persistors.getPersistorDataFilters(session);
 		return persistor.getRecord(dataFilter);
+	}
+
+	/**
+	 * Returns the OHLCV record.
+	 * 
+	 * @param record The default OHLCV record.
+	 * @param ohlcv The OHLCV bar.
+	 * @return The filled record.
+	 */
+	public static Record getRecordOHLCV(Record record, OHLCV ohlcv) {
+		record.getValue(Fields.Time).setLong(ohlcv.getTime());
+		record.getValue(Fields.Open).setDouble(ohlcv.getOpen());
+		record.getValue(Fields.High).setDouble(ohlcv.getHigh());
+		record.getValue(Fields.Low).setDouble(ohlcv.getLow());
+		record.getValue(Fields.Close).setDouble(ohlcv.getClose());
+		record.getValue(Fields.Volume).setDouble(ohlcv.getVolume());
+		return record;
 	}
 
 }

@@ -66,6 +66,7 @@
 	<entry key="actionClearName">Clear</entry>
 	<entry key="actionCreateName">Create</entry>
 	<entry key="actionDeleteName">Delete</entry>
+	<entry key="actionDownloadName">Download</entry>
 	<entry key="actionSelectName">Select</entry>
 	<entry key="actionAcceptName">Accept</entry>
 	<entry key="actionColumnsName">Columns</entry>

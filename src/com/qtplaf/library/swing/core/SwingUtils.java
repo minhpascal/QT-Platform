@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,6 +121,20 @@ public class SwingUtils {
 		if (listeners != null) {
 			for (KeyListener listener : listeners) {
 				cmp.removeKeyListener(listener);
+			}
+		}
+	}
+
+	/**
+	 * Remove mouse listeners form the argument component.
+	 * 
+	 * @param cmp The component.
+	 */
+	public static void removeMouseListeners(Component cmp) {
+		MouseListener[] listeners = cmp.getMouseListeners();
+		if (listeners != null) {
+			for (MouseListener listener : listeners) {
+				cmp.removeMouseListener(listener);
 			}
 		}
 	}
@@ -975,6 +990,36 @@ public class SwingUtils {
 				removeKeyListeners(component);
 			}
 			component.addKeyListener(keyListener);
+		}
+	}
+
+	/**
+	 * Installs the mouse listener in the tree of components where the argument component is included, starting in the
+	 * first parent <i>JFrame</i> or <i>JDialog</i> parent, without removing previous mouse listeners.
+	 * 
+	 * @param cmp The starting components in the tree.
+	 * @param mouseListener The mouse listener to install.
+	 */
+	public static void installMouseListener(Component cmp, MouseListener mouseListener) {
+		installMouseListener(cmp, mouseListener, false);
+	}
+
+	/**
+	 * Installs the mouse listener in the tree of components where the argument component is included, starting in the
+	 * first parent <i>JFrame</i> or <i>JDialog</i> parent.
+	 * 
+	 * @param cmp The starting components in the tree.
+	 * @param mouseListener The mouse listener to install.
+	 * @param removePrevious A boolean indicating whether previous key listeners should be removed.
+	 */
+	public static void installMouseListener(Component cmp, MouseListener mouseListener, boolean removePrevious) {
+		Component parent = getFirstParentFrameOrDialog(cmp);
+		List<Component> components = getAllComponents(parent);
+		for (Component component : components) {
+			if (removePrevious) {
+				removeMouseListeners(component);
+			}
+			component.addMouseListener(mouseListener);
 		}
 	}
 

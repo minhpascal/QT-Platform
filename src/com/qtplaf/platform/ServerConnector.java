@@ -32,4 +32,7 @@ public class ServerConnector {
 	public static void disconnect(Server server) throws ServerException {
 		server.getConnectionManager().disconnect();
 	}
+	public static boolean isConnected(Server server) throws ServerException {
+		return server.getConnectionManager().isConnected();
+	}
 }

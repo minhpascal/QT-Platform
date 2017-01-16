@@ -27,7 +27,11 @@ import incubator.persistence.OHLCVFile;
  * @author Miquel Sas
  */
 public class TestDkOHLCVIterator {
-	static String userName = "msasc1EU";
+	/** Logger configuration. */
+	static {
+		System.setProperty("log4j.configurationFile", "LoggerQTPlatform.xml");
+	}
+	static String userName = "msasc2EU";
 	static String password = "C1a2r3l4a5";
 
 	/**

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<descriptor>
+	<instrument id="EURUSD" description="EUR/USD" pip-value="0.0001" pip-scale="4" tick-value="0.00001" tick-scale="5" volume-scale="0" primary-currency="EUR" secondary-currency="USD"/>
+	<period unit="Minute" size="1"/>
+	<tick value="false"/>
+	<ohlcv value="true"/>
+	<size value="5"/>
+</descriptor>

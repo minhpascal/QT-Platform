@@ -512,6 +512,12 @@ public class JTableRecord extends JTable {
 	 * @param row The row to select.
 	 */
 	public void setSelectedRow(int row) {
+		if (row < 0) {
+			row = 0;
+		}
+		if (row >= getTableModelRecord().getRowCount()) {
+			row = getTableModelRecord().getRowCount() - 1;
+		}
 		setSelectedRows(row);
 	}
 
