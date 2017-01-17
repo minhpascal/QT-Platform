@@ -51,6 +51,7 @@ public interface Icons {
 	String app_16x16_execute = "images/app/16x16/execute.png";
 	String app_16x16_list = "images/app/16x16/list.png";
 	String app_16x16_new = "images/app/16x16/new.png";
+	String app_16x16_purge = "images/app/16x16/purge.png";
 	String app_16x16_select_all = "images/app/16x16/select-all.png";
 	String app_16x16_sort = "images/app/16x16/sort.png";
 	String app_16x16_stop = "images/app/16x16/stop.png";

@@ -142,6 +142,41 @@ public class Period implements Comparable<Period> {
 	}
 
 	/**
+	 * Returns the time this period elapses in millisecond. The time returned for months and years is the maximum (31 or
+	 * 366 days).
+	 * 
+	 * @return The time of the priod in milliseconds.
+	 */
+	public long getTime() {
+		long time = 0;
+		switch (unit) {
+		case Millisecond:
+			time = 1;
+			break;
+		case Second:
+			time = 1000;
+			break;
+		case Minute:
+			time = 1000 * 60;
+			break;
+		case Hour:
+			time = 1000 * 60 * 60;
+			break;
+		case Day:
+			time = 1000 * 60 * 60 * 24;
+			break;
+		case Month:
+			time = 1000 * 60 * 60 * 24 * 31;
+			break;
+		case Year:
+			time = 1000 * 60 * 60 * 24 * 366;
+			break;
+		}
+		time *= size;
+		return time;
+	}
+
+	/**
 	 * Compares this period with the argument object. Returns 0 if they are equal, -1 if this value is less than the
 	 * argument, and 1 if it is greater.
 	 *

@@ -150,9 +150,21 @@ public class DkOHLCVIterator implements OHLCVIterator {
 		if (lastTimeLoaded == -1) {
 			lastTimeLoaded = from;
 		}
+		
+		// Calculate the buffer size to not pass the to limit.
+		int execBufferSize = 0;
+		long nextTime = lastTimeLoaded;
+		for (int i = 0; i < bufferSize; i++) {
+			nextTime += period.getTime();
+			if (nextTime > to) {
+				break;
+			}
+			execBufferSize++;
+		}
+		
 		// Load data.
 		List<OHLCV> ohlcvData = historyManager.getOHLCVData(
-			instrument, period, offerSide, filter, lastTimeLoaded, 0, bufferSize);
+			instrument, period, offerSide, filter, lastTimeLoaded, 0, execBufferSize);
 		
 		// Tranfer loaded data to buffer with the limit of to.
 		for (OHLCV ohlcv : ohlcvData) {

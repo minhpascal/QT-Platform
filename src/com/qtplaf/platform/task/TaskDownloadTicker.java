@@ -114,7 +114,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	public void execute() throws Exception {
 
 		// Count steps.
-		if (countSteps() == -1) {
+		if (countSteps() <= 0) {
 			notifyCancelled();
 			return;
 		}

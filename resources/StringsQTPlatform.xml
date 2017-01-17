@@ -19,5 +19,6 @@
 	<entry key="qtItemDataFilter">data filter</entry>
 	
 	<entry key="qtAskDeleteTicker">Delete current ticker and downloaded data?</entry>
+	<entry key="qtAskPurgeTicker">Purge (delete) current ticker data?</entry>
 	
 </properties>

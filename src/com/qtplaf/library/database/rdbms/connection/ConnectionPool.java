@@ -109,7 +109,9 @@ public class ConnectionPool {
 				PoolableConnection connection = connections.get(i);
 				if (connection.isClosed()) {
 					if (time - connection.getTimeLastUsed() >= timeoutClosed) {
-						connection.reallyClose();
+						if (!connection.isReallyClosed()) {
+							connection.reallyClose();
+						}
 						connections.remove(connection);
 					}
 				}
@@ -126,9 +128,9 @@ public class ConnectionPool {
 	public Connection getConnection() throws SQLException {
 		synchronized (lock) {
 			for (PoolableConnection connection : connections) {
-				if (connection.isClosed()) {
+				if (connection.isClosed() && !connection.isReallyClosed()) {
 					connection.setClosed(false);
-					connection.setAutoCommit(true);
+					connection.setAutoCommit(false);
 					return connection;
 				}
 			}
@@ -140,7 +142,7 @@ public class ConnectionPool {
 			PoolableConnection connection = new PoolableConnection(
 					underlyingConnection);
 			connection.setClosed(false);
-			connection.setAutoCommit(true);
+			connection.setAutoCommit(false);
 			connections.add(connection);
 			return connection;
 		}

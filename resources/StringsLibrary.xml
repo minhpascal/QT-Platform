@@ -57,20 +57,22 @@
 
 	<!-- Actions (buttons) names. These are more generic. -->
 
-	<entry key="actionStartName">Start</entry>
-	<entry key="actionStopName">Stop</entry>
-	<entry key="actionExitName">Exit</entry>
-	<entry key="actionExecuteName">Execute</entry>
+	<entry key="actionAcceptName">Accept</entry>
 	<entry key="actionCancelName">Cancel</entry>
 	<entry key="actionCloseName">Close</entry>
 	<entry key="actionClearName">Clear</entry>
-	<entry key="actionCreateName">Create</entry>
-	<entry key="actionDeleteName">Delete</entry>
-	<entry key="actionDownloadName">Download</entry>
-	<entry key="actionSelectName">Select</entry>
-	<entry key="actionAcceptName">Accept</entry>
 	<entry key="actionColumnsName">Columns</entry>
+	<entry key="actionCreateName">Create</entry>
+	<entry key="actionDownloadName">Download</entry>
+	<entry key="actionDeleteName">Delete</entry>
+	<entry key="actionExecuteName">Execute</entry>
+	<entry key="actionExitName">Exit</entry>
+	<entry key="actionPurgeName">Purge</entry>
+	<entry key="actionSelectName">Select</entry>
 	<entry key="actionSortName">Sort</entry>
+	<entry key="actionStartName">Start</entry>
+	<entry key="actionStopName">Stop</entry>
+	
 	<entry key="actionAscendingName">Asc</entry>
 	<entry key="actionDescendingName">Desc</entry>
 

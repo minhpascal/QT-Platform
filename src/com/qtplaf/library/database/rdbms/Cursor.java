@@ -45,6 +45,10 @@ public class Cursor {
 	 */
 	private ResultSet rs;
 	/**
+	 * Default fetch size.
+	 */
+	private int fetchSize = 50;
+	/**
 	 * The number of records per page.
 	 */
 	private int pageSize = 100;
@@ -96,6 +100,7 @@ public class Cursor {
 		for (int i = 0; i < values.size(); i++) {
 			DBUtils.toPreparedStatement(values.get(i), i + 1, ps);
 		}
+		ps.setFetchSize(getFetchSize());
 		rs = ps.executeQuery();
 		fieldList = select.getView().getFieldList();
 		persistor = new DBPersistor(dbEngine, select.getView());
@@ -385,6 +390,24 @@ public class Cursor {
 	 */
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	/**
+	 * Returns the default fetch size
+	 * 
+	 * @return The fetch size.
+	 */
+	public int getFetchSize() {
+		return fetchSize;
+	}
+
+	/**
+	 * Set the fetch size.
+	 * 
+	 * @param fetchSize The fetch size.
+	 */
+	public void setFetchSize(int fetchSize) {
+		this.fetchSize = fetchSize;
 	}
 
 	/**

@@ -832,6 +832,23 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Configure the action as an action purge.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configurePurge(Session session, Action action) {
+		setSourceName(action, session.getString("actionPurgeName"));
+		setShortDescription(action, session.getString("actionPurgeName"));
+		setAcceleratorKey(
+			action,
+			KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_purge));
+	}
+
+	/**
 	 * Configure the action as an action select.
 	 * 
 	 * @param session Working session.

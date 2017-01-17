@@ -162,6 +162,7 @@ public class DBEngine {
 				ps.close();
 			}
 			if (closeConnection && cn != null) {
+				cn.commit();
 				cn.close();
 			}
 		}
@@ -196,7 +197,6 @@ public class DBEngine {
 		int countModified = 0;
 		try {
 			cn = getConnection();
-			cn.setAutoCommit(false);
 			countModified = executeStatements(statements, cn);
 			cn.commit();
 		} catch (SQLException e) {
@@ -206,7 +206,6 @@ public class DBEngine {
 			throw e;
 		} finally {
 			if (cn != null && !cn.isClosed()) {
-				cn.setAutoCommit(true);
 				cn.close();
 			}
 		}

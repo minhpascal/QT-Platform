@@ -50,6 +50,7 @@ import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
+import com.qtplaf.platform.action.TestAction;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
@@ -359,6 +360,12 @@ public class QTPlatform {
 			itemSrvTickers.setActionClass(ActionTickers.class);
 			itemSrvTickers.setLaunchArgs(server);
 			menu.addMenuItem(itemServer, itemSrvTickers);
+			
+			// Test
+//			TreeMenuItem itemSrvTest = TreeMenuItem.getMenuItem(session, "Test");
+//			itemSrvTest.setActionClass(TestAction.class);
+//			itemSrvTest.setLaunchArgs(server);
+//			menu.addMenuItem(itemServer, itemSrvTest);
 		}
 
 		menu.refreshTree();

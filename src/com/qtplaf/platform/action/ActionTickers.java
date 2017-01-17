@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -193,7 +194,7 @@ public class ActionTickers extends AbstractAction {
 	}
 
 	/**
-	 * Action to delete a new ticker.
+	 * Action to delete a ticker (and its data).
 	 */
 	class ActionDelete extends ActionTableOption {
 		/**
@@ -236,6 +237,52 @@ public class ActionTickers extends AbstractAction {
 				Persistors.getDDL().dropTable(table);
 				getTableModel().deleteRecord(row);
 				getTableRecord().setSelectedRow(row);
+
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+	}
+
+
+	/**
+	 * Action to purge a ticker data.
+	 */
+	class ActionPurge extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionPurge(Session session) {
+			super();
+			ActionUtils.configurePurge(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			try {
+				Session session = ActionUtils.getSession(ActionTickers.this);
+				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Record record = getSelectedRecord();
+				if (record == null) {
+					return;
+				}
+
+				// Ask delete.
+				String question = session.getString("qtAskPurgeTicker");
+				if (MessageBox.question(session, question, MessageBox.yesNo) != MessageBox.yes) {
+					return;
+				}
+
+				// Delete record and table.
+				String tableName = record.getValue(Fields.TableName).getString();
+				Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
+				persistor.delete((Criteria)null);
 
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -352,6 +399,7 @@ public class ActionTickers extends AbstractAction {
 				frame.setComponent(panelTableRecord);
 				frame.addAction(new ActionCreate(session));
 				frame.addAction(new ActionDelete(session));
+				frame.addAction(new ActionPurge(session));
 				frame.addAction(new ActionDownload(session));
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);
