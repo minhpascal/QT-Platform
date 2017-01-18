@@ -1,18 +1,15 @@
 /*
  * Copyright (C) 2015 Miquel Sas
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package com.qtplaf.library.database.rdbms.adapters;
 
@@ -134,6 +131,7 @@ public class DerbyAdapter extends DBEngineAdapter {
 	public boolean isExplicitRelation() {
 		return true;
 	}
+
 	/**
 	 * Return a string representation of the date, valid to be used in an SQL statement.
 	 *
@@ -141,11 +139,11 @@ public class DerbyAdapter extends DBEngineAdapter {
 	 * @return The representation.
 	 */
 	public String toStringSQL(Date date) {
-		String sdate  = FormatUtils.unformattedFromDate(date);
-		String syear  = (sdate.length() == 8 ? sdate.substring(0,4) : sdate.substring(0,5));
-		String smonth = (sdate.length() == 8 ? sdate.substring(4,6) : sdate.substring(5,7));
-		String sday   = (sdate.length() == 8 ? sdate.substring(6,8) : sdate.substring(7,9));
-		return "'"+syear+"-"+smonth+"-"+sday+"'";
+		String sdate = FormatUtils.unformattedFromDate(date);
+		String syear = (sdate.length() == 8 ? sdate.substring(0, 4) : sdate.substring(0, 5));
+		String smonth = (sdate.length() == 8 ? sdate.substring(4, 6) : sdate.substring(5, 7));
+		String sday = (sdate.length() == 8 ? sdate.substring(6, 8) : sdate.substring(7, 9));
+		return "'" + syear + "-" + smonth + "-" + sday + "'";
 	}
 
 	/**
@@ -156,10 +154,10 @@ public class DerbyAdapter extends DBEngineAdapter {
 	 */
 	public String toStringSQL(Time time) {
 		String stime = FormatUtils.unformattedFromTime(time);
-		String sHour = stime.substring(0,2);
-		String sMin  = stime.substring(2,4);
-		String sSec  = stime.substring(4,6);
-		return "'"+sHour+":"+sMin+":"+sSec+"'";
+		String sHour = stime.substring(0, 2);
+		String sMin = stime.substring(2, 4);
+		String sSec = stime.substring(4, 6);
+		return "'" + sHour + ":" + sMin + ":" + sSec + "'";
 	}
 
 	/**
@@ -169,13 +167,13 @@ public class DerbyAdapter extends DBEngineAdapter {
 	 * @return The representation.
 	 */
 	public String toStringSQL(Timestamp timestamp) {
-		String stime = FormatUtils.unformattedFromTimestamp(timestamp,false);
-		String sYear  = (stime.length() == 14 ? stime.substring(0,4) : stime.substring(0,5));
-		String sMonth = (stime.length() == 14 ? stime.substring(4,6) : stime.substring(5,7));
-		String sDay   = (stime.length() == 14 ? stime.substring(6,8) : stime.substring(7,9));
-		String sHour  = (stime.length() == 14 ? stime.substring(8,10): stime.substring(9,11));
-		String sMin   = (stime.length() == 14 ? stime.substring(10,12):stime.substring(11,13));
-		String sSec   = (stime.length() == 14 ? stime.substring(12,14):stime.substring(13,15));
-		return "'"+sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":"+sSec+"'";
+		String stime = FormatUtils.unformattedFromTimestamp(timestamp, false);
+		String sYear = (stime.length() == 14 ? stime.substring(0, 4) : stime.substring(0, 5));
+		String sMonth = (stime.length() == 14 ? stime.substring(4, 6) : stime.substring(5, 7));
+		String sDay = (stime.length() == 14 ? stime.substring(6, 8) : stime.substring(7, 9));
+		String sHour = (stime.length() == 14 ? stime.substring(8, 10) : stime.substring(9, 11));
+		String sMin = (stime.length() == 14 ? stime.substring(10, 12) : stime.substring(11, 13));
+		String sSec = (stime.length() == 14 ? stime.substring(12, 14) : stime.substring(13, 15));
+		return "'" + sYear + "-" + sMonth + "-" + sDay + " " + sHour + ":" + sMin + ":" + sSec + "'";
 	}
 }

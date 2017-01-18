@@ -34,33 +34,14 @@ public class FieldLists {
 		
 		FieldList fieldList = new FieldList();
 		
-		fieldList.addField(Fields.getFieldTime(session));
-		fieldList.addField(Fields.getFieldOpen(session));
-		fieldList.addField(Fields.getFieldHigh(session));
-		fieldList.addField(Fields.getFieldLow(session));
-		fieldList.addField(Fields.getFieldClose(session));
-		fieldList.addField(Fields.getFieldVolume(session));
+		fieldList.addField(FieldDef.getTime(session));
+		fieldList.addField(FieldDef.getOpen(session));
+		fieldList.addField(FieldDef.getHigh(session));
+		fieldList.addField(FieldDef.getLow(session));
+		fieldList.addField(FieldDef.getClose(session));
+		fieldList.addField(FieldDef.getVolume(session));
 		
-		fieldList.getField(Fields.Time).setPrimaryKey(true);
-		
-		return fieldList;
-	}
-
-	/**
-	 * Returns the list of fields for the servers table.
-	 * 
-	 * @param session The working session.
-	 * @return The field list.
-	 */
-	public static FieldList getFieldListServers(Session session) {
-		
-		FieldList fieldList = new FieldList();
-		
-		fieldList.addField(Fields.getFieldServerId(session));
-		fieldList.addField(Fields.getFieldServerName(session));
-		fieldList.addField(Fields.getFieldServerTitle(session));
-		
-		fieldList.getField(Fields.ServerId).setPrimaryKey(true);
+		fieldList.getField(FieldDef.Time).setPrimaryKey(true);
 		
 		return fieldList;
 	}
@@ -75,65 +56,20 @@ public class FieldLists {
 		
 		FieldList fieldList = new FieldList();
 		
-		fieldList.addField(Fields.getFieldServerId(session));
-		fieldList.addField(Fields.getFieldInstrumentId(session));
-		fieldList.addField(Fields.getFieldPeriodId(session));
-		fieldList.addField(Fields.getFieldOfferSide(session));
-		fieldList.addField(Fields.getFieldDataFilter(session));
-		fieldList.addField(Fields.getFieldTableName(session));
+		fieldList.addField(FieldDef.getServerId(session, FieldDef.ServerId));
+		fieldList.addField(FieldDef.getInstrumentId(session, FieldDef.InstrumentId));
+		fieldList.addField(FieldDef.getPeriodId(session, FieldDef.PeriodId));
+		fieldList.addField(FieldDef.getOfferSide(session));
+		fieldList.addField(FieldDef.getDataFilter(session));
+		fieldList.addField(FieldDef.getTableName(session));
 		
-		fieldList.getField(Fields.ServerId).setPrimaryKey(true);
-		fieldList.getField(Fields.InstrumentId).setPrimaryKey(true);
-		fieldList.getField(Fields.PeriodId).setPrimaryKey(true);
+		fieldList.getField(FieldDef.ServerId).setPrimaryKey(true);
+		fieldList.getField(FieldDef.InstrumentId).setPrimaryKey(true);
+		fieldList.getField(FieldDef.PeriodId).setPrimaryKey(true);
 		
 		return fieldList;
 	}
 
-	/**
-	 * Returns the list of fields for an instrument records.
-	 * 
-	 * @param session The working session.
-	 * @return The field list.
-	 */
-	public static FieldList getFieldListInstruments(Session session) {
-		
-		FieldList fieldList = new FieldList();
-		
-		fieldList.addField(Fields.getFieldServerId(session));
-		fieldList.addField(Fields.getFieldInstrumentId(session));
-		fieldList.addField(Fields.getFieldInstrumentDesc(session));
-		fieldList.addField(Fields.getFieldInstrumentPipValue(session));
-		fieldList.addField(Fields.getFieldInstrumentPipScale(session));
-		fieldList.addField(Fields.getFieldInstrumentTickValue(session));
-		fieldList.addField(Fields.getFieldInstrumentTickScale(session));
-		fieldList.addField(Fields.getFieldInstrumentVolumeScale(session));
-		fieldList.addField(Fields.getFieldInstrumentPrimaryCurrency(session));
-		fieldList.addField(Fields.getFieldInstrumentSecondaryCurrency(session));
-		fieldList.getField(Fields.ServerId).setPrimaryKey(true);
-		fieldList.getField(Fields.InstrumentId).setPrimaryKey(true);
-		
-		return fieldList;
-	}
-	
-	/**
-	 * Returns the list of fields for the period records.
-	 * 
-	 * @param session The working session.
-	 * @return The field list.
-	 */
-	public static FieldList getFieldListPeriods(Session session) {
-		
-		FieldList fieldList = new FieldList();
-		
-		fieldList.addField(Fields.getFieldPeriodId(session));
-		fieldList.addField(Fields.getFieldPeriodName(session));
-		fieldList.addField(Fields.getFieldPeriodUnitIndex(session));
-		fieldList.addField(Fields.getFieldPeriodSize(session));
-		fieldList.getField(Fields.PeriodId).setPrimaryKey(true);
-		
-		return fieldList;
-	}
-	
 	/**
 	 * Returns the list of fields for the offer sides records.
 	 * 
@@ -144,8 +80,8 @@ public class FieldLists {
 		
 		FieldList fieldList = new FieldList();
 		
-		fieldList.addField(Fields.getFieldOfferSide(session));
-		fieldList.getField(Fields.OfferSide).setPrimaryKey(true);
+		fieldList.addField(FieldDef.getOfferSide(session));
+		fieldList.getField(FieldDef.OfferSide).setPrimaryKey(true);
 		
 		return fieldList;
 	}
@@ -160,8 +96,8 @@ public class FieldLists {
 		
 		FieldList fieldList = new FieldList();
 		
-		fieldList.addField(Fields.getFieldDataFilter(session));
-		fieldList.getField(Fields.DataFilter).setPrimaryKey(true);
+		fieldList.addField(FieldDef.getDataFilter(session));
+		fieldList.getField(FieldDef.DataFilter).setPrimaryKey(true);
 		
 		return fieldList;
 	}

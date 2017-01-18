@@ -165,6 +165,9 @@ public class Period implements Comparable<Period> {
 		case Day:
 			time = 1000 * 60 * 60 * 24;
 			break;
+		case Week:
+			time = 1000 * 60 * 60 * 24 * 7;
+			break;
 		case Month:
 			time = 1000 * 60 * 60 * 24 * 31;
 			break;

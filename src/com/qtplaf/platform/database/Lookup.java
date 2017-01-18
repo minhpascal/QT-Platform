@@ -43,15 +43,15 @@ public class Lookup {
 		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
 		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersAvInst").toLowerCase());
 		lookup.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lookup.addColumn(Fields.InstrumentId);
-		lookup.addColumn(Fields.InstrumentDesc);
-		lookup.addColumn(Fields.InstrumentPipValue);
-		lookup.addColumn(Fields.InstrumentPipScale);
-		lookup.addColumn(Fields.InstrumentTickValue);
-		lookup.addColumn(Fields.InstrumentTickScale);
-		lookup.addColumn(Fields.InstrumentVolumeScale);
-		lookup.addColumn(Fields.InstrumentPrimaryCurrency);
-		lookup.addColumn(Fields.InstrumentSecondaryCurrency);
+		lookup.addColumn(FieldDef.InstrumentId);
+		lookup.addColumn(FieldDef.InstrumentDesc);
+		lookup.addColumn(FieldDef.InstrumentPipValue);
+		lookup.addColumn(FieldDef.InstrumentPipScale);
+		lookup.addColumn(FieldDef.InstrumentTickValue);
+		lookup.addColumn(FieldDef.InstrumentTickScale);
+		lookup.addColumn(FieldDef.InstrumentVolumeScale);
+		lookup.addColumn(FieldDef.InstrumentPrimaryCurrency);
+		lookup.addColumn(FieldDef.InstrumentSecondaryCurrency);
 		Record selected = lookup.lookupRecord(recordSet);
 		return Records.fromRecordInstrument(selected);
 	}

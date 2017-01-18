@@ -23,7 +23,7 @@ import com.qtplaf.library.database.Types;
  * 
  * @author Miquel Sas
  */
-public class Fields {
+public class FieldDef {
 
 	public static final String ServerId = "server_id";
 	public static final String ServerName = "server_name";
@@ -58,12 +58,13 @@ public class Fields {
 	 * Returns the <b><i>ServerId</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldServerId(Session session) {
+	public static Field getServerId(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(ServerId);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(20);
 		field.setHeader(session.getString("fieldServerIdHeader"));
@@ -76,12 +77,13 @@ public class Fields {
 	 * Returns the <b><i>ServerName</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldServerName(Session session) {
+	public static Field getServerName(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(ServerName);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(60);
 		field.setHeader(session.getString("fieldServerNameHeader"));
@@ -94,12 +96,13 @@ public class Fields {
 	 * Returns the <b><i>ServerTitle</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldServerTitle(Session session) {
+	public static Field getServerTitle(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(ServerTitle);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(120);
 		field.setHeader(session.getString("fieldServerTitleHeader"));
@@ -112,12 +115,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentId</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentId(Session session) {
+	public static Field getInstrumentId(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentId);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(20);
 		field.setHeader(session.getString("fieldInstrumentIdHeader"));
@@ -130,12 +134,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentDesc</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentDesc(Session session) {
+	public static Field getInstrumentDesc(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentDesc);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(120);
 		field.setHeader(session.getString("fieldInstrumentDescHeader"));
@@ -148,12 +153,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentPipValue</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentPipValue(Session session) {
+	public static Field getInstrumentPipValue(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentPipValue);
+		field.setName(name);
 		field.setType(Types.Decimal);
 		field.setLength(16);
 		field.setDecimals(8);
@@ -167,12 +173,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentPipScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentPipScale(Session session) {
+	public static Field getInstrumentPipScale(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentPipScale);
+		field.setName(name);
 		field.setType(Types.Integer);
 		field.setLength(2);
 		field.setHeader(session.getString("fieldInstrumentPipScaleHeader"));
@@ -185,12 +192,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentTickValue</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentTickValue(Session session) {
+	public static Field getInstrumentTickValue(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentTickValue);
+		field.setName(name);
 		field.setType(Types.Decimal);
 		field.setLength(16);
 		field.setDecimals(8);
@@ -204,12 +212,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentTickScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentTickScale(Session session) {
+	public static Field getInstrumentTickScale(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentTickScale);
+		field.setName(name);
 		field.setType(Types.Integer);
 		field.setLength(2);
 		field.setHeader(session.getString("fieldInstrumentTickScaleHeader"));
@@ -222,12 +231,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentVolumeScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentVolumeScale(Session session) {
+	public static Field getInstrumentVolumeScale(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentVolumeScale);
+		field.setName(name);
 		field.setType(Types.Integer);
 		field.setLength(2);
 		field.setHeader(session.getString("fieldInstrumentVolumeScaleHeader"));
@@ -240,12 +250,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentPrimaryCurrency</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentPrimaryCurrency(Session session) {
+	public static Field getInstrumentPrimaryCurrency(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentPrimaryCurrency);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(6);
 		field.setHeader(session.getString("fieldInstrumentPrimaryCurrencyHeader"));
@@ -258,12 +269,13 @@ public class Fields {
 	 * Returns the <b><i>InstrumentSecondaryCurrency</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldInstrumentSecondaryCurrency(Session session) {
+	public static Field getInstrumentSecondaryCurrency(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(InstrumentSecondaryCurrency);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(6);
 		field.setHeader(session.getString("fieldInstrumentSecondaryCurrencyHeader"));
@@ -278,7 +290,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldUnitId(Session session) {
+	public static Field getUnitId(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(UnitId);
@@ -296,7 +308,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldUnitName(Session session) {
+	public static Field getUnitName(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(UnitName);
@@ -312,12 +324,13 @@ public class Fields {
 	 * Returns the <b><i>PeriodId</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name The field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldPeriodId(Session session) {
+	public static Field getPeriodId(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(PeriodId);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(5);
 		field.setHeader(session.getString("fieldPeriodIdHeader"));
@@ -330,12 +343,13 @@ public class Fields {
 	 * Returns the <b><i>PeriodName</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name The field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldPeriodName(Session session) {
+	public static Field getPeriodName(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(PeriodName);
+		field.setName(name);
 		field.setType(Types.String);
 		field.setLength(15);
 		field.setHeader(session.getString("fieldPeriodNameHeader"));
@@ -349,12 +363,13 @@ public class Fields {
 	 * Returns the <b><i>PeriodSize</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name The field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldPeriodSize(Session session) {
+	public static Field getPeriodSize(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(PeriodSize);
+		field.setName(name);
 		field.setType(Types.Integer);
 		field.setLength(3);
 		field.setHeader(session.getString("fieldPeriodSizeHeader"));
@@ -367,12 +382,13 @@ public class Fields {
 	 * Returns the <b><i>PeriodUnitIndex</i></b> field definition.
 	 * 
 	 * @param session Working session.
+	 * @param name The field name.
 	 * @return The field definition.
 	 */
-	public static Field getFieldPeriodUnitIndex(Session session) {
+	public static Field getPeriodUnitIndex(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
-		field.setName(PeriodUnitIndex);
+		field.setName(name);
 		field.setType(Types.Integer);
 		field.setLength(2);
 		field.setHeader(session.getString("fieldPeriodUnitIndexHeader"));
@@ -387,7 +403,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldTableName(Session session) {
+	public static Field getTableName(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(TableName);
@@ -406,7 +422,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldDataFilter(Session session) {
+	public static Field getDataFilter(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(DataFilter);
@@ -424,7 +440,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldOfferSide(Session session) {
+	public static Field getOfferSide(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(OfferSide);
@@ -442,7 +458,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldTime(Session session) {
+	public static Field getTime(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(Time);
@@ -459,7 +475,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldOpen(Session session) {
+	public static Field getOpen(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(Open);
@@ -476,7 +492,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldHigh(Session session) {
+	public static Field getHigh(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(High);
@@ -493,7 +509,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldLow(Session session) {
+	public static Field getLow(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(Low);
@@ -510,7 +526,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldClose(Session session) {
+	public static Field getClose(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(Close);
@@ -527,7 +543,7 @@ public class Fields {
 	 * @param session Working session.
 	 * @return The field definition.
 	 */
-	public static Field getFieldVolume(Session session) {
+	public static Field getVolume(Session session) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(Volume);

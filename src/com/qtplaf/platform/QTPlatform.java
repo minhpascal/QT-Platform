@@ -51,11 +51,14 @@ import com.qtplaf.platform.action.ActionAvailableInstruments;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.action.TestAction;
-import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.Periods;
+import com.qtplaf.platform.database.tables.Servers;
 
 /**
  * Main entry of the QT-Platform.
@@ -187,13 +190,13 @@ public class QTPlatform {
 		}
 
 		// Check for the necessary table Server in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tables.Servers)) {
+		if (!ddl.existsTable(Tables.getTableServers(session))) {
 			ddl.buildTable(Tables.getTableServers(session));
 		}
 		synchronizeSupportedServer(session);
 
 		// Check for the necessary table Periods in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tables.Periods)) {
+		if (!ddl.existsTable(Names.getSchema(), Periods.Name)) {
 			ddl.buildTable(Tables.getTablePeriods(session));
 		}
 		synchronizeStandardPeriods(session);
@@ -211,7 +214,7 @@ public class QTPlatform {
 		synchronizeStandardDataFilters(session);
 
 		// Check for the necessary table Instruments in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tables.Instruments)) {
+		if (!ddl.existsTable(Names.getSchema(), Instruments.Name)) {
 			ddl.buildTable(Tables.getTableInstruments(session));
 		}
 
@@ -289,7 +292,7 @@ public class QTPlatform {
 			Record record = recordSet.get(i);
 			boolean remove = true;
 			for (Server server : servers) {
-				if (server.getId().toLowerCase().equals(record.getValue(Fields.ServerId).toString().toLowerCase())) {
+				if (server.getId().toLowerCase().equals(record.getValue(FieldDef.ServerId).toString().toLowerCase())) {
 					remove = false;
 					break;
 				}
@@ -305,7 +308,7 @@ public class QTPlatform {
 			boolean included = false;
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
-				if (record.getValue(Fields.ServerId).toString().toLowerCase().equals(id)) {
+				if (record.getValue(FieldDef.ServerId).toString().toLowerCase().equals(id)) {
 					included = true;
 					break;
 				}

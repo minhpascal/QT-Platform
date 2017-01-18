@@ -29,7 +29,7 @@ import com.qtplaf.library.trading.data.Tick;
  * 
  * @author Miquel Sas
  */
-public class TickTable extends Table {
+public class Ticks extends Table {
 
 	/**
 	 * Returns a list of values given a tick data element.
@@ -83,7 +83,7 @@ public class TickTable extends Table {
 	 * 
 	 * @param instrument
 	 */
-	public TickTable(Instrument instrument) {
+	public Ticks(Instrument instrument) {
 		super();
 
 		// Rgister the parameters.

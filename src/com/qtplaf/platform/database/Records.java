@@ -43,9 +43,9 @@ public class Records {
 	 * @return The record.
 	 */
 	public static Record getRecordServer(Record record, Server server) {
-		record.setValue(Fields.ServerId, server.getId());
-		record.setValue(Fields.ServerName, server.getName());
-		record.setValue(Fields.ServerTitle, server.getTitle());
+		record.setValue(FieldDef.ServerId, server.getId());
+		record.setValue(FieldDef.ServerName, server.getName());
+		record.setValue(FieldDef.ServerTitle, server.getTitle());
 		return record;
 	}
 
@@ -57,15 +57,15 @@ public class Records {
 	 * @return The record.
 	 */
 	public static Record getRecordInstrument(Record record, Instrument instrument) {
-		record.setValue(Fields.InstrumentId, instrument.getId());
-		record.setValue(Fields.InstrumentDesc, instrument.getDescription());
-		record.setValue(Fields.InstrumentPipValue, instrument.getPipValue());
-		record.setValue(Fields.InstrumentPipScale, instrument.getPipScale());
-		record.setValue(Fields.InstrumentTickValue, instrument.getTickValue());
-		record.setValue(Fields.InstrumentTickScale, instrument.getTickScale());
-		record.setValue(Fields.InstrumentVolumeScale, instrument.getVolumeScale());
-		record.setValue(Fields.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
-		record.setValue(Fields.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
+		record.setValue(FieldDef.InstrumentId, instrument.getId());
+		record.setValue(FieldDef.InstrumentDesc, instrument.getDescription());
+		record.setValue(FieldDef.InstrumentPipValue, instrument.getPipValue());
+		record.setValue(FieldDef.InstrumentPipScale, instrument.getPipScale());
+		record.setValue(FieldDef.InstrumentTickValue, instrument.getTickValue());
+		record.setValue(FieldDef.InstrumentTickScale, instrument.getTickScale());
+		record.setValue(FieldDef.InstrumentVolumeScale, instrument.getVolumeScale());
+		record.setValue(FieldDef.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
+		record.setValue(FieldDef.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
 		return record;
 	}
 
@@ -95,16 +95,16 @@ public class Records {
 			return null;
 		}
 		Instrument instrument = new Instrument();
-		instrument.setId(record.getValue(Fields.InstrumentId).getString());
-		instrument.setDescription(record.getValue(Fields.InstrumentDesc).getString());
-		instrument.setPipValue(record.getValue(Fields.InstrumentPipValue).getDouble());
-		instrument.setPipScale(record.getValue(Fields.InstrumentPipScale).getInteger());
-		instrument.setTickValue(record.getValue(Fields.InstrumentTickValue).getDouble());
-		instrument.setTickScale(record.getValue(Fields.InstrumentTickScale).getInteger());
-		instrument.setVolumeScale(record.getValue(Fields.InstrumentVolumeScale).getInteger());
-		String primaryCurrency = record.getValue(Fields.InstrumentPrimaryCurrency).getString();
+		instrument.setId(record.getValue(FieldDef.InstrumentId).getString());
+		instrument.setDescription(record.getValue(FieldDef.InstrumentDesc).getString());
+		instrument.setPipValue(record.getValue(FieldDef.InstrumentPipValue).getDouble());
+		instrument.setPipScale(record.getValue(FieldDef.InstrumentPipScale).getInteger());
+		instrument.setTickValue(record.getValue(FieldDef.InstrumentTickValue).getDouble());
+		instrument.setTickScale(record.getValue(FieldDef.InstrumentTickScale).getInteger());
+		instrument.setVolumeScale(record.getValue(FieldDef.InstrumentVolumeScale).getInteger());
+		String primaryCurrency = record.getValue(FieldDef.InstrumentPrimaryCurrency).getString();
 		instrument.setPrimaryCurrency(Currency.getInstance(primaryCurrency));
-		String secondaryCurrency = record.getValue(Fields.InstrumentSecondaryCurrency).getString();
+		String secondaryCurrency = record.getValue(FieldDef.InstrumentSecondaryCurrency).getString();
 		instrument.setSecondaryCurrency(Currency.getInstance(secondaryCurrency));
 		return instrument;
 	}
@@ -117,10 +117,10 @@ public class Records {
 	 * @return The record.
 	 */
 	public static Record getRecordPeriod(Record record, Period period) {
-		record.setValue(Fields.PeriodId, period.getId());
-		record.setValue(Fields.PeriodName, period.toString());
-		record.setValue(Fields.PeriodSize, period.getSize());
-		record.setValue(Fields.PeriodUnitIndex, period.getUnit().ordinal());
+		record.setValue(FieldDef.PeriodId, period.getId());
+		record.setValue(FieldDef.PeriodName, period.toString());
+		record.setValue(FieldDef.PeriodSize, period.getSize());
+		record.setValue(FieldDef.PeriodUnitIndex, period.getUnit().ordinal());
 		return record;
 	}
 
@@ -145,7 +145,7 @@ public class Records {
 	 * @return The record.
 	 */
 	public static Record getRecordOfferSide(Record record, OfferSide offerSide) {
-		record.setValue(Fields.OfferSide, offerSide.name());
+		record.setValue(FieldDef.OfferSide, offerSide.name());
 		return record;
 	}
 
@@ -170,7 +170,7 @@ public class Records {
 	 * @return The record.
 	 */
 	public static Record getRecordDataFilter(Record record, Filter dataFilter) {
-		record.setValue(Fields.DataFilter, dataFilter.name());
+		record.setValue(FieldDef.DataFilter, dataFilter.name());
 		return record;
 	}
 
@@ -195,12 +195,12 @@ public class Records {
 	 * @return The filled record.
 	 */
 	public static Record getRecordOHLCV(Record record, OHLCV ohlcv) {
-		record.getValue(Fields.Time).setLong(ohlcv.getTime());
-		record.getValue(Fields.Open).setDouble(ohlcv.getOpen());
-		record.getValue(Fields.High).setDouble(ohlcv.getHigh());
-		record.getValue(Fields.Low).setDouble(ohlcv.getLow());
-		record.getValue(Fields.Close).setDouble(ohlcv.getClose());
-		record.getValue(Fields.Volume).setDouble(ohlcv.getVolume());
+		record.getValue(FieldDef.Time).setLong(ohlcv.getTime());
+		record.getValue(FieldDef.Open).setDouble(ohlcv.getOpen());
+		record.getValue(FieldDef.High).setDouble(ohlcv.getHigh());
+		record.getValue(FieldDef.Low).setDouble(ohlcv.getLow());
+		record.getValue(FieldDef.Close).setDouble(ohlcv.getClose());
+		record.getValue(FieldDef.Volume).setDouble(ohlcv.getVolume());
 		return record;
 	}
 

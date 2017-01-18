@@ -17,7 +17,9 @@ package com.qtplaf.platform.database;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorDDL;
+import com.qtplaf.library.database.View;
 import com.qtplaf.library.database.rdbms.DBEngine;
+import com.qtplaf.library.database.rdbms.DBPersistor;
 import com.qtplaf.library.database.rdbms.DBPersistorDDL;
 import com.qtplaf.library.trading.server.Server;
 
@@ -49,9 +51,19 @@ public class Persistors {
 		return dbEngine;
 	}
 
-	
+	/**
+	 * Returns the persistor for the view.
+	 * 
+	 * @param view The view.
+	 * @return The persistor.
+	 */
+	public static Persistor getPersistor(View view) {
+		return new DBPersistor(getDBEngine(), view);
+	}
+
 	/**
 	 * Returns a suitable DDL.
+	 * 
 	 * @return The DDL.
 	 */
 	public static PersistorDDL getDDL() {

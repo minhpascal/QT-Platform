@@ -18,7 +18,7 @@
 	<entry key="qtItemOfferSide">offer side</entry>
 	<entry key="qtItemDataFilter">data filter</entry>
 	
-	<entry key="qtAskDeleteTicker">Delete current ticker and downloaded data?</entry>
-	<entry key="qtAskPurgeTicker">Purge (delete) current ticker data?</entry>
+	<entry key="qtAskDeleteTickers">Delete selected tickers and downloaded data?</entry>
+	<entry key="qtAskPurgeTickers">Purge (delete) selected tickers data?</entry>
 	
 </properties>

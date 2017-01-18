@@ -15,14 +15,8 @@
 package com.qtplaf.platform.action;
 
 import java.awt.event.ActionEvent;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.MessageFormat;
 
 import javax.swing.AbstractAction;
-import javax.swing.ListSelectionModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,36 +25,12 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
-import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
-import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.Value;
-import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.EditMode;
-import com.qtplaf.library.swing.MessageBox;
-import com.qtplaf.library.swing.ProgressManager;
-import com.qtplaf.library.swing.action.ActionTableOption;
-import com.qtplaf.library.swing.core.JFormRecord;
-import com.qtplaf.library.swing.core.JFormRecordCustomizer;
-import com.qtplaf.library.swing.core.JOptionFrame;
-import com.qtplaf.library.swing.core.JPanelTableRecord;
-import com.qtplaf.library.swing.core.JTableRecord;
-import com.qtplaf.library.swing.core.TableModelRecord;
-import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.library.trading.server.Filter;
-import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Fields;
-import com.qtplaf.platform.database.Lookup;
-import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Persistors;
-import com.qtplaf.platform.database.RecordSets;
-import com.qtplaf.platform.database.Records;
-import com.qtplaf.platform.database.Tables;
-import com.qtplaf.platform.task.TaskDownloadTicker;
 
 /**
  * Edit the list of server tickers.
@@ -94,7 +64,7 @@ public class TestAction extends AbstractAction {
 			Server server = (Server) ActionUtils.getLaunchArgs(this);
 			String tableName = "eurusd_mn001_aa";
 			Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
-			Field fTIME = persistor.getField(Fields.Time);
+			Field fTIME = persistor.getField(FieldDef.Time);
 			Order order = new Order();
 			order.add(fTIME, false);
 			Record record = null;

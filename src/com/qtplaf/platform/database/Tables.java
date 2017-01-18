@@ -20,6 +20,9 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.rdbms.DBPersistor;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.Periods;
+import com.qtplaf.platform.database.tables.Servers;
 
 /**
  * Centralizes table definitions.
@@ -29,10 +32,7 @@ import com.qtplaf.library.trading.server.Server;
 public class Tables {
 
 	public static final String DataFilters = "data_filters";
-	public static final String Instruments = "instruments";
 	public static final String OfferSides = "offer_sides";
-	public static final String Periods = "periods";
-	public static final String Servers = "servers";
 	public static final String Tickers = "tickers";
 
 	/**
@@ -58,14 +58,7 @@ public class Tables {
 	 * @return The table definition.
 	 */
 	public static Table getTableInstruments(Session session) {
-
-		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListInstruments(session));
-		table.setName(Instruments);
-		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
-
-		return table;
+		return new Instruments(session);
 	}
 
 	/**
@@ -92,20 +85,7 @@ public class Tables {
 	 * @return The table definition.
 	 */
 	public static Table getTablePeriods(Session session) {
-
-		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListPeriods(session));
-		table.setName(Periods);
-		table.setSchema(Names.getSchema());
-
-		Index index = new Index();
-		index.add(table.getField(Fields.PeriodUnitIndex));
-		index.add(table.getField(Fields.PeriodSize));
-		table.addIndex(index);
-
-		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table.getSimpleView(index)));
-
-		return table;
+		return new Periods(session);
 	}
 
 	/**
@@ -115,14 +95,7 @@ public class Tables {
 	 * @return The table definition.
 	 */
 	public static Table getTableServers(Session session) {
-
-		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListServers(session));
-		table.setName(Servers);
-		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table.getSimpleView()));
-
-		return table;
+		return new Servers(session);
 	}
 
 	/**
@@ -144,21 +117,21 @@ public class Tables {
 		ForeignKey fkPeriods = new ForeignKey(false);
 		fkPeriods.setLocalTable(tableTickers);
 		fkPeriods.setForeignTable(tablePeriods);
-		fkPeriods.add(tableTickers.getField(Fields.PeriodId), tablePeriods.getField(Fields.PeriodId));
+		fkPeriods.add(tableTickers.getField(FieldDef.PeriodId), tablePeriods.getField(FieldDef.PeriodId));
 		tableTickers.addForeignKey(fkPeriods);
 
 		Table tableOfferSides = getTableOfferSides(session);
 		ForeignKey fkOfferSides = new ForeignKey(false);
 		fkOfferSides.setLocalTable(tableTickers);
 		fkOfferSides.setForeignTable(tableOfferSides);
-		fkOfferSides.add(tableTickers.getField(Fields.OfferSide), tableOfferSides.getField(Fields.OfferSide));
+		fkOfferSides.add(tableTickers.getField(FieldDef.OfferSide), tableOfferSides.getField(FieldDef.OfferSide));
 		tableTickers.addForeignKey(fkOfferSides);
 
 		Table tableDataFilters = getTableDataFilters(session);
 		ForeignKey fkDataFilters = new ForeignKey(false);
 		fkDataFilters.setLocalTable(tableTickers);
 		fkDataFilters.setForeignTable(tableDataFilters);
-		fkDataFilters.add(tableTickers.getField(Fields.DataFilter), tableDataFilters.getField(Fields.DataFilter));
+		fkDataFilters.add(tableTickers.getField(FieldDef.DataFilter), tableDataFilters.getField(FieldDef.DataFilter));
 		tableTickers.addForeignKey(fkDataFilters);
 
 		tableTickers.setPersistor(

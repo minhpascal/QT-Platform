@@ -17,7 +17,7 @@ package com.qtplaf.library.database;
 import com.qtplaf.library.util.StringUtils;
 
 /**
- * A group of fields within a table or view. Fields of the same group are expected to same a related meaning.
+ * A group of fields within a table or view. FieldDef of the same group are expected to same a related meaning.
  * 
  * @author Miquel Sas
  */

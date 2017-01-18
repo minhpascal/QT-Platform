@@ -61,7 +61,7 @@ public class JPanelColumns extends JPanel {
 	 * Enumerates the possible operations or modes.
 	 */
 	public enum Mode {
-		/** Fields selection. */
+		/** FieldDef selection. */
 		Selection,
 		/** Order definition. */
 		Order;

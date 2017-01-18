@@ -34,7 +34,7 @@ import com.qtplaf.library.trading.server.OHLCVIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
@@ -279,7 +279,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private long getTimeOfLastDowloaded() throws PersistorException {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(Fields.Time);
+		Field fTIME = persistor.getField(FieldDef.Time);
 		Order order = new Order();
 		order.add(fTIME, false);
 		Record record = null;
@@ -289,7 +289,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		}
 		iter.close();
 		if (record != null) {
-			return record.getValue(Fields.Time).getLong();
+			return record.getValue(FieldDef.Time).getLong();
 		}
 		return -1;
 	}
@@ -322,7 +322,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private void deleteFromTimeFrom() throws Exception {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(Fields.Time);
+		Field fTIME = persistor.getField(FieldDef.Time);
 		Value vTIME = new Value(getTimeFrom());
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldGE(fTIME, vTIME));

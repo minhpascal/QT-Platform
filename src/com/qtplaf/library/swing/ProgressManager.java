@@ -82,6 +82,10 @@ public class ProgressManager {
 	 * The frame title.
 	 */
 	private String title;
+	/**
+	 * The option frame.
+	 */
+	private JOptionFrame frame;
 
 	/**
 	 * Constructor.
@@ -91,6 +95,7 @@ public class ProgressManager {
 	public ProgressManager(Session session) {
 		super();
 		progress = new JPanelProgressGroup(session);
+		frame = new JOptionFrame(getSession());
 	}
 
 	/**
@@ -128,7 +133,7 @@ public class ProgressManager {
 	public void setPanelProgressWidth(int panelProgressWidth) {
 		progress.setPanelProgressWidth(panelProgressWidth);
 	}
-	
+
 	/**
 	 * Set the frame title.
 	 * 
@@ -151,10 +156,30 @@ public class ProgressManager {
 	 * @param resizable A boolean that indicates if the frame is resizable.
 	 */
 	public void showFrame(boolean resizable) {
-		JOptionFrame frame = new JOptionFrame(getSession());
 		frame.setTitle(title);
 		frame.setComponent(new JScrollPane(progress));
 		frame.addAction(new ActionClose(getSession()));
 		frame.showFrame(resizable);
 	}
+
+	/**
+	 * Set the frame size factor.
+	 * 
+	 * @param widthFactor Screen width factor.
+	 * @param heightFactor Screen height factor.
+	 */
+	public void setSize(double widthFactor, double heightFactor) {
+		frame.setSize(widthFactor, heightFactor);
+	}
+
+	/**
+	 * Set the frame size.
+	 * 
+	 * @param width
+	 * @param height
+	 */
+	public void setSize(int width, int height) {
+		frame.setSize(width, height);
+	}
+
 }

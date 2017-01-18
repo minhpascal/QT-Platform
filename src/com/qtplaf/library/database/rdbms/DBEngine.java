@@ -65,7 +65,7 @@ public class DBEngine {
 	/**
 	 * Creates a <i>DBEngine</i> assigning the database adapter and the connection information.
 	 * 
-	 * @param databaseAdapter The database adapter.
+	 * @param dbEngineAdapter The database engine adapter.
 	 * @param connectionInfo The connection information.
 	 * 
 	 * @throws ClassNotFoundException
@@ -73,20 +73,26 @@ public class DBEngine {
 	 * @throws IllegalAccessException
 	 * @throws SQLException
 	 */
-	public DBEngine(DBEngineAdapter databaseAdapter, ConnectionInfo connectionInfo)
+	public DBEngine(DBEngineAdapter dbEngineAdapter, ConnectionInfo connectionInfo)
 		throws ClassNotFoundException,
 		InstantiationException,
 		IllegalAccessException,
 		SQLException {
 		super();
-		this.dbEngineAdapter = databaseAdapter;
+		this.dbEngineAdapter = dbEngineAdapter;
 		this.connectionInfo = connectionInfo;
-		databaseAdapter.registerDriver();
+
+		dbEngineAdapter.registerDriver();
 	}
 
+	/**
+	 * Returns the connection pool.
+	 * 
+	 * @return The connection pool.
+	 */
 	public ConnectionPool getConnectionPool() {
 		if (connectionPool == null) {
-			connectionPool = new ConnectionPool(getConnectionInfo());
+			connectionPool = new ConnectionPool(connectionInfo);
 		}
 		return connectionPool;
 	}
@@ -110,7 +116,7 @@ public class DBEngine {
 	}
 
 	/**
-	 * Returns the connection.
+	 * Returns the connection, pooled or not depending on the driver.
 	 *
 	 * @return The connection.
 	 * @throws SQLException
@@ -343,7 +349,7 @@ public class DBEngine {
 	public int executeCreateSchema(String schema) throws SQLException {
 		return executeStatement(getDBEngineAdapter().getStatementCreateSchema(schema));
 	}
-	
+
 	/**
 	 * Executes a create table statement, with primary key, indexes, persistent foreign keys and constraints.
 	 *
@@ -353,27 +359,27 @@ public class DBEngine {
 	 */
 	public int executeBuildTable(Table table) throws SQLException {
 		int updated = 0;
-		
+
 		// Create the table.
 		updated += executeCreateTable(table);
-		
+
 		// Add the primary key.
 		if (table.getPrimaryKey() != null) {
 			updated += executeAddPrimaryKey(table);
 		}
-		
+
 		// Add secondary indexes.
 		for (int i = 0; i < table.getIndexCount(); i++) {
 			updated += executeCreateIndex(table.getIndex(i));
 		}
-		
+
 		// Persistent foreign keys.
 		for (int i = 0; i < table.getForeignKeyCount(); i++) {
 			if (table.getForeignKey(i).isPersistent()) {
 				updated += executeAddForeignKey(table, table.getForeignKey(i));
 			}
 		}
-		
+
 		return updated;
 	}
 

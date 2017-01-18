@@ -16,6 +16,7 @@ package com.qtplaf.platform.action;
 
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ListSelectionModel;
@@ -46,7 +47,7 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
@@ -83,19 +84,19 @@ public class ActionTickers extends AbstractAction {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				String mustBeSet = session.getString("qtItemMustBeSet");
 				// Validate the period.
-				Value period = form.getEditField(Fields.PeriodId).getValue();
+				Value period = form.getEditField(FieldDef.PeriodId).getValue();
 				if (Records.getRecordPeriod(session, period) == null) {
 					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemPeriod")));
 					return false;
 				}
 				// Validate offer side.
-				Value offerSide = form.getEditField(Fields.OfferSide).getValue();
+				Value offerSide = form.getEditField(FieldDef.OfferSide).getValue();
 				if (Records.getRecordOfferSide(session, offerSide) == null) {
 					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemOfferSide")));
 					return false;
 				}
 				// Validate data filter.
-				Value dataFilter = form.getEditField(Fields.DataFilter).getValue();
+				Value dataFilter = form.getEditField(FieldDef.DataFilter).getValue();
 				if (Records.getRecordDataFilter(session, dataFilter) == null) {
 					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemDataFilter")));
 					return false;
@@ -138,12 +139,12 @@ public class ActionTickers extends AbstractAction {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String instrument = form.getEditField(Fields.InstrumentId).getValue().toString();
-			String period = form.getEditField(Fields.PeriodId).getValue().toString();
-			String filter = form.getEditField(Fields.DataFilter).getValue().toString();
-			String offerSide = form.getEditField(Fields.OfferSide).getValue().toString();
+			String instrument = form.getEditField(FieldDef.InstrumentId).getValue().toString();
+			String period = form.getEditField(FieldDef.PeriodId).getValue().toString();
+			String filter = form.getEditField(FieldDef.DataFilter).getValue().toString();
+			String offerSide = form.getEditField(FieldDef.OfferSide).getValue().toString();
 			Value tableName = new Value(Names.getName(instrument, period, filter, offerSide));
-			form.getEditField(Fields.TableName).setValue(tableName);
+			form.getEditField(FieldDef.TableName).setValue(tableName);
 		}
 	}
 
@@ -182,7 +183,7 @@ public class ActionTickers extends AbstractAction {
 				Persistor persistor = Persistors.getPersistorTickers(session);
 				persistor.insert(record);
 				// Create the table.
-				String tableName = record.getValue(Fields.TableName).getString();
+				String tableName = record.getValue(FieldDef.TableName).getString();
 				Table table = Tables.getTableOHLCV(session, server, tableName);
 				persistor.getDDL().buildTable(table);
 				getTableModel().insertRecord(record);
@@ -216,26 +217,26 @@ public class ActionTickers extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
-				Record record = getSelectedRecord();
-				if (record == null) {
+				List<Record> records = getSelectedRecords();
+				if (records.isEmpty()) {
 					return;
 				}
 
 				// Ask delete.
-				String question = session.getString("qtAskDeleteTicker");
+				String question = session.getString("qtAskDeleteTickers");
 				if (MessageBox.question(session, question, MessageBox.yesNo) != MessageBox.yes) {
 					return;
 				}
 
-				// Current selecte row.
+				// Delete records and tables.
 				int row = getTableRecord().getSelectedRow();
-
-				// Delete record and table.
-				Persistors.getPersistorTickers(session).delete(record);
-				String tableName = record.getValue(Fields.TableName).getString();
-				Table table = Tables.getTableOHLCV(session, server, tableName);
-				Persistors.getDDL().dropTable(table);
-				getTableModel().deleteRecord(row);
+				for (Record record : records) {
+					Persistors.getPersistorTickers(session).delete(record);
+					String tableName = record.getValue(FieldDef.TableName).getString();
+					Table table = Tables.getTableOHLCV(session, server, tableName);
+					Persistors.getDDL().dropTable(table);
+					getTableModel().deleteRecord(record);
+				}
 				getTableRecord().setSelectedRow(row);
 
 			} catch (Exception exc) {
@@ -243,7 +244,6 @@ public class ActionTickers extends AbstractAction {
 			}
 		}
 	}
-
 
 	/**
 	 * Action to purge a ticker data.
@@ -268,21 +268,23 @@ public class ActionTickers extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
-				Record record = getSelectedRecord();
-				if (record == null) {
+				List<Record> records = getSelectedRecords();
+				if (records.isEmpty()) {
 					return;
 				}
 
 				// Ask delete.
-				String question = session.getString("qtAskPurgeTicker");
+				String question = session.getString("qtAskPurgeTickers");
 				if (MessageBox.question(session, question, MessageBox.yesNo) != MessageBox.yes) {
 					return;
 				}
 
 				// Delete record and table.
-				String tableName = record.getValue(Fields.TableName).getString();
-				Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
-				persistor.delete((Criteria)null);
+				for (Record record : records) {
+					String tableName = record.getValue(FieldDef.TableName).getString();
+					Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
+					persistor.delete((Criteria) null);
+				}
 
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -313,29 +315,33 @@ public class ActionTickers extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
-				Record record = getSelectedRecord();
-				if (record == null) {
+				List<Record> records = getSelectedRecords();
+				if (records.isEmpty()) {
 					return;
 				}
-
-				// Retrieve the instrument, period, offer side and filter instances, and the table name.
-				Value vSERVER_ID = record.getValue(Fields.ServerId);
-				Value vINSTR_ID = record.getValue(Fields.InstrumentId);
-				Record recordInstr = Records.getRecordInstrument(session, vSERVER_ID, vINSTR_ID);
-				Instrument instrument = Records.fromRecordInstrument(recordInstr);
-				Period period = Period.parseId(record.getValue(Fields.PeriodId).getString());
-				OfferSide offerSide = OfferSide.valueOf(record.getValue(Fields.OfferSide).getString());
-				Filter filter = Filter.valueOf(record.getValue(Fields.DataFilter).getString());
-
-				// The task.
-				TaskDownloadTicker task =
-					new TaskDownloadTicker(session, server, instrument, period, offerSide, filter);
-				task.setName(instrument.getId());
-				task.setDescription(instrument.getDescription());
-				
-				// Finally the progress manager.
 				ProgressManager progress = new ProgressManager(session);
-				progress.addTask(task);
+				if (records.size() > 1) {
+					progress.setSize(0.4, 0.8);
+				} else {
+					progress.setPanelProgressWidth(1000);
+				}
+				for (Record record : records) {
+					Value vSERVER_ID = record.getValue(FieldDef.ServerId);
+					Value vINSTR_ID = record.getValue(FieldDef.InstrumentId);
+					Record recordInstr = Records.getRecordInstrument(session, vSERVER_ID, vINSTR_ID);
+					Instrument instrument = Records.fromRecordInstrument(recordInstr);
+					Period period = Period.parseId(record.getValue(FieldDef.PeriodId).getString());
+					OfferSide offerSide = OfferSide.valueOf(record.getValue(FieldDef.OfferSide).getString());
+					Filter filter = Filter.valueOf(record.getValue(FieldDef.DataFilter).getString());
+
+					TaskDownloadTicker task =
+						new TaskDownloadTicker(session, server, instrument, period, offerSide, filter);
+					
+					task.setName(instrument.getId());
+					task.setDescription(period.toString());
+
+					progress.addTask(task);
+				}
 				progress.showFrame();
 
 			} catch (Exception exc) {
@@ -382,14 +388,14 @@ public class ActionTickers extends AbstractAction {
 				Persistor persistor = Persistors.getPersistorTickers(session);
 				Record masterRecord = persistor.getDefaultRecord();
 
-				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
+				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(Fields.InstrumentId);
-				tableModelRecord.addColumn(Fields.PeriodName);
-				tableModelRecord.addColumn(Fields.OfferSide);
-				tableModelRecord.addColumn(Fields.DataFilter);
-				tableModelRecord.addColumn(Fields.TableName);
+				tableModelRecord.addColumn(FieldDef.InstrumentId);
+				tableModelRecord.addColumn(FieldDef.PeriodName);
+				tableModelRecord.addColumn(FieldDef.OfferSide);
+				tableModelRecord.addColumn(FieldDef.DataFilter);
+				tableModelRecord.addColumn(FieldDef.TableName);
 
 				tableModelRecord.setRecordSet(RecordSets.getRecordSetTickers(session, server));
 				tableRecord.setModel(tableModelRecord);
@@ -437,31 +443,31 @@ public class ActionTickers extends AbstractAction {
 	private Record getTicker(Session session, Server server, Instrument instrument) {
 		Persistor persistor = Persistors.getPersistorTickers(session);
 		Record record = persistor.getDefaultRecord();
-		record.getValue(Fields.ServerId).setValue(server.getId());
-		record.getValue(Fields.InstrumentId).setValue(instrument.getId());
+		record.getValue(FieldDef.ServerId).setValue(server.getId());
+		record.getValue(FieldDef.InstrumentId).setValue(instrument.getId());
 
 		JFormRecord form = new JFormRecord(session);
 		form.setRecord(record);
 		form.setTitle(session.getString("qtMenuServersTickersCreate"));
 		form.setEditMode(EditMode.Insert);
-		form.addField(Fields.ServerId);
-		form.addField(Fields.InstrumentId);
-		form.addField(Fields.PeriodId);
-		form.addField(Fields.PeriodName);
-		form.addField(Fields.OfferSide);
-		form.addField(Fields.DataFilter);
-		form.addField(Fields.TableName);
+		form.addField(FieldDef.ServerId);
+		form.addField(FieldDef.InstrumentId);
+		form.addField(FieldDef.PeriodId);
+		form.addField(FieldDef.PeriodName);
+		form.addField(FieldDef.OfferSide);
+		form.addField(FieldDef.DataFilter);
+		form.addField(FieldDef.TableName);
 
-		form.getEditField(Fields.ServerId).setEnabled(false);
-		form.getEditField(Fields.InstrumentId).setEnabled(false);
-		form.getEditField(Fields.TableName).setEnabled(false);
+		form.getEditField(FieldDef.ServerId).setEnabled(false);
+		form.getEditField(FieldDef.InstrumentId).setEnabled(false);
+		form.getEditField(FieldDef.TableName).setEnabled(false);
 
 		ActionTableName actionTableName = new ActionTableName(form);
-		form.getEditField(Fields.ServerId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Fields.InstrumentId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Fields.PeriodId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Fields.OfferSide).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Fields.DataFilter).getEditContext().addValueAction(actionTableName);
+		form.getEditField(FieldDef.ServerId).getEditContext().addValueAction(actionTableName);
+		form.getEditField(FieldDef.InstrumentId).getEditContext().addValueAction(actionTableName);
+		form.getEditField(FieldDef.PeriodId).getEditContext().addValueAction(actionTableName);
+		form.getEditField(FieldDef.OfferSide).getEditContext().addValueAction(actionTableName);
+		form.getEditField(FieldDef.DataFilter).getEditContext().addValueAction(actionTableName);
 
 		form.setCustomizer(new TickersFormCustomizer());
 

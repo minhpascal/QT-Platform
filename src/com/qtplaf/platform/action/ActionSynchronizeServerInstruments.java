@@ -31,7 +31,7 @@ import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Persistors;
 
 /**
@@ -67,16 +67,16 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 				statusBar.setStatus("Inserting available instruments", 4, 5);
 				for (Instrument instrument : instruments) {
 					Record record = persistor.getDefaultRecord();
-					record.setValue(Fields.ServerId, server.getId());
-					record.setValue(Fields.InstrumentId, instrument.getId());
-					record.setValue(Fields.InstrumentDesc, instrument.getDescription());
-					record.setValue(Fields.InstrumentPipValue, instrument.getPipValue());
-					record.setValue(Fields.InstrumentPipScale, instrument.getPipScale());
-					record.setValue(Fields.InstrumentTickValue, instrument.getTickValue());
-					record.setValue(Fields.InstrumentTickScale, instrument.getTickScale());
-					record.setValue(Fields.InstrumentVolumeScale, instrument.getVolumeScale());
-					record.setValue(Fields.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
-					record.setValue(Fields.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
+					record.setValue(FieldDef.ServerId, server.getId());
+					record.setValue(FieldDef.InstrumentId, instrument.getId());
+					record.setValue(FieldDef.InstrumentDesc, instrument.getDescription());
+					record.setValue(FieldDef.InstrumentPipValue, instrument.getPipValue());
+					record.setValue(FieldDef.InstrumentPipScale, instrument.getPipScale());
+					record.setValue(FieldDef.InstrumentTickValue, instrument.getTickValue());
+					record.setValue(FieldDef.InstrumentTickScale, instrument.getTickScale());
+					record.setValue(FieldDef.InstrumentVolumeScale, instrument.getVolumeScale());
+					record.setValue(FieldDef.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
+					record.setValue(FieldDef.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
 					persistor.insert(record);
 				}
 				

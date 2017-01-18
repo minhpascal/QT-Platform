@@ -19,7 +19,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,72 +187,6 @@ public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 			constrains.insets = new Insets(1, 1, 1, 1);
 			add(panel, constrains);
 			x++;
-		}
-
-		if (!panels.isEmpty() && panels.size() == getMaximumPanelLevels(panels)) {
-			Window window = SwingUtils.getWindowAncestor(this);
-			if (window != null) {
-				window.pack();
-			}
-		}
-	}
-
-	/**
-	 * Returns the maximum number of panel levels using the task levels of each panel task.
-	 * 
-	 * @param panels The list of panels.
-	 * @return The maximum number of levels.
-	 */
-	private int getMaximumPanelLevels(List<JPanelProgress> panels) {
-
-		// Fill a list of bottom tasks.
-		List<Task> bottomTasks = new ArrayList<>();
-		for (JPanelProgress panel : panels) {
-			Task task = panel.getMonitoringTask();
-			if (task != null && task.getParent() == null) {
-				fillBottomTasks(bottomTasks, task);
-			}
-		}
-
-		// Calculate levels.
-		int levels = 0;
-		for (Task task : bottomTasks) {
-			levels = Math.max(levels, getTaskLevels(task));
-		}
-
-		return levels;
-	}
-
-	/**
-	 * Returns the number of task levels starting at the bottom task and moving up.
-	 * 
-	 * @param bottomTask The source bottom task.
-	 * @return The number of levels to up.
-	 */
-	private int getTaskLevels(Task bottomTask) {
-		int levels = 1;
-		Task parent = bottomTask.getParent();
-		while (parent != null) {
-			levels++;
-			parent = parent.getParent();
-		}
-		return levels;
-	}
-
-	/**
-	 * Fill the list of bottom tasks with the bottom children of the task argument.
-	 * 
-	 * @param bottomTasks The list of bottom tasks to fill.
-	 * @param task The sourc task.
-	 */
-	private void fillBottomTasks(List<Task> bottomTasks, Task task) {
-		List<Task> children = task.getChildren();
-		if (children == null || children.isEmpty()) {
-			bottomTasks.add(task);
-			return;
-		}
-		for (Task child : children) {
-			fillBottomTasks(bottomTasks, child);
 		}
 	}
 

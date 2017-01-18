@@ -31,7 +31,7 @@ import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
 
@@ -87,15 +87,15 @@ public class ActionAvailableInstruments extends AbstractAction {
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(Fields.InstrumentId);
-				tableModelRecord.addColumn(Fields.InstrumentDesc);
-				tableModelRecord.addColumn(Fields.InstrumentPipValue);
-				tableModelRecord.addColumn(Fields.InstrumentPipScale);
-				tableModelRecord.addColumn(Fields.InstrumentTickValue);
-				tableModelRecord.addColumn(Fields.InstrumentTickScale);
-				tableModelRecord.addColumn(Fields.InstrumentVolumeScale);
-				tableModelRecord.addColumn(Fields.InstrumentPrimaryCurrency);
-				tableModelRecord.addColumn(Fields.InstrumentSecondaryCurrency);
+				tableModelRecord.addColumn(FieldDef.InstrumentId);
+				tableModelRecord.addColumn(FieldDef.InstrumentDesc);
+				tableModelRecord.addColumn(FieldDef.InstrumentPipValue);
+				tableModelRecord.addColumn(FieldDef.InstrumentPipScale);
+				tableModelRecord.addColumn(FieldDef.InstrumentTickValue);
+				tableModelRecord.addColumn(FieldDef.InstrumentTickScale);
+				tableModelRecord.addColumn(FieldDef.InstrumentVolumeScale);
+				tableModelRecord.addColumn(FieldDef.InstrumentPrimaryCurrency);
+				tableModelRecord.addColumn(FieldDef.InstrumentSecondaryCurrency);
 				tableModelRecord.setRecordSet(RecordSets.getRecordSetAvailableInstruments(session, server));
 				tableRecord.setModel(tableModelRecord);
 

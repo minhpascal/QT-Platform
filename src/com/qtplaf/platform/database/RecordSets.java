@@ -42,7 +42,7 @@ public class RecordSets {
 
 		Persistor persistor = Persistors.getPersistorInstruments(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(FieldDef.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 
 		// Track max pip and tick scale to set their values decimals.
@@ -50,13 +50,13 @@ public class RecordSets {
 		int maxTickScale = 0;
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			maxPipScale = Math.max(maxPipScale, record.getValue(Fields.InstrumentPipScale).getInteger());
-			maxTickScale = Math.max(maxTickScale, record.getValue(Fields.InstrumentTickScale).getInteger());
+			maxPipScale = Math.max(maxPipScale, record.getValue(FieldDef.InstrumentPipScale).getInteger());
+			maxTickScale = Math.max(maxTickScale, record.getValue(FieldDef.InstrumentTickScale).getInteger());
 		}
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			record.getValue(Fields.InstrumentPipValue).setDecimals(maxPipScale);
-			record.getValue(Fields.InstrumentTickValue).setDecimals(maxTickScale);
+			record.getValue(FieldDef.InstrumentPipValue).setDecimals(maxPipScale);
+			record.getValue(FieldDef.InstrumentTickValue).setDecimals(maxTickScale);
 		}
 
 		return recordSet;
@@ -73,7 +73,7 @@ public class RecordSets {
 	public static RecordSet getRecordSetTickers(Session session, Server server) throws Exception {
 		Persistor persistor = Persistors.getPersistorTickers(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(FieldDef.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}

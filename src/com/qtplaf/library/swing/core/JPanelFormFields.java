@@ -45,7 +45,7 @@ import com.qtplaf.library.swing.event.ComponentHandler;
 import com.qtplaf.library.util.list.ListUtils;
 
 /**
- * A panel that holds a grid form of fields from a record. Fields are layed out in tabs by field group if there are
+ * A panel that holds a grid form of fields from a record. FieldDef are layed out in tabs by field group if there are
  * field groups, and optionally in sub-panels defined by (gridx, gridy) values.
  * <p>
  * Usage:
