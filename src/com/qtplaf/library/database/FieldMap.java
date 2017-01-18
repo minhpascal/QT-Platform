@@ -108,7 +108,7 @@ public class FieldMap {
 	/**
 	 * Get a field index by named alias.
 	 * <p>
-	 * FieldDef are mapped using the getAlias() method of the field.
+	 * Domains are mapped using the getAlias() method of the field.
 	 * <p>
 	 * 
 	 * @return The field index or -1 if not found.

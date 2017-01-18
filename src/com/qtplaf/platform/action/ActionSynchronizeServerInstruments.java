@@ -31,8 +31,8 @@ import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.tables.Instruments;
 
 /**
  * Synchronize server available instruments.
@@ -43,7 +43,7 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-	
+
 	/**
 	 * Runnable to perform synchronizing.
 	 */
@@ -53,38 +53,42 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 				Session session = ActionUtils.getSession(ActionSynchronizeServerInstruments.this);
 				Server server = (Server) ActionUtils.getLaunchArgs(ActionSynchronizeServerInstruments.this);
 				StatusBar statusBar = ActionUtils.getStatusBar(ActionSynchronizeServerInstruments.this);
-				
+
 				statusBar.setStatus("Connecting to server " + server.getName(), 1, 5);
 				ServerConnector.connect(server);
-				
+
 				statusBar.setStatus("Retrieving available instruments", 2, 5);
 				List<Instrument> instruments = server.getAvailableInstruments();
 
 				statusBar.setStatus("Deleting registered instruments", 3, 5);
 				Persistor persistor = Persistors.getPersistorInstruments(session);
 				persistor.delete((Criteria) null);
-				
+
 				statusBar.setStatus("Inserting available instruments", 4, 5);
 				for (Instrument instrument : instruments) {
 					Record record = persistor.getDefaultRecord();
-					record.setValue(FieldDef.ServerId, server.getId());
-					record.setValue(FieldDef.InstrumentId, instrument.getId());
-					record.setValue(FieldDef.InstrumentDesc, instrument.getDescription());
-					record.setValue(FieldDef.InstrumentPipValue, instrument.getPipValue());
-					record.setValue(FieldDef.InstrumentPipScale, instrument.getPipScale());
-					record.setValue(FieldDef.InstrumentTickValue, instrument.getTickValue());
-					record.setValue(FieldDef.InstrumentTickScale, instrument.getTickScale());
-					record.setValue(FieldDef.InstrumentVolumeScale, instrument.getVolumeScale());
-					record.setValue(FieldDef.InstrumentPrimaryCurrency, instrument.getPrimaryCurrency().toString());
-					record.setValue(FieldDef.InstrumentSecondaryCurrency, instrument.getSecondaryCurrency().toString());
+					record.setValue(Instruments.Fields.ServerId, server.getId());
+					record.setValue(Instruments.Fields.InstrumentId, instrument.getId());
+					record.setValue(Instruments.Fields.InstrumentDesc, instrument.getDescription());
+					record.setValue(Instruments.Fields.InstrumentPipValue, instrument.getPipValue());
+					record.setValue(Instruments.Fields.InstrumentPipScale, instrument.getPipScale());
+					record.setValue(Instruments.Fields.InstrumentTickValue, instrument.getTickValue());
+					record.setValue(Instruments.Fields.InstrumentTickScale, instrument.getTickScale());
+					record.setValue(Instruments.Fields.InstrumentVolumeScale, instrument.getVolumeScale());
+					record.setValue(
+						Instruments.Fields.InstrumentPrimaryCurrency,
+						instrument.getPrimaryCurrency().toString());
+					record.setValue(
+						Instruments.Fields.InstrumentSecondaryCurrency,
+						instrument.getSecondaryCurrency().toString());
 					persistor.insert(record);
 				}
-				
+
 				statusBar.setStatus("Disconnecting from server " + server.getName(), 5, 5);
 				ServerConnector.disconnect(server);
-				
+
 				statusBar.clearStatus();
-				
+
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}

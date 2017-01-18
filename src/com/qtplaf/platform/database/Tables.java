@@ -15,26 +15,22 @@
 package com.qtplaf.platform.database;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.ForeignKey;
-import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.rdbms.DBPersistor;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.tables.DataFilters;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
+import com.qtplaf.platform.database.tables.Tickers;
 
 /**
- * Centralizes table definitions.
+ * Caches table definitions and centralizes table access.
  * 
  * @author Miquel Sas
  */
 public class Tables {
-
-	public static final String DataFilters = "data_filters";
-	public static final String OfferSides = "offer_sides";
-	public static final String Tickers = "tickers";
-
 	/**
 	 * Returns the table definition for standard data filters.
 	 * 
@@ -42,13 +38,7 @@ public class Tables {
 	 * @return The table definition.
 	 */
 	public static Table getTableDataFilters(Session session) {
-
-		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListDataFilters(session));
-		table.setName(DataFilters);
-		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
-		return table;
+		return new DataFilters(session);
 	}
 
 	/**
@@ -68,14 +58,7 @@ public class Tables {
 	 * @return The table definition.
 	 */
 	public static Table getTableOfferSides(Session session) {
-
-		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListOfferSides(session));
-		table.setName(OfferSides);
-		table.setSchema(Names.getSchema());
-		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
-
-		return table;
+		return new OfferSides(session);
 	}
 
 	/**
@@ -107,37 +90,7 @@ public class Tables {
 	 * @return The table definition.
 	 */
 	public static Table getTableTickers(Session session) {
-
-		Table tableTickers = new Table(session);
-		tableTickers.addFields(FieldLists.getFieldListTickers(session));
-		tableTickers.setName(Tickers);
-		tableTickers.setSchema(Names.getSchema());
-
-		Table tablePeriods = getTablePeriods(session);
-		ForeignKey fkPeriods = new ForeignKey(false);
-		fkPeriods.setLocalTable(tableTickers);
-		fkPeriods.setForeignTable(tablePeriods);
-		fkPeriods.add(tableTickers.getField(FieldDef.PeriodId), tablePeriods.getField(FieldDef.PeriodId));
-		tableTickers.addForeignKey(fkPeriods);
-
-		Table tableOfferSides = getTableOfferSides(session);
-		ForeignKey fkOfferSides = new ForeignKey(false);
-		fkOfferSides.setLocalTable(tableTickers);
-		fkOfferSides.setForeignTable(tableOfferSides);
-		fkOfferSides.add(tableTickers.getField(FieldDef.OfferSide), tableOfferSides.getField(FieldDef.OfferSide));
-		tableTickers.addForeignKey(fkOfferSides);
-
-		Table tableDataFilters = getTableDataFilters(session);
-		ForeignKey fkDataFilters = new ForeignKey(false);
-		fkDataFilters.setLocalTable(tableTickers);
-		fkDataFilters.setForeignTable(tableDataFilters);
-		fkDataFilters.add(tableTickers.getField(FieldDef.DataFilter), tableDataFilters.getField(FieldDef.DataFilter));
-		tableTickers.addForeignKey(fkDataFilters);
-
-		tableTickers.setPersistor(
-			new DBPersistor(Persistors.getDBEngine(), tableTickers.getComplexView(tableTickers.getPrimaryKey())));
-
-		return tableTickers;
+		return new Tickers(session);
 	}
 
 	/**
@@ -148,15 +101,7 @@ public class Tables {
 	 * @param name The name of the table.
 	 * @return The table definition.
 	 */
-	public static Table getTableOHLCV(Session session, Server server, String name) {
-
-		Table table = new Table(session);
-		table.addFields(FieldLists.getFieldListOHLCV(session));
-		table.setName(name);
-		table.setSchema(Names.getSchema(server));
-		table.setPersistor(new DBPersistor(Persistors.getDBEngine(), table));
-
-		return table;
-
+	public static Table getTableOHLCVS(Session session, Server server, String name) {
+		return new OHLCVS(session, server, name);
 	}
 }

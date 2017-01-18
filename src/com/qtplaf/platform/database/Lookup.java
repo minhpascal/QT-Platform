@@ -22,6 +22,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.tables.Instruments;
 
 /**
  * Centralizes lookup operations.
@@ -43,15 +44,15 @@ public class Lookup {
 		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
 		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersAvInst").toLowerCase());
 		lookup.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lookup.addColumn(FieldDef.InstrumentId);
-		lookup.addColumn(FieldDef.InstrumentDesc);
-		lookup.addColumn(FieldDef.InstrumentPipValue);
-		lookup.addColumn(FieldDef.InstrumentPipScale);
-		lookup.addColumn(FieldDef.InstrumentTickValue);
-		lookup.addColumn(FieldDef.InstrumentTickScale);
-		lookup.addColumn(FieldDef.InstrumentVolumeScale);
-		lookup.addColumn(FieldDef.InstrumentPrimaryCurrency);
-		lookup.addColumn(FieldDef.InstrumentSecondaryCurrency);
+		lookup.addColumn(Instruments.Fields.InstrumentId);
+		lookup.addColumn(Instruments.Fields.InstrumentDesc);
+		lookup.addColumn(Instruments.Fields.InstrumentPipValue);
+		lookup.addColumn(Instruments.Fields.InstrumentPipScale);
+		lookup.addColumn(Instruments.Fields.InstrumentTickValue);
+		lookup.addColumn(Instruments.Fields.InstrumentTickScale);
+		lookup.addColumn(Instruments.Fields.InstrumentVolumeScale);
+		lookup.addColumn(Instruments.Fields.InstrumentPrimaryCurrency);
+		lookup.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
 		Record selected = lookup.lookupRecord(recordSet);
 		return Records.fromRecordInstrument(selected);
 	}

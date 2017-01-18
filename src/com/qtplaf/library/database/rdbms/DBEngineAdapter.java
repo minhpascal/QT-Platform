@@ -18,6 +18,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
@@ -131,6 +133,14 @@ public abstract class DBEngineAdapter {
 	 * @return A boolean.
 	 */
 	public abstract boolean isExplicitRelation();
+
+	/**
+	 * Returns a appropriate data source.
+	 * 
+	 * @param info The data source info.
+	 * @return The data source.
+	 */
+	public abstract DataSource getDataSource(DataSourceInfo info);
 
 	/**
 	 * Check if the underlying database accepts implicit relations.

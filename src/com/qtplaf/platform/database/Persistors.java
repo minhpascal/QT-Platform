@@ -77,7 +77,7 @@ public class Persistors {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorOHLCV(Session session, Server server, String name) {
-		return Tables.getTableOHLCV(session, server, name).getPersistor();
+		return Tables.getTableOHLCVS(session, server, name).getPersistor();
 	}
 
 	/**

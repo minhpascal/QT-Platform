@@ -16,7 +16,7 @@ package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.FieldDef;
+import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
 
@@ -26,7 +26,7 @@ import com.qtplaf.platform.database.Persistors;
  * @author Miquel Sas
  */
 public class Instruments extends Table {
-	
+
 	public interface Fields {
 		String ServerId = "server_id";
 		String InstrumentId = "instr_id";
@@ -50,25 +50,20 @@ public class Instruments extends Table {
 	 */
 	public Instruments(Session session) {
 		super(session);
-
 		setName(Name);
-
-		addField(FieldDef.getServerId(session, Fields.ServerId));
-		addField(FieldDef.getInstrumentId(session, Fields.InstrumentId));
-		addField(FieldDef.getInstrumentDesc(session, Fields.InstrumentDesc));
-		addField(FieldDef.getInstrumentPipValue(session, Fields.InstrumentPipValue));
-		addField(FieldDef.getInstrumentPipScale(session, Fields.InstrumentPipScale));
-		addField(FieldDef.getInstrumentTickValue(session, Fields.InstrumentTickValue));
-		addField(FieldDef.getInstrumentTickScale(session, Fields.InstrumentTickScale));
-		addField(FieldDef.getInstrumentVolumeScale(session, Fields.InstrumentVolumeScale));
-		addField(FieldDef.getInstrumentPrimaryCurrency(session, Fields.InstrumentPrimaryCurrency));
-		addField(FieldDef.getInstrumentSecondaryCurrency(session, Fields.InstrumentSecondaryCurrency));
-		
-		getField(FieldDef.ServerId).setPrimaryKey(true);
-		getField(FieldDef.InstrumentId).setPrimaryKey(true);
-		
+		addField(Domains.getServerId(session, Fields.ServerId));
+		addField(Domains.getInstrumentId(session, Fields.InstrumentId));
+		addField(Domains.getInstrumentDesc(session, Fields.InstrumentDesc));
+		addField(Domains.getInstrumentPipValue(session, Fields.InstrumentPipValue));
+		addField(Domains.getInstrumentPipScale(session, Fields.InstrumentPipScale));
+		addField(Domains.getInstrumentTickValue(session, Fields.InstrumentTickValue));
+		addField(Domains.getInstrumentTickScale(session, Fields.InstrumentTickScale));
+		addField(Domains.getInstrumentVolumeScale(session, Fields.InstrumentVolumeScale));
+		addField(Domains.getInstrumentPrimaryCurrency(session, Fields.InstrumentPrimaryCurrency));
+		addField(Domains.getInstrumentSecondaryCurrency(session, Fields.InstrumentSecondaryCurrency));
+		getField(Fields.ServerId).setPrimaryKey(true);
+		getField(Fields.InstrumentId).setPrimaryKey(true);
 		setSchema(Names.getSchema());
-		
 		setPersistor(Persistors.getPersistor(getSimpleView()));
 	}
 

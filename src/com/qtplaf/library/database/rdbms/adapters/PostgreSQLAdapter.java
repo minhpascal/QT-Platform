@@ -18,9 +18,14 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+import javax.sql.DataSource;
+
+import org.postgresql.jdbc3.Jdbc3PoolingDataSource;
+
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
+import com.qtplaf.library.database.rdbms.DataSourceInfo;
 import com.qtplaf.library.util.FormatUtils;
 
 /**
@@ -36,6 +41,24 @@ public class PostgreSQLAdapter extends DBEngineAdapter {
 	public PostgreSQLAdapter() {
 		super();
 		setDriverClassName("org.postgresql.Driver");
+	}
+
+	/**
+	 * Returns a appropriate data source.
+	 * 
+	 * @param info The data source info.
+	 * @return The data source.
+	 */
+	public DataSource getDataSource(DataSourceInfo info) {
+		Jdbc3PoolingDataSource source = new Jdbc3PoolingDataSource();
+		source.setDataSourceName(info.getDataSourceName());
+		source.setServerName(info.getServerName());
+		source.setPortNumber(info.getPortNumber());
+		source.setDatabaseName(info.getDatabase());
+		source.setUser(info.getUser());
+		source.setPassword(info.getPassword());
+		source.setMaxConnections(10);
+		return source;
 	}
 
 	/**
@@ -139,11 +162,11 @@ public class PostgreSQLAdapter extends DBEngineAdapter {
 	 */
 	@Override
 	public String toStringSQL(Date date) {
-		String sdate  = FormatUtils.unformattedFromDate(date);
-		String syear  = (sdate.length() == 8 ? sdate.substring(0,4) : sdate.substring(0,5));
-		String smonth = (sdate.length() == 8 ? sdate.substring(4,6) : sdate.substring(5,7));
-		String sday   = (sdate.length() == 8 ? sdate.substring(6,8) : sdate.substring(7,9));
-		return "'"+syear+"-"+smonth+"-"+sday+"'";
+		String sdate = FormatUtils.unformattedFromDate(date);
+		String syear = (sdate.length() == 8 ? sdate.substring(0, 4) : sdate.substring(0, 5));
+		String smonth = (sdate.length() == 8 ? sdate.substring(4, 6) : sdate.substring(5, 7));
+		String sday = (sdate.length() == 8 ? sdate.substring(6, 8) : sdate.substring(7, 9));
+		return "'" + syear + "-" + smonth + "-" + sday + "'";
 	}
 
 	/**
@@ -155,10 +178,10 @@ public class PostgreSQLAdapter extends DBEngineAdapter {
 	@Override
 	public String toStringSQL(Time time) {
 		String stime = FormatUtils.unformattedFromTime(time);
-		String sHour = stime.substring(0,2);
-		String sMin  = stime.substring(2,4);
-		String sSec  = stime.substring(4,6);
-		return "'"+sHour+":"+sMin+":"+sSec+"'";
+		String sHour = stime.substring(0, 2);
+		String sMin = stime.substring(2, 4);
+		String sSec = stime.substring(4, 6);
+		return "'" + sHour + ":" + sMin + ":" + sSec + "'";
 	}
 
 	/**
@@ -170,14 +193,14 @@ public class PostgreSQLAdapter extends DBEngineAdapter {
 	 */
 	@Override
 	public String toStringSQL(Timestamp timestamp) {
-		String stime = FormatUtils.unformattedFromTimestamp(timestamp,false);
-		String sYear  = (stime.length() == 14 ? stime.substring(0,4) : stime.substring(0,5));
-		String sMonth = (stime.length() == 14 ? stime.substring(4,6) : stime.substring(5,7));
-		String sDay   = (stime.length() == 14 ? stime.substring(6,8) : stime.substring(7,9));
-		String sHour  = (stime.length() == 14 ? stime.substring(8,10): stime.substring(9,11));
-		String sMin   = (stime.length() == 14 ? stime.substring(10,12):stime.substring(11,13));
-		String sSec   = (stime.length() == 14 ? stime.substring(12,14):stime.substring(13,15));
-		return "'"+sYear+"-"+sMonth+"-"+sDay+" "+sHour+":"+sMin+":"+sSec+"'";
+		String stime = FormatUtils.unformattedFromTimestamp(timestamp, false);
+		String sYear = (stime.length() == 14 ? stime.substring(0, 4) : stime.substring(0, 5));
+		String sMonth = (stime.length() == 14 ? stime.substring(4, 6) : stime.substring(5, 7));
+		String sDay = (stime.length() == 14 ? stime.substring(6, 8) : stime.substring(7, 9));
+		String sHour = (stime.length() == 14 ? stime.substring(8, 10) : stime.substring(9, 11));
+		String sMin = (stime.length() == 14 ? stime.substring(10, 12) : stime.substring(11, 13));
+		String sSec = (stime.length() == 14 ? stime.substring(12, 14) : stime.substring(13, 15));
+		return "'" + sYear + "-" + sMonth + "-" + sDay + " " + sHour + ":" + sMin + ":" + sSec + "'";
 	}
 
 }

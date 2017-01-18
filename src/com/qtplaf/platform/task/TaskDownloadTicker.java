@@ -34,10 +34,10 @@ import com.qtplaf.library.trading.server.OHLCVIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.tables.OHLCVS;
 
 /**
  * Task to download a ticker from a server, starting at the last data downloaded, up to the last data available in the
@@ -212,7 +212,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private Table getTable() {
 		String tableName = Names.getName(instrument, period, filter, offerSide);
-		return Tables.getTableOHLCV(getSession(), server, tableName);
+		return Tables.getTableOHLCVS(getSession(), server, tableName);
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private long getTimeOfLastDowloaded() throws PersistorException {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(FieldDef.Time);
+		Field fTIME = persistor.getField(OHLCVS.Fields.Time);
 		Order order = new Order();
 		order.add(fTIME, false);
 		Record record = null;
@@ -289,7 +289,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		}
 		iter.close();
 		if (record != null) {
-			return record.getValue(FieldDef.Time).getLong();
+			return record.getValue(OHLCVS.Fields.Time).getLong();
 		}
 		return -1;
 	}
@@ -322,7 +322,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private void deleteFromTimeFrom() throws Exception {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(FieldDef.Time);
+		Field fTIME = persistor.getField(OHLCVS.Fields.Time);
 		Value vTIME = new Value(getTimeFrom());
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldGE(fTIME, vTIME));

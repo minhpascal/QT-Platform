@@ -22,6 +22,8 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.Tickers;
 
 /**
  * Centralizes record sets generation.
@@ -42,7 +44,7 @@ public class RecordSets {
 
 		Persistor persistor = Persistors.getPersistorInstruments(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(FieldDef.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(Instruments.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 
 		// Track max pip and tick scale to set their values decimals.
@@ -50,13 +52,13 @@ public class RecordSets {
 		int maxTickScale = 0;
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			maxPipScale = Math.max(maxPipScale, record.getValue(FieldDef.InstrumentPipScale).getInteger());
-			maxTickScale = Math.max(maxTickScale, record.getValue(FieldDef.InstrumentTickScale).getInteger());
+			maxPipScale = Math.max(maxPipScale, record.getValue(Instruments.Fields.InstrumentPipScale).getInteger());
+			maxTickScale = Math.max(maxTickScale, record.getValue(Instruments.Fields.InstrumentTickScale).getInteger());
 		}
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			record.getValue(FieldDef.InstrumentPipValue).setDecimals(maxPipScale);
-			record.getValue(FieldDef.InstrumentTickValue).setDecimals(maxTickScale);
+			record.getValue(Instruments.Fields.InstrumentPipValue).setDecimals(maxPipScale);
+			record.getValue(Instruments.Fields.InstrumentTickValue).setDecimals(maxTickScale);
 		}
 
 		return recordSet;
@@ -73,7 +75,7 @@ public class RecordSets {
 	public static RecordSet getRecordSetTickers(Session session, Server server) throws Exception {
 		Persistor persistor = Persistors.getPersistorTickers(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(FieldDef.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(Tickers.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}

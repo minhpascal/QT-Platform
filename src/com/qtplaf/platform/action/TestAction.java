@@ -29,8 +29,8 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.tables.OHLCVS;
 
 /**
  * Edit the list of server tickers.
@@ -64,7 +64,7 @@ public class TestAction extends AbstractAction {
 			Server server = (Server) ActionUtils.getLaunchArgs(this);
 			String tableName = "eurusd_mn001_aa";
 			Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
-			Field fTIME = persistor.getField(FieldDef.Time);
+			Field fTIME = persistor.getField(OHLCVS.Fields.Time);
 			Order order = new Order();
 			order.add(fTIME, false);
 			Record record = null;

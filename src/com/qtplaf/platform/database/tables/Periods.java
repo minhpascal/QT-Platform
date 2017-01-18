@@ -15,8 +15,9 @@
 package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.FieldDef;
+import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
 
@@ -26,7 +27,7 @@ import com.qtplaf.platform.database.Persistors;
  * @author Miquel Sas
  */
 public class Periods extends Table {
-	
+
 	public interface Fields {
 		String PeriodId = "period_id";
 		String PeriodName = "period_name";
@@ -44,19 +45,19 @@ public class Periods extends Table {
 	 */
 	public Periods(Session session) {
 		super(session);
-
 		setName(Name);
-
-		addField(FieldDef.getPeriodId(session, Fields.PeriodId));
-		addField(FieldDef.getPeriodName(session, Fields.PeriodName));
-		addField(FieldDef.getPeriodUnitIndex(session, Fields.PeriodUnitIndex));
-		addField(FieldDef.getPeriodSize(session, Fields.PeriodSize));
-		
-		getField(FieldDef.PeriodId).setPrimaryKey(true);
-		
+		addField(Domains.getPeriodId(session, Fields.PeriodId));
+		addField(Domains.getPeriodName(session, Fields.PeriodName));
+		addField(Domains.getPeriodUnitIndex(session, Fields.PeriodUnitIndex));
+		addField(Domains.getPeriodSize(session, Fields.PeriodSize));
+		getField(Fields.PeriodId).setPrimaryKey(true);
 		setSchema(Names.getSchema());
-		
-		setPersistor(Persistors.getPersistor(getSimpleView()));
+
+		Order order = new Order();
+		order.add(getField(Fields.PeriodUnitIndex));
+		order.add(getField(Fields.PeriodSize));
+
+		setPersistor(Persistors.getPersistor(getSimpleView(order)));
 	}
 
 }

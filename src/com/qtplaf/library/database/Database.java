@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * A <i>Database</i> is a dictionary for <i>Field</i>'s, <i>Table</i>'s and <i>View</i>'s. FieldDef are organized by
+ * A <i>Database</i> is a dictionary for <i>Field</i>'s, <i>Table</i>'s and <i>View</i>'s. Domains are organized by
  * name because they are sharable among tables and views of different physical databases, while tables and views are
  * organized by catalog, schema and name.
  * 

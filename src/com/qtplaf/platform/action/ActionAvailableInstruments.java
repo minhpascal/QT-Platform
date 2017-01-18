@@ -31,9 +31,9 @@ import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
+import com.qtplaf.platform.database.tables.Instruments;
 
 /**
  * Shows the list of available instruments for the server set as launch argument.
@@ -87,15 +87,15 @@ public class ActionAvailableInstruments extends AbstractAction {
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(FieldDef.InstrumentId);
-				tableModelRecord.addColumn(FieldDef.InstrumentDesc);
-				tableModelRecord.addColumn(FieldDef.InstrumentPipValue);
-				tableModelRecord.addColumn(FieldDef.InstrumentPipScale);
-				tableModelRecord.addColumn(FieldDef.InstrumentTickValue);
-				tableModelRecord.addColumn(FieldDef.InstrumentTickScale);
-				tableModelRecord.addColumn(FieldDef.InstrumentVolumeScale);
-				tableModelRecord.addColumn(FieldDef.InstrumentPrimaryCurrency);
-				tableModelRecord.addColumn(FieldDef.InstrumentSecondaryCurrency);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentId);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentDesc);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentPipValue);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentPipScale);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentTickValue);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentTickScale);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentVolumeScale);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentPrimaryCurrency);
+				tableModelRecord.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
 				tableModelRecord.setRecordSet(RecordSets.getRecordSetAvailableInstruments(session, server));
 				tableRecord.setModel(tableModelRecord);
 
@@ -105,7 +105,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);
 				frame.showFrame();
-				
+
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}

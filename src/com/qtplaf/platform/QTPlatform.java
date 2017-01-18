@@ -34,8 +34,8 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
+import com.qtplaf.library.database.rdbms.DataSourceInfo;
 import com.qtplaf.library.database.rdbms.adapters.PostgreSQLAdapter;
-import com.qtplaf.library.database.rdbms.connection.ConnectionInfo;
 import com.qtplaf.library.swing.FrameMenu;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.core.JPanelTreeMenu;
@@ -50,15 +50,16 @@ import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
-import com.qtplaf.platform.action.TestAction;
-import com.qtplaf.platform.database.FieldDef;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.tables.DataFilters;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
+import com.qtplaf.platform.database.tables.Tickers;
 
 /**
  * Main entry of the QT-Platform.
@@ -122,7 +123,7 @@ public class QTPlatform {
 		frameMenu.setVisible(true);
 
 		// Command line argument: database connection (xml file name).
-		Argument argConnection = new Argument("connectionFile", "Database connection file", true, true, false);
+		Argument argConnection = new Argument("dataSourceFile", "Database connection file", true, true, false);
 		ArgumentManager argMngr = new ArgumentManager(argConnection);
 		if (!argMngr.parse(args)) {
 			for (String error : argMngr.getErrors()) {
@@ -135,7 +136,7 @@ public class QTPlatform {
 
 			// Ensure database.
 			logger.info("Database checking...");
-			configureDatabase(session, argMngr.getValue("connectionFile"));
+			configureDatabase(session, argMngr.getValue("dataSourceFile"));
 			logger.info("Database checked");
 
 			// Configure the menu.
@@ -166,12 +167,12 @@ public class QTPlatform {
 		// Connection file.
 		File cnFile = SystemUtils.getFileFromClassPathEntries(connectionFile);
 
-		// Connection info and db engine.
-		ConnectionInfo cnInfo = ConnectionInfo.getConnectionInfo(cnFile);
+		// Data source info and db engine.
+		DataSourceInfo info = DataSourceInfo.getDataSourceInfo(cnFile);
 		DBEngineAdapter adapter = new PostgreSQLAdapter();
-		DBEngine dbEngine = new DBEngine(adapter, cnInfo);
+		DBEngine dbEngine = new DBEngine(adapter, info);
 		Persistors.setDBEngine(dbEngine);
-		
+
 		// Persistor DDL.
 		PersistorDDL ddl = Persistors.getDDL();
 
@@ -202,13 +203,13 @@ public class QTPlatform {
 		synchronizeStandardPeriods(session);
 
 		// Check for the necessary table OfferSides in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tables.OfferSides)) {
+		if (!ddl.existsTable(Names.getSchema(), OfferSides.Name)) {
 			ddl.buildTable(Tables.getTableOfferSides(session));
 		}
 		synchronizeStandardOfferSides(session, dbEngine);
 
 		// Check for the necessary table DataFilters in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tables.DataFilters)) {
+		if (!ddl.existsTable(Names.getSchema(), DataFilters.Name)) {
 			ddl.buildTable(Tables.getTableDataFilters(session));
 		}
 		synchronizeStandardDataFilters(session);
@@ -219,7 +220,7 @@ public class QTPlatform {
 		}
 
 		// Check for the necessary table Tickers in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tables.Tickers)) {
+		if (!ddl.existsTable(Names.getSchema(), Tickers.Name)) {
 			ddl.buildTable(Tables.getTableTickers(session));
 		}
 	}
@@ -292,7 +293,10 @@ public class QTPlatform {
 			Record record = recordSet.get(i);
 			boolean remove = true;
 			for (Server server : servers) {
-				if (server.getId().toLowerCase().equals(record.getValue(FieldDef.ServerId).toString().toLowerCase())) {
+				if (server
+					.getId()
+					.toLowerCase()
+					.equals(record.getValue(Servers.Fields.ServerId).toString().toLowerCase())) {
 					remove = false;
 					break;
 				}
@@ -308,7 +312,7 @@ public class QTPlatform {
 			boolean included = false;
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
-				if (record.getValue(FieldDef.ServerId).toString().toLowerCase().equals(id)) {
+				if (record.getValue(Servers.Fields.ServerId).toString().toLowerCase().equals(id)) {
 					included = true;
 					break;
 				}
@@ -363,12 +367,12 @@ public class QTPlatform {
 			itemSrvTickers.setActionClass(ActionTickers.class);
 			itemSrvTickers.setLaunchArgs(server);
 			menu.addMenuItem(itemServer, itemSrvTickers);
-			
+
 			// Test
-//			TreeMenuItem itemSrvTest = TreeMenuItem.getMenuItem(session, "Test");
-//			itemSrvTest.setActionClass(TestAction.class);
-//			itemSrvTest.setLaunchArgs(server);
-//			menu.addMenuItem(itemServer, itemSrvTest);
+			// TreeMenuItem itemSrvTest = TreeMenuItem.getMenuItem(session, "Test");
+			// itemSrvTest.setActionClass(TestAction.class);
+			// itemSrvTest.setLaunchArgs(server);
+			// menu.addMenuItem(itemServer, itemSrvTest);
 		}
 
 		menu.refreshTree();

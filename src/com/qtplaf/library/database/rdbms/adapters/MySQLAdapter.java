@@ -18,9 +18,12 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+import javax.sql.DataSource;
+
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
+import com.qtplaf.library.database.rdbms.DataSourceInfo;
 import com.qtplaf.library.util.FormatUtils;
 
 /**
@@ -36,6 +39,16 @@ public class MySQLAdapter extends DBEngineAdapter {
 	public MySQLAdapter() {
 		super();
 		setDriverClassName("org.gjt.mm.mysql.Driver");
+	}
+
+	/**
+	 * Returns a appropriate data source.
+	 * 
+	 * @param info The data source info.
+	 * @return The data source.
+	 */
+	public DataSource getDataSource(DataSourceInfo info) {
+		return null;
 	}
 
 	/**

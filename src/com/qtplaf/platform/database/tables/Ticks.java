@@ -90,7 +90,7 @@ public class Ticks extends Table {
 		this.instrument = instrument;
 
 		// Set the standard name base on the parameters.
-//		setName(Names.getTickName(instrument));
+		// setName(Names.getTickName(instrument));
 
 		// Configure the segments.
 

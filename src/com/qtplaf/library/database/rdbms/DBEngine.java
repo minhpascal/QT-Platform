@@ -19,6 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
@@ -33,8 +35,6 @@ import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.ValueMap;
 import com.qtplaf.library.database.View;
-import com.qtplaf.library.database.rdbms.connection.ConnectionInfo;
-import com.qtplaf.library.database.rdbms.connection.ConnectionPool;
 import com.qtplaf.library.database.rdbms.sql.Insert;
 import com.qtplaf.library.database.rdbms.sql.Select;
 import com.qtplaf.library.database.rdbms.sql.Statement;
@@ -50,60 +50,40 @@ import com.qtplaf.library.util.list.ListUtils;
 public class DBEngine {
 
 	/**
-	 * The connection information.
-	 */
-	private ConnectionInfo connectionInfo;
-	/**
 	 * The database engine adapter.
 	 */
 	private DBEngineAdapter dbEngineAdapter;
 	/**
-	 * The connection pool.
+	 * Data source info.
 	 */
-	private ConnectionPool connectionPool;
+	private DataSourceInfo dataSourceInfo;
+	/**
+	 * Data source.
+	 */
+	private DataSource dataSource;
 
 	/**
 	 * Creates a <i>DBEngine</i> assigning the database adapter and the connection information.
 	 * 
 	 * @param dbEngineAdapter The database engine adapter.
-	 * @param connectionInfo The connection information.
-	 * 
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws SQLException
+	 * @param dataSourceInfo The connection information.
 	 */
-	public DBEngine(DBEngineAdapter dbEngineAdapter, ConnectionInfo connectionInfo)
-		throws ClassNotFoundException,
-		InstantiationException,
-		IllegalAccessException,
-		SQLException {
+	public DBEngine(DBEngineAdapter dbEngineAdapter, DataSourceInfo dataSourceInfo) {
 		super();
 		this.dbEngineAdapter = dbEngineAdapter;
-		this.connectionInfo = connectionInfo;
-
-		dbEngineAdapter.registerDriver();
+		this.dataSourceInfo = dataSourceInfo;
 	}
 
 	/**
-	 * Returns the connection pool.
+	 * Returns the data source.
 	 * 
-	 * @return The connection pool.
+	 * @return The data source.
 	 */
-	public ConnectionPool getConnectionPool() {
-		if (connectionPool == null) {
-			connectionPool = new ConnectionPool(connectionInfo);
+	public DataSource getDataSource() {
+		if (dataSource == null) {
+			dataSource = getDBEngineAdapter().getDataSource(dataSourceInfo);
 		}
-		return connectionPool;
-	}
-
-	/**
-	 * Returns the connection information.
-	 *
-	 * @return The connection information.
-	 */
-	public ConnectionInfo getConnectionInfo() {
-		return connectionInfo;
+		return dataSource;
 	}
 
 	/**
@@ -122,7 +102,9 @@ public class DBEngine {
 	 * @throws SQLException
 	 */
 	public Connection getConnection() throws SQLException {
-		return getConnectionPool().getConnection();
+		Connection cn = getDataSource().getConnection();
+		cn.setAutoCommit(false);
+		return cn;
 	}
 
 	/**
