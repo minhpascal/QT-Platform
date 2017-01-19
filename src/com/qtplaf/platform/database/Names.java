@@ -18,6 +18,7 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.library.util.StringUtils;
 
 /**
  * An utility to generate names based on instruments, periods, filters and offer sides.
@@ -82,5 +83,25 @@ public class Names {
 		b.append(filter.toLowerCase());
 		b.append(offerSide.toLowerCase());
 		return b.toString();
+	}
+
+	/**
+	 * Returns the instrument id given an OHLCV tablle name.
+	 * 
+	 * @param tableName The table name.
+	 * @return The instrument id.
+	 */
+	public static String getInstrumentId(String tableName) {
+		return StringUtils.split(tableName,"_")[0];
+	}
+
+	/**
+	 * Returns the period id given an OHLCV tablle name.
+	 * 
+	 * @param tableName The table name.
+	 * @return The period id.
+	 */
+	public static String getPeriodId(String tableName) {
+		return StringUtils.split(tableName,"_")[1];
 	}
 }

@@ -295,7 +295,7 @@ public class JLookupRecords extends JDialogSession {
 			getTableRecord().setSelectedRecords(selectedRecords);
 		}
 
-		// RunAction it
+		// RunTickers it
 		setModal(true);
 		setVisible(true);
 

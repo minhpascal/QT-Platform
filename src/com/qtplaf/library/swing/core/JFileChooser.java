@@ -95,7 +95,7 @@ public class JFileChooser extends javax.swing.JFileChooser {
 	}
 
 	/**
-	 * RunAction the dialog using the parameterized dialog type.
+	 * RunTickers the dialog using the parameterized dialog type.
 	 * 
 	 * @return The return state.
 	 */
@@ -104,7 +104,7 @@ public class JFileChooser extends javax.swing.JFileChooser {
 	}
 
 	/**
-	 * RunAction the dialog using the parameterized dialog type.
+	 * RunTickers the dialog using the parameterized dialog type.
 	 * 
 	 * @param parent The parent component or null.
 	 * @return The return state.

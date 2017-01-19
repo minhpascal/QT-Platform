@@ -116,10 +116,10 @@ public class QTPlatform {
 		frameMenu.setPreExitAction(new PreExitAction());
 
 		// Re-direct out and err.
-		System.setOut(frameMenu.getConsole().getPrintStream());
-		System.setErr(frameMenu.getConsole().getPrintStream());
+//		System.setOut(frameMenu.getConsole().getPrintStream());
+//		System.setErr(frameMenu.getConsole().getPrintStream());
 
-		// RunAction the menu.
+		// RunTickers the menu.
 		frameMenu.setVisible(true);
 
 		// Command line argument: database connection (xml file name).
@@ -143,7 +143,7 @@ public class QTPlatform {
 			logger.info("Configuring menu...");
 			configureMenu(frameMenu.getPanelTreeMenu());
 
-			// RunAction the menu.
+			// RunTickers the menu.
 			frameMenu.showTreeMenu();
 
 		} catch (Exception exc) {

@@ -528,9 +528,9 @@ public class Table implements Comparable<Object> {
 			primaryKey.setName(getName() + "_PK");
 			primaryKey.setSchema(getSchema());
 			primaryKey.setDescription(getName() + " primary key");
-			List<KeyPointer> primaryKeyPointers = fields.getPrimaryKeyPointers();
-			for (KeyPointer pointer : primaryKeyPointers) {
-				primaryKey.add(getField(pointer.getIndex()));
+			List<Field> primaryKeyFields = getPrimaryKeyFields();
+			for (Field field : primaryKeyFields) {
+				primaryKey.add(field);
 			}
 		}
 		return primaryKey;
@@ -541,15 +541,6 @@ public class Table implements Comparable<Object> {
 	 */
 	public void removePrimaryKey() {
 		primaryKey = null;
-	}
-
-	/**
-	 * Get the list of primary key pointers.
-	 *
-	 * @return The list of primary key pointers.
-	 */
-	public List<KeyPointer> getPrimaryKeyPointers() {
-		return fields.getPrimaryKeyPointers();
 	}
 
 	/**
@@ -775,11 +766,12 @@ public class Table implements Comparable<Object> {
 	 */
 	public Filter getPrimaryKeyFilter(OrderKey primaryKey) {
 		Filter filter = new Filter();
-		List<KeyPointer> primaryKeyPointers = getPrimaryKeyPointers();
-		for (int i = 0; i < primaryKeyPointers.size(); i++) {
-			KeyPointer pointer = primaryKeyPointers.get(i);
-			int index = pointer.getIndex();
-			Field field = getField(index);
+		List<Field> primaryKeyFields = getPrimaryKeyFields();
+		if (primaryKeyFields.size() != primaryKey.size()) {
+			throw new IllegalArgumentException();
+		}
+		for (int i = 0; i < primaryKeyFields.size(); i++) {
+			Field field = getField(i);
 			Value value = primaryKey.get(i).getValue();
 			if (i > 0) {
 				filter.and();

@@ -43,12 +43,12 @@ public class JPanelTableRecord extends JPanel {
 		private String lineOfLinesMessage;
 
 		/**
-		 * RunAction the selected line number and number of lines in the status label.
+		 * RunTickers the selected line number and number of lines in the status label.
 		 */
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 
-			// RunAction the selected line number and number of lines in the status label.
+			// RunTickers the selected line number and number of lines in the status label.
 			if (tableRecord != null) {
 				if (lineOfLinesMessage == null) {
 					lineOfLinesMessage = getSession().getString("lineOfLines");

@@ -38,6 +38,7 @@ import javax.swing.table.TableModel;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
+import com.qtplaf.library.database.PageRecordSet;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.EditContext;
@@ -186,6 +187,10 @@ public class JTableRecord extends JTable {
 	 * A boolean that indicates if sorting clicking the header is enabled.
 	 */
 	private boolean sortingEnabled = true;
+	/**
+	 * The number of rows to process to adjust column sizes.
+	 */
+	private int adjustColumnSizesRows = 100;
 
 	/**
 	 * Constructor with default list selection mode multiple interval.
@@ -242,6 +247,24 @@ public class JTableRecord extends JTable {
 	 */
 	public void setSortingEnabled(boolean sortingEnabled) {
 		this.sortingEnabled = sortingEnabled;
+	}
+
+	/**
+	 * Returns the number of rows processed to adjust column sizes. -1 all rows.
+	 * 
+	 * @return The number of rows processed to adjust column sizes.
+	 */
+	public int getAdjustColumnSizesRows() {
+		return adjustColumnSizesRows;
+	}
+
+	/**
+	 * Set the number of rows processed to adjust column sizes. -1 all.
+	 * 
+	 * @param adjustColumnSizesRows The number of rows processed to adjust column sizes.
+	 */
+	public void setAdjustColumnSizesRows(int adjustColumnSizesRows) {
+		this.adjustColumnSizesRows = adjustColumnSizesRows;
 	}
 
 	/**
@@ -309,9 +332,11 @@ public class JTableRecord extends JTable {
 			// tableColumn.setCellEditor(cellEditor);
 		}
 
-		// Set the listener to the header.
+		// Set the listener to the header if the model is not Page.
 		getTableHeader().removeMouseListener(headerMouseHandler);
-		getTableHeader().addMouseListener(headerMouseHandler);
+		if (!(tableModelRecord.getRecordSet() instanceof PageRecordSet)) {
+			getTableHeader().addMouseListener(headerMouseHandler);
+		}
 
 		// Adjust the column sizes to correctly display all data.
 		adjustColumnSizes();
@@ -466,7 +491,13 @@ public class JTableRecord extends JTable {
 
 				// Compute the width of the data column.
 				int dataWidth = 0;
-				for (int row = 0; row < getRowCount(); row++) {
+				int count = 0;
+				if (getRowCount() > adjustColumnSizesRows && adjustColumnSizesRows > 0) {
+					count = adjustColumnSizesRows;
+				} else {
+					count = getRowCount();
+				}
+				for (int row = 0; row < count; row++) {
 					Object value = getValueAt(row, column);
 					if (value instanceof String) {
 						String svalue = (String) value;

@@ -15,7 +15,6 @@ package com.qtplaf.library.database;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,17 +37,13 @@ public class FieldList {
 	 */
 	private List<Field> persistentFields;
 	/**
-	 * The list of primary key pointers.
-	 */
-	private List<KeyPointer> primaryKeyPointers;
-	/**
 	 * The list of primary key fields.
 	 */
 	private List<Field> primaryKeyFields;
 	/**
-	 * The list of persistent key pointers.
+	 * Primary order.
 	 */
-	private List<KeyPointer> persistentKeyPointers;
+	private Order primaryOrder;
 
 	/**
 	 * Default constructor.
@@ -90,18 +85,6 @@ public class FieldList {
 		Record record = new Record();
 		record.setFieldListAndValues(this, values);
 		return record;
-	}
-
-	/**
-	 * Returns a record created with this field list and the array of values. For performance issues this method does
-	 * not validate that field-value type match. The method <i>validateValues</i> can be used to validate the values if
-	 * necessary.
-	 * 
-	 * @param values The array of values.
-	 * @return The record.
-	 */
-	public Record getRecord(Value... values) {
-		return getRecord(Arrays.asList(values));
 	}
 
 	/**
@@ -168,10 +151,6 @@ public class FieldList {
 	public void clearFieldMap() {
 		FieldMap.removeMap(fieldMap);
 		fieldMap = null;
-		if (primaryKeyPointers != null) {
-			primaryKeyPointers.clear();
-		}
-		primaryKeyPointers = null;
 		if (primaryKeyFields != null) {
 			primaryKeyFields.clear();
 		}
@@ -180,10 +159,7 @@ public class FieldList {
 			persistentFields.clear();
 		}
 		persistentFields = null;
-		if (persistentKeyPointers != null) {
-			persistentKeyPointers.clear();
-		}
-		persistentKeyPointers = null;
+		primaryOrder = null;
 	}
 
 	/**
@@ -298,30 +274,30 @@ public class FieldList {
 	public List<Field> getPersistentFields() {
 		if (persistentFields == null) {
 			persistentFields = new ArrayList<>();
-			List<KeyPointer> pointers = getPersistentKeyPointers();
-			for (KeyPointer pointer : pointers) {
-				persistentFields.add(getField(pointer.getIndex()));
+			for (int i = 0; i < fields.size(); i++) {
+				Field field = fields.get(i);
+				if (field.isLocal() && field.isPersistent()) {
+					persistentFields.add(field);
+				}
 			}
 		}
 		return persistentFields;
 	}
 
 	/**
-	 * Returns the list of persistent key pointers. Only local fields can be persistent.
-	 *
-	 * @return The list of persistent key pointers.
+	 * Returns the primary order.
+	 * 
+	 * @return The primary order.
 	 */
-	public List<KeyPointer> getPersistentKeyPointers() {
-		if (persistentKeyPointers == null) {
-			persistentKeyPointers = new ArrayList<>();
-			for (int i = 0; i < fields.size(); i++) {
-				Field field = fields.get(i);
-				if (field.isLocal() && field.isPersistent()) {
-					persistentKeyPointers.add(new KeyPointer(i));
-				}
+	public Order getPrimaryOrder() {
+		if (primaryOrder == null) {
+			primaryOrder = new Order();
+			List<Field> pkFields = getPrimaryKeyFields();
+			for (Field field : pkFields) {
+				primaryOrder.add(field, true);
 			}
 		}
-		return persistentKeyPointers;
+		return primaryOrder;
 	}
 
 	/**
@@ -370,34 +346,19 @@ public class FieldList {
 	public List<Field> getPrimaryKeyFields() {
 		if (primaryKeyFields == null) {
 			primaryKeyFields = new ArrayList<>();
-			List<KeyPointer> pointers = getPrimaryKeyPointers();
-			for (KeyPointer pointer : pointers) {
-				primaryKeyFields.add(getField(pointer.getIndex()));
+			for (Field field : fields) {
+				if (field.isLocal() && field.isPrimaryKey()) {
+					primaryKeyFields.add(field);
+				}
+			}
+			if (primaryKeyFields.isEmpty()) {
+				for (Field field : fields) {
+					if (field.isLocal() && !field.isVirtual()) {
+						primaryKeyFields.add(field);
+					}
+				}
 			}
 		}
 		return primaryKeyFields;
-	}
-
-	/**
-	 * Returns the list of primary key pointers. Only local fields are included in the primary key.
-	 *
-	 * @return The list of primary key pointers.
-	 */
-	public List<KeyPointer> getPrimaryKeyPointers() {
-		if (primaryKeyPointers == null) {
-			primaryKeyPointers = new ArrayList<>();
-			for (int i = 0; i < fields.size(); i++) {
-				Field field = fields.get(i);
-				if (field.isLocal() && field.isPrimaryKey()) {
-					primaryKeyPointers.add(new KeyPointer(i, true));
-				}
-			}
-			if (primaryKeyPointers.isEmpty()) {
-				for (int i = 0; i < fields.size(); i++) {
-					primaryKeyPointers.add(new KeyPointer(i, true));
-				}
-			}
-		}
-		return primaryKeyPointers;
 	}
 }

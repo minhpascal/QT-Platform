@@ -34,10 +34,6 @@ public class RecordSet implements Iterable<Record> {
 	 * The list of fields.
 	 */
 	private FieldList fields;
-	/**
-	 * The list of order by key pointers.
-	 */
-	private List<KeyPointer> orderByKeyPointers;
 
 	/**
 	 * Default constructor.
@@ -57,27 +53,6 @@ public class RecordSet implements Iterable<Record> {
 	}
 
 	/**
-	 * Returns the list of order by key pointers.
-	 *
-	 * @return The list of order by key pointers.
-	 */
-	public List<KeyPointer> getOrderByKeyPointers() {
-		if (orderByKeyPointers == null) {
-			orderByKeyPointers = getFieldList().getPrimaryKeyPointers();
-		}
-		return orderByKeyPointers;
-	}
-
-	/**
-	 * Sets the list of order by key pointers.
-	 *
-	 * @param orderByKeyPointers The list of order by key pointers.
-	 */
-	public void setOrderByKeyPointers(List<KeyPointer> orderByKeyPointers) {
-		this.orderByKeyPointers = orderByKeyPointers;
-	}
-
-	/**
 	 * Sets the field list.
 	 *
 	 * @param fields The field list.
@@ -94,7 +69,6 @@ public class RecordSet implements Iterable<Record> {
 	public RecordSet getCopy() {
 		RecordSet recordSet = new RecordSet();
 		recordSet.setFieldList(getFieldList());
-		recordSet.setOrderByKeyPointers(getOrderByKeyPointers());
 		recordSet.records.addAll(records);
 		return recordSet;
 	}
@@ -192,11 +166,21 @@ public class RecordSet implements Iterable<Record> {
 	 * @return The insert index.
 	 */
 	public int getInsertIndex(Record record) {
+		return getInsertIndex(record, fields.getPrimaryOrder());
+	}
+	/**
+	 * Gets the insert index using the order key.
+	 *
+	 * @param record The record.
+	 * @param order The order.
+	 * @return The insert index.
+	 */
+	public int getInsertIndex(Record record, Order order) {
+		OrderKey key = record.getOrderKey(order);
 		int index;
-		OrderKey key = record.getIndexKey(getOrderByKeyPointers());
 		for (index = 0; index < records.size(); index++) {
 			Record scanRecord = records.get(index);
-			OrderKey scanKey = scanRecord.getIndexKey(getOrderByKeyPointers());
+			OrderKey scanKey = scanRecord.getOrderKey(order);
 			if (key.compareTo(scanKey) <= 0) {
 				break;
 			}
@@ -302,16 +286,7 @@ public class RecordSet implements Iterable<Record> {
 		if (size() == 0) {
 			return;
 		}
-		sort(getOrderByKeyPointers());
-	}
-
-	/**
-	 * Sort this list of records based on the order based on a list of key pointers.
-	 *
-	 * @param keyPointers The list of key pointers
-	 */
-	public void sort(List<KeyPointer> keyPointers) {
-		sort(new RecordComparator(keyPointers));
+		sort(fields.getPrimaryOrder());
 	}
 
 	/**
@@ -320,9 +295,7 @@ public class RecordSet implements Iterable<Record> {
 	 * @param order The <code>Order</code> to use in the sort.
 	 */
 	public void sort(Order order) {
-		List<Field> fields = new ArrayList<>();
-		fields.addAll(getFieldList().getFields());
-		sort(order.getKeyPointers(fields));
+		sort(new RecordComparator(order));
 	}
 
 	/**

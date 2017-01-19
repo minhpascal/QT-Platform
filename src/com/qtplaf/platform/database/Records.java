@@ -79,6 +79,20 @@ public class Records {
 	 * Returns the instrument record from the database, given the server and instruments ids.
 	 * 
 	 * @param session The working session.
+	 * @param serverId The server id.
+	 * @param instrumentId The instrument id.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordInstrument(Session session, String serverId, String instrumentId)
+		throws PersistorException {
+		return getRecordInstrument(session, new Value(serverId), new Value(instrumentId));
+	}
+
+	/**
+	 * Returns the instrument record from the database, given the server and instruments ids.
+	 * 
+	 * @param session The working session.
 	 * @param server The server id value.
 	 * @param instrument The instrument id value.
 	 * @return The record or null.

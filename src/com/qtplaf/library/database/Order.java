@@ -14,7 +14,6 @@
 package com.qtplaf.library.database;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -213,32 +212,6 @@ public class Order extends ArrayList<Order.Segment> {
 	 */
 	public void add(Field field, boolean asc) {
 		add(new Segment(field, asc));
-	}
-
-	/**
-	 * Returns the record key pointers that correspond to this index and the argument fields.
-	 *
-	 * @return The list of record key pointers.
-	 * @param fields The array of fields.
-	 */
-	public List<KeyPointer> getKeyPointers(List<Field> fields) {
-		List<KeyPointer> keyPointers = new ArrayList<>();
-		for (int i = 0; i < size(); i++) {
-			Field field = get(i).getField();
-			boolean asc = get(i).isAsc();
-			int index = -1;
-			for (int j = 0; j < fields.size(); j++) {
-				if (fields.get(j).equals(field)) {
-					index = j;
-					break;
-				}
-			}
-			if (index == -1) {
-				throw new IllegalArgumentException("Invalid field list");
-			}
-			keyPointers.add(new KeyPointer(index, asc));
-		}
-		return keyPointers;
 	}
 
 	/**

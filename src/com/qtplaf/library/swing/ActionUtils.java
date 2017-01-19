@@ -707,6 +707,21 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Configure the action as an action browse.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureBrowse(Session session, Action action) {
+		setSourceName(action, session.getString("actionBrowseName"));
+		setShortDescription(action, session.getString("actionBrowseName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_browse));
+	}
+
+	/**
 	 * Configure the action as an action cancel.
 	 * 
 	 * @param session Working session.

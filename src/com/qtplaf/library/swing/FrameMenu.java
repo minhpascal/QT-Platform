@@ -432,7 +432,7 @@ public class FrameMenu {
 	}
 
 	/**
-	 * RunAction the console.
+	 * RunTickers the console.
 	 */
 	public void showConsole() {
 		getTabbedPane().setSelectedComponent(getConsoleComponent());
@@ -440,7 +440,7 @@ public class FrameMenu {
 	}
 
 	/**
-	 * RunAction the tree menu.
+	 * RunTickers the tree menu.
 	 */
 	public void showTreeMenu() {
 		getTabbedPane().setSelectedComponent(getPanelTreeMenu());

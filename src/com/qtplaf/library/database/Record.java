@@ -235,21 +235,41 @@ public class Record implements Comparable<Object> {
 	 * @return The list of persistent values.
 	 */
 	public List<Value> getPersistentValues() {
-		List<KeyPointer> persistentKeyPointers = fields.getPersistentKeyPointers();
-		List<Value> persistentValues = new ArrayList<>(persistentKeyPointers.size());
-		for (KeyPointer pointer : persistentKeyPointers) {
-			persistentValues.add(values.get(pointer.getIndex()));
+		List<Field> persistentFields = getPersistentFields();
+		List<Value> persistentValues = new ArrayList<>(persistentFields.size());
+		for (Field field : persistentFields) {
+			persistentValues.add(getValue(field.getAlias()));
 		}
 		return persistentValues;
 	}
+	
+	/**
+	 * Returns the order key for the given order. The order must contain fields of the record.
+	 * @param order The order.
+	 * @return The key.
+	 */
+	public OrderKey getOrderKey(Order order) {
+		OrderKey key = new OrderKey();
+		for (int i = 0; i < order.size(); i++) {
+			Order.Segment segment = order.get(i);
+			Field field = segment.getField();
+			boolean asc = segment.isAsc();
+			Value value = getValue(field.getAlias());
+			if (value == null) {
+				throw new IllegalArgumentException();
+			}
+			key.add(value, asc);
+		}
+		return key;
+	}
 
 	/**
-	 * Returns the list of persistent key pointers.
+	 * Returns the list of persistent fields.
 	 *
-	 * @return the list of persistent key pointers.
+	 * @return the list of persistent fields.
 	 */
-	public List<KeyPointer> getPersistentKeyPointers() {
-		return fields.getPersistentKeyPointers();
+	public List<Field> getPersistentFields() {
+		return fields.getPersistentFields();
 	}
 
 	/**
@@ -515,15 +535,6 @@ public class Record implements Comparable<Object> {
 	}
 
 	/**
-	 * Get the primary key pointers.
-	 *
-	 * @return The primary key pointers list.
-	 */
-	public List<KeyPointer> getPrimaryKeyPointers() {
-		return fields.getPrimaryKeyPointers();
-	}
-
-	/**
 	 * Get the list of primary key fields.
 	 * 
 	 * @return The list of primary key fields.
@@ -533,22 +544,12 @@ public class Record implements Comparable<Object> {
 	}
 
 	/**
-	 * Get an index key from an array of key pointers.
-	 *
-	 * @param pointers A list of KeyPointer's
-	 * @return An OrderKey
+	 * Returns the primary order.
+	 * 
+	 * @return The primary order.
 	 */
-	public OrderKey getIndexKey(List<KeyPointer> pointers) {
-		if (pointers != null) {
-			OrderKey orderKey = new OrderKey(pointers.size());
-			for (KeyPointer pointer : pointers) {
-				int index = pointer.getIndex();
-				boolean asc = pointer.isAsc();
-				orderKey.add(getValue(index), asc);
-			}
-			return orderKey;
-		}
-		return null;
+	public Order getPrimaryOrder() {
+		return fields.getPrimaryOrder();
 	}
 
 	/**
@@ -557,7 +558,12 @@ public class Record implements Comparable<Object> {
 	 * @return An <code>IndexKey</code>
 	 */
 	public OrderKey getPrimaryKey() {
-		return getIndexKey(getPrimaryKeyPointers());
+		List<Field> primaryKeyFields = getPrimaryKeyFields();
+		OrderKey orderKey = new OrderKey(primaryKeyFields.size());
+		for (Field field : primaryKeyFields) {
+			orderKey.add(getValue(field.getAlias()), true);
+		}
+		return orderKey;
 	}
 
 	/**
@@ -609,7 +615,7 @@ public class Record implements Comparable<Object> {
 				MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		// Compare using the primary key pointers.
-		RecordComparator comparator = new RecordComparator(getPrimaryKeyPointers());
+		RecordComparator comparator = new RecordComparator(getPrimaryOrder());
 		return comparator.compare(this, record);
 	}
 

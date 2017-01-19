@@ -135,7 +135,7 @@ class ActionListenerDrawingsButton implements ActionListener {
 			menuItemFiboExpansion.addActionListener(listenerItems);
 			popupMenu.add(menuItemFiboExpansion);
 
-			// RunAction the pop up menu
+			// RunTickers the pop up menu
 			Component component = (Component) e.getSource();
 			popupMenu.show(component, 0, component.getSize().height);
 

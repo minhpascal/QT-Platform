@@ -101,7 +101,7 @@ public class ActionSortTable extends AbstractAction {
 
 		Order order = dialogColumns.getOrder(model);
 		if (order != null) {
-			model.setComparator(new RecordComparator(masterRecord, order));
+			model.setComparator(new RecordComparator(order));
 			model.sort();
 		}
 	}

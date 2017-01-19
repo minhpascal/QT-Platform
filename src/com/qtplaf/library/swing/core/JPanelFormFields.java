@@ -726,7 +726,7 @@ public class JPanelFormFields extends JPanel {
 				}
 			}
 		}
-		// Add first the mai descriptions.
+		// Add first the main descriptions.
 		for (Field field : foreignRefreshFieldsTmp) {
 			if (field.isMainDescription()) {
 				if (!foreignRefreshFields.contains(field)) {

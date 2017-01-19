@@ -442,7 +442,7 @@ public class JFormRecord extends JDialogSession {
 		pack();
 		SwingUtils.centerOnScreen(this);
 
-		// RunAction it.
+		// RunTickers it.
 		setModal(modal);
 		setVisible(true);
 		requestFocus();

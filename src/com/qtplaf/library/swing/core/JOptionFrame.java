@@ -387,7 +387,7 @@ public class JOptionFrame extends JFrameSession {
 		}
 		SwingUtils.centerOnScreen(this);
 
-		// RunAction it.
+		// RunTickers it.
 		setResizable(resizable);
 		setVisible(true);
 		requestFocus();

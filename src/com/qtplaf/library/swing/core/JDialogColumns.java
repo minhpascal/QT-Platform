@@ -220,7 +220,7 @@ public class JDialogColumns extends JDialogSession {
 		// Layout components, set the size and position the window.
 		layoutComponents();
 
-		// RunAction it
+		// RunTickers it
 		setModal(true);
 		setVisible(true);
 
@@ -259,7 +259,7 @@ public class JDialogColumns extends JDialogSession {
 		// Layout components, set the size and position the window.
 		layoutComponents();
 
-		// RunAction it
+		// RunTickers it
 		setModal(true);
 		setVisible(true);
 

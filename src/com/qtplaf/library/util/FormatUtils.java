@@ -206,6 +206,7 @@ public class FormatUtils {
 		return b.toString().trim();
 	}
 
+
 	/**
 	 * Returns the set of properties given the locale. If the properties has not already been set it sets them, thus
 	 * always returning a valid map of properties.

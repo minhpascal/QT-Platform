@@ -208,7 +208,7 @@ public class TableModelRecord extends AbstractTableModel {
 	 * @return A copy of the internal record set.
 	 */
 	public RecordSet getRecordSet() {
-		return recordSet.getCopy();
+		return recordSet;
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class TableModelRecord extends AbstractTableModel {
 	 */
 	public RecordComparator getComparator() {
 		if (comparator == null) {
-			comparator = new RecordComparator(masterRecord.getPrimaryKeyPointers());
+			comparator = new RecordComparator(masterRecord.getPrimaryOrder());
 		}
 		return comparator;
 	}
@@ -361,7 +361,7 @@ public class TableModelRecord extends AbstractTableModel {
 	 * @param order The order.
 	 */
 	public void sort(Order order) {
-		setComparator(new RecordComparator(masterRecord, order));
+		setComparator(new RecordComparator(order));
 		sort();
 	}
 
@@ -458,6 +458,19 @@ public class TableModelRecord extends AbstractTableModel {
 	 */
 	public int insertRecord(Record record) {
 		int index = recordSet.getInsertIndex(record);
+		insertRecord(index, record);
+		return index;
+	}
+
+	/**
+	 * Insert a record at the position given by the order.
+	 * 
+	 * @param record The record.
+	 * @param order The order.
+	 * @return the insert index.
+	 */
+	public int insertRecord(Record record, Order order) {
+		int index = recordSet.getInsertIndex(record, order);
 		insertRecord(index, record);
 		return index;
 	}

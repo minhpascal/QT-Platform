@@ -14,7 +14,6 @@
 package com.qtplaf.library.database;
 
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * A comparator useful to compare records and sort them within a record set or list.
@@ -24,28 +23,18 @@ import java.util.List;
 public class RecordComparator implements Comparator<Record> {
 
 	/**
-	 * The key pointers.
+	 * The order.
 	 */
-	private final List<KeyPointer> keyPointers;
+	private Order order;
 
 	/**
-	 * Constructor assigning the list of key pointers.
+	 * Constructor using an order to get the key pointers.
 	 * 
-	 * @param keyPointers The list of key pointers.
-	 */
-	public RecordComparator(List<KeyPointer> keyPointers) {
-		super();
-		this.keyPointers = keyPointers;
-	}
-
-	/**
-	 * Constructor using a master record and an order to get the key pointers.
-	 * 
-	 * @param masterRecord The master record.
 	 * @param order The order.
 	 */
-	public RecordComparator(Record masterRecord, Order order) {
-		this(order.getKeyPointers(masterRecord.getFieldList().getFields()));
+	public RecordComparator(Order order) {
+		super();
+		this.order = order;
 	}
 
 	/**
@@ -57,8 +46,8 @@ public class RecordComparator implements Comparator<Record> {
 	 */
 	@Override
 	public int compare(Record r1, Record r2) {
-		OrderKey k1 = r1.getIndexKey(keyPointers);
-		OrderKey k2 = r2.getIndexKey(keyPointers);
+		OrderKey k1 = r1.getOrderKey(order);
+		OrderKey k2 = r2.getOrderKey(order);
 		return k1.compareTo(k2);
 	}
 
@@ -69,10 +58,6 @@ public class RecordComparator implements Comparator<Record> {
 	 * @return An order that corresponds to the key pointers.
 	 */
 	public Order getOrder(Record record) {
-		Order order = new Order();
-		for (KeyPointer keyPointer : keyPointers) {
-			order.add(record.getField(keyPointer.getIndex()), keyPointer.isAsc());
-		}
 		return order;
 	}
 }

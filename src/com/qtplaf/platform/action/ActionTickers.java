@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Criteria;
+import com.qtplaf.library.database.PageRecordSet;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -47,12 +48,14 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.tables.OHLCVS;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.task.TaskDownloadTicker;
@@ -86,10 +89,17 @@ public class ActionTickers extends AbstractAction {
 				String mustBeSet = session.getString("qtItemMustBeSet");
 				// Validate the period.
 				Value period = form.getEditField(Tickers.Fields.PeriodId).getValue();
-				if (Records.getRecordPeriod(session, period) == null) {
+				Record rcPeriod = Records.getRecordPeriod(session, period);
+				if (rcPeriod == null) {
 					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemPeriod")));
 					return false;
 				}
+				form.getRecord().setValue(
+					Periods.Fields.PeriodUnitIndex,
+					rcPeriod.getValue(Periods.Fields.PeriodUnitIndex));
+				form.getRecord().setValue(
+					Periods.Fields.PeriodSize,
+					rcPeriod.getValue(Periods.Fields.PeriodSize));
 				// Validate offer side.
 				Value offerSide = form.getEditField(Tickers.Fields.OfferSide).getValue();
 				if (Records.getRecordOfferSide(session, offerSide) == null) {
@@ -187,7 +197,7 @@ public class ActionTickers extends AbstractAction {
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
 				Table table = Tables.getTableOHLCVS(session, server, tableName);
 				persistor.getDDL().buildTable(table);
-				getTableModel().insertRecord(record);
+				getTableModel().insertRecord(record, persistor.getView().getOrderBy());
 				getTableRecord().setSelectedRecord(record);
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -374,9 +384,90 @@ public class ActionTickers extends AbstractAction {
 	}
 
 	/**
+	 * Action to browse the current ticker.
+	 */
+	class ActionBrowse extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionBrowse(Session session) {
+			super();
+			ActionUtils.configureBrowse(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			new Thread(new RunBrowse(this)).start();
+		}
+	}
+
+	/**
+	 * Runnable to launch the browse action it in a thread.
+	 */
+	class RunBrowse implements Runnable {
+		ActionBrowse action;
+
+		RunBrowse(ActionBrowse action) {
+			this.action = action;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Session session = ActionUtils.getSession(ActionTickers.this);
+				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Record record = action.getSelectedRecord();
+				if (record == null) {
+					return;
+				}
+				String tableName = record.getValue(Tickers.Fields.TableName).getString();
+				Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
+
+				String serverId = record.getValue(Tickers.Fields.ServerId).getString();
+				String instrId = record.getValue(Tickers.Fields.InstrumentId).getString();
+				String periodId = record.getValue(Tickers.Fields.PeriodId).getString();
+				Formatters.configureOHLCV(session, persistor, serverId, instrId, periodId);
+
+				Record masterRecord = persistor.getDefaultRecord();
+
+				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
+				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
+				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+				tableModelRecord.addColumn(OHLCVS.Fields.Time);
+				tableModelRecord.addColumn(OHLCVS.Fields.Open);
+				tableModelRecord.addColumn(OHLCVS.Fields.High);
+				tableModelRecord.addColumn(OHLCVS.Fields.Low);
+				tableModelRecord.addColumn(OHLCVS.Fields.Close);
+				tableModelRecord.addColumn(OHLCVS.Fields.Volume);
+
+				PageRecordSet recordSet = new PageRecordSet();
+				recordSet.setPersistor(persistor);
+				tableModelRecord.setRecordSet(recordSet);
+				tableRecord.setModel(tableModelRecord);
+
+				JOptionFrame frame = new JOptionFrame(session);
+				frame.setTitle(server.getName() + " " + tableName);
+				frame.setComponent(panelTableRecord);
+
+				frame.addAction(new ActionClose(session));
+				frame.setSize(0.6, 0.8);
+				frame.showFrame();
+
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+	}
+
+	/**
 	 * Runnable to launch it in a thread.
 	 */
-	class RunAction implements Runnable {
+	class RunTickers implements Runnable {
 		@Override
 		public void run() {
 			try {
@@ -400,10 +491,23 @@ public class ActionTickers extends AbstractAction {
 				JOptionFrame frame = new JOptionFrame(session);
 				frame.setTitle(server.getName() + " " + session.getString("qtMenuServersTickers").toLowerCase());
 				frame.setComponent(panelTableRecord);
-				frame.addAction(new ActionCreate(session));
-				frame.addAction(new ActionDelete(session));
+
+				ActionCreate actionCreate = new ActionCreate(session);
+				ActionUtils.setSortIndex(actionCreate, 0);
+				frame.addAction(actionCreate);
+
+				ActionDelete actionDelete = new ActionDelete(session);
+				ActionUtils.setSortIndex(actionDelete, 1);
+				frame.addAction(actionDelete);
+				frame.addAction(actionCreate);
+
+				ActionBrowse actionBrowse = new ActionBrowse(session);
+				ActionUtils.setSortIndex(actionBrowse, 2);
+				frame.addAction(actionBrowse);
+
 				frame.addAction(new ActionPurge(session));
 				frame.addAction(new ActionDownload(session));
+
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);
 				frame.showFrame();
@@ -426,7 +530,7 @@ public class ActionTickers extends AbstractAction {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new Thread(new RunAction()).start();
+		new Thread(new RunTickers()).start();
 	}
 
 	/**

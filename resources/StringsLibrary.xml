@@ -58,6 +58,7 @@
 	<!-- Actions (buttons) names. These are more generic. -->
 
 	<entry key="actionAcceptName">Accept</entry>
+	<entry key="actionBrowseName">Browse</entry>
 	<entry key="actionCancelName">Cancel</entry>
 	<entry key="actionCloseName">Close</entry>
 	<entry key="actionClearName">Clear</entry>

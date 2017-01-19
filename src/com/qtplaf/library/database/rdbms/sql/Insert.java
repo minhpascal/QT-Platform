@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Filter;
-import com.qtplaf.library.database.KeyPointer;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
@@ -222,10 +221,8 @@ public class Insert extends Statement {
 		}
 		if (record != null) {
 			boolean comma = false;
-			List<KeyPointer> persistentKeyPointers = record
-				.getPersistentKeyPointers();
-			for (KeyPointer pointer : persistentKeyPointers) {
-				Field field = record.getField(pointer.getIndex());
+			List<Field> persistentFields = record.getPersistentFields();
+			for (Field field : persistentFields) {
 				if (comma) {
 					b.append(", ");
 				}
@@ -263,10 +260,8 @@ public class Insert extends Statement {
 			}
 			if (record != null) {
 				boolean comma = false;
-				List<KeyPointer> persistentKeyPointers = record
-					.getPersistentKeyPointers();
-				for (KeyPointer pointer : persistentKeyPointers) {
-					Field field = record.getField(pointer.getIndex());
+				List<Field> persistentFields = record.getPersistentFields();
+				for (Field field : persistentFields) {
 					if (comma) {
 						b.append(", ");
 					}
