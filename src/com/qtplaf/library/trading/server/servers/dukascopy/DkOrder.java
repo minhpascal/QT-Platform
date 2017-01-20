@@ -35,6 +35,10 @@ import com.qtplaf.library.trading.server.ServerException;
 public class DkOrder implements Order {
 
 	/**
+	 * Dukascopy server.
+	 */
+	private DkServer server;
+	/**
 	 * Dukascopy <i>Iorder</i>.
 	 */
 	private IOrder order;
@@ -42,10 +46,12 @@ public class DkOrder implements Order {
 	/**
 	 * Constructor assigning the Dukascopy order.
 	 * 
+	 * @param server The server.
 	 * @param order The Dukascopy order.
 	 */
-	public DkOrder(IOrder order) {
+	public DkOrder(DkServer server, IOrder order) {
 		super();
+		this.server = server;
 		this.order = order;
 	}
 
@@ -234,7 +240,7 @@ public class DkOrder implements Order {
 	 * @return The instrument.
 	 */
 	public Instrument getInstrument() {
-		return DkUtilities.fromDkInstrument(order.getInstrument());
+		return server.getDkConverter().fromDkInstrument(order.getInstrument());
 	}
 
 	/**
@@ -261,7 +267,7 @@ public class DkOrder implements Order {
 	 * @return The order command.
 	 */
 	public OrderCommand getOrderCommand() {
-		return DkUtilities.fromDkOrderCommand(order.getOrderCommand(),isClosed());
+		return server.getDkConverter().fromDkOrderCommand(order.getOrderCommand(), isClosed());
 	}
 
 	/**
@@ -270,7 +276,7 @@ public class DkOrder implements Order {
 	 * @return The current order state.
 	 */
 	public OrderState getOrderState() {
-		return DkUtilities.fromDkOrderState(order.getState());
+		return server.getDkConverter().fromDkOrderState(order.getState());
 	}
 
 	/**
@@ -334,7 +340,7 @@ public class DkOrder implements Order {
 	 * @return The side used to check the stop loss condition.
 	 */
 	public OfferSide getStopLossSide() {
-		return DkUtilities.fromDkOfferSide(order.getStopLossSide());
+		return server.getDkConverter().fromDkOfferSide(order.getStopLossSide());
 	}
 
 	/**

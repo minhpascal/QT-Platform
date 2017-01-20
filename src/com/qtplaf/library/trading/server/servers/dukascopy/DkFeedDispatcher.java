@@ -30,10 +30,18 @@ import com.qtplaf.library.trading.server.feed.FeedDispatcher;
 public class DkFeedDispatcher extends FeedDispatcher {
 
 	/**
-	 * Constructor.
+	 * Dukascopy server.
 	 */
-	public DkFeedDispatcher() {
+	private DkServer server;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param server The server,
+	 */
+	public DkFeedDispatcher(DkServer server) {
 		super();
+		this.server = server;
 	}
 
 	/**
@@ -45,10 +53,10 @@ public class DkFeedDispatcher extends FeedDispatcher {
 	 * @param dkBar The Dukascopy bar.
 	 */
 	public void addCurrentBar(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide, IBar dkBar) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
-		com.qtplaf.library.trading.data.Period period = DkUtilities.fromDkPeriod(dkPeriod);
-		com.qtplaf.library.trading.server.OfferSide offerSide = DkUtilities.fromDkOfferSide(dkOfferSide);
-		OHLCV ohlcv = DkUtilities.fromDkBar(dkBar);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
+		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
+		OHLCV ohlcv = server.getDkConverter().fromDkBar(dkBar);
 		addCurrentOHLCV(instrument, period, offerSide, ohlcv);
 	}
 
@@ -61,13 +69,13 @@ public class DkFeedDispatcher extends FeedDispatcher {
 	 * @param dkBar The Dukascopy bar.
 	 */
 	public void addBar(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide, IBar dkBar) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
-		com.qtplaf.library.trading.data.Period period = DkUtilities.fromDkPeriod(dkPeriod);
-		com.qtplaf.library.trading.server.OfferSide offerSide = DkUtilities.fromDkOfferSide(dkOfferSide);
-		OHLCV ohlcv = DkUtilities.fromDkBar(dkBar);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
+		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
+		OHLCV ohlcv = server.getDkConverter().fromDkBar(dkBar);
 		addOHLCV(instrument, period, offerSide, ohlcv);
 	}
-	
+
 	/**
 	 * Add a tick data event to the input queue, from Dukascopy data.
 	 * 
@@ -75,8 +83,8 @@ public class DkFeedDispatcher extends FeedDispatcher {
 	 * @param dkTick The Dukascopy tick.
 	 */
 	public void addTick(Instrument dkInstrument, ITick dkTick) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
-		Tick tick = DkUtilities.fromDkTick(dkTick);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
+		Tick tick = server.getDkConverter().fromDkTick(dkTick);
 		addTick(instrument, tick);
 	}
 }

@@ -23,7 +23,7 @@ import com.qtplaf.library.trading.server.OrderHistory;
  * @author Miquel Sas
  */
 public class DkOrderHistory implements OrderHistory {
-	
+
 	/**
 	 * IClose order reference.
 	 */
@@ -32,7 +32,7 @@ public class DkOrderHistory implements OrderHistory {
 	 * IFillOrder reference.
 	 */
 	private IFillOrder fillOrder;
-	
+
 	/**
 	 * Constructor assigning the ICloseOrder.
 	 * 

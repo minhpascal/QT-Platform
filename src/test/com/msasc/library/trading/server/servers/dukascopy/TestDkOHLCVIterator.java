@@ -14,7 +14,6 @@ import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.HistoryManager;
 import com.qtplaf.library.trading.server.OHLCVIterator;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
-import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
 import com.qtplaf.library.util.Calendar;
 import com.qtplaf.library.util.SystemUtils;
 
@@ -40,10 +39,10 @@ public class TestDkOHLCVIterator {
 	public static void main(String[] args) throws Exception {
 		int error = 0;
 		try {
-			Instrument instrument = DkUtilities.fromDkInstrument(com.dukascopy.api.Instrument.EURUSD);
-			Period period = DkUtilities.fromDkPeriod(com.dukascopy.api.Period.ONE_MIN);
-			
 			DkServer server = new DkServer();
+			Instrument instrument = server.getDkConverter().fromDkInstrument(com.dukascopy.api.Instrument.EURUSD);
+			Period period = server.getDkConverter().fromDkPeriod(com.dukascopy.api.Period.ONE_MIN);
+			
 			server.getConnectionManager().addListener(new DkConnectionListener());
 			server.getConnectionManager().connect(userName, password, AccountType.Demo);
 

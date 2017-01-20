@@ -387,7 +387,7 @@ public class MessageBox {
 		Option[] options,
 		Option initialOption) {
 		
-		JOptionDialog dialog = new JOptionDialog(session);
+		JOptionDialog dialog = new JOptionDialog(session, WindowManager.getLast());
 		if (title != null) {
 			dialog.setTitle(title);
 		}

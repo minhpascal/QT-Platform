@@ -43,7 +43,7 @@ public class DkBarFeedListener implements IBarFeedListener {
 	}
 
 	/**
-	 * The method is being called when next bar arrives and posts the bar  to the dispatcher.
+	 * The method is being called when next bar arrives and posts the bar to the dispatcher.
 	 * 
 	 * @param dkInstrument Instrument.
 	 * @param dkPeriod Period.

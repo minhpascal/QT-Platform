@@ -16,9 +16,9 @@ package com.qtplaf.library.trading.server.servers.dukascopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.ConnectionListener;
 import com.qtplaf.library.trading.server.ConnectionManager;
-import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.ServerException;
 
 /**
@@ -27,7 +27,7 @@ import com.qtplaf.library.trading.server.ServerException;
  * @author Miquel Sas
  */
 public class DkConnectionManager implements ConnectionManager {
-	
+
 	/**
 	 * Dukascopy uses this logger.
 	 */
@@ -88,7 +88,7 @@ public class DkConnectionManager implements ConnectionManager {
 		// Do connect.
 		try {
 			server.getClient().connect(url, username, password);
-			
+
 			// Wait for connection.
 			int i = 10; // wait max ten seconds
 			while (i > 0 && !server.getClient().isConnected()) {
@@ -103,7 +103,7 @@ public class DkConnectionManager implements ConnectionManager {
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
-		
+
 		// Install the strategy listener.
 		server.getClient().startStrategy(server.getStrategyListener());
 	}
@@ -123,7 +123,7 @@ public class DkConnectionManager implements ConnectionManager {
 	 * @return The connection type.
 	 */
 	public AccountType getConnectionType() {
-			return connectionType;
+		return connectionType;
 	}
 
 	/**

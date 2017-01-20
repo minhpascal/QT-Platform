@@ -14,6 +14,7 @@
 package com.qtplaf.library.trading.server.servers.dukascopy;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -66,6 +67,15 @@ public class DkServer extends AbstractServer {
 	 * Instance of the feed manager.
 	 */
 	private DkFeedManager feedManager;
+	/**
+	 * Instance of the converter.
+	 */
+	private DkConverter dkConverter;
+	/**
+	 * List of subscribed instruments.
+	 */
+	private Set<com.dukascopy.api.Instrument> subscribedInstruments =
+		new HashSet<com.dukascopy.api.Instrument>();
 
 	/**
 	 * Constructor.
@@ -83,7 +93,7 @@ public class DkServer extends AbstractServer {
 			client.setSystemListener(systemListener);
 
 			// Initialize the context strategy.
-			strategyListener = new DkStrategyListener();
+			strategyListener = new DkStrategyListener(this);
 
 		} catch (Exception cause) {
 			throw new ServerException(cause);
@@ -93,6 +103,22 @@ public class DkServer extends AbstractServer {
 		setName("Dukascopy");
 		setId("dkcp");
 		setTitle("Dukascopy Bank SA");
+	}
+
+	/**
+	 * Check that when some information is required from the instrument, the instrument has been subscribed.
+	 * 
+	 * @param instrument The Dukascopy instrument.
+	 * @throws ServerException
+	 */
+	public void checkSubscribed(com.dukascopy.api.Instrument instrument) throws ServerException {
+		if (!getConnectionManager().isConnected()) {
+			return;
+		}
+		if (!subscribedInstruments.contains(instrument)) {
+			subscribedInstruments.add(instrument);
+			getClient().setSubscribedInstruments(subscribedInstruments);
+		}
 	}
 
 	/**
@@ -156,7 +182,7 @@ public class DkServer extends AbstractServer {
 		Set<com.dukascopy.api.Instrument> dukascopyInstruments = getClient().getAvailableInstruments();
 		List<Instrument> instruments = new ArrayList<>();
 		for (com.dukascopy.api.Instrument dukascopyInstrument : dukascopyInstruments) {
-			instruments.add(DkUtilities.fromDkInstrument(dukascopyInstrument));
+			instruments.add(getDkConverter().fromDkInstrument(dukascopyInstrument));
 		}
 		return instruments;
 	}
@@ -211,5 +237,17 @@ public class DkServer extends AbstractServer {
 			feedManager = new DkFeedManager(this);
 		}
 		return feedManager;
+	}
+
+	/**
+	 * Returns the converter.
+	 * 
+	 * @return The converter.
+	 */
+	public DkConverter getDkConverter() {
+		if (dkConverter == null) {
+			dkConverter = new DkConverter(this);
+		}
+		return dkConverter;
 	}
 }

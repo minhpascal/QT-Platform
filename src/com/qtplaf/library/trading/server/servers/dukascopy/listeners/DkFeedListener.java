@@ -19,7 +19,7 @@ import com.dukascopy.api.Period;
 import com.qtplaf.library.trading.server.feed.FeedListenerAdapter;
 import com.qtplaf.library.trading.server.feed.OHLCVSubscription;
 import com.qtplaf.library.trading.server.feed.TickSubscription;
-import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
+import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 
 /**
  * Dukascopy feed listener.
@@ -28,11 +28,17 @@ import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
  */
 public class DkFeedListener extends FeedListenerAdapter {
 
+	/** DK server. */
+	private DkServer server;
+
 	/**
 	 * Constructor.
+	 * 
+	 * @param server The server.
 	 */
-	public DkFeedListener() {
+	public DkFeedListener(DkServer server) {
 		super();
+		this.server = server;
 	}
 
 	/**
@@ -43,9 +49,9 @@ public class DkFeedListener extends FeedListenerAdapter {
 	 * @param dkOfferSide The Dukascopy offer side.
 	 */
 	public void addCurrentOHLCVSubscription(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
-		com.qtplaf.library.trading.data.Period period = DkUtilities.fromDkPeriod(dkPeriod);
-		com.qtplaf.library.trading.server.OfferSide offerSide = DkUtilities.fromDkOfferSide(dkOfferSide);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
+		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
 		OHLCVSubscription subscription = new OHLCVSubscription(instrument, period, offerSide);
 		addCurrentOHLCVSubscription(subscription);
 	}
@@ -58,9 +64,9 @@ public class DkFeedListener extends FeedListenerAdapter {
 	 * @param dkOfferSide The Dukascopy offer side.
 	 */
 	public void addOHLCVSubscription(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
-		com.qtplaf.library.trading.data.Period period = DkUtilities.fromDkPeriod(dkPeriod);
-		com.qtplaf.library.trading.server.OfferSide offerSide = DkUtilities.fromDkOfferSide(dkOfferSide);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
+		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
 		OHLCVSubscription subscription = new OHLCVSubscription(instrument, period, offerSide);
 		addOHLCVSubscription(subscription);
 	}
@@ -73,7 +79,7 @@ public class DkFeedListener extends FeedListenerAdapter {
 	 * @param dkOfferSide The Dukascopy offer side.
 	 */
 	public void addTickSubscription(Instrument dkInstrument) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		TickSubscription subscription = new TickSubscription(instrument);
 		addTickSubscription(subscription);
 	}

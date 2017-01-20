@@ -64,7 +64,7 @@ public class DkFeedManager implements FeedManager {
 
 		// If the dispatcher is not started, start it.
 		if (dispatcher == null) {
-			dispatcher = new DkFeedDispatcher();
+			dispatcher = new DkFeedDispatcher(server);
 			// Install the dispatcher in the strategy listener.
 			server.getStrategyListener().setDispatcher(dispatcher);
 			new Thread(dispatcher, "Dukascopy feed dispatcher").start();
@@ -101,9 +101,9 @@ public class DkFeedManager implements FeedManager {
 		IContext context = server.getStrategyListener().getContext();
 		List<OHLCVSubscription> ohlcvSubscriptions = listener.getOHLCVSubscriptions();
 		for (OHLCVSubscription subscription : ohlcvSubscriptions) {
-			Instrument dkInstrument = DkUtilities.toDkInstrument(subscription.getInstrument());
-			Period dkPeriod = DkUtilities.toDkPeriod(subscription.getPeriod());
-			OfferSide dkOfferSide = DkUtilities.toDkOfferSide(subscription.getOfferSide());
+			Instrument dkInstrument = server.getDkConverter().toDkInstrument(subscription.getInstrument());
+			Period dkPeriod = server.getDkConverter().toDkPeriod(subscription.getPeriod());
+			OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(subscription.getOfferSide());
 			IBarFeedListener dkListener = new DkBarFeedListener(dispatcher);
 			// Set the user object to the subscription in order to be able to unsubscribe when the listener is removed.
 			subscription.setObject(dkListener);
@@ -120,7 +120,7 @@ public class DkFeedManager implements FeedManager {
 		IContext context = server.getStrategyListener().getContext();
 		List<OHLCVSubscription> ohlcvSubscriptions = listener.getOHLCVSubscriptions();
 		for (OHLCVSubscription subscription : ohlcvSubscriptions) {
-			DkBarFeedListener dkListener = (DkBarFeedListener)subscription.getObject();
+			DkBarFeedListener dkListener = (DkBarFeedListener) subscription.getObject();
 			if (dkListener != null) {
 				context.unsubscribeFromBarsFeed(dkListener);
 			}
@@ -155,7 +155,7 @@ public class DkFeedManager implements FeedManager {
 		}
 		Set<Instrument> dkInstruments = new LinkedHashSet<>();
 		for (com.qtplaf.library.trading.data.Instrument instrument : instruments) {
-			Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
+			Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
 			dkInstruments.add(dkInstrument);
 		}
 		return dkInstruments;

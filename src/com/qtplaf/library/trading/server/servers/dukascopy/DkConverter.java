@@ -1,19 +1,26 @@
 /*
  * Copyright (C) 2015 Miquel Sas
- *
+ * 
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
 package com.qtplaf.library.trading.server.servers.dukascopy;
 
 import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dukascopy.api.IBar;
 import com.dukascopy.api.ITick;
@@ -26,13 +33,75 @@ import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.OrderCommand;
 import com.qtplaf.library.trading.server.OrderState;
+import com.qtplaf.library.trading.server.ServerException;
 
 /**
- * Utilities to convert Dukascopy definitions from/to system definitions.
+ * Converter of Dukascopy objects to system objects.
  * 
  * @author Miquel Sas
  */
-public class DkUtilities {
+public class DkConverter {
+
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
+
+	/** Dukascopy server. */
+	private DkServer server;
+
+	/** A map with instruments by id. */
+	private Map<String, com.dukascopy.api.Instrument> mapInstruments = new HashMap<>();
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param server The server.
+	 */
+	public DkConverter(DkServer server) {
+		super();
+		this.server = server;
+	}
+
+	/**
+	 * Check the instruments map and load if the server is connected.
+	 */
+	private void loadInstruments() {
+		try {
+			if (mapInstruments.isEmpty()) {
+				if (server.getConnectionManager().isConnected()) {
+					Set<com.dukascopy.api.Instrument> dkInstruments = server.getClient().getAvailableInstruments();
+					for (com.dukascopy.api.Instrument dkInstrument : dkInstruments) {
+						mapInstruments.put(dkInstrument.name(), dkInstrument);
+					}
+
+				}
+			}
+		} catch (ServerException exc) {
+			logger.catching(exc);
+		}
+	}
+
+	/**
+	 * Returns the Dukascopy instrument given the system instrument.
+	 * 
+	 * @param instrument The system instrument.
+	 * @return The Dukascopy instrument.
+	 * @throws ServerException
+	 */
+	public com.dukascopy.api.Instrument toDkInstrument(Instrument instrument) {
+		loadInstruments();
+		com.dukascopy.api.Instrument dkInstrument = mapInstruments.get(instrument.getId());
+		if (dkInstrument != null) {
+			return dkInstrument;
+		}
+		com.dukascopy.api.Instrument[] dkInstruments = com.dukascopy.api.Instrument.values();
+		for (com.dukascopy.api.Instrument dkInstr : dkInstruments) {
+			if (dkInstr.name().equals(instrument.getId())) {
+				return dkInstr;
+			}
+		}
+		// Should never come here.
+		throw new IllegalArgumentException("Instrument not supported: " + instrument.getId());
+	}
 
 	/**
 	 * Convert from a Dukascopy instrument to a system instrument.
@@ -40,7 +109,7 @@ public class DkUtilities {
 	 * @param dkInstrument The Dukascopy instrument.
 	 * @return This system corresponding instrument.
 	 */
-	public static Instrument fromDkInstrument(com.dukascopy.api.Instrument dkInstrument) {
+	public Instrument fromDkInstrument(com.dukascopy.api.Instrument dkInstrument) {
 		Instrument instrument = new Instrument();
 
 		// Identifier.
@@ -92,29 +161,12 @@ public class DkUtilities {
 	}
 
 	/**
-	 * Returns the Dukascopy instrument given the system instrument.
-	 * 
-	 * @param instrument The system instrument.
-	 * @return The Dukascopy instrument.
-	 */
-	public static com.dukascopy.api.Instrument toDkInstrument(Instrument instrument) {
-		com.dukascopy.api.Instrument[] dukascopyInstruments = com.dukascopy.api.Instrument.values();
-		for (com.dukascopy.api.Instrument dukascopyInstrument : dukascopyInstruments) {
-			if (dukascopyInstrument.name().equals(instrument.getId())) {
-				return dukascopyInstrument;
-			}
-		}
-		// Should never come here.
-		throw new IllegalArgumentException("Instrument not supported: " + instrument.getId());
-	}
-
-	/**
 	 * Returns the corresponding unit given the system unit.
 	 * 
 	 * @param unit The system unit.
 	 * @return The Dukascopy unit.
 	 */
-	public static com.dukascopy.api.Unit toDkUnit(Unit unit) {
+	public com.dukascopy.api.Unit toDkUnit(Unit unit) {
 		switch (unit) {
 		case Millisecond:
 			return com.dukascopy.api.Unit.Millisecond;
@@ -138,12 +190,24 @@ public class DkUtilities {
 	}
 
 	/**
+	 * Returns a suitable Dukascopy period give this system period.
+	 * 
+	 * @param period The period.
+	 * @return The Dukascopy period.
+	 */
+	public com.dukascopy.api.Period toDkPeriod(Period period) {
+		com.dukascopy.api.Unit unit = toDkUnit(period.getUnit());
+		int size = period.getSize();
+		return com.dukascopy.api.Period.createCustomPeriod(unit, size);
+	}
+
+	/**
 	 * Returns this system unit given the Dukaascopy unit.
 	 * 
 	 * @param dkUnit The Dukascopy unit.
 	 * @return The system unit.
 	 */
-	public static Unit fromDkUnit(com.dukascopy.api.Unit dkUnit) {
+	public Unit fromDkUnit(com.dukascopy.api.Unit dkUnit) {
 		switch (dkUnit) {
 		case Millisecond:
 			return Unit.Millisecond;
@@ -167,24 +231,12 @@ public class DkUtilities {
 	}
 
 	/**
-	 * Returns a suitable Dukascopy period give this system period.
-	 * 
-	 * @param period The period.
-	 * @return The Dukascopy period.
-	 */
-	public static com.dukascopy.api.Period toDkPeriod(Period period) {
-		com.dukascopy.api.Unit unit = toDkUnit(period.getUnit());
-		int size = period.getSize();
-		return com.dukascopy.api.Period.createCustomPeriod(unit, size);
-	}
-
-	/**
 	 * Returns this system period given the Dukascopy period.
 	 * 
 	 * @param dkPeriod The Dukascopy period.
 	 * @return This system period.
 	 */
-	public static Period fromDkPeriod(com.dukascopy.api.Period dkPeriod) {
+	public Period fromDkPeriod(com.dukascopy.api.Period dkPeriod) {
 		Unit unit = fromDkUnit(dkPeriod.getUnit());
 		int size = dkPeriod.getNumOfUnits();
 		return new Period(unit, size);
@@ -196,7 +248,7 @@ public class DkUtilities {
 	 * @param filter The filter.
 	 * @return The Dukascopy filter.
 	 */
-	public static com.dukascopy.api.Filter toDkFilter(Filter filter) {
+	public com.dukascopy.api.Filter toDkFilter(Filter filter) {
 		switch (filter) {
 		case AllFlats:
 			return com.dukascopy.api.Filter.ALL_FLATS;
@@ -216,8 +268,9 @@ public class DkUtilities {
 	 * @param closed A boolean that indicates if the order is closed.
 	 * @return This system <i>OrderCommand</i>.
 	 */
-	public static OrderCommand fromDkOrderCommand(
-		com.dukascopy.api.IEngine.OrderCommand orderCommand, boolean closed) {
+	public OrderCommand fromDkOrderCommand(
+		com.dukascopy.api.IEngine.OrderCommand orderCommand,
+		boolean closed) {
 		switch (orderCommand) {
 		case BUY:
 			return (closed ? OrderCommand.Buy : OrderCommand.BuyMarket);
@@ -254,7 +307,7 @@ public class DkUtilities {
 	 * @param orderCommand This system order command.
 	 * @return The Dukascopy order command.
 	 */
-	public static com.dukascopy.api.IEngine.OrderCommand toDkOrderCommand(OrderCommand orderCommand) {
+	public com.dukascopy.api.IEngine.OrderCommand toDkOrderCommand(OrderCommand orderCommand) {
 		switch (orderCommand) {
 		case Buy:
 		case BuyMarket:
@@ -293,7 +346,7 @@ public class DkUtilities {
 	 * @param dkOrderState The Dukascopy order state.
 	 * @return This system order state.
 	 */
-	public static OrderState fromDkOrderState(com.dukascopy.api.IOrder.State dkOrderState) {
+	public OrderState fromDkOrderState(com.dukascopy.api.IOrder.State dkOrderState) {
 		switch (dkOrderState) {
 		case CANCELED:
 			return OrderState.Cancelled;
@@ -316,7 +369,7 @@ public class DkUtilities {
 	 * @param dkOfferSide The Dukascopy offer side.
 	 * @return This system offer side.
 	 */
-	public static OfferSide fromDkOfferSide(com.dukascopy.api.OfferSide dkOfferSide) {
+	public OfferSide fromDkOfferSide(com.dukascopy.api.OfferSide dkOfferSide) {
 		switch (dkOfferSide) {
 		case ASK:
 			return OfferSide.Ask;
@@ -333,7 +386,7 @@ public class DkUtilities {
 	 * @param offerSide The offer side.
 	 * @return The Dukascopy offer side.
 	 */
-	public static com.dukascopy.api.OfferSide toDkOfferSide(OfferSide offerSide) {
+	public com.dukascopy.api.OfferSide toDkOfferSide(OfferSide offerSide) {
 		switch (offerSide) {
 		case Ask:
 			return com.dukascopy.api.OfferSide.ASK;
@@ -350,7 +403,7 @@ public class DkUtilities {
 	 * @param dkTick The Dukscopy tick.
 	 * @return This system tick.
 	 */
-	public static Tick fromDkTick(ITick dkTick) {
+	public Tick fromDkTick(ITick dkTick) {
 		Tick tick = new Tick();
 		double[] askValues = dkTick.getAsks();
 		double[] askVolumes = dkTick.getAskVolumes();
@@ -374,7 +427,7 @@ public class DkUtilities {
 	 * @param dkBar The Dukascopy bar.
 	 * @return This system OHLCV data item.
 	 */
-	public static OHLCV fromDkBar(IBar dkBar) {
+	public OHLCV fromDkBar(IBar dkBar) {
 		OHLCV ohlcv = new OHLCV();
 		ohlcv.setOpen(dkBar.getOpen());
 		ohlcv.setHigh(dkBar.getHigh());

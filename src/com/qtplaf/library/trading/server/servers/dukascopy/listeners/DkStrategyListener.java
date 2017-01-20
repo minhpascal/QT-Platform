@@ -30,7 +30,7 @@ import com.qtplaf.library.trading.server.feed.FeedListener;
 import com.qtplaf.library.trading.server.feed.OHLCVSubscription;
 import com.qtplaf.library.trading.server.feed.TickSubscription;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkFeedDispatcher;
-import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
+import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 
 /**
  * Dukascopy strategy implementation to listen to strategy events, to retrieve the context, the history, ticks and all
@@ -53,12 +53,19 @@ public class DkStrategyListener implements IStrategy {
 	 * The list of system listeners.
 	 */
 	private List<FeedListener> listeners = new ArrayList<>();
+	/**
+	 * The server.
+	 */
+	private DkServer server;
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param server The server.
 	 */
-	public DkStrategyListener() {
+	public DkStrategyListener(DkServer server) {
 		super();
+		this.server = server;
 	}
 
 	/**
@@ -120,15 +127,15 @@ public class DkStrategyListener implements IStrategy {
 	 * @throws JFException
 	 */
 	private void forwardCurrentBars(Instrument dkInstrument) throws JFException {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		for (FeedListener listener : listeners) {
 			List<OHLCVSubscription> currentSubscriptions = listener.getCurrentOHLCVSubscriptions();
 			for (OHLCVSubscription subscription : currentSubscriptions) {
 				if (!subscription.getInstrument().equals(instrument)) {
 					continue;
 				}
-				Period dkPeriod = DkUtilities.toDkPeriod(subscription.getPeriod());
-				OfferSide dkOfferSide = DkUtilities.toDkOfferSide(subscription.getOfferSide());
+				Period dkPeriod = server.getDkConverter().toDkPeriod(subscription.getPeriod());
+				OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(subscription.getOfferSide());
 				IBar dkBar = context.getHistory().getBar(dkInstrument, dkPeriod, dkOfferSide, 0);
 				dispatcher.addCurrentBar(dkInstrument, dkPeriod, dkOfferSide, dkBar);
 			}
@@ -142,7 +149,7 @@ public class DkStrategyListener implements IStrategy {
 	 * @param dkTick The tick.
 	 */
 	private void forwardTick(Instrument dkInstrument, ITick dkTick) {
-		com.qtplaf.library.trading.data.Instrument instrument = DkUtilities.fromDkInstrument(dkInstrument);
+		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		for (FeedListener listener : listeners) {
 			List<TickSubscription> tickSubscriptions = listener.getTickSubscriptions();
 			for (TickSubscription subscription : tickSubscriptions) {

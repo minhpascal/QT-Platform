@@ -57,11 +57,12 @@ public class DkHistoryManager implements HistoryManager {
 	 * @throws ServerException
 	 */
 	public Tick getLastTick(Instrument instrument) throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		server.checkSubscribed(dkInstrument);
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			com.dukascopy.api.ITick dkTick = history.getLastTick(dkInstrument);
-			Tick tick = DkUtilities.fromDkTick(dkTick);
+			Tick tick = server.getDkConverter().fromDkTick(dkTick);
 			return tick;
 		} catch (Exception cause) {
 			throw new ServerException(cause);
@@ -78,13 +79,14 @@ public class DkHistoryManager implements HistoryManager {
 	 * @throws ServerException
 	 */
 	public List<Tick> getTickData(Instrument instrument, long from, long to) throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		server.checkSubscribed(dkInstrument);
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			List<com.dukascopy.api.ITick> dkTicks = history.getTicks(dkInstrument, from, to);
 			List<Tick> ticks = new ArrayList<>();
 			for (com.dukascopy.api.ITick dkTick : dkTicks) {
-				Tick tick = DkUtilities.fromDkTick(dkTick);
+				Tick tick = server.getDkConverter().fromDkTick(dkTick);
 				ticks.add(tick);
 			}
 			return ticks;
@@ -113,14 +115,15 @@ public class DkHistoryManager implements HistoryManager {
 		int oneSecondIntervalsBefore,
 		int oneSecondIntervalsAfter)
 		throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		server.checkSubscribed(dkInstrument);
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			List<com.dukascopy.api.ITick> dkTicks =
 				history.getTicks(dkInstrument, oneSecondIntervalsBefore, time, oneSecondIntervalsAfter);
 			List<Tick> ticks = new ArrayList<>();
 			for (com.dukascopy.api.ITick dkTick : dkTicks) {
-				Tick tick = DkUtilities.fromDkTick(dkTick);
+				Tick tick = server.getDkConverter().fromDkTick(dkTick);
 				ticks.add(tick);
 			}
 			return ticks;
@@ -138,8 +141,9 @@ public class DkHistoryManager implements HistoryManager {
 	 * @throws ServerException
 	 */
 	public long getTimeOfFirstOHLCVData(Instrument instrument, Period period) throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
-		com.dukascopy.api.Period dkPeriod = DkUtilities.toDkPeriod(period);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		com.dukascopy.api.Period dkPeriod = server.getDkConverter().toDkPeriod(period);
+		server.checkSubscribed(dkInstrument);
 		return server.getContext().getDataService().getTimeOfFirstCandle(dkInstrument, dkPeriod);
 	}
 
@@ -169,7 +173,8 @@ public class DkHistoryManager implements HistoryManager {
 	 * @throws ServerException
 	 */
 	public long getTimeOfFirstTick(Instrument instrument) throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		server.checkSubscribed(dkInstrument);
 		return server.getContext().getDataService().getTimeOfFirstTick(dkInstrument);
 	}
 
@@ -209,9 +214,10 @@ public class DkHistoryManager implements HistoryManager {
 	 * @throws ServerException
 	 */
 	public OHLCV getOHLCV(Instrument instrument, Period period, OfferSide offerSide, int shift) throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
-		com.dukascopy.api.Period dkPeriod = DkUtilities.toDkPeriod(period);
-		com.dukascopy.api.OfferSide dkOfferSide = DkUtilities.toDkOfferSide(offerSide);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		com.dukascopy.api.Period dkPeriod = server.getDkConverter().toDkPeriod(period);
+		com.dukascopy.api.OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(offerSide);
+		server.checkSubscribed(dkInstrument);
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			com.dukascopy.api.IBar bar = history.getBar(dkInstrument, dkPeriod, dkOfferSide, shift);
@@ -264,10 +270,11 @@ public class DkHistoryManager implements HistoryManager {
 		long from,
 		long to)
 		throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
-		com.dukascopy.api.Period dkPeriod = DkUtilities.toDkPeriod(period);
-		com.dukascopy.api.Filter dkFilter = DkUtilities.toDkFilter(filter);
-		com.dukascopy.api.OfferSide dkOfferSide = DkUtilities.toDkOfferSide(offerSide);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		com.dukascopy.api.Period dkPeriod = server.getDkConverter().toDkPeriod(period);
+		com.dukascopy.api.Filter dkFilter = server.getDkConverter().toDkFilter(filter);
+		com.dukascopy.api.OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(offerSide);
+		server.checkSubscribed(dkInstrument);
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			List<com.dukascopy.api.IBar> bars =
@@ -334,10 +341,11 @@ public class DkHistoryManager implements HistoryManager {
 		int periodsBefore,
 		int periodsAfter) throws ServerException {
 
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
-		com.dukascopy.api.Period dkPeriod = DkUtilities.toDkPeriod(period);
-		com.dukascopy.api.Filter dkFilter = DkUtilities.toDkFilter(filter);
-		com.dukascopy.api.OfferSide dkOfferSide = DkUtilities.toDkOfferSide(offerSide);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
+		com.dukascopy.api.Period dkPeriod = server.getDkConverter().toDkPeriod(period);
+		com.dukascopy.api.Filter dkFilter = server.getDkConverter().toDkFilter(filter);
+		com.dukascopy.api.OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(offerSide);
+		server.checkSubscribed(dkInstrument);
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			List<com.dukascopy.api.IBar> bars = history.getBars(
@@ -420,13 +428,14 @@ public class DkHistoryManager implements HistoryManager {
 	 * @throws ServerException
 	 */
 	public List<Order> getOrders(Instrument instrument, long from, long to) throws ServerException {
-		com.dukascopy.api.Instrument dkInstrument = DkUtilities.toDkInstrument(instrument);
+		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
 		com.dukascopy.api.IHistory history = server.getContext().getHistory();
+		server.checkSubscribed(dkInstrument);
 		try {
 			List<com.dukascopy.api.IOrder> dkOrders = history.getOrdersHistory(dkInstrument, from, to);
 			List<Order> orders = new ArrayList<>();
 			for (int i = 0; i < dkOrders.size(); i++) {
-				orders.add(new DkOrder(dkOrders.get(i)));
+				orders.add(new DkOrder(server, dkOrders.get(i)));
 			}
 			return orders;
 		} catch (Exception cause) {

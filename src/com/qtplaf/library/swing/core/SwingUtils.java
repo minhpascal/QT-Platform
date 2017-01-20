@@ -299,23 +299,6 @@ public class SwingUtils {
 	}
 
 	/**
-	 * Causes <i>runnable.run()</i> to be executed synchronously on the AWT event dispatching thread. This call blocks
-	 * until all pending AWT events have been processed and (then) <i>runnable.run()</i> returns. This method should be
-	 * used when an application thread needs to update the GUI. It shouldn't be called from the event dispatching
-	 * thread.
-	 * 
-	 * @param runnable The runnable object.
-	 * @exception InterruptedException if we're interrupted while waiting for the event dispatching thread to finish
-	 *            executing <code>doRun.run()</code>
-	 * @exception InvocationTargetException if an exception is thrown while running <code>doRun</code>
-	 *
-	 * @see #invokeLater
-	 */
-	public static void invokeAndWait(final Runnable runnable) throws InterruptedException, InvocationTargetException {
-		EventQueue.invokeAndWait(runnable);
-	}
-
-	/**
 	 * Sets the size of the window to a width and height factor of the screen size, and centers it on the screen.
 	 * 
 	 * @param window The window to set the size.

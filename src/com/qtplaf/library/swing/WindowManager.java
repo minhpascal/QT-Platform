@@ -16,8 +16,6 @@ package com.qtplaf.library.swing;
 
 import java.awt.Window;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.KeyStroke;
 
@@ -26,6 +24,8 @@ import com.qtplaf.library.swing.core.JDialogSession;
 import com.qtplaf.library.swing.core.JFrameSession;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.swing.event.KeyHandler;
+import com.qtplaf.library.util.list.ArrayDelist;
+import com.qtplaf.library.util.list.Delist;
 
 /**
  * The window manager keeps track of dialogs and frames that extend <tt>JDialogSession</tt> or <tt>JFrameSession</tt>.
@@ -49,7 +49,8 @@ public class WindowManager {
 			if (KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()).equals(keyWindows)) {
 				StringBuilder b = new StringBuilder();
 				Session session = null;
-				for (Window window : windows) {
+				for (int i = 0; i < windows.size(); i++) {
+					Window window = windows.get(i);
 					if (window instanceof JFrameSession) {
 						JFrameSession frame = (JFrameSession) window;
 						session = frame.getSession();
@@ -70,7 +71,7 @@ public class WindowManager {
 	/**
 	 * The list of windows.
 	 */
-	private static List<Window> windows = new ArrayList<>();
+	private static Delist<Window> windows = new ArrayDelist<>();
 	/**
 	 * Key listener.
 	 */
@@ -83,7 +84,7 @@ public class WindowManager {
 	 */
 	synchronized public static void add(Window window) {
 		SwingUtils.installKeyListener(window, keyListener);
-		windows.add(window);
+		windows.addLast(window);
 	}
 
 	/**
@@ -94,14 +95,9 @@ public class WindowManager {
 	synchronized public static void remove(Window window) {
 		windows.remove(window);
 	}
-
-	/**
-	 * Returns the list of windows.
-	 * 
-	 * @return The list of windows.
-	 */
-	synchronized public static List<Window> getWindows() {
-		return new ArrayList<>(windows);
+	
+	synchronized public static Window getLast() {
+		return windows.getLast();
 	}
 	
 	/**

@@ -15,7 +15,6 @@
 package com.qtplaf.library.database;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,9 +24,10 @@ import com.qtplaf.library.util.list.ArrayDelist;
 import com.qtplaf.library.util.list.Delist;
 
 /**
- * A <tt>PageRecordSet</tt> is a <tt>RecordSet</tt> that retrieves records per pages from the underlinying
- * <tt>Persistor</tt> and <tt>Criteria</tt>. It is aimed to be used when the underlying view is very huge. Note that
- * they can not be greater that <tt>Integer.MAX_VALUE</tt>.
+ * A <tt>PageRecordSet</tt> is a <tt>RecordSet</tt> that first paginates the underliying <tt>Persistor</tt> and
+ * <tt>Criteria</tt>. It is aimed to be used when the underlying view is very large and visually browse is required.
+ * <p>
+ * Note that they can not be greater that <tt>Integer.MAX_VALUE</tt>.
  * <p>
  * Additionally, this <tt>PageRecordSet</tt> can not be sorted since it strictly uses the underlying order of the
  * persistor.
@@ -38,6 +38,23 @@ public class PageRecordSet extends RecordSet {
 
 	/** Logger instance to log exceptions. */
 	private static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Runable to paginate in a thread.
+	 */
+	private class Paginator implements Runnable {
+		@Override
+		public void run() {
+			try {
+				setPaginating(true);
+				paginate();
+			} catch (Exception exc) {
+				logger.catching(exc);
+			} finally {
+				setPaginating(false);
+			}
+		}
+	}
 
 	/**
 	 * Page information.
@@ -53,6 +70,13 @@ public class PageRecordSet extends RecordSet {
 		private OrderKey lastKey;
 
 		/**
+		 * Default constructor.
+		 */
+		private Page() {
+			super();
+		}
+
+		/**
 		 * Constructor.
 		 * 
 		 * @param firstIndex First index.
@@ -61,7 +85,6 @@ public class PageRecordSet extends RecordSet {
 		 * @param lastKey Last key.
 		 */
 		private Page(int firstIndex, OrderKey firstKey, int lastIndex, OrderKey lastKey) {
-			super();
 			this.firstIndex = firstIndex;
 			this.firstKey = firstKey;
 			this.lastIndex = lastIndex;
@@ -195,6 +218,15 @@ public class PageRecordSet extends RecordSet {
 	 * The page size, default is 100.
 	 */
 	private int pageSize = 100;
+	/**
+	 * Current loaded page.
+	 */
+	private Page currentPage;
+
+	/**
+	 * A boolean that indicates whether paginating is on.
+	 */
+	private boolean paginating = false;
 
 	/**
 	 * Constructor.
@@ -247,48 +279,33 @@ public class PageRecordSet extends RecordSet {
 	 */
 	@Override
 	public Record get(int index) {
+		
+		// Check pagination.
+		checkPaginate();
 
 		try {
+			
+			// Page...
+			Page page = null;
+			
+			// Initial state.
+			if (currentPage == null) {
+				page = findPage(index);
+				loadPage(page);
+			}
 
 			// Current loaded page.
-			Page page = pages.getLast();
+			page = currentPage;
 
 			// First check if the required record is in the current loaded page.
 			if (inPage(index, page)) {
 				return get(index, page);
 			}
-
-			// Index is in previous pages.
-			if (index < page.getFirstIndex()) {
-				Iterator<Page> i = pages.descendingIterator();
-				while (i.hasNext()) {
-					page = i.next();
-					if (inPage(index, page)) {
-						loadPage(page);
-						return get(index, page);
-					}
-				}
-			}
-
-			// Index is in next pages.
-			if (index > page.getLastIndex()) {
-				int pageIndex = pages.indexOf(page);
-				while (pageIndex < pages.size()) {
-					page = pages.get(pageIndex);
-					if (inPage(index, page)) {
-						loadPage(page);
-						return get(index, page);
-					}
-					pageIndex++;
-				}
-				while (true) {
-					loadNextPage(page);
-					page = pages.getLast();
-					if (inPage(index, page)) {
-						return get(index, page);
-					}
-				}
-			}
+			
+			// need to find the page.
+			page = findPage(index);
+			loadPage(page);
+			return get(index, page);
 
 		} catch (PersistorException exc) {
 			logger.catching(exc);
@@ -329,10 +346,10 @@ public class PageRecordSet extends RecordSet {
 	 */
 	@Override
 	public int size() {
+		checkPaginate();
 		if (size < 0) {
 			try {
 				size = (int) persistor.count(criteria);
-				loadFirstPage();
 			} catch (PersistorException exc) {
 				logger.catching(exc);
 			}
@@ -350,7 +367,7 @@ public class PageRecordSet extends RecordSet {
 	}
 
 	/**
-	 * Load the page and leaves it as the last loaded page.
+	 * Load a selected page.
 	 * 
 	 * @param page The page to load.
 	 * @throws PersistorException
@@ -360,142 +377,22 @@ public class PageRecordSet extends RecordSet {
 		try {
 			clear();
 
-			int firstIndex = page.getFirstIndex();
 			OrderKey firstKey = page.getFirstKey();
-			int lastIndex = 0;
-			OrderKey lastKey = null;
+			OrderKey lastKey = page.getLastKey();
 
 			Criteria criteria = new Criteria();
 			if (this.criteria != null) {
 				criteria.add(this.criteria);
 			}
 			criteria.add(getCriteria(firstKey, Operator.FIELD_GE));
+			criteria.add(getCriteria(lastKey, Operator.FIELD_LE));
 
-			Order order = getOrder();
-			Record record = null;
-
-			iter = persistor.iterator(criteria, order);
+			iter = persistor.iterator(criteria, getOrder());
 			while (iter.hasNext()) {
-				record = iter.next();
-				add(record);
-				if (super.size() >= pageSize) {
-					break;
-				}
+				add(iter.next());
 			}
-			if (record != null) {
-				lastIndex += firstIndex + super.size() - 1;
-				lastKey = record.getOrderKey(order);
-			}
-			page.setFirstIndex(firstIndex);
-			page.setFirstKey(firstKey);
-			page.setLastIndex(lastIndex);
-			page.setLastKey(lastKey);
+			currentPage = page;
 
-			// Remove subsequent pages.
-			// while (!pages.getLast().equals(page)) {
-			// pages.removeLast();
-			// }
-
-		} finally {
-			if (iter != null) {
-				iter.close();
-			}
-		}
-	}
-
-	/**
-	 * Loads next page and sets it as the last page loaded.
-	 * 
-	 * @param page
-	 * @throws PersistorException
-	 */
-	private void loadNextPage(Page page) throws PersistorException {
-		RecordIterator iter = null;
-		try {
-			clear();
-
-			int firstIndex = page.getLastIndex() + 1;
-			OrderKey firstKey = null;
-			int lastIndex = 0;
-			OrderKey lastKey = null;
-
-			Criteria criteria = new Criteria();
-			if (this.criteria != null) {
-				criteria.add(this.criteria);
-			}
-			criteria.add(getCriteria(page.getLastKey(), Operator.FIELD_GT));
-
-			Order order = getOrder();
-			Record record = null;
-			boolean first = true;
-
-			iter = persistor.iterator(criteria, order);
-			while (iter.hasNext()) {
-				record = iter.next();
-				if (first) {
-					firstKey = record.getOrderKey(order);
-					first = false;
-				}
-				add(record);
-				if (super.size() >= pageSize) {
-					break;
-				}
-			}
-			if (record != null) {
-				lastIndex += firstIndex + super.size() - 1;
-				lastKey = record.getOrderKey(order);
-			}
-			Page nextPage = new Page(firstIndex, firstKey, lastIndex, lastKey);
-			// while (!pages.getLast().equals(page)) {
-			// pages.removeLast();
-			// }
-			pages.addLast(nextPage);
-
-		} finally {
-			if (iter != null) {
-				iter.close();
-			}
-		}
-	}
-
-	/**
-	 * Load the first page.
-	 * 
-	 * @throws PersistorException
-	 */
-	private void loadFirstPage() throws PersistorException {
-		RecordIterator iter = null;
-		try {
-			clear();
-			pages.clear();
-
-			int firstIndex = 0;
-			OrderKey firstKey = null;
-			int lastIndex = 0;
-			OrderKey lastKey = null;
-
-			Order order = getOrder();
-			Record record = null;
-			boolean first = true;
-
-			iter = persistor.iterator(criteria, order);
-			while (iter.hasNext()) {
-				record = iter.next();
-				if (first) {
-					firstKey = record.getOrderKey(order);
-					first = false;
-				}
-				add(record);
-				if (super.size() >= pageSize) {
-					break;
-				}
-			}
-			if (record != null) {
-				lastIndex += firstIndex + super.size() - 1;
-				lastKey = record.getOrderKey(order);
-			}
-			Page page = new Page(firstIndex, firstKey, lastIndex, lastKey);
-			pages.addLast(page);
 		} finally {
 			if (iter != null) {
 				iter.close();
@@ -511,12 +408,6 @@ public class PageRecordSet extends RecordSet {
 	 * @return The additional criteria to retrieve records GE/GT the key.
 	 */
 	private Criteria getCriteria(OrderKey key, Condition.Operator operator) {
-		if (getOrder().size() != key.size()) {
-			throw new IllegalArgumentException();
-		}
-		if (operator != Operator.FIELD_GE && operator != Operator.FIELD_GT) {
-			throw new IllegalArgumentException();
-		}
 		Criteria criteria = new Criteria();
 		for (int i = 0; i < key.size(); i++) {
 			Field field = getOrder().get(i).getField();
@@ -524,6 +415,166 @@ public class PageRecordSet extends RecordSet {
 			criteria.add(new Condition(field, operator, value));
 		}
 		return criteria;
+	}
+
+	/**
+	 * Find the page that contains the record index.
+	 * 
+	 * @param recordIndex The record index.
+	 * @return The page.
+	 */
+	private Page findPage(int recordIndex) {
+		int pageIndex = 0;
+		Page page = null;
+		while (true) {
+			if (pageIndex == getPagesSize()) {
+				if (isPaginating()) {
+					sleep(50);
+					continue;
+				}
+				break;
+			}
+			page = getPage(pageIndex);
+			if (inPage(recordIndex, page)) {
+				break;
+			}
+			pageIndex++;
+		}
+		return page;
+	}
+
+	/**
+	 * Sleep.
+	 * 
+	 * @param time Time in millis
+	 */
+	private void sleep(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException ignore) {
+		}
+	}
+
+	/**
+	 * Check if pagination should be started.
+	 */
+	private void checkPaginate() {
+		if (!isPaginating() && isPagesEmpty()) {
+			new Thread(new Paginator()).start();
+		}
+	}
+
+	/**
+	 * Paginate the underlying persistor.
+	 * 
+	 * @throws PersistorException
+	 */
+	private void paginate() throws PersistorException {
+		RecordIterator iter = null;
+		try {
+
+			Order order = getOrder();
+
+			int index = -1;
+			Page currentPage = null;
+			int currentPageSize = 0;
+			Record record = null;
+
+			iter = persistor.iterator(criteria, order);
+			while (iter.hasNext()) {
+				index++;
+				record = iter.next();
+				if (currentPageSize == 0) {
+					int firstIndex = index;
+					OrderKey firstKey = record.getOrderKey(order);
+					currentPage = new Page();
+					currentPage.setFirstIndex(firstIndex);
+					currentPage.setFirstKey(firstKey);
+				}
+				if (currentPageSize == pageSize - 1) {
+					int lastIndex = index;
+					OrderKey lastKey = record.getOrderKey(order);
+					currentPage.setLastIndex(lastIndex);
+					currentPage.setLastKey(lastKey);
+					addPage(currentPage);
+					currentPage = null;
+					currentPageSize = 0;
+					continue;
+				}
+				currentPageSize++;
+			}
+			if (record != null && currentPage != null && !currentPage.equals(getLastPage())) {
+				int lastIndex = index;
+				OrderKey lastKey = record.getOrderKey(order);
+				currentPage.setLastIndex(lastIndex);
+				currentPage.setLastKey(lastKey);
+				addPage(currentPage);
+			}
+		} finally {
+			if (iter != null) {
+				iter.close();
+			}
+		}
+	}
+
+	/**
+	 * Synchronized access to the paginating flag.
+	 */
+	synchronized private boolean isPaginating() {
+		return paginating;
+	}
+
+	/**
+	 * Synchronized access to the paginating flag.
+	 */
+	synchronized private void setPaginating(boolean b) {
+		this.paginating = b;
+	}
+
+	/**
+	 * Synchronized access to pages.
+	 * 
+	 * param page Add a page.
+	 */
+	synchronized private void addPage(Page page) {
+		pages.addLast(page);
+	}
+
+	/**
+	 * Synchronized access to pages.
+	 * 
+	 * @return The last page in the list.
+	 */
+	synchronized private Page getLastPage() {
+		return pages.getLast();
+	}
+
+	/**
+	 * Synchronized access to pages.
+	 * 
+	 * @param index The index of the page.
+	 * @return The page of index.
+	 */
+	synchronized private Page getPage(int index) {
+		return pages.get(index);
+	}
+
+	/**
+	 * Synchronized access to pages.
+	 * 
+	 * @return A boolean.
+	 */
+	synchronized private boolean isPagesEmpty() {
+		return pages.isEmpty();
+	}
+
+	/**
+	 * Synchronized access to pages.
+	 * 
+	 * @return The size of the pages.
+	 */
+	synchronized private int getPagesSize() {
+		return pages.size();
 	}
 
 	/**

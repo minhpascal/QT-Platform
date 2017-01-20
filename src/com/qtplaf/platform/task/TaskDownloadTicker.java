@@ -325,7 +325,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		Field fTIME = persistor.getField(OHLCVS.Fields.Time);
 		Value vTIME = new Value(getTimeFrom());
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldGE(fTIME, vTIME));
+		criteria.add(Condition.fieldGT(fTIME, vTIME));
 		persistor.delete(criteria);
 	}
 }

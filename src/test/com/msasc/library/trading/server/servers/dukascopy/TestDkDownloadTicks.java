@@ -10,7 +10,6 @@ import com.qtplaf.library.trading.data.Tick;
 import com.qtplaf.library.trading.server.AccountType;
 import com.qtplaf.library.trading.server.HistoryManager;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
-import com.qtplaf.library.trading.server.servers.dukascopy.DkUtilities;
 import com.qtplaf.library.util.Calendar;
 
 /**
@@ -32,7 +31,7 @@ public class TestDkDownloadTicks {
 			server.getConnectionManager().addListener(new DkConnectionListener());
 			server.getConnectionManager().connect(userName, password, AccountType.Demo);
 
-			Instrument instrument = DkUtilities.fromDkInstrument(com.dukascopy.api.Instrument.EURUSD);
+			Instrument instrument = server.getDkConverter().fromDkInstrument(com.dukascopy.api.Instrument.EURUSD);
 
 			HistoryManager history = server.getHistoryManager();
 			// long first = history.getTimeOfFirstTick(instrument);

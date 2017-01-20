@@ -37,33 +37,6 @@ import com.qtplaf.library.util.NumberUtils;
  */
 public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 
-	/**
-	 * Runnable to invoke later adding a panel.
-	 */
-	class AddPanelProgress implements Runnable {
-		JPanelProgress panelProgress;
-
-		AddPanelProgress(JPanelProgress panelProgress) {
-			this.panelProgress = panelProgress;
-		}
-
-		public void run() {
-			List<JPanelProgress> panels = getPanels();
-			panels.add(panelProgress);
-			layoutPanels(panels);
-			repaint();
-		}
-	}
-
-	/**
-	 * Runnable to invoke later removing terminated tasks.
-	 */
-	class RemoveTerminated implements Runnable {
-		public void run() {
-			removeTerminated();
-		}
-	}
-
 	/** Number of columns. */
 	private int columns = 1;
 	/** Working session. */
@@ -97,7 +70,11 @@ public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 		JPanelProgress panelProgress = new JPanelProgress(getSession());
 		panelProgress.setPanelProgressWidth(getPanelProgressWidth());
 		panelProgress.monitorTask(task);
-		SwingUtils.invokeLater(new AddPanelProgress(panelProgress));
+		
+		List<JPanelProgress> panels = getPanels();
+		panels.add(panelProgress);
+		layoutPanels(panels);
+		repaint();
 	}
 
 	/**
@@ -126,7 +103,7 @@ public class JPanelProgressGroup extends JPanel implements TaskMonitor {
 	 */
 	@Override
 	synchronized public void remove(Task task) {
-		SwingUtils.invokeLater(new RemoveTerminated());
+		removeTerminated();
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class DkOrderManager implements OrderManager {
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder order = engine.getOrderById(id);
-			return new DkOrder(order);
+			return new DkOrder(server, order);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -74,7 +74,7 @@ public class DkOrderManager implements OrderManager {
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder order = engine.getOrder(label);
-			return new DkOrder(order);
+			return new DkOrder(server, order);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -92,7 +92,7 @@ public class DkOrderManager implements OrderManager {
 			List<IOrder> dkOrders = engine.getOrders();
 			List<Order> orders = new ArrayList<>();
 			for (IOrder dkOrder : dkOrders) {
-				orders.add(new DkOrder(dkOrder));
+				orders.add(new DkOrder(server, dkOrder));
 			}
 			return orders;
 		} catch (Exception cause) {
@@ -108,12 +108,13 @@ public class DkOrderManager implements OrderManager {
 	 * @throws ServerException
 	 */
 	public List<Order> getOrders(Instrument instrument) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
-			List<IOrder> dkOrders = engine.getOrders(DkUtilities.toDkInstrument(instrument));
+			List<IOrder> dkOrders = engine.getOrders(server.getDkConverter().toDkInstrument(instrument));
 			List<Order> orders = new ArrayList<>();
 			for (IOrder dkOrder : dkOrders) {
-				orders.add(new DkOrder(dkOrder));
+				orders.add(new DkOrder(server, dkOrder));
 			}
 			return orders;
 		} catch (Exception cause) {
@@ -137,14 +138,15 @@ public class DkOrderManager implements OrderManager {
 		Instrument instrument,
 		OrderCommand orderCommand,
 		double amount) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
 				amount);
-			return new DkOrder(dkOrder);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -168,14 +170,16 @@ public class DkOrderManager implements OrderManager {
 		OrderCommand orderCommand,
 		double amount,
 		double price) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
-				amount, price);
-			return new DkOrder(dkOrder);
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
+				amount,
+				price);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -201,14 +205,17 @@ public class DkOrderManager implements OrderManager {
 		double amount,
 		double price,
 		double slippage) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
-				amount, price, slippage);
-			return new DkOrder(dkOrder);
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
+				amount,
+				price,
+				slippage);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -236,14 +243,19 @@ public class DkOrderManager implements OrderManager {
 		double price,
 		double slippage,
 		double stopLossPrice) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
-				amount, price, slippage, stopLossPrice, 0);
-			return new DkOrder(dkOrder);
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
+				amount,
+				price,
+				slippage,
+				stopLossPrice,
+				0);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -273,14 +285,19 @@ public class DkOrderManager implements OrderManager {
 		double slippage,
 		double stopLossPrice,
 		double takeProfitPrice) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
-				amount, price, slippage, stopLossPrice, takeProfitPrice);
-			return new DkOrder(dkOrder);
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
+				amount,
+				price,
+				slippage,
+				stopLossPrice,
+				takeProfitPrice);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -298,8 +315,8 @@ public class DkOrderManager implements OrderManager {
 	 * @param slippage The accepted slippage.
 	 * @param stopLossPrice The stop loss price.
 	 * @param takeProfitPrice The take profit price.
-	 * @param expirationTime A long indicating how long the order should be alive if not executed. For market orders must
-	 *        be zero.
+	 * @param expirationTime A long indicating how long the order should be alive if not executed. For market orders
+	 *        must be zero.
 	 * @return The order if succefully created.
 	 * @throws ServerException
 	 */
@@ -313,14 +330,20 @@ public class DkOrderManager implements OrderManager {
 		double stopLossPrice,
 		double takeProfitPrice,
 		long expirationTime) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
-				amount, price, slippage, stopLossPrice, takeProfitPrice, expirationTime);
-			return new DkOrder(dkOrder);
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
+				amount,
+				price,
+				slippage,
+				stopLossPrice,
+				takeProfitPrice,
+				expirationTime);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -338,8 +361,8 @@ public class DkOrderManager implements OrderManager {
 	 * @param slippage The accepted slippage.
 	 * @param stopLossPrice The stop loss price.
 	 * @param takeProfitPrice The take profit price.
-	 * @param expirationTime A long indicating how long the order should be alive if not executed. For market orders must
-	 *        be zero.
+	 * @param expirationTime A long indicating how long the order should be alive if not executed. For market orders
+	 *        must be zero.
 	 * @param comment An optional comment.
 	 * @return The order if succefully created.
 	 * @throws ServerException
@@ -355,14 +378,21 @@ public class DkOrderManager implements OrderManager {
 		double takeProfitPrice,
 		long expirationTime,
 		String comment) throws ServerException {
+		server.checkSubscribed(server.getDkConverter().toDkInstrument(instrument));
 		try {
 			IEngine engine = server.getContext().getEngine();
 			IOrder dkOrder = engine.submitOrder(
-				label, 
-				DkUtilities.toDkInstrument(instrument), 
-				DkUtilities.toDkOrderCommand(orderCommand), 
-				amount, price, slippage, stopLossPrice, takeProfitPrice, expirationTime, comment);
-			return new DkOrder(dkOrder);
+				label,
+				server.getDkConverter().toDkInstrument(instrument),
+				server.getDkConverter().toDkOrderCommand(orderCommand),
+				amount,
+				price,
+				slippage,
+				stopLossPrice,
+				takeProfitPrice,
+				expirationTime,
+				comment);
+			return new DkOrder(server, dkOrder);
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}

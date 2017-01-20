@@ -331,22 +331,9 @@ public class Instrument {
 	public boolean equals(Object obj) {
 		if (obj instanceof Instrument) {
 			Instrument instrument = (Instrument) obj;
-			if (!getId().equals(instrument.getId())) {
-				return false;
+			if (getId().equals(instrument.getId())) {
+				return true;
 			}
-			if (!getPipValueAsBigDecimal().equals(instrument.getPipValueAsBigDecimal())) {
-				return false;
-			}
-			if (!getTickValueAsBigDecimal().equals(instrument.getTickValueAsBigDecimal())) {
-				return false;
-			}
-			if (!getPrimaryCurrency().equals(instrument.getPrimaryCurrency())) {
-				return false;
-			}
-			if (!getSecondaryCurrency().equals(instrument.getSecondaryCurrency())) {
-				return false;
-			}
-			return true;
 		}
 		return false;
 	}
