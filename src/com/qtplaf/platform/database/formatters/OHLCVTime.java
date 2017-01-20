@@ -82,7 +82,7 @@ public class OHLCVTime extends AbstractFormatter {
 	public String valueToString(Object value) throws ParseException {
 		if (value instanceof Value) {
 			Value time = (Value) value;
-			return format.format(new Timestamp(time.getLong())) + " " + time.getLong();
+			return format.format(new Timestamp(time.getLong()));
 		}
 		return value.toString();
 	}
