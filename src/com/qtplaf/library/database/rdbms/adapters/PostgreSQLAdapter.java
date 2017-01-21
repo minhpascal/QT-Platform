@@ -137,6 +137,8 @@ public class PostgreSQLAdapter extends DBEngineAdapter {
 			b.append("TIME");
 		} else if (type == Types.Timestamp) {
 			b.append("TIMESTAMP");
+		} else if (type == Types.AutoIncrement) {
+			b.append("BIGSERIAL");
 		} else {
 			throw new IllegalArgumentException("Invalid field type to create the field");
 		}

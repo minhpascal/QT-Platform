@@ -14,7 +14,6 @@ import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.trading.chart.CursorType;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.Indicator;
 import com.qtplaf.library.trading.data.IndicatorSource;
@@ -59,7 +58,6 @@ public class TestFrameChart {
 		plotDataIndicator.add(getWMA(dataList, 20, Color.RED, OHLCV.Index.Close.getIndex()));
 		plotDataIndicator.add(getSMA(dataList, 200, Color.BLACK, OHLCV.Index.Close.getIndex()));
 		plotDataIndicator.setPlotScale(plotDataPrice.getPlotScale());
-		plotDataIndicator.setOddsAndEvens();
 
 		frame.getChart().getPlotParameters().setChartCrossCursorWidth(-1);
 		frame.getChart().getPlotParameters().setChartCrossCursorHeight(-1);
@@ -94,16 +92,15 @@ public class TestFrameChart {
 
 		PlotData plotDataPrice = new PlotData();
 		plotDataPrice.add(dataList);
-		plotDataPrice.add(getMQMA(dataList, OHLCV.Index.Close.getIndex(), "WMA", 21, 5, 13, 5));
+//		plotDataPrice.add(getMQMA(dataList, OHLCV.Index.Close.getIndex(), "WMA", 21, 5, 13, 5));
 		// plotDataPrice.add(getSMMA(dataList, OHLCV.Index.Close.getIndex(), 1.2, 0.0, 8, 5, 3));
 		// plotDataPrice.add(getSMMA(dataList, OHLCV.Index.Close.getIndex(), 1.2, 0.0, 100, 8, 3));
-		// plotDataPrice.add(getSMA(dataList, 10, null, OHLCV.Index.Close.getIndex()));
+		 plotDataPrice.add(getSMA(dataList, 10, null, OHLCV.Index.Close.getIndex()));
 		// plotDataPrice.add(getWMA(getWMA(getWMA(getWMA(dataList, 8, null, OHLCV.Index.Close.getIndex()), 4, null, 0),
 		// 2, null, 0), 2, Color.RED, 0));
 		// plotDataPrice.add(getSMA(getSMA(getSMA(getSMA(dataList, 8, null, OHLCV.Index.Close.getIndex()), 4, null, 0),
 		// 2, null, 0), 2, Color.BLUE, 0));
 		// plotDataPrice.add(getEMA(getEMA(dataList, 50, null, OHLCV.Index.Close.getIndex()), 10, null, 0));
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -128,7 +125,6 @@ public class TestFrameChart {
 		PlotData plotDataPrice = new PlotData();
 		plotDataPrice.add(dataList);
 		plotDataPrice.add(getWMA(getGaussian(dataList, 21, OHLCV.Index.Close.getIndex(), Color.RED), 5, Color.RED, 0));
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -153,7 +149,6 @@ public class TestFrameChart {
 		PlotData plotDataPrice = new PlotData();
 		plotDataPrice.add(dataList);
 		plotDataPrice.add(getWMA(getWMA(dataList, 8, Color.RED, OHLCV.Index.Close.getIndex()), 5, Color.RED, 0));
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -178,7 +173,6 @@ public class TestFrameChart {
 
 		PlotData plotDataPrice = new PlotData();
 		plotDataPrice.add(dataList);
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -202,7 +196,6 @@ public class TestFrameChart {
 
 		PlotData plotDataPrice = new PlotData();
 		plotDataPrice.add(dataList);
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -227,7 +220,6 @@ public class TestFrameChart {
 		PlotData plotDataPrice = new PlotData();
 		plotDataPrice.add(dataList);
 		plotDataPrice.add(getSMA(dataList, 100, null, OHLCV.Index.Close.getIndex()));
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -253,7 +245,6 @@ public class TestFrameChart {
 		plotDataPrice.add(dataList);
 		plotDataPrice.add(getSMA(dataList, 100, null, OHLCV.Index.Close.getIndex()));
 		plotDataPrice.setPlotScale(PlotScale.Logarithmic);
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 
@@ -279,7 +270,6 @@ public class TestFrameChart {
 		plotDataPrice.add(dataList);
 		plotDataPrice.add(getSMA(dataList, 100, null, OHLCV.Index.Close.getIndex()));
 		plotDataPrice.setPlotScale(PlotScale.Logarithmic);
-		plotDataPrice.setOddsAndEvens();
 		return plotDataPrice;
 	}
 

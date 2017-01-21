@@ -21,7 +21,8 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.platform.database.formatters.OHLCVPip;
-import com.qtplaf.platform.database.formatters.OHLCVTime;
+import com.qtplaf.platform.database.formatters.OHLCVTimeFmt;
+import com.qtplaf.platform.database.formatters.OHLCVVolume;
 import com.qtplaf.platform.database.tables.OHLCVS;
 
 /**
@@ -50,7 +51,9 @@ public class Formatters {
 
 		// Time based on period.
 		Period period = Period.parseId(periodId);
-		persistor.getField(OHLCVS.Fields.Time).setFormatter(new OHLCVTime(period.getUnit()));
+		OHLCVTimeFmt timeFmt = new OHLCVTimeFmt(period.getUnit());
+		persistor.getField(OHLCVS.Fields.TimeFmt).setFormatter(timeFmt);
+		persistor.getField(OHLCVS.Fields.TimeFmt).setCalculator(timeFmt);
 
 		Record recordInstr = Records.getRecordInstrument(session, serverId, instrId);
 		Instrument instrument = Records.fromRecordInstrument(recordInstr);
@@ -58,5 +61,6 @@ public class Formatters {
 		persistor.getField(OHLCVS.Fields.High).setFormatter(new OHLCVPip(session, instrument));
 		persistor.getField(OHLCVS.Fields.Low).setFormatter(new OHLCVPip(session, instrument));
 		persistor.getField(OHLCVS.Fields.Close).setFormatter(new OHLCVPip(session, instrument));
+		persistor.getField(OHLCVS.Fields.Volume).setFormatter(new OHLCVVolume(session, instrument));
 	}
 }

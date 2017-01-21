@@ -463,7 +463,8 @@ public class MeanSquaredSmoothedMovingAverage extends Indicator {
 		}
 
 		// Remove the temporarily added data.
-		indicatorData.remove(indicatorData.size() - 1);
+		// TODO Do not use remove.
+//		indicatorData.remove(indicatorData.size() - 1);
 
 		return data;
 	}

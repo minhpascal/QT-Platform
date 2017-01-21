@@ -19,16 +19,19 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
+import com.qtplaf.library.database.FieldCalculator;
+import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.util.Timestamp;
+import com.qtplaf.platform.database.tables.OHLCVS;
 
 /**
  * A formatter for OHLCV/Bar time that adapts to the period.
  * 
  * @author Miquel Sas
  */
-public class OHLCVTime extends AbstractFormatter {
+public class OHLCVTimeFmt extends AbstractFormatter implements FieldCalculator {
 	
 	/** Date format. */
 	SimpleDateFormat format;
@@ -38,7 +41,7 @@ public class OHLCVTime extends AbstractFormatter {
 	 * 
 	 * @param unit The unit.
 	 */
-	public OHLCVTime(Unit unit) {
+	public OHLCVTimeFmt(Unit unit) {
 		super();
 		
 		// Build a convenient date format using the period.
@@ -85,5 +88,10 @@ public class OHLCVTime extends AbstractFormatter {
 			return format.format(new Timestamp(time.getLong()));
 		}
 		return value.toString();
+	}
+
+	@Override
+	public Value getValue(Record record) {
+		return record.getValue(OHLCVS.Fields.Time);
 	}
 }

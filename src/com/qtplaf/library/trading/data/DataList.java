@@ -26,16 +26,12 @@ import com.qtplaf.library.trading.data.info.VolumeInfo;
  * 
  * @author Miquel Sas
  */
-public class DataList {
+public abstract class DataList {
 
 	/**
 	 * The data info.
 	 */
 	private DataInfo dataInfo;
-	/**
-	 * The list of data.
-	 */
-	private List<Data> dataList = new ArrayList<>();
 	/**
 	 * The plot type to apply to this data.
 	 */
@@ -71,7 +67,6 @@ public class DataList {
 	public DataList(Session session, DataInfo dataInfo) {
 		super();
 		this.session = session;
-		;
 		this.dataInfo = dataInfo;
 	}
 
@@ -82,15 +77,6 @@ public class DataList {
 	 */
 	public Session getSession() {
 		return session;
-	}
-
-	/**
-	 * Directly set the data list. This method is aimed to be used by the persistent layer and should be used with care.
-	 * 
-	 * @param dataList The data list to set.
-	 */
-	public void setDataList(List<Data> dataList) {
-		this.dataList = dataList;
 	}
 
 	/**
@@ -107,40 +93,22 @@ public class DataList {
 	 *
 	 * @return The number of elements in this list.
 	 */
-	public int size() {
-		return dataList.size();
-	}
+	public abstract int size();
 
 	/**
 	 * Returns <tt>true</tt> if this list contains no elements.
 	 *
 	 * @return <tt>true</tt> if this list contains no elements.
 	 */
-	public boolean isEmpty() {
-		return dataList.isEmpty();
-	}
+	public abstract boolean isEmpty();
 
 	/**
-	 * Add the dara element to this list.
+	 * Add the data element to this list.
 	 * 
-	 * @param data
+	 * @param data The data element.
 	 * @return A boolean indicating if the elementt was added.
 	 */
-	public boolean add(Data data) {
-		boolean added = dataList.add(data);
-		if (added) {
-			notifyChange(new DataListEvent(this, data, dataList.size() - 1, DataListEvent.Operation.Add));
-		}
-		return added;
-	}
-
-	/**
-	 * Clear the list.
-	 */
-	public void clear() {
-		dataList.clear();
-		notifyChange(new DataListEvent(this, null, -1, DataListEvent.Operation.Clear));
-	}
+	public abstract boolean add(Data data);
 
 	/**
 	 * Returns the data element atthe given index.
@@ -148,45 +116,7 @@ public class DataList {
 	 * @param index The index.
 	 * @return The data element at the given index.
 	 */
-	public Data get(int index) {
-		return dataList.get(index);
-	}
-
-	/**
-	 * Returns the sub list of data items.
-	 * 
-	 * @param fromIndex Start index.
-	 * @param toIndex End index.
-	 * @return The sub list.
-	 */
-	public List<Data> subList(int fromIndex, int toIndex) {
-		return dataList.subList(fromIndex, toIndex);
-	}
-
-	/**
-	 * Removes the data at the given index.
-	 * 
-	 * @param index The data index.
-	 * @return The removed data.
-	 */
-	public Data remove(int index) {
-		Data removedData = dataList.remove(index);
-		notifyChange(new DataListEvent(this, removedData, index, DataListEvent.Operation.Remove));
-		return removedData;
-	}
-
-	/**
-	 * Sets the element at the given index.
-	 * 
-	 * @param index The index.
-	 * @param data The data element.
-	 * @return The data element that was previously at the index location.
-	 */
-	public Data set(int index, Data data) {
-		Data previousData = dataList.set(index, data);
-		notifyChange(new DataListEvent(this, previousData, index, DataListEvent.Operation.Set));
-		return previousData;
-	}
+	public abstract Data get(int index);
 
 	/**
 	 * Returns the type of plot.
@@ -318,7 +248,7 @@ public class DataList {
 	 * 
 	 * @param e The data list event.
 	 */
-	private void notifyChange(DataListEvent e) {
+	protected void notifyChange(DataListEvent e) {
 		for (DataListListener listener : listeners) {
 			listener.dataListChanged(e);
 		}
@@ -336,8 +266,7 @@ public class DataList {
 		}
 		DataInfo volumeDataInfo =
 			new VolumeInfo(getSession(), getDataInfo().getInstrument(), getDataInfo().getPeriod());
-		DataList volumeDataList = new DataList(getSession(), volumeDataInfo);
-		volumeDataList.dataList = this.dataList;
+		DataList volumeDataList = new DelegateDataList(getSession(), volumeDataInfo, this);
 		volumeDataList.setPlotType(PlotType.Histogram);
 		volumeDataList.initializePlotProperties();
 		return volumeDataList;
@@ -360,60 +289,4 @@ public class DataList {
 	public void setDataPlotter(DataPlotter dataPlotter) {
 		this.dataPlotter = dataPlotter;
 	}
-
-	/**
-	 * Returns a data item that is the union or consolidation of a list of data items.
-	 * <p>
-	 * For OHLCV data items the open is the open of the first, the high is the higher, the low the lower, the close is
-	 * the close of the last, and the volume is the sum.The time is the time of the first item.
-	 * <p>
-	 * For generic data items the last item is returned.
-	 * 
-	 * @param fromIndex Start index.
-	 * @param toIndex End index.
-	 * @return The union data item.
-	 */
-	public Data union(int fromIndex, int toIndex) {
-		List<Data> subList = subList(fromIndex, toIndex);
-		if (subList.isEmpty()) {
-			throw new IllegalStateException("The sub list can not be empty.");
-		}
-		Data data = subList.get(0);
-		if (!OHLCV.class.isInstance(data)) {
-			return subList.get(subList.size() - 1);
-		}
-		double open = 0;
-		double high = 0;
-		double low = 0;
-		double close = 0;
-		double volume = 0;
-		long time = 0;
-		for (int i = 0; i < subList.size(); i++) {
-			OHLCV ohlcv = (OHLCV) subList.get(i);
-			if (i == 0) {
-				open = ohlcv.getOpen();
-				time = ohlcv.getTime();
-			}
-			high = Math.max(high, ohlcv.getHigh());
-			low = Math.min(low, ohlcv.getLow());
-			if (i == subList.size() - 1) {
-				close = ohlcv.getClose();
-			}
-			volume += ohlcv.getVolume();
-		}
-		return new OHLCV(time, open, high, low, close, volume);
-	}
-
-	/**
-	 * Returns a data list with this list data and the argument info, mostly for tricky calculations in indicators.
-	 * 
-	 * @param dataInfo The data info.
-	 * @return The new data list.
-	 */
-	public DataList getDataListFromInfo(DataInfo dataInfo) {
-		DataList resultDataList = new DataList(getSession(), dataInfo);
-		resultDataList.dataList = this.dataList;
-		return resultDataList;
-	}
-
 }

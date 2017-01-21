@@ -438,7 +438,9 @@ public class ActionTickers extends AbstractAction {
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+				tableModelRecord.addColumn(OHLCVS.Fields.Index);
 				tableModelRecord.addColumn(OHLCVS.Fields.Time);
+				tableModelRecord.addColumn(OHLCVS.Fields.TimeFmt);
 				tableModelRecord.addColumn(OHLCVS.Fields.Open);
 				tableModelRecord.addColumn(OHLCVS.Fields.High);
 				tableModelRecord.addColumn(OHLCVS.Fields.Low);
@@ -451,7 +453,18 @@ public class ActionTickers extends AbstractAction {
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);
-				frame.setTitle(server.getName() + " " + tableName);
+				
+				StringBuilder title = new StringBuilder();
+				title.append(server.getName());
+				title.append(", ");
+				title.append(instrId);
+				title.append(" ");
+				title.append(Period.parseId(periodId));
+				title.append(" [");
+				title.append(tableName);
+				title.append("]");
+				frame.setTitle(title.toString());
+				
 				frame.setComponent(panelTableRecord);
 
 				frame.addAction(new ActionClose(session));

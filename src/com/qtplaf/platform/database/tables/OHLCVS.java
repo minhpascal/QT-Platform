@@ -29,7 +29,9 @@ import com.qtplaf.platform.database.Persistors;
 public class OHLCVS extends Table {
 
 	public interface Fields {
+		String Index = "index";
 		String Time = "time";
+		String TimeFmt = "time_fmt";
 		String Open = "open";
 		String High = "high";
 		String Low = "low";
@@ -49,12 +51,14 @@ public class OHLCVS extends Table {
 
 		setName(name);
 
+		addField(Domains.getIndex(session, Fields.Index));
 		addField(Domains.getTime(session, Fields.Time));
 		addField(Domains.getOpen(session, Fields.Open));
 		addField(Domains.getHigh(session, Fields.High));
 		addField(Domains.getLow(session, Fields.Low));
 		addField(Domains.getClose(session, Fields.Close));
 		addField(Domains.getVolume(session, Fields.Volume));
+		addField(Domains.getTimeFmt(session, Fields.TimeFmt));
 
 		getField(Fields.Time).setPrimaryKey(true);
 

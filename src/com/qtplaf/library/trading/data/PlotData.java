@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.qtplaf.library.util.Calendar;
+import com.qtplaf.library.util.NumberUtils;
 
 /**
  * A container for the data to plot in a <i>JChartContainer</i>.
@@ -55,11 +56,6 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * The scale to plot the data.
 	 */
 	private PlotScale plotScale = PlotScale.Linear;
-	/**
-	 * A list of a boolean per data list element that indicates if the period is odd or even. The first period, of index
-	 * 0, is odd.
-	 */
-	private List<Boolean> odds = new ArrayList<>();
 
 	/**
 	 * Default constructor.
@@ -660,7 +656,16 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * @return A boolean that indicates if the period is odd.
 	 */
 	public boolean isOdd(int index) {
-		return odds.get(index);
+		if (isEmpty()) {
+			return false;
+		}
+		if (get(0).isEmpty()) {
+			return false;
+		}
+		if (get(0).size() <= index) {
+			return false;
+		}
+		return (getOddCode(get(0).get(index)) == 1);
 	}
 
 	/**
@@ -670,73 +675,55 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * @return A boolean that indicates if the period is Even.
 	 */
 	public boolean isEven(int index) {
-		return odds.get(index);
+		if (isEmpty()) {
+			return false;
+		}
+		if (get(0).isEmpty()) {
+			return false;
+		}
+		if (get(0).size() <= index) {
+			return false;
+		}
+		return (getOddCode(get(0).get(index)) == 2);
 	}
 
 	/**
-	 * Scans the data and sets the periods odds and evens.
+	 * Returns the odd code, 1 odd, 2 even, 0 none.
+	 * 
+	 * @param data The data item.
+	 * @return The odd code.
 	 */
-	public void setOddsAndEvens() {
-		if (isEmpty()) {
-			return;
+	public int getOddCode(Data data) {
+		if (data == null) {
+			return 0;
 		}
-		odds.clear();
-		DataList dataList = get(0);
-		for (int i = 0; i < dataList.size(); i++) {
-			// First period is always odd (true).
-			if (i == 0) {
-				odds.add(true);
-				continue;
+		Calendar calendar = Calendar.getGTMCalendar(data.getTime());
+		switch (getPeriod().getUnit()) {
+		case Millisecond:
+		case Second:
+		case Minute:
+		case Hour:
+			if (NumberUtils.isOdd(calendar.getDay())) {
+				return 1;
 			}
-			// Compare current and previous times.
-			boolean oddPrevious = odds.get(i - 1);
-			long timePrevious = dataList.get(i - 1).getTime();
-			long timeCurrent = dataList.get(i).getTime();
-			Calendar calendarPrevious = new Calendar(timePrevious);
-			Calendar calendarCurrent = new Calendar(timeCurrent);
-			// Check unit.
-			switch (getPeriod().getUnit()) {
-			case Millisecond:
-			case Second:
-			case Minute:
-			case Hour:
-				if (calendarCurrent.getDay() != calendarPrevious.getDay() ||
-					calendarCurrent.getWeek() != calendarPrevious.getWeek() ||
-					calendarCurrent.getMonth() != calendarPrevious.getMonth() ||
-					calendarCurrent.getYear() != calendarPrevious.getYear()) {
-					odds.add(!oddPrevious);
-				} else {
-					odds.add(oddPrevious);
-				}
-				break;
-			case Day:
-				if (calendarCurrent.getWeek() != calendarPrevious.getWeek() ||
-					calendarCurrent.getMonth() != calendarPrevious.getMonth() ||
-					calendarCurrent.getYear() != calendarPrevious.getYear()) {
-					odds.add(!oddPrevious);
-				} else {
-					odds.add(oddPrevious);
-				}
-				break;
-			case Week:
-				if (calendarCurrent.getMonth() != calendarPrevious.getMonth() ||
-					calendarCurrent.getYear() != calendarPrevious.getYear()) {
-					odds.add(!oddPrevious);
-				} else {
-					odds.add(oddPrevious);
-				}
-				break;
-			case Month:
-				if (calendarCurrent.getYear() != calendarPrevious.getYear()) {
-					odds.add(!oddPrevious);
-				} else {
-					odds.add(oddPrevious);
-				}
-				break;
-			default:
-				odds.add(oddPrevious);
-				break;
+			return 2;
+		case Day:
+			if (NumberUtils.isOdd(calendar.getWeek())) {
+				return 1;
 			}
+			return 2;
+		case Week:
+			if (NumberUtils.isOdd(calendar.getMonth())) {
+				return 1;
+			}
+			return 2;
+		case Month:
+			if (NumberUtils.isOdd(calendar.getYear())) {
+				return 1;
+			}
+			return 2;
+		default:
+			return 0;
 		}
 	}
 }

@@ -206,6 +206,10 @@ public class Record implements Comparable<Object> {
 	 * @return The value at the given index.
 	 */
 	public Value getValue(int index) {
+		FieldCalculator calculator = getField(index).getCalculator();
+		if (calculator != null) {
+			return calculator.getValue(this);
+		}
 		return values.get(index);
 	}
 
@@ -717,6 +721,7 @@ public class Record implements Comparable<Object> {
 			case ByteArray:
 				b.append(value.getByteArray());
 				break;
+			case AutoIncrement:
 			case Decimal:
 			case Double:
 			case Integer:

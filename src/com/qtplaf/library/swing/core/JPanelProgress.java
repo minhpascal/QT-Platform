@@ -41,6 +41,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionList;
@@ -76,6 +79,9 @@ import com.qtplaf.library.util.Timestamp;
  * @author Miquel Sas
  */
 public class JPanelProgress extends JPanel {
+
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
 
 	/**
 	 * Mouse listener.
@@ -1315,6 +1321,9 @@ public class JPanelProgress extends JPanel {
 			if (task.isIndeterminate()) {
 				getLabelStatus().setText(getSession().getString("panelProgressError"));
 			}
+			
+			// Log the exception
+			logger.catching(task.getException());
 		}
 	}
 

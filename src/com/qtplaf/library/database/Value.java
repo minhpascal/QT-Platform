@@ -821,7 +821,7 @@ public class Value implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isLong() {
-		return getType().isLong();
+		return (getType().isLong() || getType().isAutoIncrement());
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class DBUtils {
 			Types type = field.getType();
 			int decimals = field.getDecimals();
 			Value value;
-			if ((field.isPersistent() || field.isVirtual())) {
+			if (field.isAutoIncrement() || field.isPersistent() || field.isVirtual()) {
 				value = DBUtils.fromResultSet(type, decimals, index++, rs);
 			} else {
 				value = field.getDefaultValue();
@@ -80,7 +80,9 @@ public class DBUtils {
 	 */
 	public static Value fromResultSet(Types type, int decimals, int index, ResultSet resultSet) throws SQLException {
 		Value value = null;
-		if (type == Types.Boolean) {
+		if (type == Types.AutoIncrement) {
+			value = new Value(resultSet.getLong(index));
+		} else if (type == Types.Boolean) {
 			String s = resultSet.getString(index);
 			boolean b = (s != null && s.equals("Y"));
 			value = new Value(b);

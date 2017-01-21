@@ -13,6 +13,8 @@
  */
 package com.qtplaf.library.trading.data;
 
+import java.util.List;
+
 /**
  * An arbitrary number of double values with the starting time. It can be an OHLCV (open, high, low, close, volume) pack
  * or the list of values of an indicator.
@@ -20,6 +22,49 @@ package com.qtplaf.library.trading.data;
  * @author Miquel Sas
  */
 public class Data {
+
+	/**
+	 * Returns a data item that is the union or consolidation of a list of data items.
+	 * <p>
+	 * For OHLCV data items the open is the open of the first, the high is the higher, the low the lower, the close is
+	 * the close of the last, and the volume is the sum.The time is the time of the first item.
+	 * <p>
+	 * For generic data items the last item is returned.
+	 * 
+	 * @param fromIndex Start index.
+	 * @param toIndex End index.
+	 * @return The union data item.
+	 */
+	public static Data union(List<Data> list) {
+		if (list.isEmpty()) {
+			throw new IllegalStateException("The sub list can not be empty.");
+		}
+		Data data = list.get(0);
+		if (!OHLCV.class.isInstance(data)) {
+			return list.get(list.size() - 1);
+		}
+		double open = 0;
+		double high = 0;
+		double low = 0;
+		double close = 0;
+		double volume = 0;
+		long time = 0;
+		for (int i = 0; i < list.size(); i++) {
+			OHLCV ohlcv = (OHLCV) list.get(i);
+			if (i == 0) {
+				open = ohlcv.getOpen();
+				time = ohlcv.getTime();
+			}
+			high = Math.max(high, ohlcv.getHigh());
+			low = Math.min(low, ohlcv.getLow());
+			if (i == list.size() - 1) {
+				close = ohlcv.getClose();
+			}
+			volume += ohlcv.getVolume();
+		}
+		return new OHLCV(time, open, high, low, close, volume);
+	}
+
 
 	/**
 	 * The data.

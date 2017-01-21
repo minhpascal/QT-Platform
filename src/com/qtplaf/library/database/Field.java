@@ -137,6 +137,8 @@ public class Field implements Comparable<Object> {
 	private boolean editSeconds = true;
 	/** A supported database function if the column is virtual or calculated. */
 	private String function;
+	/** Optional calculator. */
+	private FieldCalculator calculator;
 
 	/** Field group. */
 	private FieldGroup fieldGroup = FieldGroup.emptyFieldGroup;
@@ -214,6 +216,7 @@ public class Field implements Comparable<Object> {
 		formatter = field.formatter;
 		editSeconds = field.editSeconds;
 		function = field.function;
+		calculator = field.calculator;
 
 		fieldGroup = field.fieldGroup;
 		actionLookup = field.actionLookup;
@@ -304,7 +307,7 @@ public class Field implements Comparable<Object> {
 		if (!isNumber()) {
 			return 0;
 		}
-		if (isInteger() || isLong()) {
+		if (isInteger() || isLong() || isAutoIncrement()) {
 			return 0;
 		}
 		return decimals;
@@ -339,6 +342,8 @@ public class Field implements Comparable<Object> {
 		case String:
 			setHorizontalAlignment(Alignment.Left);
 			break;
+		case AutoIncrement:
+			setPersistent(false);
 		case Decimal:
 		case Double:
 		case Long:
@@ -465,14 +470,12 @@ public class Field implements Comparable<Object> {
 	 */
 	public String getPossibleValueLabel(Value value) {
 		List<Value> possibleValues = getPossibleValues();
-		if (possibleValues != null) {
-			for (Value possibleValue : possibleValues) {
-				if (possibleValue.equals(value)) {
-					return possibleValue.getLabel();
-				}
+		for (Value possibleValue : possibleValues) {
+			if (possibleValue.equals(value)) {
+				return possibleValue.getLabel();
 			}
 		}
-		return null;
+		return "";
 	}
 
 	/**
@@ -481,8 +484,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean indicating if this field has possible values.
 	 */
 	public boolean isPossibleValues() {
-		List<Value> possibleValues = getPossibleValues();
-		return (possibleValues != null && !possibleValues.isEmpty());
+		return !getPossibleValues().isEmpty();
 	}
 
 	/**
@@ -580,7 +582,7 @@ public class Field implements Comparable<Object> {
 		}
 
 		// Possible values
-		if (getPossibleValues() != null) {
+		if (!getPossibleValues().isEmpty()) {
 			if (!value.in(getPossibleValues())) {
 				return false;
 			}
@@ -633,7 +635,7 @@ public class Field implements Comparable<Object> {
 		}
 
 		// Possible values
-		if (getPossibleValues() != null) {
+		if (!getPossibleValues().isEmpty()) {
 			if (!value.in(getPossibleValues())) {
 				return MessageFormat.format("Value {0} is not in the list of possible values", value);
 			}
@@ -675,6 +677,9 @@ public class Field implements Comparable<Object> {
 	 * @return The default value.
 	 */
 	public Value getDefaultValue() {
+		if (isAutoIncrement()) {
+			return new Value(0);
+		}
 		if (isBoolean()) {
 			return new Value(false);
 		}
@@ -1240,6 +1245,15 @@ public class Field implements Comparable<Object> {
 	}
 
 	/**
+	 * Check if this field is auto-increment.
+	 *
+	 * @return A boolean.
+	 */
+	public boolean isAutoIncrement() {
+		return getType().isAutoIncrement();
+	}
+
+	/**
 	 * Check if this field is boolean.
 	 *
 	 * @return A boolean.
@@ -1499,6 +1513,24 @@ public class Field implements Comparable<Object> {
 	}
 
 	/**
+	 * Returns the calculator.
+	 * 
+	 * @return The calculator.
+	 */
+	public FieldCalculator getCalculator() {
+		return calculator;
+	}
+
+	/**
+	 * Sets the calcualtor.
+	 * 
+	 * @param calculator The field calculator.
+	 */
+	public void setCalculator(FieldCalculator calculator) {
+		this.calculator = calculator;
+	}
+
+	/**
 	 * Check if this column is virtual. A column is virtual is it has a function but not a name.
 	 *
 	 * @return A <code>boolean</code>.
@@ -1528,11 +1560,9 @@ public class Field implements Comparable<Object> {
 		if (getMaximumValue() != null) {
 			return true;
 		}
-		if (getPossibleValues() != null) {
-			if (!getPossibleValues().isEmpty()) {
-				if (!isBoolean()) {
-					return true;
-				}
+		if (!getPossibleValues().isEmpty()) {
+			if (!isBoolean()) {
+				return true;
 			}
 		}
 		return false;

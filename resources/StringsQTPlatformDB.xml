@@ -70,8 +70,14 @@
 	
 	<!-- OHLCV -->
 	
-	<entry key="fieldOHLCVTimeLabel">Time start</entry>
+	<entry key="fieldOHLCVIndexLabel">Index</entry>
+	<entry key="fieldOHLCVIndexHeader">Index</entry>
+	
+	<entry key="fieldOHLCVTimeLabel">Time</entry>
 	<entry key="fieldOHLCVTimeHeader">Time</entry>
+	
+	<entry key="fieldOHLCVTimeFmtLabel">Time fmt</entry>
+	<entry key="fieldOHLCVTimeFmtHeader">Time fmt</entry>
 	
 	<entry key="fieldOHLCVOpenLabel">Open value</entry>
 	<entry key="fieldOHLCVOpenHeader">Open</entry>

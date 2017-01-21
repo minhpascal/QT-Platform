@@ -669,6 +669,38 @@ public class Domains {
 	}
 
 	/**
+	 * Returns the <b><i>TimeFmt</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getTimeFmt(Session session, String name) {
+		return getTimeFmt(session, name, name);
+	}
+
+	/**
+	 * Returns the <b><i>TimeFmt</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @return The field definition.
+	 */
+	public static Field getTimeFmt(Session session, String name, String alias) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.Long);
+		field.setHeader(session.getString("fieldOHLCVTimeFmtLabel"));
+		field.setLabel(session.getString("fieldOHLCVTimeFmtLabel"));
+		field.setTitle(session.getString("fieldOHLCVTimeFmtHeader"));
+		field.setPersistent(false);
+		return field;
+	}
+
+	/**
 	 * Returns the <b><i>Open</i></b> field definition.
 	 * 
 	 * @param session Working session.
@@ -820,6 +852,37 @@ public class Domains {
 		field.setHeader(session.getString("fieldOHLCVVolumeLabel"));
 		field.setLabel(session.getString("fieldOHLCVVolumeLabel"));
 		field.setTitle(session.getString("fieldOHLCVVolumeHeader"));
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>Index</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getIndex(Session session, String name) {
+		return getIndex(session, name, name);
+	}
+
+	/**
+	 * Returns the <b><i>Index</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias Field alias.
+	 * @return The field definition.
+	 */
+	public static Field getIndex(Session session, String name, String alias) {
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.AutoIncrement);
+		field.setHeader(session.getString("fieldOHLCVIndexLabel"));
+		field.setLabel(session.getString("fieldOHLCVIndexLabel"));
+		field.setTitle(session.getString("fieldOHLCVIndexHeader"));
 		return field;
 	}
 }
