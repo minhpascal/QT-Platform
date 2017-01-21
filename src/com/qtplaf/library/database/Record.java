@@ -242,9 +242,10 @@ public class Record implements Comparable<Object> {
 		}
 		return persistentValues;
 	}
-	
+
 	/**
 	 * Returns the order key for the given order. The order must contain fields of the record.
+	 * 
 	 * @param order The order.
 	 * @return The key.
 	 */

@@ -152,7 +152,8 @@ public class Filter extends ArrayList<Filter.Segment> {
 		@Override
 		public int compareTo(Object o) {
 			if (!(o instanceof Segment)) {
-				throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
+				throw new UnsupportedOperationException(
+					MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 			}
 			// Filter segments are not aimed to e compared inn order to be sorted.
 			return 0;
@@ -170,7 +171,7 @@ public class Filter extends ArrayList<Filter.Segment> {
 	public Filter() {
 		super();
 	}
-	
+
 	/**
 	 * Create a filter from an origin criteria.
 	 * 
@@ -527,7 +528,8 @@ public class Filter extends ArrayList<Filter.Segment> {
 		}
 
 		if (nocase) {
-			add(new Segment(b.toString(), new Value(value.toString()
+			add(new Segment(b.toString(), new Value(value
+				.toString()
 				.toUpperCase())));
 		} else {
 			add(new Segment(b.toString(), value));
@@ -663,7 +665,10 @@ public class Filter extends ArrayList<Filter.Segment> {
 	 * @param not Not flag
 	 * @param nocase No case flag
 	 */
-	private void condIsMember(Field field, List<Value> values, boolean not,
+	private void condIsMember(
+		Field field,
+		List<Value> values,
+		boolean not,
 		boolean nocase) {
 
 		if (nocase && !field.isString()) {
@@ -747,8 +752,12 @@ public class Filter extends ArrayList<Filter.Segment> {
 	 * @param not Not flag
 	 * @param nocase No case flag
 	 */
-	private void condBetween(Field field, Value value1, Value value2,
-		boolean not, boolean nocase) {
+	private void condBetween(
+		Field field,
+		Value value1,
+		Value value2,
+		boolean not,
+		boolean nocase) {
 
 		if (nocase && !field.isString() && !value1.isString() && value2.isString()) {
 			throw new IllegalArgumentException("No case only applies to string fields and values");
@@ -940,8 +949,12 @@ public class Filter extends ArrayList<Filter.Segment> {
 	 * @param nocase No case flag
 	 * @param type The type of like condition
 	 */
-	private void condLike(Field field, Value value, boolean nocase,
-		boolean not, Like type) {
+	private void condLike(
+		Field field,
+		Value value,
+		boolean nocase,
+		boolean not,
+		Like type) {
 		validateLike(field, value);
 		StringBuilder b = new StringBuilder();
 		if (nocase) {

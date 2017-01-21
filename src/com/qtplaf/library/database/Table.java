@@ -679,7 +679,7 @@ public class Table implements Comparable<Object> {
 	public List<ForeignKey> getForeignKeys() {
 		return foreignKeys;
 	}
-	
+
 	/**
 	 * Returns a simple view of this table, using the primary key as index.
 	 *

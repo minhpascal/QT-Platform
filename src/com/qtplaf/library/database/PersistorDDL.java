@@ -57,8 +57,8 @@ public interface PersistorDDL {
 	 * @throws PersistorException
 	 */
 	int createSchema(String schema) throws PersistorException;
-	
-		/**
+
+	/**
 	 * Executes a create table statement.
 	 *
 	 * @param table The table.

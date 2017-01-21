@@ -327,7 +327,7 @@ public class FieldProperties {
 		if (field.getLength() <= 0) {
 			properties.getValue(Length).setNull();
 		}
-		
+
 		// Store group and subgroup as objects.
 		properties.setProperty(Group, field.getFieldGroup());
 
@@ -472,9 +472,10 @@ public class FieldProperties {
 		}
 		return fieldGroup.getTitle();
 	}
-	
+
 	/**
 	 * Returns a valid index for the field group.
+	 * 
 	 * @param fieldGroup The field group.
 	 * @return A valid index (Integer.MAX_VALUE if the group is null)
 	 */

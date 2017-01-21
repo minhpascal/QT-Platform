@@ -161,7 +161,7 @@ public class ValueMap {
 	public boolean isTypeAlias() {
 		return type == Type.Alias;
 	}
-	
+
 	/**
 	 * Check if the map is type field.
 	 * 

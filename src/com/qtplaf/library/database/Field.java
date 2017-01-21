@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.Action;
@@ -37,96 +36,6 @@ import com.qtplaf.library.util.Timestamp;
  * @author Miquel Sas
  */
 public class Field implements Comparable<Object> {
-	private static int index = 0;
-	/** Field name. */
-	private static final Integer KeyName = Integer.valueOf(index++);
-	/** Optional field alias, if not set the name is used. */
-	private static final Integer KeyAlias = Integer.valueOf(index++);
-	/** Length if applicable, otherwise -1. */
-	private static final Integer KeyLength = Integer.valueOf(index++);
-	/** Decimals if applicable, otherwise -1. */
-	private static final Integer KeyDecimals = Integer.valueOf(index++);
-	/** Type. */
-	private static final Integer KeyType = Integer.valueOf(index++);
-	/** A flag that indicates if this field is persistent. */
-	private static final Integer KeyPersistent = Integer.valueOf(index++);
-	/** Maximum value. */
-	private static final Integer KeyMaximumValue = Integer.valueOf(index++);
-	/** Minimum value. */
-	private static final Integer KeyMinimumValue = Integer.valueOf(index++);
-	/** List of possible values. */
-	private static final Integer KeyPossibleValues = Integer.valueOf(index++);
-	/** A flag indicating if a non empty value is required for this field. */
-	private static final Integer KeyRequired = Integer.valueOf(index++);
-	/** A flag indicating if this field can be null. */
-	private static final Integer KeyNullable = Integer.valueOf(index++);
-	/** A generic value validator. */
-	private static final Integer KeyValidator = Integer.valueOf(index++);
-	/** Initial value. */
-	private static final Integer KeyInitialValue = Integer.valueOf(index++);
-	/** A flag to indicate if the field should initialize to the current date, time or time stamp. */
-	private static final Integer KeyCurrentDateTimeOrTimestamp = Integer.valueOf(index++);
-	/** Description, normally a longer description. */
-	private static final Integer KeyDescription = Integer.valueOf(index++);
-	/** Label on forms. */
-	private static final Integer KeyLabel = Integer.valueOf(index++);
-	/** Header on grids. */
-	private static final Integer KeyHeader = Integer.valueOf(index++);
-	/** Title or short description. */
-	private static final Integer KeyTitle = Integer.valueOf(index++);
-	/** Horizontal alignment. */
-	private static final Integer KeyHorizontalAlignment = Integer.valueOf(index++);
-	/** Vertical alignment. */
-	private static final Integer KeyVerticalAlignment = Integer.valueOf(index++);
-	/** Adjusted display length. */
-	private static final Integer KeyDisplayLength = Integer.valueOf(index++);
-	/** Uppercase flag. */
-	private static final Integer KeyUppercase = Integer.valueOf(index++);
-	/** Minimum width, must be set for not autosize fields. */
-	private static final Integer KeyMinimumWidth = Integer.valueOf(index++);
-	/** Maximum width, must be set for not autosize fields. */
-	private static final Integer KeyMaximumWidth = Integer.valueOf(index++);
-	/** Preferred width, must be set for not autosize fields. */
-	private static final Integer KeyPreferredWidth = Integer.valueOf(index++);
-	/** Autosize flag. */
-	private static final Integer KeyAutoSize = Integer.valueOf(index++);
-	/** Width factor for string fields. */
-	private static final Integer KeyWidthFactor = Integer.valueOf(index++);
-	/** Fixed size flag for form and table autosize. */
-	private static final Integer KeyFixedWidth = Integer.valueOf(index++);
-	/** An optional formatter. */
-	private static final Integer KeyFormatter = Integer.valueOf(index++);
-	/** A boolean that indicates if seconds should be edited when the type is time or timestamp. */
-	private static final Integer KeyEditSeconds = Integer.valueOf(index++);
-	/** A flag that indicates is this field is a primary key field. */
-	private static final Integer KeyPrimaryKey = Integer.valueOf(index++);
-	/** A supported database function if the column is virtual or calculated. */
-	private static final Integer KeyFunction = Integer.valueOf(index++);
-	/** Optional parent table. */
-	private static final Integer KeyParentTable = Integer.valueOf(index++);
-	/** Optional parent view */
-	private static final Integer KeyParentView = Integer.valueOf(index++);
-	/** A boolean that indicates if this field is a key description, that is, the main description of a primary key. */
-	private static final Integer KeyMainDescription = Integer.valueOf(index++);
-	/** A boolean that indicates if this field is a lookup field. */
-	private static final Integer KeyLookup = Integer.valueOf(index++);
-	/** Field group. */
-	private static final Integer KeyFieldGroup = Integer.valueOf(index++);
-	/** A boolean that indicates if the field becomes a min-max field in filter form. */
-	private static final Integer KeyMinMaxFilter = Integer.valueOf(index++);
-	/** An optonal lookup action. */
-	private static final Integer KeyActionLookup = Integer.valueOf(index++);
-	/** A boolean that indicates, if the field is boolean, if it has to be edited in check or combo box. */
-	private static final Integer KeyEditBooleanInCheckBox = Integer.valueOf(index++);
-	/** A boolean to prevent the field from being edited. */
-	private static final Integer KeyEditable = Integer.valueOf(index++);
-	/** A boolean to indicate if the field is a password field. */
-	private static final Integer KeyPassword = Integer.valueOf(index++);
-	/** The optinal working session. */
-	private static final Integer KeySession = Integer.valueOf(index++);
-
-	/** Generic properties. */
-	private static final Integer KeyProperties = Integer.MAX_VALUE;
 
 	/**
 	 * Returns the list of all relations contained in the list of fields.
@@ -147,10 +56,105 @@ public class Field implements Comparable<Object> {
 		return relations;
 	}
 
+	/** Field name. */
+	private String name;
+	/** Optional field alias, if not set the name is used. */
+	private String alias;
+	/** Length if applicable, otherwise -1. */
+	private int length = -1;
+	/** Decimals if applicable, otherwise -1. */
+	private int decimals = -1;
+	/** Type. */
+	private Types type;
+	/** A flag that indicates if this field is persistent. */
+	private boolean persistent = true;
+	/** A flag indicating if this field can be null. */
+	private boolean nullable = true;
+	/** A flag that indicates is this field is a primary key field. */
+	private boolean primaryKey = false;
+
+	/** Description, normally a longer description. */
+	private String description;
+	/** Label on forms. */
+	private String label;
+	/** Header on grids. */
+	private String header;
+	/** Title or short description. */
+	private String title;
+
+	/** Initial value. */
+	private Value initialValue;
+	/** Maximum value. */
+	private Value maximumValue;
+	/** Minimum value. */
+	private Value minimumValue;
+	/** List of possible values. */
+	private List<Value> possibleValues;
+	/** A flag indicating if a non empty value is required for this field. */
+	private boolean required = false;
+	/** A generic value validator. */
+	private Validator<Value> validator;
+	/** A flag to indicate if the field should initialize to the current date, time or time stamp. */
+	private boolean currentDateTimeOrTimestamp = false;
+
+	/** Horizontal alignment. */
+	private Alignment horizontalAlignment = Alignment.Left;
+	/** Vertical alignment. */
+	private Alignment verticalAlignment = Alignment.Center;
+	/** Adjusted display length. */
+	private int displayLength = 0;
+	/** Uppercase flag. */
+	private boolean uppercase = false;
+	/** Minimum width, must be set for not autosize fields. */
+	private int minimumWidth = -1;
+	/** Maximum width, must be set for not autosize fields. */
+	private int maximumWidth = -1;
+	/** Preferred width, must be set for not autosize fields. */
+	private int preferredWidth = -1;
+	/** Autosize flag. */
+	private boolean autoSize = true;
+	/** Width factor for string fields. */
+	private double widthFactor = 0;
+	/** Fixed size flag for form and table autosize. */
+	private boolean fixedWidth = true;
+
+	/** A boolean that indicates if this field is a key description, that is, the main description of a primary key. */
+	private boolean mainDescription = false;
+	/** A boolean that indicates if this field is a lookup field. */
+	private boolean lookup = false;
+	/** A boolean that indicates if the field becomes a min-max field in filter form. */
+	private boolean minMaxFilter = false;
+	/** A boolean that indicates, if the field is boolean, if it has to be edited in check or combo box. */
+	private boolean editBooleanInCheckBox = false;
+	/** A boolean to prevent the field from being edited. */
+	private boolean editable = true;
+	/** A boolean to indicate if the field is a password field. */
+	private boolean password = false;
+
+	/** An optional formatter. */
+	private JFormattedTextField.AbstractFormatter formatter;
+	/** A boolean that indicates if seconds should be edited when the type is time or timestamp. */
+	private boolean editSeconds = true;
+	/** A supported database function if the column is virtual or calculated. */
+	private String function;
+
+	/** Field group. */
+	private FieldGroup fieldGroup = FieldGroup.emptyFieldGroup;
+	/** An optional lookup action. */
+	private Action actionLookup;
+
+	/** Optional parent table. */
+	private Table parentTable;
+	/** Optional parent view */
+	private View parentView;
+
+	/** The optinal working session. */
+	private Session session;
+
 	/**
-	 * The properties.
+	 * The additional properties.
 	 */
-	private Properties properties = new Properties();
+	private Properties properties;
 
 	/**
 	 * Default constructor.
@@ -166,7 +170,63 @@ public class Field implements Comparable<Object> {
 	 */
 	public Field(Field field) {
 		super();
-		properties.putAll(field.properties);
+
+		name = field.name;
+		alias = field.alias;
+		length = field.length;
+		decimals = field.decimals;
+		type = field.type;
+		persistent = field.persistent;
+		nullable = field.nullable;
+		primaryKey = field.primaryKey;
+
+		description = field.description;
+		label = field.label;
+		header = field.header;
+		title = field.title;
+
+		initialValue = field.initialValue;
+		maximumValue = field.maximumValue;
+		minimumValue = field.minimumValue;
+		possibleValues = field.possibleValues;
+		required = field.required;
+		validator = field.validator;
+		currentDateTimeOrTimestamp = field.currentDateTimeOrTimestamp;
+
+		horizontalAlignment = field.horizontalAlignment;
+		verticalAlignment = field.verticalAlignment;
+		displayLength = field.displayLength;
+		uppercase = field.uppercase;
+		minimumWidth = field.minimumWidth;
+		maximumWidth = field.maximumWidth;
+		preferredWidth = field.preferredWidth;
+		autoSize = field.autoSize;
+		widthFactor = field.widthFactor;
+		fixedWidth = field.fixedWidth;
+
+		mainDescription = field.mainDescription;
+		lookup = field.lookup;
+		minMaxFilter = field.minMaxFilter;
+		editBooleanInCheckBox = field.editBooleanInCheckBox;
+		editable = field.editable;
+		password = field.password;
+
+		formatter = field.formatter;
+		editSeconds = field.editSeconds;
+		function = field.function;
+
+		fieldGroup = field.fieldGroup;
+		actionLookup = field.actionLookup;
+
+		parentTable = field.parentTable;
+		parentView = field.parentView;
+
+		session = field.session;
+
+		if (field.properties != null) {
+			properties = new Properties();
+			properties.putAll(field.properties);
+		}
 	}
 
 	/**
@@ -184,7 +244,7 @@ public class Field implements Comparable<Object> {
 	 * @return The name.
 	 */
 	public String getName() {
-		return properties.getString(KeyName);
+		return name;
 	}
 
 	/**
@@ -193,7 +253,7 @@ public class Field implements Comparable<Object> {
 	 * @param name The name of the field.
 	 */
 	public void setName(String name) {
-		properties.setString(KeyName, name);
+		this.name = name;
 	}
 
 	/**
@@ -202,7 +262,10 @@ public class Field implements Comparable<Object> {
 	 * @return The field alias.
 	 */
 	public String getAlias() {
-		return properties.getString(KeyAlias, getName());
+		if (alias == null) {
+			return name;
+		}
+		return alias;
 	}
 
 	/**
@@ -211,7 +274,7 @@ public class Field implements Comparable<Object> {
 	 * @param alias The field alias.
 	 */
 	public void setAlias(String alias) {
-		properties.setString(KeyAlias, alias);
+		this.alias = alias;
 	}
 
 	/**
@@ -220,7 +283,7 @@ public class Field implements Comparable<Object> {
 	 * @return The field length if applicable, otherwise -1.
 	 */
 	public int getLength() {
-		return properties.getInteger(KeyLength, -1);
+		return length;
 	}
 
 	/**
@@ -229,7 +292,7 @@ public class Field implements Comparable<Object> {
 	 * @param length The field length.
 	 */
 	public void setLength(int length) {
-		properties.setInteger(KeyLength, length);
+		this.length = length;
 	}
 
 	/**
@@ -244,7 +307,7 @@ public class Field implements Comparable<Object> {
 		if (isInteger() || isLong()) {
 			return 0;
 		}
-		return properties.getInteger(KeyDecimals, -1);
+		return decimals;
 	}
 
 	/**
@@ -253,7 +316,7 @@ public class Field implements Comparable<Object> {
 	 * @param decimals The number of decimal places.
 	 */
 	public void setDecimals(int decimals) {
-		properties.setInteger(KeyDecimals, decimals);
+		this.decimals = decimals;
 	}
 
 	/**
@@ -262,7 +325,7 @@ public class Field implements Comparable<Object> {
 	 * @return The type.
 	 */
 	public Types getType() {
-		return (Types) properties.getObject(KeyType);
+		return type;
 	}
 
 	/**
@@ -271,7 +334,7 @@ public class Field implements Comparable<Object> {
 	 * @param type The type.
 	 */
 	public void setType(Types type) {
-		properties.setObject(KeyType, type);
+		this.type = type;
 		switch (type) {
 		case String:
 			setHorizontalAlignment(Alignment.Left);
@@ -297,7 +360,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean
 	 */
 	public boolean isPersistent() {
-		return properties.getBoolean(KeyPersistent, true);
+		return persistent;
 	}
 
 	/**
@@ -306,7 +369,7 @@ public class Field implements Comparable<Object> {
 	 * @param persistent A boolean.
 	 */
 	public void setPersistent(boolean persistent) {
-		properties.setBoolean(KeyPersistent, persistent);
+		this.persistent = persistent;
 	}
 
 	/**
@@ -315,7 +378,7 @@ public class Field implements Comparable<Object> {
 	 * @return The maximum value.
 	 */
 	public Value getMaximumValue() {
-		return (Value) properties.getObject(KeyMaximumValue);
+		return maximumValue;
 	}
 
 	/**
@@ -325,7 +388,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setMaximumValue(Value maximumValue) {
 		validateValueType(maximumValue);
-		properties.setObject(KeyMaximumValue, maximumValue);
+		this.maximumValue = maximumValue;
 	}
 
 	/**
@@ -334,7 +397,7 @@ public class Field implements Comparable<Object> {
 	 * @return The minimum value.
 	 */
 	public Value getMinimumValue() {
-		return (Value) properties.getObject(KeyMinimumValue);
+		return minimumValue;
 	}
 
 	/**
@@ -344,7 +407,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setMinimumValue(Value minimumValue) {
 		validateValueType(minimumValue);
-		properties.setObject(KeyMinimumValue, minimumValue);
+		this.minimumValue = minimumValue;
 	}
 
 	/**
@@ -353,12 +416,10 @@ public class Field implements Comparable<Object> {
 	 * @param value The value to add.
 	 */
 	public void addPossibleValue(Value value) {
-		List<Value> possibleValues = getPossibleValues();
+		validateValueType(value);
 		if (possibleValues == null) {
 			possibleValues = new ArrayList<>();
-			properties.setObject(KeyPossibleValues, possibleValues);
 		}
-		validateValueType(value);
 		if (!possibleValues.contains(value)) {
 			possibleValues.add(value);
 		}
@@ -379,10 +440,9 @@ public class Field implements Comparable<Object> {
 	 * Clear the list of possible values and set the member to null.
 	 */
 	public void clearPossibleValues() {
-		if (getPossibleValues() != null) {
-			getPossibleValues().clear();
+		if (possibleValues != null) {
+			possibleValues.clear();
 		}
-		properties.remove(KeyPossibleValues);
 	}
 
 	/**
@@ -390,9 +450,11 @@ public class Field implements Comparable<Object> {
 	 *
 	 * @return The array of possible values.
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Value> getPossibleValues() {
-		return (List<Value>) properties.getObject(KeyPossibleValues);
+		if (possibleValues == null) {
+			return new ArrayList<>();
+		}
+		return possibleValues;
 	}
 
 	/**
@@ -442,7 +504,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isRequired() {
-		return properties.getBoolean(KeyRequired);
+		return required;
 	}
 
 	/**
@@ -451,7 +513,7 @@ public class Field implements Comparable<Object> {
 	 * @param required A boolean.
 	 */
 	public void setRequired(boolean required) {
-		properties.setBoolean(KeyRequired, required);
+		this.required = required;
 	}
 
 	/**
@@ -460,7 +522,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean
 	 */
 	public boolean isNullable() {
-		return properties.getBoolean(KeyNullable, true);
+		return nullable;
 	}
 
 	/**
@@ -469,7 +531,7 @@ public class Field implements Comparable<Object> {
 	 * @param nullable A boolean
 	 */
 	public void setNullable(boolean nullable) {
-		properties.setBoolean(KeyNullable, nullable);
+		this.nullable = nullable;
 	}
 
 	/**
@@ -477,9 +539,8 @@ public class Field implements Comparable<Object> {
 	 *
 	 * @return The generic validator.
 	 */
-	@SuppressWarnings("unchecked")
 	public Validator<Value> getValidator() {
-		return (Validator<Value>) properties.getObject(KeyValidator);
+		return validator;
 	}
 
 	/**
@@ -488,7 +549,7 @@ public class Field implements Comparable<Object> {
 	 * @param validator The validator.
 	 */
 	public void setValidator(Validator<Value> validator) {
-		properties.setObject(KeyValidator, validator);
+		this.validator = validator;
 	}
 
 	/**
@@ -653,7 +714,7 @@ public class Field implements Comparable<Object> {
 	 * @return The initial value.
 	 */
 	public Value getInitialValue() {
-		return (Value) properties.getObject(KeyInitialValue);
+		return initialValue;
 	}
 
 	/**
@@ -663,7 +724,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setInitialValue(Value initialValue) {
 		validateValueType(initialValue);
-		properties.setObject(KeyInitialValue, initialValue);
+		this.initialValue = initialValue;
 	}
 
 	/**
@@ -672,12 +733,11 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean indicating the initialization rule.
 	 */
 	public boolean isCurrentDateTimeOrTimestamp() {
-		return properties.getBoolean(KeyCurrentDateTimeOrTimestamp);
+		return currentDateTimeOrTimestamp;
 	}
 
 	/**
 	 * Check if his field should initialize to the current date.
-	 * <p>
 	 * 
 	 * @return A boolean indicating that it should be initialized to the current date.
 	 */
@@ -687,7 +747,6 @@ public class Field implements Comparable<Object> {
 
 	/**
 	 * Check if his field should initialize to the current time.
-	 * <p>
 	 * 
 	 * @return A boolean indicating that it should be initialized to the current time.
 	 */
@@ -697,7 +756,6 @@ public class Field implements Comparable<Object> {
 
 	/**
 	 * Check if his field should initialize to the current time stamp.
-	 * <p>
 	 * 
 	 * @return A boolean indicating that it should be initialized to the current time stamp.
 	 */
@@ -711,7 +769,7 @@ public class Field implements Comparable<Object> {
 	 * @param currentDateTimeOrTimestamp A boolean.
 	 */
 	public void setCurrentDateTimeOrTimestamp(boolean currentDateTimeOrTimestamp) {
-		properties.setBoolean(KeyCurrentDateTimeOrTimestamp, currentDateTimeOrTimestamp);
+		this.currentDateTimeOrTimestamp = currentDateTimeOrTimestamp;
 	}
 
 	/**
@@ -720,7 +778,7 @@ public class Field implements Comparable<Object> {
 	 * @return The long description.
 	 */
 	public String getDescription() {
-		return properties.getString(KeyDescription);
+		return description;
 	}
 
 	/**
@@ -729,7 +787,7 @@ public class Field implements Comparable<Object> {
 	 * @param description The long description.
 	 */
 	public void setDescription(String description) {
-		properties.setString(KeyDescription, description);
+		this.description = description;
 	}
 
 	/**
@@ -738,7 +796,7 @@ public class Field implements Comparable<Object> {
 	 * @return The label used in forms.
 	 */
 	public String getLabel() {
-		return properties.getString(KeyLabel);
+		return label;
 	}
 
 	/**
@@ -747,7 +805,7 @@ public class Field implements Comparable<Object> {
 	 * @param label The label used in forms.
 	 */
 	public void setLabel(String label) {
-		properties.setString(KeyLabel, label);
+		this.label = label;
 	}
 
 	/**
@@ -756,7 +814,7 @@ public class Field implements Comparable<Object> {
 	 * @return The header used in tables.
 	 */
 	public String getHeader() {
-		return properties.getString(KeyHeader);
+		return header;
 	}
 
 	/**
@@ -765,7 +823,7 @@ public class Field implements Comparable<Object> {
 	 * @param header The header used in tables.
 	 */
 	public void setHeader(String header) {
-		properties.setString(KeyHeader, header);
+		this.header = header;
 	}
 
 	/**
@@ -774,7 +832,7 @@ public class Field implements Comparable<Object> {
 	 * @return The title or short description.
 	 */
 	public String getTitle() {
-		return properties.getString(KeyTitle);
+		return title;
 	}
 
 	/**
@@ -783,7 +841,7 @@ public class Field implements Comparable<Object> {
 	 * @param title The title or short description.
 	 */
 	public void setTitle(String title) {
-		properties.setString(KeyTitle, title);
+		this.title = title;
 	}
 
 	/**
@@ -792,7 +850,7 @@ public class Field implements Comparable<Object> {
 	 * @return The horizontal alignment.
 	 */
 	public Alignment getHorizontalAlignment() {
-		return (Alignment) properties.getObject(KeyHorizontalAlignment, Alignment.Left);
+		return horizontalAlignment;
 	}
 
 	/**
@@ -807,7 +865,7 @@ public class Field implements Comparable<Object> {
 		if (!horizontalAlignment.isHorizontal()) {
 			throw new IllegalArgumentException(horizontalAlignment.toString());
 		}
-		properties.setObject(KeyHorizontalAlignment, horizontalAlignment);
+		this.horizontalAlignment = horizontalAlignment;
 	}
 
 	/**
@@ -816,7 +874,7 @@ public class Field implements Comparable<Object> {
 	 * @return The vertical alignment.
 	 */
 	public Alignment getVerticalAlignment() {
-		return (Alignment) properties.getObject(KeyVerticalAlignment, Alignment.Center);
+		return verticalAlignment;
 	}
 
 	/**
@@ -831,7 +889,7 @@ public class Field implements Comparable<Object> {
 		if (!verticalAlignment.isVertical()) {
 			throw new IllegalArgumentException(verticalAlignment.toString());
 		}
-		properties.setObject(KeyVerticalAlignment, verticalAlignment);
+		this.verticalAlignment = verticalAlignment;
 	}
 
 	/**
@@ -840,7 +898,10 @@ public class Field implements Comparable<Object> {
 	 * @return The display length.
 	 */
 	public int getDisplayLength() {
-		return properties.getInteger(KeyDisplayLength, getLength());
+		if (displayLength > 0) {
+			return displayLength;
+		}
+		return getLength();
 	}
 
 	/**
@@ -890,7 +951,7 @@ public class Field implements Comparable<Object> {
 	 * @param displayLength The display length.
 	 */
 	public void setDisplayLength(int displayLength) {
-		properties.setInteger(KeyDisplayLength, displayLength);
+		this.displayLength = displayLength;
 	}
 
 	/**
@@ -899,7 +960,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean
 	 */
 	public boolean isUppercase() {
-		return properties.getBoolean(KeyUppercase);
+		return uppercase;
 	}
 
 	/**
@@ -908,7 +969,7 @@ public class Field implements Comparable<Object> {
 	 * @param uppercase A boolean indicating that the value is uppercase.
 	 */
 	public void setUppercase(boolean uppercase) {
-		properties.setBoolean(KeyUppercase, uppercase);
+		this.uppercase = uppercase;
 	}
 
 	/**
@@ -917,7 +978,7 @@ public class Field implements Comparable<Object> {
 	 * @return The minimum width.
 	 */
 	public int getMinimumWidth() {
-		return properties.getInteger(KeyMinimumWidth, -1);
+		return minimumWidth;
 	}
 
 	/**
@@ -926,7 +987,7 @@ public class Field implements Comparable<Object> {
 	 * @param minimumWidth The minimum width.
 	 */
 	public void setMinimumWidth(int minimumWidth) {
-		properties.setInteger(KeyMinimumWidth, minimumWidth);
+		this.minimumWidth = minimumWidth;
 	}
 
 	/**
@@ -935,7 +996,7 @@ public class Field implements Comparable<Object> {
 	 * @return The maximum width.
 	 */
 	public int getMaximumWidth() {
-		return properties.getInteger(KeyMaximumWidth, -1);
+		return maximumWidth;
 	}
 
 	/**
@@ -944,7 +1005,7 @@ public class Field implements Comparable<Object> {
 	 * @param maximumWidth The maximum width.
 	 */
 	public void setMaximumWidth(int maximumWidth) {
-		properties.setInteger(KeyMaximumWidth, maximumWidth);
+		this.maximumWidth = maximumWidth;
 	}
 
 	/**
@@ -953,7 +1014,7 @@ public class Field implements Comparable<Object> {
 	 * @return The preferred width.
 	 */
 	public int getPreferredWidth() {
-		return properties.getInteger(KeyPreferredWidth, -1);
+		return preferredWidth;
 	}
 
 	/**
@@ -962,7 +1023,7 @@ public class Field implements Comparable<Object> {
 	 * @param preferredWidth The preferred width.
 	 */
 	public void setPreferredWidth(int preferredWidth) {
-		properties.setInteger(KeyPreferredWidth, preferredWidth);
+		this.preferredWidth = preferredWidth;
 	}
 
 	/**
@@ -971,7 +1032,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isAutoSize() {
-		return properties.getBoolean(KeyAutoSize, true);
+		return autoSize;
 	}
 
 	/**
@@ -980,7 +1041,7 @@ public class Field implements Comparable<Object> {
 	 * @param autoSize A boolean
 	 */
 	public void setAutoSize(boolean autoSize) {
-		properties.setBoolean(KeyAutoSize, autoSize);
+		this.autoSize = autoSize;
 	}
 
 	/**
@@ -989,7 +1050,7 @@ public class Field implements Comparable<Object> {
 	 * @return The width factor.
 	 */
 	public double getWidthFactor() {
-		return properties.getDouble(KeyWidthFactor);
+		return widthFactor;
 	}
 
 	/**
@@ -998,7 +1059,7 @@ public class Field implements Comparable<Object> {
 	 * @param widthFactor The width factor.
 	 */
 	public void setWidthFactor(double widthFactor) {
-		properties.setDouble(KeyWidthFactor, widthFactor);
+		this.widthFactor = widthFactor;
 	}
 
 	/**
@@ -1008,7 +1069,7 @@ public class Field implements Comparable<Object> {
 	 * @param formatter The optional formatter.
 	 */
 	public void setFormatter(JFormattedTextField.AbstractFormatter formatter) {
-		properties.setObject(KeyFormatter, formatter);
+		this.formatter = formatter;
 	}
 
 	/**
@@ -1017,7 +1078,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean indicating if secnds should be edited when the type is time or timestamp.
 	 */
 	public boolean isEditSeconds() {
-		return properties.getBoolean(KeyEditSeconds);
+		return editSeconds;
 	}
 
 	/**
@@ -1026,7 +1087,7 @@ public class Field implements Comparable<Object> {
 	 * @param editSeconds A boolean indicating if secnds should be edited when the type is time or timestamp.
 	 */
 	public void setEditSeconds(boolean editSeconds) {
-		properties.setBoolean(KeyEditSeconds, editSeconds);
+		this.editSeconds = editSeconds;
 	}
 
 	/**
@@ -1035,7 +1096,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean indicating if the field is fixed-width.
 	 */
 	public boolean isFixedWidth() {
-		return properties.getBoolean(KeyFixedWidth, true);
+		return fixedWidth;
 	}
 
 	/**
@@ -1044,7 +1105,7 @@ public class Field implements Comparable<Object> {
 	 * @param fixedWidth A boolean
 	 */
 	public void setFixedWidth(boolean fixedWidth) {
-		properties.setBoolean(KeyFixedWidth, fixedWidth);
+		this.fixedWidth = fixedWidth;
 	}
 
 	/**
@@ -1053,7 +1114,7 @@ public class Field implements Comparable<Object> {
 	 * @return The optional action lookupor null.
 	 */
 	public Action getActionLookup() {
-		return (Action) properties.getObject(KeyActionLookup);
+		return actionLookup;
 	}
 
 	/**
@@ -1062,7 +1123,7 @@ public class Field implements Comparable<Object> {
 	 * @param actionLookup The optional action lookup.
 	 */
 	public void setActionLookup(Action actionLookup) {
-		properties.setObject(KeyActionLookup, actionLookup);
+		this.actionLookup = actionLookup;
 	}
 
 	/**
@@ -1071,7 +1132,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isEditable() {
-		return properties.getBoolean(KeyEditable, true);
+		return editable;
 	}
 
 	/**
@@ -1080,7 +1141,7 @@ public class Field implements Comparable<Object> {
 	 * @param editable A boolean.
 	 */
 	public void setEditable(boolean editable) {
-		properties.setBoolean(KeyEditable, editable);
+		this.editable = editable;
 	}
 
 	/**
@@ -1089,7 +1150,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isEditBooleanInCheckBox() {
-		return properties.getBoolean(KeyEditBooleanInCheckBox);
+		return editBooleanInCheckBox;
 	}
 
 	/**
@@ -1101,7 +1162,7 @@ public class Field implements Comparable<Object> {
 		if (!isBoolean()) {
 			throw new UnsupportedOperationException("Operation only valid for boolean types.");
 		}
-		properties.setBoolean(KeyEditBooleanInCheckBox, editBooleanInCheckBox);
+		this.editBooleanInCheckBox = editBooleanInCheckBox;
 	}
 
 	/**
@@ -1302,7 +1363,7 @@ public class Field implements Comparable<Object> {
 	 * @return The optional formatter.
 	 */
 	public JFormattedTextField.AbstractFormatter getFormatter() {
-		return (JFormattedTextField.AbstractFormatter) properties.getObject(KeyFormatter);
+		return formatter;
 	}
 
 	/**
@@ -1311,16 +1372,16 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean that indicates if this field is a key description.
 	 */
 	public boolean isMainDescription() {
-		return properties.getBoolean(KeyMainDescription);
+		return mainDescription;
 	}
 
 	/**
 	 * Set if this field is a key description. By rule, only a key description field should be set by table.
 	 * 
-	 * @param keyDescription A boolean.
+	 * @param mainDescription A boolean.
 	 */
-	public void setMainDescription(boolean keyDescription) {
-		properties.setBoolean(KeyMainDescription, keyDescription);
+	public void setMainDescription(boolean mainDescription) {
+		this.mainDescription = mainDescription;
 	}
 
 	/**
@@ -1330,7 +1391,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isLookup() {
-		return properties.getBoolean(KeyLookup);
+		return lookup;
 	}
 
 	/**
@@ -1340,7 +1401,7 @@ public class Field implements Comparable<Object> {
 	 * @param lookup A boolean.
 	 */
 	public void setLookup(boolean lookup) {
-		properties.setBoolean(KeyLookup, lookup);
+		this.lookup = lookup;
 	}
 
 	/**
@@ -1349,7 +1410,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isPassword() {
-		return properties.getBoolean(KeyPassword);
+		return password;
 	}
 
 	/**
@@ -1358,7 +1419,7 @@ public class Field implements Comparable<Object> {
 	 * @param password A boolean.
 	 */
 	public void setPassword(boolean password) {
-		properties.setBoolean(KeyPassword, password);
+		this.password = password;
 	}
 
 	/**
@@ -1367,7 +1428,7 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean
 	 */
 	public boolean isPrimaryKey() {
-		return properties.getBoolean(KeyPrimaryKey);
+		return primaryKey;
 	}
 
 	/**
@@ -1411,7 +1472,7 @@ public class Field implements Comparable<Object> {
 	 * @param primaryKey A boolean that indicates if this field is a primary key field.
 	 */
 	public void setPrimaryKey(boolean primaryKey) {
-		properties.setBoolean(KeyPrimaryKey, Boolean.valueOf(primaryKey));
+		this.primaryKey = primaryKey;
 		if (primaryKey) {
 			setNullable(false);
 		}
@@ -1423,7 +1484,7 @@ public class Field implements Comparable<Object> {
 	 * @return The function.
 	 */
 	public String getFunction() {
-		return properties.getString(KeyFunction);
+		return function;
 	}
 
 	/**
@@ -1433,7 +1494,7 @@ public class Field implements Comparable<Object> {
 	 */
 	public void setFunction(String function) {
 		if (function != null && function.trim().length() > 0) {
-			properties.setString(KeyFunction, function.trim());
+			this.function = function;
 		}
 	}
 
@@ -1483,7 +1544,7 @@ public class Field implements Comparable<Object> {
 	 * @return The parent table.
 	 */
 	public Table getParentTable() {
-		return (Table) properties.getObject(KeyParentTable);
+		return parentTable;
 	}
 
 	/**
@@ -1492,7 +1553,7 @@ public class Field implements Comparable<Object> {
 	 * @param parentTable The parent table.
 	 */
 	public void setParentTable(Table parentTable) {
-		properties.setObject(KeyParentTable, parentTable);
+		this.parentTable = parentTable;
 	}
 
 	/**
@@ -1501,7 +1562,7 @@ public class Field implements Comparable<Object> {
 	 * @return The parent view
 	 */
 	public View getParentView() {
-		return (View) properties.getObject(KeyParentView);
+		return parentView;
 	}
 
 	/**
@@ -1510,7 +1571,7 @@ public class Field implements Comparable<Object> {
 	 * @param parentView The parent view
 	 */
 	public void setParentView(View parentView) {
-		properties.setObject(KeyParentView, parentView);
+		this.parentView = parentView;
 	}
 
 	/**
@@ -1519,7 +1580,7 @@ public class Field implements Comparable<Object> {
 	 * @return The field group if any.
 	 */
 	public FieldGroup getFieldGroup() {
-		return (FieldGroup) properties.getObject(KeyFieldGroup, FieldGroup.emptyFieldGroup);
+		return fieldGroup;
 	}
 
 	/**
@@ -1528,7 +1589,7 @@ public class Field implements Comparable<Object> {
 	 * @param fieldGroup The field group.
 	 */
 	public void setFieldGroup(FieldGroup fieldGroup) {
-		properties.setObject(KeyFieldGroup, fieldGroup);
+		this.fieldGroup = fieldGroup;
 	}
 
 	/**
@@ -1537,7 +1598,7 @@ public class Field implements Comparable<Object> {
 	 * @return The working session.
 	 */
 	public Session getSession() {
-		return (Session) properties.getObject(KeySession);
+		return session;
 	}
 
 	/**
@@ -1546,7 +1607,7 @@ public class Field implements Comparable<Object> {
 	 * @param session The working session.
 	 */
 	public void setSession(Session session) {
-		properties.setObject(KeySession, session);
+		this.session = session;
 	}
 
 	/**
@@ -1555,16 +1616,16 @@ public class Field implements Comparable<Object> {
 	 * @return A boolean.
 	 */
 	public boolean isMinMaxFilter() {
-		return properties.getBoolean(KeyMinMaxFilter);
+		return minMaxFilter;
 	}
 
 	/**
 	 * Sets a boolean indicating if tthis field is a min-max field in a filter form.
 	 * 
-	 * @param filter A boolean.
+	 * @param minMaxFilter A boolean.
 	 */
-	public void setMinMaxFilter(boolean filter) {
-		properties.setBoolean(KeyMinMaxFilter, filter);
+	public void setMinMaxFilter(boolean minMaxFilter) {
+		this.minMaxFilter = minMaxFilter;
 	}
 
 	/**
@@ -1656,12 +1717,10 @@ public class Field implements Comparable<Object> {
 	 * @return The property or null.
 	 */
 	public Object getProperty(Object key) {
-		@SuppressWarnings("unchecked")
-		HashMap<Object, Object> mapProperties = (HashMap<Object, Object>) properties.getObject(KeyProperties);
-		if (mapProperties != null) {
-			return mapProperties.get(key);
+		if (properties == null) {
+			return null;
 		}
-		return null;
+		return properties.getObject(key);
 	}
 
 	/**
@@ -1671,13 +1730,10 @@ public class Field implements Comparable<Object> {
 	 * @param property The property.
 	 */
 	public void setProperty(Object key, Object property) {
-		@SuppressWarnings("unchecked")
-		HashMap<Object, Object> mapProperties = (HashMap<Object, Object>) properties.getObject(KeyProperties);
-		if (mapProperties == null) {
-			mapProperties = new HashMap<Object, Object>();
-			properties.setObject(KeyProperties, mapProperties);
+		if (properties == null) {
+			properties = new Properties();
 		}
-		mapProperties.put(key, property);
+		properties.setObject(key, property);
 	}
 
 	/**

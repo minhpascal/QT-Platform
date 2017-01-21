@@ -26,22 +26,18 @@ public class Relation extends ForeignKey {
 	/**
 	 * A relation type describes the type of a relation. There are only four possible types of relations, listed below.
 	 * <ol>
-	 * <li>
-	 * <code><b>LookUp</b></code>: in a lookup relation, the list of local fields from the relation segments does not match the
-	 * local entity key fields, and the foreign fields from the segments exactly match the foreign entity key fields. It
-	 * is a many-to-one relation. A lookup relation can not be reversed because a relation must have convenient keys for
-	 * the foreign entity.</li>
-	 * <li>
-	 * <code><b>Unique</b></code>: in an unique relation, the list of fields from the segments exactly match both the local and
-	 * foreign key fields. It is a one-to-one relation.</li>
-	 * <li>
-	 * <code><b>LocalDetail</b></code>: it is a header-detail relation where the local entity is the detail entity. The fields
-	 * from the segments match partly the local key fields and exactly the foreign key fields. It is a many-to-one
-	 * relation.</li>
-	 * <li>
-	 * <code><b>ForeignDetail</b></code>: it is a header-detail relation where the foreign entity is the detail entity. The
-	 * fields from the segments match partly the foreign key fields and exactly the local key fields. It is a
-	 * one-to-many relation.</li>
+	 * <li><code><b>LookUp</b></code>: in a lookup relation, the list of local fields from the relation segments does
+	 * not match the local entity key fields, and the foreign fields from the segments exactly match the foreign entity
+	 * key fields. It is a many-to-one relation. A lookup relation can not be reversed because a relation must have
+	 * convenient keys for the foreign entity.</li>
+	 * <li><code><b>Unique</b></code>: in an unique relation, the list of fields from the segments exactly match both
+	 * the local and foreign key fields. It is a one-to-one relation.</li>
+	 * <li><code><b>LocalDetail</b></code>: it is a header-detail relation where the local entity is the detail entity.
+	 * The fields from the segments match partly the local key fields and exactly the foreign key fields. It is a
+	 * many-to-one relation.</li>
+	 * <li><code><b>ForeignDetail</b></code>: it is a header-detail relation where the foreign entity is the detail
+	 * entity. The fields from the segments match partly the foreign key fields and exactly the local key fields. It is
+	 * a one-to-many relation.</li>
 	 * </ol>
 	 *
 	 * A <code>LocalDetail</code> relation if reversed becomes a <code>ForeignDetail</code> relation and viceversa.
@@ -169,14 +165,16 @@ public class Relation extends ForeignKey {
 		if (check && getForeignTable() == null) {
 			check = false;
 		}
-		if (check &&
+		if (check
+			&&
 			(getForeignTable().getPrimaryKeyFields() == null || getForeignTable().getPrimaryKeyFields().isEmpty())) {
 			check = false;
 		}
 		if (check && size() == 0) {
 			check = false;
 		}
-		if (check &&
+		if (check
+			&&
 			(getLocalTable().getPrimaryKeyFields() == null || getLocalTable().getPrimaryKeyFields().isEmpty())) {
 			check = false;
 		}

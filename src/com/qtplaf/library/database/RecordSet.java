@@ -168,6 +168,7 @@ public class RecordSet implements Iterable<Record> {
 	public int getInsertIndex(Record record) {
 		return getInsertIndex(record, fields.getPrimaryOrder());
 	}
+
 	/**
 	 * Gets the insert index using the order key.
 	 *

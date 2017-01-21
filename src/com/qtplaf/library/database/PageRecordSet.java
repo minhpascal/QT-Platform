@@ -279,15 +279,15 @@ public class PageRecordSet extends RecordSet {
 	 */
 	@Override
 	public Record get(int index) {
-		
+
 		// Check pagination.
 		checkPaginate();
 
 		try {
-			
+
 			// Page...
 			Page page = null;
-			
+
 			// Initial state.
 			if (currentPage == null) {
 				page = findPage(index);
@@ -301,7 +301,7 @@ public class PageRecordSet extends RecordSet {
 			if (inPage(index, page)) {
 				return get(index, page);
 			}
-			
+
 			// need to find the page.
 			page = findPage(index);
 			loadPage(page);
