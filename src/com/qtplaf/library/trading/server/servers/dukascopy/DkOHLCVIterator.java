@@ -163,14 +163,22 @@ public class DkOHLCVIterator implements OHLCVIterator {
 		}
 
 		// Load data.
-		List<OHLCV> ohlcvData = historyManager.getOHLCVData(
-			instrument,
-			period,
-			offerSide,
-			filter,
-			lastTimeLoaded,
-			0,
-			execBufferSize);
+		List<OHLCV> ohlcvData = null;
+		while (execBufferSize > 0) {
+			try {
+				ohlcvData = historyManager.getOHLCVData(
+					instrument,
+					period,
+					offerSide,
+					filter,
+					lastTimeLoaded,
+					0,
+					execBufferSize);
+				break;
+			} catch (Exception exc) {
+				execBufferSize--;
+			}
+		}
 
 		// Tranfer loaded data to buffer with the limit of to.
 		for (OHLCV ohlcv : ohlcvData) {

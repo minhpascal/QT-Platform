@@ -452,6 +452,7 @@ public class FormatUtils {
 			return formattedFromDouble(value.getDouble(), locale);
 		case Integer:
 			return formattedFromInteger(value.getInteger(), locale);
+		case AutoIncrement:
 		case Long:
 			return formattedFromLong(value.getLong(), locale);
 		case String:
@@ -614,6 +615,7 @@ public class FormatUtils {
 			return new Value(formattedToDouble(str, locale));
 		case Integer:
 			return new Value(formattedToInteger(str, locale));
+		case AutoIncrement:
 		case Long:
 			return new Value(formattedToLong(str, locale));
 		case String:

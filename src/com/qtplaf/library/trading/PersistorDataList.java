@@ -14,8 +14,16 @@
 
 package com.qtplaf.library.trading;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.PersistorException;
+import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
@@ -24,7 +32,7 @@ import com.qtplaf.library.trading.data.info.DataInfo;
  * A data list that retireves its data persistor. The contract of a persistor of data lists is that fields must be
  * defined as follows:
  * <ul>
- * <li>The first field is always the index, an auto-increment field.</li>
+ * <li>The first field is always the index, an auto-increment field starting preferably at 1, but not mandatory.</li>
  * <li>The second field is a long, the time of the ohlcv data.</li>
  * <li>All subsequent <b>persistent</b> fields are of type double and are considered data.</li>
  * </ul>
@@ -33,10 +41,17 @@ import com.qtplaf.library.trading.data.info.DataInfo;
  */
 public class PersistorDataList extends DataList {
 
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
+
 	/**
 	 * The underlying persistor.
 	 */
 	private Persistor persistor;
+	/**
+	 * First index in the table.
+	 */
+	private int firstIndex = -1;
 
 	/**
 	 * @param session
@@ -93,4 +108,54 @@ public class PersistorDataList extends DataList {
 		return null;
 	}
 
+	/**
+	 * Retrieves and returns the first index in the persistor.
+	 * 
+	 * @return The first index.
+	 * @throws PersistorException
+	 */
+	private int getFirstIndex() throws PersistorException {
+		if (firstIndex == -1) {
+			RecordIterator iter = null;
+			try {
+				Order order = new Order();
+				order.add(persistor.getField(0), true);
+				iter = persistor.iterator(null, order);
+				if (iter.hasNext()) {
+					Record record = iter.next();
+					firstIndex = record.getValue(0).getInteger();
+				}
+			} finally {
+				if (iter != null) {
+					iter.close();
+				}
+			}
+		}
+		return firstIndex;
+	}
+
+	/**
+	 * Retrieves and returns the last index in the persistor.
+	 * 
+	 * @return The last index.
+	 * @throws PersistorException
+	 */
+	private int getLastIndex() throws PersistorException {
+		int lastIndex = 0;
+		RecordIterator iter = null;
+		try {
+			Order order = new Order();
+			order.add(persistor.getField(0), false);
+			iter = persistor.iterator(null, order);
+			if (iter.hasNext()) {
+				Record record = iter.next();
+				lastIndex = record.getValue(0).getInteger();
+			}
+		} finally {
+			if (iter != null) {
+				iter.close();
+			}
+		}
+		return lastIndex;
+	}
 }
