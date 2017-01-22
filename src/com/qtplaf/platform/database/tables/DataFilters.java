@@ -41,10 +41,14 @@ public class DataFilters extends Table {
 	 */
 	public DataFilters(Session session) {
 		super(session);
+		
 		setName(Name);
-		addField(Domains.getDataFilter(session, Fields.DataFilter));
-		getField(Fields.DataFilter).setPrimaryKey(true);
 		setSchema(Names.getSchema());
+		
+		addField(Domains.getDataFilter(session, Fields.DataFilter));
+		
+		getField(Fields.DataFilter).setPrimaryKey(true);
+		
 		setPersistor(Persistors.getPersistor(getSimpleView()));
 	}
 

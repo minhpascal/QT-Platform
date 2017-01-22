@@ -25,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.PageRecordSet;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
@@ -196,7 +195,7 @@ public class ActionTickers extends AbstractAction {
 				// Create the table.
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
 				Table table = Tables.getTableOHLCVS(session, server, tableName);
-				persistor.getDDL().buildTable(table);
+				Persistors.getDDL().buildTable(table);
 				getTableModel().insertRecord(record, persistor.getView().getOrderBy());
 				getTableRecord().setSelectedRecord(record);
 			} catch (Exception exc) {
@@ -293,8 +292,9 @@ public class ActionTickers extends AbstractAction {
 				// Delete record and table.
 				for (Record record : records) {
 					String tableName = record.getValue(Tickers.Fields.TableName).getString();
-					Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
-					persistor.delete((Criteria) null);
+					Table table = Tables.getTableOHLCVS(session, server, tableName);
+					Persistors.getDDL().dropTable(table);
+					Persistors.getDDL().buildTable(table);
 				}
 
 			} catch (Exception exc) {

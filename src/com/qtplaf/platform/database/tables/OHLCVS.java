@@ -15,6 +15,7 @@
 package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Domains;
@@ -50,6 +51,7 @@ public class OHLCVS extends Table {
 		super(session);
 
 		setName(name);
+		setSchema(Names.getSchema(server));
 
 		addField(Domains.getIndex(session, Fields.Index));
 		addField(Domains.getTime(session, Fields.Time));
@@ -61,8 +63,12 @@ public class OHLCVS extends Table {
 		addField(Domains.getTimeFmt(session, Fields.TimeFmt));
 
 		getField(Fields.Time).setPrimaryKey(true);
-
-		setSchema(Names.getSchema(server));
+		
+		Index index = new Index();
+		index.add(getField(Fields.Index));
+		index.setUnique(true);
+		addIndex(index);
+		
 		setPersistor(Persistors.getPersistor(getSimpleView()));
 	}
 

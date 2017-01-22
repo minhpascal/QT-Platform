@@ -41,10 +41,14 @@ public class OfferSides extends Table {
 	 */
 	public OfferSides(Session session) {
 		super(session);
+		
 		setName(Name);
-		addField(Domains.getOfferSide(session, Fields.OfferSide));
-		getField(Fields.OfferSide).setPrimaryKey(true);
 		setSchema(Names.getSchema());
+		
+		addField(Domains.getOfferSide(session, Fields.OfferSide));
+		
+		getField(Fields.OfferSide).setPrimaryKey(true);
+		
 		setPersistor(Persistors.getPersistor(getSimpleView()));
 	}
 

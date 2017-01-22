@@ -45,13 +45,16 @@ public class Periods extends Table {
 	 */
 	public Periods(Session session) {
 		super(session);
+		
 		setName(Name);
+		setSchema(Names.getSchema());
+		
 		addField(Domains.getPeriodId(session, Fields.PeriodId));
 		addField(Domains.getPeriodName(session, Fields.PeriodName));
 		addField(Domains.getPeriodUnitIndex(session, Fields.PeriodUnitIndex));
 		addField(Domains.getPeriodSize(session, Fields.PeriodSize));
+		
 		getField(Fields.PeriodId).setPrimaryKey(true);
-		setSchema(Names.getSchema());
 
 		Order order = new Order();
 		order.add(getField(Fields.PeriodUnitIndex));

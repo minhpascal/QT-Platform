@@ -43,12 +43,16 @@ public class Servers extends Table {
 	 */
 	public Servers(Session session) {
 		super(session);
+		
 		setName(Name);
+		setSchema(Names.getSchema());
+		
 		addField(Domains.getServerId(session, Fields.ServerId));
 		addField(Domains.getServerName(session, Fields.ServerName));
 		addField(Domains.getServerTitle(session, Fields.ServerTitle));
+		
 		getField(Fields.ServerId).setPrimaryKey(true);
-		setSchema(Names.getSchema());
+		
 		setPersistor(Persistors.getPersistor(getSimpleView()));
 	}
 

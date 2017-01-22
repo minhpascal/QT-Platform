@@ -50,7 +50,10 @@ public class Instruments extends Table {
 	 */
 	public Instruments(Session session) {
 		super(session);
+		
 		setName(Name);
+		setSchema(Names.getSchema());
+		
 		addField(Domains.getServerId(session, Fields.ServerId));
 		addField(Domains.getInstrumentId(session, Fields.InstrumentId));
 		addField(Domains.getInstrumentDesc(session, Fields.InstrumentDesc));
@@ -61,9 +64,10 @@ public class Instruments extends Table {
 		addField(Domains.getInstrumentVolumeScale(session, Fields.InstrumentVolumeScale));
 		addField(Domains.getInstrumentPrimaryCurrency(session, Fields.InstrumentPrimaryCurrency));
 		addField(Domains.getInstrumentSecondaryCurrency(session, Fields.InstrumentSecondaryCurrency));
+		
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);
-		setSchema(Names.getSchema());
+		
 		setPersistor(Persistors.getPersistor(getSimpleView()));
 	}
 

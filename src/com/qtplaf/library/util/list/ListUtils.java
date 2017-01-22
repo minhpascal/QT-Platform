@@ -34,6 +34,20 @@ public class ListUtils {
 	}
 
 	/**
+	 * Returns the array of double values given the list.
+	 * 
+	 * @param list The list of doubles.
+	 * @return The array.
+	 */
+	public static double[] toArray(List<Double> list) {
+		double[] values = new double[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			values[i] = list.get(i);
+		}
+		return values;
+	}
+
+	/**
 	 * Returns a list given the argument array.
 	 * 
 	 * @param array The array.
@@ -77,7 +91,8 @@ public class ListUtils {
 		try {
 			comparable = ((ArrayList) o);
 		} catch (ClassCastException exc) {
-			throw new UnsupportedOperationException(MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
+			throw new UnsupportedOperationException(
+				MessageFormat.format("Not comparable type: {0}", o.getClass().getName()));
 		}
 		if (arrayList.isEmpty() && comparable.size() > 0) {
 			return -1;

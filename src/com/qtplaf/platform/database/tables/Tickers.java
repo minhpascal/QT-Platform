@@ -50,6 +50,7 @@ public class Tickers extends Table {
 		super(session);
 
 		setName(Name);
+		setSchema(Names.getSchema());
 
 		addField(Domains.getServerId(session, Fields.ServerId));
 		addField(Domains.getInstrumentId(session, Fields.InstrumentId));
@@ -89,7 +90,6 @@ public class Tickers extends Table {
 		order.add(tablePeriods.getField(Periods.Fields.PeriodUnitIndex));
 		order.add(tablePeriods.getField(Periods.Fields.PeriodSize));
 		
-		setSchema(Names.getSchema());
 		setPersistor(Persistors.getPersistor(getComplexView(order)));
 	}
 
