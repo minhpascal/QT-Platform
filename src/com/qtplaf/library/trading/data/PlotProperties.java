@@ -56,7 +56,7 @@ public class PlotProperties {
 	/**
 	 * A boolean that indicates if the color in candlesticks and histograms should be raised.
 	 */
-	private boolean colorRaised = true;
+	private boolean colorRaised = false;
 	/**
 	 * The stroke that applies to lines, bars and candlesticks and histograms borders.
 	 */

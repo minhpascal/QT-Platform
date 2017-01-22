@@ -47,7 +47,7 @@ public class Cursor {
 	/**
 	 * Default fetch size.
 	 */
-	private int fetchSize = 50;
+	private int fetchSize = 100;
 	/**
 	 * The number of records per page.
 	 */

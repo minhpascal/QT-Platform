@@ -737,6 +737,21 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Configure the action as an action chart.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureChart(Session session, Action action) {
+		setSourceName(action, session.getString("actionChartName"));
+		setShortDescription(action, session.getString("actionChartName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Edit);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_chart));
+	}
+
+	/**
 	 * Configure the action as an action clear.
 	 * 
 	 * @param session Working session.

@@ -42,6 +42,7 @@ public interface Icons {
 	String app_16x16_accept = "images/app/16x16/accept.png";
 	String app_16x16_browse = "images/app/16x16/browse.png";
 	String app_16x16_cancel = "images/app/16x16/cancel.png";
+	String app_16x16_chart = "images/app/16x16/chart.png";
 	String app_16x16_checked = "images/app/16x16/checked.png";
 	String app_16x16_clear = "images/app/16x16/clear.png";
 	String app_16x16_close = "images/app/16x16/close.png";

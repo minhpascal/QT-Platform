@@ -14,6 +14,7 @@
 
 package com.qtplaf.platform.action;
 
+import java.awt.BasicStroke;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.List;
@@ -42,8 +43,15 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.trading.chart.JFrameChart;
+import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.data.PlotType;
+import com.qtplaf.library.trading.data.info.DataInfo;
+import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
@@ -407,6 +415,29 @@ public class ActionTickers extends AbstractAction {
 	}
 
 	/**
+	 * Action to show the current ticker chart.
+	 */
+	class ActionChart extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionChart(Session session) {
+			super();
+			ActionUtils.configureChart(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			new Thread(new RunChart(this)).start();
+		}
+	}
+
+	/**
 	 * Runnable to launch the browse action it in a thread.
 	 */
 	class RunBrowse implements Runnable {
@@ -478,6 +509,59 @@ public class ActionTickers extends AbstractAction {
 	}
 
 	/**
+	 * Runnable to launch the chart action it in a thread.
+	 */
+	class RunChart implements Runnable {
+		ActionChart action;
+
+		RunChart(ActionChart action) {
+			this.action = action;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Session session = ActionUtils.getSession(ActionTickers.this);
+				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Record record = action.getSelectedRecord();
+				if (record == null) {
+					return;
+				}
+				String tableName = record.getValue(Tickers.Fields.TableName).getString();
+				Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
+
+				String serverId = record.getValue(Tickers.Fields.ServerId).getString();
+				String instrId = record.getValue(Tickers.Fields.InstrumentId).getString();
+				String periodId = record.getValue(Tickers.Fields.PeriodId).getString();
+				
+				Period period = Period.parseId(periodId);
+				Record recordInstr = Records.getRecordInstrument(session, serverId, instrId);
+				Instrument instrument = Records.fromRecordInstrument(recordInstr);
+				
+				
+				// Build the plot data.
+				DataInfo dataInfo = new PriceInfo(session, instrument, period);
+				DataList dataList = new PersistorDataList(session, dataInfo, persistor);
+				dataList.setPlotType(PlotType.Candlestick);
+				dataList.initializePlotProperties();
+				PlotData plotData = new PlotData();
+				plotData.add(dataList);
+				
+				// The chart frame.
+				JFrameChart frame = new JFrameChart(session);
+				frame.getChart().getPlotParameters().setChartCrossCursorWidth(-1);
+				frame.getChart().getPlotParameters().setChartCrossCursorHeight(-1);
+				frame.getChart().getPlotParameters().setChartCrossCursorCircleRadius(-1);
+				frame.getChart().getPlotParameters().setChartCrossCursorStroke(new BasicStroke());
+				frame.getChart().addPlotData(plotData);
+				
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+	}
+
+	/**
 	 * Runnable to launch it in a thread.
 	 */
 	class RunTickers implements Runnable {
@@ -517,6 +601,10 @@ public class ActionTickers extends AbstractAction {
 				ActionBrowse actionBrowse = new ActionBrowse(session);
 				ActionUtils.setSortIndex(actionBrowse, 2);
 				frame.addAction(actionBrowse);
+
+				ActionChart actionChart = new ActionChart(session);
+				ActionUtils.setSortIndex(actionChart, 3);
+				frame.addAction(actionChart);
 
 				frame.addAction(new ActionPurge(session));
 				frame.addAction(new ActionDownload(session));

@@ -60,8 +60,9 @@
 	<entry key="actionAcceptName">Accept</entry>
 	<entry key="actionBrowseName">Browse</entry>
 	<entry key="actionCancelName">Cancel</entry>
-	<entry key="actionCloseName">Close</entry>
+	<entry key="actionChartName">Chart</entry>
 	<entry key="actionClearName">Clear</entry>
+	<entry key="actionCloseName">Close</entry>
 	<entry key="actionColumnsName">Columns</entry>
 	<entry key="actionCreateName">Create</entry>
 	<entry key="actionDownloadName">Download</entry>

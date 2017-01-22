@@ -73,6 +73,15 @@ public class PersistorDataList extends DataList {
 		private Data getData() {
 			return data;
 		}
+
+		@Override
+		public String toString() {
+			StringBuilder b = new StringBuilder();
+			b.append(index);
+			b.append("; ");
+			b.append(data);
+			return b.toString();
+		}
 	}
 
 	/**
@@ -82,7 +91,7 @@ public class PersistorDataList extends DataList {
 	/**
 	 * The page size to cache data, default is 5000.
 	 */
-	private int pageSize = 5000;
+	private int pageSize = 100;
 	/**
 	 * The cached page.
 	 */
@@ -91,6 +100,10 @@ public class PersistorDataList extends DataList {
 	 * First index in the table.
 	 */
 	private int firstIndex = -1;
+	/**
+	 * A boolean that indicates if the underlying data items are price (OHLCV) or raw data.
+	 */
+	private boolean price = true;
 
 	/**
 	 * @param session
@@ -212,7 +225,7 @@ public class PersistorDataList extends DataList {
 	 * @throws PersistorException
 	 */
 	private int getIndex(int index) {
-		return getFirstIndex() - index;
+		return getFirstIndex() + index;
 	}
 
 	/**
@@ -289,7 +302,7 @@ public class PersistorDataList extends DataList {
 	private void loadPage(int index) {
 
 		// First persistor index to scan.
-		int persistorIndex = getIndex(index) - (pageSize / 2);
+		int persistorIndex = getIndex(index);
 		if (persistorIndex < 0) {
 			persistorIndex = 0;
 		}
@@ -334,7 +347,7 @@ public class PersistorDataList extends DataList {
 				values.add(record.getValue(i).getDouble());
 			}
 		}
-		Data data = new Data();
+		Data data = (price ? new OHLCV() : new Data());
 		data.setTime(time);
 		data.setValues(ListUtils.toArray(values));
 		return new DataItem(index, data);
