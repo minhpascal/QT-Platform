@@ -130,23 +130,27 @@ public abstract class MovingAverage extends Indicator {
 	 * 
 	 * @param index The data index.
 	 * @param indicatorSources The list of indicator sources.
-	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
+	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources);
 
 	/**
 	 * Returns the average data calculated from the begining to the argument index, when index is less that period.
 	 * 
+	 * @param period The period of the average.
 	 * @param index The index.
 	 * @param indicatorSources The list of indicator sources.
 	 * @return The average data element.
 	 */
-	protected Data getAverage(int index, List<IndicatorSource> indicatorSources) {
+	protected Data getAverage(int period, int index, List<IndicatorSource> indicatorSources) {
 		int numIndexes = getNumIndexes();
 		double[] averages = new double[numIndexes];
 		Arrays.fill(averages, 0);
-		for (int i = 0; i <= index; i++) {
+		int start = 0;
+		if (index >= period) {
+			start = index - period + 1;
+		}
+		for (int i = start; i <= index; i++) {
 			int averageIndex = 0;
 			for (IndicatorSource source : indicatorSources) {
 				DataList dataList = source.getDataList();
@@ -157,8 +161,12 @@ public abstract class MovingAverage extends Indicator {
 				}
 			}
 		}
+		double divisor = index + 1;
+		if (index >= period) {
+			divisor = period;
+		}
 		for (int i = 0; i < averages.length; i++) {
-			averages[i] = averages[i] / (index + 1);
+			averages[i] = averages[i] / divisor;
 		}
 		Data data = new Data();
 		data.setData(averages);

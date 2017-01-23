@@ -24,7 +24,7 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.util.NumberUtils;
 
 /**
- * A formatter for OHLCV/Bar pip value that adapts to the pip scale.
+ * A formatter for OHLCV pip value that adapts to the pip scale.
  * 
  * @author Miquel Sas
  */

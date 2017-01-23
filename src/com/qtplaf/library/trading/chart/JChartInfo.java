@@ -492,54 +492,11 @@ public class JChartInfo extends JPanel {
 	 * 
 	 * @param id The info item id.
 	 * @param text The text.
-	 */
-	public void setInfo(String id, String text) {
-		setInfo(id, text, true);
-	}
-
-	/**
-	 * Set the properties to the info item.
-	 * 
-	 * @param id The info item id.
-	 * @param text The text.
-	 * @param repaint A boolean that idicates if the info panel should immediatly be repainted.
-	 */
-	public void setInfo(String id, String text, boolean repaint) {
-		setInfo(id, text, null, -1, repaint);
-	}
-
-	/**
-	 * Set the properties to the info item.
-	 * 
-	 * @param id The info item id.
-	 * @param text The text.
-	 * @param color The color.
-	 */
-	public void setInfo(String id, String text, Color color) {
-		setInfo(id, text, color, true);
-	}
-
-	/**
-	 * Set the properties to the info item.
-	 * 
-	 * @param id The info item id.
-	 * @param text The text.
 	 * @param color The color.
 	 * @param repaint A boolean that idicates if the info panel should immediatly be repainted.
 	 */
 	public void setInfo(String id, String text, Color color, boolean repaint) {
 		setInfo(id, text, color, -1, repaint);
-	}
-
-	/**
-	 * Set the properties to the info item.
-	 * 
-	 * @param id The info item id.
-	 * @param text The text.
-	 * @param style The font style.
-	 */
-	public void setInfo(String id, String text, int style) {
-		setInfo(id, text, null, style, true);
 	}
 
 	/**

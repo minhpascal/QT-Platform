@@ -13,12 +13,10 @@
  */
 package com.qtplaf.library.trading.data.indicators;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.Data;
-import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 
@@ -61,46 +59,14 @@ public class SimpleMovingAverage extends MovingAverage {
 	 * @param index The data index.
 	 * @param inputSources The list of input sources.
 	 * @param inputIndexes The list of input indexes to be considered.
-	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
-
+	public Data calculate(int index, List<IndicatorSource> indicatorSources) {
 		// If index < 0 do nothing.
 		if (index < 0) {
 			return null;
 		}
-
-		// The unique data list and the index of the data.
 		int period = getIndicatorInfo().getParameter(ParamPeriod).getValue().getInteger();
-
-		// If index < period, calculate the mean from scratch.
-		if (index < period) {
-			return getAverage(index, indicatorSources);
-		}
-
-		// Improved performance calculation retrieving from the last calculated average the first value of the series
-		// (divided by the period) and adding the new value of the series (also divided bythe period).
-		int numIndexes = getNumIndexes();
-		double[] averages = new double[numIndexes];
-		Arrays.fill(averages, 0);
-		int averageIndex = 0;
-		for (IndicatorSource source : indicatorSources) {
-			DataList dataList = source.getDataList();
-			List<Integer> indexes = source.getIndexes();
-			for (Integer dataIndex : indexes) {
-				double lastAverage = indicatorData.get(index - 1).getValue(averageIndex);
-				double firstValue = dataList.get(index - period).getValue(dataIndex) / period;
-				double nextValue = dataList.get(index).getValue(dataIndex) / period;
-				double average = lastAverage - firstValue + nextValue;
-				averages[averageIndex] += average;
-				averageIndex++;
-			}
-		}
-		
-		Data data = new Data();
-		data.setData(averages);
-		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
-		return data;
+		return getAverage(period, index, indicatorSources);
 	}
 }

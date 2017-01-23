@@ -14,9 +14,6 @@
 
 package com.qtplaf.library.trading.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +29,6 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.util.list.ArrayDelist;
 import com.qtplaf.library.util.list.Delist;
-import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A data list that retrieves its data from persistor. The contract for a persistor of data lists is that fields must be
@@ -40,7 +36,7 @@ import com.qtplaf.library.util.list.ListUtils;
  * <ul>
  * <li>The first field is always the index, an auto-increment field starting preferably at 1, but not mandatory to start
  * at 1, not negative and indexed.</li>
- * <li>The second field is a long, the time of the ohlcv data.</li>
+ * <li>The second field is a long, the time of the timed data.</li>
  * <li>All subsequent <b>persistent</b> fields are of type double and are considered data.</li>
  * </ul>
  * With this structure, the <tt>PersistorDataList</tt> can handle not only <tt>OHLCV</tt> data, but any timed
@@ -54,40 +50,9 @@ public class PersistorDataList extends DataList {
 	private static final Logger logger = LogManager.getLogger();
 
 	/**
-	 * A data item to be stored in the cached page.
-	 */
-	private class DataItem {
-
-		private int index;
-		private Data data;
-
-		private DataItem(int index, Data data) {
-			this.index = index;
-			this.data = data;
-		}
-
-		private int getIndex() {
-			return index;
-		}
-
-		private Data getData() {
-			return data;
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder b = new StringBuilder();
-			b.append(index);
-			b.append("; ");
-			b.append(data);
-			return b.toString();
-		}
-	}
-
-	/**
 	 * The underlying persistor.
 	 */
-	private Persistor persistor;
+	private DataPersistor persistor;
 	/**
 	 * The page size to cache data, default is 5000.
 	 */
@@ -95,15 +60,7 @@ public class PersistorDataList extends DataList {
 	/**
 	 * The cached page.
 	 */
-	private Delist<DataItem> page = new ArrayDelist<>();
-	/**
-	 * First index in the table.
-	 */
-	private int firstIndex = -1;
-	/**
-	 * A boolean that indicates if the underlying data items are price (OHLCV) or raw data.
-	 */
-	private boolean price = true;
+	private Delist<Record> page = new ArrayDelist<>();
 
 	/**
 	 * @param session
@@ -111,7 +68,7 @@ public class PersistorDataList extends DataList {
 	 */
 	public PersistorDataList(Session session, DataInfo dataInfo, Persistor persistor) {
 		super(session, dataInfo);
-		this.persistor = persistor;
+		this.persistor = new DataPersistor(persistor);
 	}
 
 	/**
@@ -130,9 +87,7 @@ public class PersistorDataList extends DataList {
 	 */
 	@Override
 	public int size() {
-		int first = getFirstIndex();
-		int last = getLastIndex();
-		return (last - first + 1);
+		return persistor.size().intValue();
 	}
 
 	/**
@@ -142,7 +97,7 @@ public class PersistorDataList extends DataList {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return false;
+		return persistor.isEmpty();
 	}
 
 	/**
@@ -158,7 +113,7 @@ public class PersistorDataList extends DataList {
 	}
 
 	/**
-	 * Returns the data element atthe given index.
+	 * Returns the data element at the given index.
 	 * 
 	 * @param index The index.
 	 * @return The data element at the given index.
@@ -194,12 +149,12 @@ public class PersistorDataList extends DataList {
 		}
 
 		// First persistor index in the page is greater than persistor index.
-		if (page.getFirst().getIndex() > getIndex(index)) {
+		if (getIndex(page.getFirst()) > getIndex(index)) {
 			return false;
 		}
 
 		// Last persistor index in the page is less than persistor index.
-		if (page.getLast().getIndex() < getIndex(index)) {
+		if (getIndex(page.getLast()) < getIndex(index)) {
 			return false;
 		}
 
@@ -213,8 +168,8 @@ public class PersistorDataList extends DataList {
 	 * @return The data.
 	 */
 	private Data getDataFromPage(int index) {
-		int pageIndex = getIndex(index) - page.getFirst().getIndex();
-		return page.get(pageIndex).getData();
+		int pageIndex = getIndex(index) - getIndex(page.getFirst());
+		return persistor.getData(page.get(pageIndex));
 	}
 
 	/**
@@ -225,58 +180,17 @@ public class PersistorDataList extends DataList {
 	 * @throws PersistorException
 	 */
 	private int getIndex(int index) {
-		return getFirstIndex() + index;
+		return persistor.getIndex(Long.valueOf(index)).intValue();
 	}
 
 	/**
-	 * Retrieves and returns the first index in the persistor.
+	 * Returns the index in the record.
 	 * 
-	 * @return The first index.
-	 * @throws PersistorException
+	 * @param record The source record.
+	 * @return The index.
 	 */
-	private int getFirstIndex() {
-		if (firstIndex == -1) {
-			RecordIterator iter = null;
-			try {
-				Order order = new Order();
-				order.add(persistor.getField(0), true);
-				iter = persistor.iterator(null, order);
-				if (iter.hasNext()) {
-					Record record = iter.next();
-					firstIndex = record.getValue(0).getInteger();
-				}
-			} catch (PersistorException exc) {
-				logger.catching(exc);
-			} finally {
-				close(iter);
-			}
-		}
-		return firstIndex;
-	}
-
-	/**
-	 * Retrieves and returns the last index in the persistor.
-	 * 
-	 * @return The last index.
-	 * @throws PersistorException
-	 */
-	private int getLastIndex() {
-		int lastIndex = 0;
-		RecordIterator iter = null;
-		try {
-			Order order = new Order();
-			order.add(persistor.getField(0), false);
-			iter = persistor.iterator(null, order);
-			if (iter.hasNext()) {
-				Record record = iter.next();
-				lastIndex = record.getValue(0).getInteger();
-			}
-		} catch (PersistorException exc) {
-			logger.catching(exc);
-		} finally {
-			close(iter);
-		}
-		return lastIndex;
+	private int getIndex(Record record) {
+		return persistor.getIndex(record).intValue();
 	}
 
 	/**
@@ -323,33 +237,12 @@ public class PersistorDataList extends DataList {
 					break;
 				}
 				Record record = iter.next();
-				page.addLast(getDataItem(record));
+				page.addLast(record);
 			}
 		} catch (PersistorException exc) {
 			logger.catching(exc);
 		} finally {
 			close(iter);
 		}
-	}
-
-	/**
-	 * Returns the data item given a record of the persistor.
-	 * 
-	 * @param record
-	 * @return The data item.
-	 */
-	private DataItem getDataItem(Record record) {
-		int index = record.getValue(0).getInteger();
-		long time = record.getValue(1).getLong();
-		List<Double> values = new ArrayList<>();
-		for (int i = 2; i < record.getFieldCount(); i++) {
-			if (record.getField(i).isPersistent()) {
-				values.add(record.getValue(i).getDouble());
-			}
-		}
-		Data data = (price ? new OHLCV() : new Data());
-		data.setTime(time);
-		data.setValues(ListUtils.toArray(values));
-		return new DataItem(index, data);
 	}
 }

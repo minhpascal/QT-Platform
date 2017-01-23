@@ -50,7 +50,7 @@ public class Data {
 		double volume = 0;
 		long time = 0;
 		for (int i = 0; i < list.size(); i++) {
-			OHLCV ohlcv = (OHLCV) list.get(i);
+			OHLCV ohlcv = new OHLCV(list.get(i));
 			if (i == 0) {
 				open = ohlcv.getOpen();
 				time = ohlcv.getTime();

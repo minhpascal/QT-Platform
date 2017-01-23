@@ -178,6 +178,17 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
+	 * Returns the data of the data list.
+	 * 
+	 * @param dataListIndex Tha data list index.
+	 * @param dataIndex The index of the data in the data list.
+	 * @return
+	 */
+	public Data getData(int dataListIndex, int dataIndex) {
+		return get(dataListIndex).get(dataIndex);
+	}
+
+	/**
 	 * @return
 	 * @see java.util.List#iterator()
 	 */

@@ -111,7 +111,7 @@ public abstract class DataList {
 	public abstract boolean add(Data data);
 
 	/**
-	 * Returns the data element atthe given index.
+	 * Returns the data element at the given index.
 	 * 
 	 * @param index The index.
 	 * @return The data element at the given index.

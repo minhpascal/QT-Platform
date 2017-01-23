@@ -24,7 +24,6 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.data.Data;
-import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.util.FormatUtils;
@@ -218,12 +217,11 @@ public class JChartContainer extends JPanel {
 		for (int i = 0; i < plotData.size(); i++) {
 			Color color = (black ? Color.BLACK : Color.BLUE);
 			black = !black;
-			DataList dataList = plotData.get(i);
-			DataInfo dataInfo = dataList.getDataInfo();
+			DataInfo dataInfo = plotData.get(i).getDataInfo();
 			String id = "Data-" + i;
 			String text = "";
-			if (index >= 0 && index < dataList.size()) {
-				Data data = dataList.get(index);
+			if (index >= 0 && index < plotData.get(i).size()) {
+				Data data = plotData.get(i).get(index);
 				if (data.isValid()) {
 					text = dataInfo.getInfoData(data);
 				}
@@ -281,11 +279,10 @@ public class JChartContainer extends JPanel {
 		if (plotData == null || plotData.isEmpty()) {
 			return b.toString();
 		}
-		DataList dataList = plotData.get(0);
-		if (index < 0 || index >= dataList.size()) {
+		if (index < 0 || index >= plotData.get(0).size()) {
 			return b.toString();
 		}
-		Data data = dataList.get(index);
+		Data data = plotData.get(0).get(index);
 		long time = data.getTime();
 		Timestamp timestamp = new Timestamp(time);
 		boolean year = true;

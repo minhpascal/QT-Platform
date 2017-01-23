@@ -128,6 +128,20 @@ public class OHLCV extends Data {
 	}
 
 	/**
+	 * Constructor assigning a <tt>Data</tt> item that must have five and only five values.
+	 * 
+	 * @param data The <tt>Data</tt> item.
+	 */
+	public OHLCV(Data data) {
+		super();
+		if (data.getData().length != 5) {
+			throw new IllegalArgumentException("Data is not OHLCV");
+		}
+		setTime(data.getTime());
+		setData(data.getData());
+	}
+
+	/**
 	 * Constructor assigning field values.
 	 * 
 	 * @param time The time in milliseconds.

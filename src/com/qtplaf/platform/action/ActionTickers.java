@@ -15,9 +15,12 @@
 package com.qtplaf.platform.action;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.ListSelectionModel;
@@ -45,11 +48,14 @@ import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.DataList;
+import com.qtplaf.library.trading.data.IndicatorDataList;
+import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotType;
+import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Filter;
@@ -547,8 +553,39 @@ public class ActionTickers extends AbstractAction {
 				PlotData plotData = new PlotData();
 				plotData.add(dataList);
 				
+				// Add a 50 period SMA
+				SimpleMovingAverage sma = new SimpleMovingAverage(new Session(Locale.UK));
+				sma.getIndicatorInfo().getParameter(0).getValue().setInteger(50);
+				IndicatorSource source = new IndicatorSource(dataList, 0);
+				IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
+				avgList.getPlotProperties(0).setColorBullishEven(Color.BLACK);
+				avgList.getPlotProperties(0).setColorBearishEven(Color.BLACK);
+				avgList.getPlotProperties(0).setColorBullishOdd(Color.BLACK);
+				avgList.getPlotProperties(0).setColorBearishOdd(Color.BLACK);
+				avgList.getPlotProperties(0).setStroke(new BasicStroke(
+					0.0f,
+					BasicStroke.CAP_ROUND,
+					BasicStroke.JOIN_MITER,
+					3.0f,
+					new float[] { 3.0f },
+					0.0f));
+				avgList.getPlotProperties(0).setStroke(new BasicStroke());
+				plotData.add(avgList);
+				
+				// Chart title.
+				StringBuilder title = new StringBuilder();
+				title.append(server.getName());
+				title.append(", ");
+				title.append(instrId);
+				title.append(" ");
+				title.append(Period.parseId(periodId));
+				title.append(" [");
+				title.append(tableName);
+				title.append("]");
+				
 				// The chart frame.
 				JFrameChart frame = new JFrameChart(session);
+				frame.setTitle(title.toString());
 				frame.getChart().getPlotParameters().setChartCrossCursorWidth(-1);
 				frame.getChart().getPlotParameters().setChartCrossCursorHeight(-1);
 				frame.getChart().getPlotParameters().setChartCrossCursorCircleRadius(-1);

@@ -39,7 +39,7 @@ public abstract class Indicator {
 		indicator.start(indicatorSources);
 		int size = indicatorSources.get(0).getDataList().size();
 		for (int index = 0; index < size; index++) {
-			Data data = indicator.calculate(index, indicatorSources, indicatorData);
+			Data data = indicator.calculate(index, indicatorSources);
 			indicatorData.add(data);
 		}
 		indicatorData.initializePlotProperties();
@@ -67,7 +67,7 @@ public abstract class Indicator {
 	public Indicator(Session session) {
 		super();
 		this.session = session;
-		indicatorInfo = new IndicatorInfo(session);
+		indicatorInfo = new IndicatorInfo(session, this);
 	}
 
 	/**
@@ -129,14 +129,11 @@ public abstract class Indicator {
 
 	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
-	 * <p>
-	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
-	 * calculated values or use them to improve calculation performance.
 	 * 
 	 * @param index The data index.
 	 * @param indicatorSources The list of indicator sources.
 	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
+	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources);
 }

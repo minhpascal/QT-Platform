@@ -61,10 +61,9 @@ public class WeightedMovingAverage extends MovingAverage {
 	 * @param index The data index.
 	 * @param inputSources The list of input sources.
 	 * @param inputIndexes The list of input indexes to be considered.
-	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
+	public Data calculate(int index, List<IndicatorSource> indicatorSources) {
 
 		// If index < 0 do nothing.
 		if (index < 0) {

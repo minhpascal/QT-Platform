@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.DataType;
+import com.qtplaf.library.trading.data.Indicator;
 
 /**
  * Pack the information that describes an indicator.
@@ -26,6 +27,10 @@ import com.qtplaf.library.trading.data.DataType;
  */
 public class IndicatorInfo extends DataInfo {
 
+	/**
+	 * The indicator that this info is attached at.
+	 */
+	private Indicator indicator;
 	/**
 	 * A boolean that indicates if this indicator has to be plotted in its own chart container, mainly because the
 	 * values range is different than the values ranges of the data sources.
@@ -54,9 +59,19 @@ public class IndicatorInfo extends DataInfo {
 	 * 
 	 * @param session The working session.
 	 */
-	public IndicatorInfo(Session session) {
+	public IndicatorInfo(Session session, Indicator indicator) {
 		super(session);
+		this.indicator = indicator;
 		setDataType(DataType.Indicator);
+	}
+
+	/**
+	 * Returns the indicator this info is attached at.
+	 * 
+	 * @return The indicator.
+	 */
+	public Indicator getIndicator() {
+		return indicator;
 	}
 
 	/**

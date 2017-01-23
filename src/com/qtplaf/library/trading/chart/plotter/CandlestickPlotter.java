@@ -57,7 +57,7 @@ public class CandlestickPlotter extends DataPlotter {
 	 * @return The candlestick drawing.
 	 */
 	private Candlestick getCandlestick(DataList dataList, int index) {
-		return new Candlestick(index, (OHLCV) dataList.get(index));
+		return new Candlestick(index, new OHLCV(dataList.get(index)));
 	}
 
 	/**

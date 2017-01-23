@@ -259,7 +259,7 @@ public class LinePlotter extends DataPlotter {
 		double[] values;
 		switch (dataType) {
 		case Price:
-			OHLCV ohlcv = (OHLCV) dataList.get(index);
+			OHLCV ohlcv = new OHLCV(dataList.get(index));
 			OHLCV.Index plotValue = dataList.getIndexOHLCV();
 			switch (plotValue) {
 			case Open:

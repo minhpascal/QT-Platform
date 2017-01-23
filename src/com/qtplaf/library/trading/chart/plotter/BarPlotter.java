@@ -54,7 +54,7 @@ public class BarPlotter extends DataPlotter {
 	 * @return The bar drawing.
 	 */
 	public Bar getBar(DataList dataList, int index) {
-		return new Bar(index, (OHLCV) dataList.get(index));
+		return new Bar(index, new OHLCV(dataList.get(index)));
 	}
 
 	/**

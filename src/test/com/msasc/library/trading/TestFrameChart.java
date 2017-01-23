@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.Indicator;
+import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.OHLCV;
@@ -26,7 +26,6 @@ import com.qtplaf.library.trading.data.PlotType;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.GaussianSmoother;
-import com.qtplaf.library.trading.data.indicators.MeanSquaredSmoothedMovingAverage;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
 import com.qtplaf.library.trading.data.readers.BarFileReader;
@@ -53,11 +52,11 @@ public class TestFrameChart {
 		// PlotData plotDataPrice = getDataEURUS_60minWMA();
 		PlotData plotDataPrice = getDataEURUS_60min();
 
-		DataList dataList = plotDataPrice.get(0);
-		PlotData plotDataIndicator = new PlotData();
-		plotDataIndicator.add(getWMA(dataList, 20, Color.RED, OHLCV.Index.Close.getIndex()));
-		plotDataIndicator.add(getSMA(dataList, 200, Color.BLACK, OHLCV.Index.Close.getIndex()));
-		plotDataIndicator.setPlotScale(plotDataPrice.getPlotScale());
+//		DataList dataList = plotDataPrice.get(0);
+//		PlotData plotDataIndicator = new PlotData();
+//		plotDataIndicator.add(getWMA(dataList, 20, Color.RED, OHLCV.Index.Close.getIndex()));
+//		plotDataIndicator.add(getSMA(dataList, 200, Color.BLACK, OHLCV.Index.Close.getIndex()));
+//		plotDataIndicator.setPlotScale(plotDataPrice.getPlotScale());
 
 		frame.getChart().getPlotParameters().setChartCrossCursorWidth(-1);
 		frame.getChart().getPlotParameters().setChartCrossCursorHeight(-1);
@@ -66,7 +65,7 @@ public class TestFrameChart {
 //		frame.getChart().getPlotParameters().setChartCursorType(CursorType.ChartCross);
 
 		frame.getChart().addPlotData(plotDataPrice);
-		frame.getChart().addPlotData(plotDataIndicator);
+//		frame.getChart().addPlotData(plotDataIndicator);
 	}
 
 	private static PlotData getDataEURUS_60min() throws Exception {
@@ -95,7 +94,7 @@ public class TestFrameChart {
 //		plotDataPrice.add(getMQMA(dataList, OHLCV.Index.Close.getIndex(), "WMA", 21, 5, 13, 5));
 		// plotDataPrice.add(getSMMA(dataList, OHLCV.Index.Close.getIndex(), 1.2, 0.0, 8, 5, 3));
 		// plotDataPrice.add(getSMMA(dataList, OHLCV.Index.Close.getIndex(), 1.2, 0.0, 100, 8, 3));
-		 plotDataPrice.add(getSMA(dataList, 10, null, OHLCV.Index.Close.getIndex()));
+		 plotDataPrice.add(getSMA2(dataList, 10, null, OHLCV.Index.Close.getIndex()));
 		// plotDataPrice.add(getWMA(getWMA(getWMA(getWMA(dataList, 8, null, OHLCV.Index.Close.getIndex()), 4, null, 0),
 		// 2, null, 0), 2, Color.RED, 0));
 		// plotDataPrice.add(getSMA(getSMA(getSMA(getSMA(dataList, 8, null, OHLCV.Index.Close.getIndex()), 4, null, 0),
@@ -308,6 +307,42 @@ public class TestFrameChart {
 		return avgList;
 	}
 
+	public static DataList getSMA2(DataList dataList, int period, Color color, int... ndx) {
+
+		List<Integer> indexes = new ArrayList<>();
+		for (int i : ndx) {
+			indexes.add(i);
+		}
+
+		IndicatorSource source = new IndicatorSource(dataList, indexes);
+
+		Session session = new Session(Locale.UK);
+		SimpleMovingAverage sma = new SimpleMovingAverage(session);
+		sma.getIndicatorInfo().getParameter(0).getValue().setInteger(period);
+		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
+
+		if (color != null) {
+			avgList.getPlotProperties(0).setColorBullishEven(color);
+			avgList.getPlotProperties(0).setColorBearishEven(color);
+			avgList.getPlotProperties(0).setColorBullishOdd(color);
+			avgList.getPlotProperties(0).setColorBearishOdd(color);
+		} else {
+			avgList.getPlotProperties(0).setColorBullishEven(Color.BLACK);
+			avgList.getPlotProperties(0).setColorBearishEven(Color.BLACK);
+			avgList.getPlotProperties(0).setColorBullishOdd(Color.BLACK);
+			avgList.getPlotProperties(0).setColorBearishOdd(Color.BLACK);
+		}
+		avgList.getPlotProperties(0).setStroke(new BasicStroke(
+			0.0f,
+			BasicStroke.CAP_ROUND,
+			BasicStroke.JOIN_MITER,
+			3.0f,
+			new float[] { 3.0f },
+			0.0f));
+		avgList.getPlotProperties(0).setStroke(new BasicStroke());
+		return avgList;
+	}
+
 	public static DataList getWMA(DataList dataList, int period, Color color, int... ndx) {
 
 		List<Integer> indexes = new ArrayList<>();
@@ -407,45 +442,6 @@ public class TestFrameChart {
 			3.0f,
 			new float[] { 3.0f },
 			0.0f));
-		avgList.getPlotProperties(0).setStroke(new BasicStroke());
-		return avgList;
-	}
-
-	public static DataList getMQMA(
-		DataList dataList,
-		int index,
-		String avgType,
-		int meanSquarePeriod,
-		int smoothPeriod,
-		int... periods) {
-
-		List<Integer> indexes = new ArrayList<>();
-		indexes.add(index);
-
-		IndicatorSource source = new IndicatorSource(dataList, indexes);
-
-		MeanSquaredSmoothedMovingAverage smma = new MeanSquaredSmoothedMovingAverage(new Session(Locale.UK));
-		smma.getIndicatorInfo().getParameter(MeanSquaredSmoothedMovingAverage.ParamAvgType).getValue().setString(
-			avgType);
-		smma
-			.getIndicatorInfo()
-			.getParameter(MeanSquaredSmoothedMovingAverage.ParamMeanSquaredPeriod)
-			.getValue()
-			.setDouble(meanSquarePeriod);
-		smma.getIndicatorInfo().getParameter(MeanSquaredSmoothedMovingAverage.ParamSmoothPeriod).getValue().setDouble(
-			smoothPeriod);
-		for (int period : periods) {
-			smma.getIndicatorInfo().getParameter(MeanSquaredSmoothedMovingAverage.ParamPeriods).addValue(
-				new Value(period));
-		}
-
-		DataList avgList = Indicator.calculate(new Session(Locale.UK), smma, Arrays.asList(source));
-
-		avgList.getPlotProperties(0).setColorBullishEven(Color.RED);
-		avgList.getPlotProperties(0).setColorBearishEven(Color.RED);
-		avgList.getPlotProperties(0).setColorBullishOdd(Color.RED);
-		avgList.getPlotProperties(0).setColorBearishOdd(Color.RED);
-
 		avgList.getPlotProperties(0).setStroke(new BasicStroke());
 		return avgList;
 	}
