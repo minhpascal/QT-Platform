@@ -55,7 +55,7 @@ public class PersistorDataList extends DataList {
 	/**
 	 * The cache size, default 1000.
 	 */
-	private int cacheSize = 1000;
+	private int cacheSize = -1;
 
 	/**
 	 * @param session
@@ -64,6 +64,9 @@ public class PersistorDataList extends DataList {
 	public PersistorDataList(Session session, DataInfo dataInfo, Persistor persistor) {
 		super(session, dataInfo);
 		this.persistor = new DataPersistor(persistor);
+		
+		// Set the cache size as the persistor size up to a maximum of 10000.
+		cacheSize = Math.min(size(), 10000);
 	}
 
 	/**

@@ -47,7 +47,7 @@ import com.qtplaf.library.trading.data.PlotProperties;
  * @author Miquel Sas
  */
 public class JChartPlotter extends JPanel {
-
+	
 	/**
 	 * The parent chart container.
 	 */
@@ -178,7 +178,7 @@ public class JChartPlotter extends JPanel {
 
 		// The graphics object.
 		Graphics2D g2 = (Graphics2D) g;
-
+		
 		// Set plotters.
 		setDataPlotters();
 
