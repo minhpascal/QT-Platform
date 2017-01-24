@@ -15,8 +15,6 @@ package com.qtplaf.platform.database;
 
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.library.trading.server.Filter;
-import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.StringUtils;
 
@@ -45,43 +43,59 @@ public class Names {
 	public static String getSchema(Server server) {
 		return getSchema() + "_" + server.getId();
 	}
-
+	
 	/**
 	 * Returns the name for a table of OHLCV data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
-	 * @param filter The data filter.
-	 * @param offerSide The offer side.
 	 * @return The name for a table of OHLCV data.
 	 */
-	public static String getName(Instrument instrument, Period period, Filter filter, OfferSide offerSide) {
-		return getName(instrument.getId(), period.getId(), filter.name(), offerSide.name());
+	public static String getName(Instrument instrument, Period period) {
+		return getName(instrument.getId(), period.getId());
 	}
-
+	
 	/**
 	 * Returns the name for a table of OHLCV data.
 	 * 
-	 * @param instrument The instrument id.
-	 * @param period The period id.
-	 * @param filter The data filter id (first character).
-	 * @param offerSide The offer side id (first character).
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @param suffix The suffix.
 	 * @return The name for a table of OHLCV data.
 	 */
-	public static String getName(String instrument, String period, String filter, String offerSide) {
-		if (filter.length() > 0) {
-			filter = filter.substring(0, 1);
-		}
-		if (offerSide.length() > 0) {
-			offerSide = offerSide.substring(0, 1);
-		}
+	public static String getName(Instrument instrument, Period period, String suffix) {
+		return getName(instrument.getId(), period.getId(), suffix);
+	}
+
+	/**
+	 * Returns the name for a table of times data.
+	 * 
+	 * @param instrument The instrument id.
+	 * @param period The period id.
+	 * @param suffix The suffix.
+	 * @return The name for a table of OHLCV data.
+	 */
+	public static String getName(String instrument, String period) {
+		return getName(instrument, period, null);
+	}
+
+	/**
+	 * Returns the name for a table of timed data.
+	 * 
+	 * @param instrument The instrument id.
+	 * @param period The period id.
+	 * @param suffix The suffix.
+	 * @return The name for a table of OHLCV data.
+	 */
+	public static String getName(String instrument, String period, String suffix) {
 		StringBuilder b = new StringBuilder();
 		b.append(instrument.toLowerCase());
 		b.append("_");
 		b.append(period.toLowerCase());
-		b.append("_");
-		b.append(filter.toLowerCase());
-		b.append(offerSide.toLowerCase());
+		if (suffix != null) {
+			b.append("_");
+			b.append(suffix.toLowerCase());
+		}
 		return b.toString();
 	}
 

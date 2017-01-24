@@ -73,25 +73,12 @@ public enum Types {
 	/**
 	 * Type Object.
 	 */
-	Object,
-	/**
-	 * Special auto-increment database type.
-	 */
-	AutoIncrement;
+	Object;
 
 	/**
 	 * The fixed length to select VARCHAR/VARBINARY or LONVARCHAR/LONGVARBINARY.
 	 */
 	public final static int fixedLength = 2000;
-
-	/**
-	 * Check if this type is auto-increment.
-	 *
-	 * @return A boolean
-	 */
-	public boolean isAutoIncrement() {
-		return equals(AutoIncrement);
-	}
 
 	/**
 	 * Check if this type is a boolean.
@@ -153,7 +140,7 @@ public enum Types {
 	 * @return A boolean
 	 */
 	public boolean isNumber() {
-		return isAutoIncrement() || isDecimal() || isDouble() || isInteger() || isLong();
+		return isDecimal() || isDouble() || isInteger() || isLong();
 	}
 
 	/**

@@ -23,6 +23,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -221,19 +223,43 @@ public class JChartPlotter extends JPanel {
 			endIndexClip = endIndexCheck + margin;
 		}
 
-		// Do plot.
+		// Plot first data list that do not need to be plotted from scratch.
+		List<DataList> fromScratch = new ArrayList<>();
+		List<DataList> notFromScratch = new ArrayList<>();
 		for (int i = 0; i < plotData.size(); i++) {
 			DataList dataList = plotData.get(i);
 			if (isPlotFromScratch(dataList)) {
+				fromScratch.add(dataList);
+			} else {
+				notFromScratch.add(dataList);
+			}
+		}
+		if (!notFromScratch.isEmpty()) {
+			for (int index = startIndexClip; index < endIndexClip; index++) {
+				for (DataList dataList : notFromScratch) {
+					plotChartData(g2, dataList, index);
+				}
+			}			
+		}
+		if (!fromScratch.isEmpty()) {
+			for (DataList dataList : fromScratch) {
 				for (int index = startIndex; index < endIndex; index++) {
 					plotChartData(g2, dataList, index);
 				}
-			} else {
-				for (int index = startIndexClip; index < endIndexClip; index++) {
-					plotChartData(g2, dataList, index);
-				}
-			}
+			}			
 		}
+//		for (int i = 0; i < plotData.size(); i++) {
+//			DataList dataList = plotData.get(i);
+//			if (isPlotFromScratch(dataList)) {
+//				for (int index = startIndex; index < endIndex; index++) {
+//					plotChartData(g2, dataList, index);
+//				}
+//			} else {
+//				for (int index = startIndexClip; index < endIndexClip; index++) {
+//					plotChartData(g2, dataList, index);
+//				}
+//			}
+//		}
 
 		// Terminate plots.
 		for (int i = 0; i < plotData.size(); i++) {

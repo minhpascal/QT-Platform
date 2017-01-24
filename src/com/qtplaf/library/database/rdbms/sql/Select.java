@@ -244,7 +244,7 @@ public class Select extends Statement {
 		int fieldCount = getView().getFieldCount();
 		for (int i = 0; i < fieldCount; i++) {
 			Field field = getView().getField(i);
-			if (field.isAutoIncrement() || field.isPersistent() || field.isVirtual()) {
+			if (field.isPersistent() || field.isVirtual()) {
 				if (i > 0) {
 					b.append(", ");
 				}

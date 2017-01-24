@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
@@ -39,11 +40,12 @@ import com.qtplaf.library.util.list.ListUtils;
  * A persistor for elements of timed <tt>Data</tt>. The general contract for a persistor of timed <tt>Data</tt> is that
  * fields must be defined as follows:
  * <ul>
- * <li>The first field is always the index, an auto-increment field starting preferably at 1, but not mandatory to start
- * at 1, not negative, increased by 1, and indexed.</li>
+ * <li>The first field is always the index, that starts at 1, indexed and unique. This field value at insert time is
+ * managed by this persistor.</li>
  * <li>The second field is a long, the time of the timed data.</li>
  * <li>All subsequent <b>persistent</b> fields are of type double and are considered data.</li>
  * </ul>
+ * Note that data in a data persistor can not be inserted from different threads, and in most cases it has no sense.
  * 
  * @author Miquel Sas
  */
@@ -60,6 +62,14 @@ public class DataPersistor implements Persistor {
 	 * First index in the underlying table.
 	 */
 	private Long firstIndex = Long.valueOf(-1);
+	/**
+	 * Last index in the underlying table.
+	 */
+	private Long lastIndex = Long.valueOf(-1);
+	/**
+	 * A boolean that indicates if the persistor is sensitive to new records added by another <tt>DataPersistor</tt>.
+	 */
+	private boolean sensitive = false;
 
 	/**
 	 * Constructor.
@@ -73,6 +83,26 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
+	 * Returns a boolean indicating whether the persistor is sensitive to new records added by another
+	 * <tt>DataPersistor</tt>.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isSensitive() {
+		return sensitive;
+	}
+
+	/**
+	 * Set a boolean indicating whether the persistor is sensitive to new records added by another
+	 * <tt>DataPersistor</tt>.
+	 * 
+	 * @param sensitive A boolean.
+	 */
+	public void setSensitive(boolean sensitive) {
+		this.sensitive = sensitive;
+	}
+
+	/**
 	 * Validates that the argument persistor conforms to the general contract of <tt>Data</tt> persistors.
 	 * 
 	 * @param persistor The persistor to validate.
@@ -80,7 +110,7 @@ public class DataPersistor implements Persistor {
 	private void validate(Persistor persistor) {
 
 		// First field must be of type <tt>AutoIncrement</tt>.
-		if (!persistor.getField(0).isAutoIncrement()) {
+		if (!persistor.getField(0).isLong()) {
 			throw new IllegalArgumentException();
 		}
 
@@ -130,7 +160,7 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
-	 * Returns the persistor index given the relative index in that starts at 0.
+	 * Returns the persistor index given a relative index that starts at 0.
 	 * 
 	 * @param index The index in the list.
 	 * @return The persistor index.
@@ -141,24 +171,38 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
+	 * Returns the record given a relative index in that starts at 0.
+	 * 
+	 * @param index The index in the list.
+	 * @return The persistor index.
+	 * @throws PersistorException
+	 */
+	public Record getRecord(Long index) {
+		Criteria criteria = new Criteria();
+		criteria.add(Condition.fieldEQ(getField(0), new Value(getIndex(index))));
+		Record record = null;
+		RecordIterator iter = null;
+		try {
+			iter = persistor.iterator(criteria);
+			if (iter.hasNext()) {
+				record = iter.next();
+			}
+		} catch (PersistorException exc) {
+			logger.catching(exc);
+		} finally {
+			close(iter);
+		}
+		return record;
+	}
+
+	/**
 	 * Retrieves and returns the first index in the persistor.
 	 * 
 	 * @return The first index.
 	 */
 	public Long getFirstIndex() {
 		if (firstIndex == -1) {
-			RecordIterator iter = null;
-			try {
-				iter = persistor.iterator(null, getIndexOrder(true));
-				if (iter.hasNext()) {
-					Record record = iter.next();
-					firstIndex = getIndex(record);
-				}
-			} catch (PersistorException exc) {
-				logger.catching(exc);
-			} finally {
-				close(iter);
-			}
+			firstIndex = getIndex(getIndexOrder(true));
 		}
 		return firstIndex;
 	}
@@ -170,20 +214,36 @@ public class DataPersistor implements Persistor {
 	 * @throws PersistorException
 	 */
 	public Long getLastIndex() {
-		Long lastIndex = Long.valueOf(0);
+		if (sensitive) {
+			return getIndex(getIndexOrder(false));
+		}
+		if (lastIndex == -1) {
+			lastIndex = getIndex(getIndexOrder(false));
+		}
+		return lastIndex;
+	}
+
+	/**
+	 * Returns the first index with the order.
+	 * 
+	 * @param order The search order.
+	 * @return The first index applying the order.
+	 */
+	private Long getIndex(Order order) {
+		Long index = Long.valueOf(0);
 		RecordIterator iter = null;
 		try {
-			iter = persistor.iterator(null, getIndexOrder(false));
+			iter = persistor.iterator(null, order);
 			if (iter.hasNext()) {
 				Record record = iter.next();
-				lastIndex = getIndex(record);
+				index = getIndex(record);
 			}
 		} catch (PersistorException exc) {
 			logger.catching(exc);
 		} finally {
 			close(iter);
 		}
-		return lastIndex;
+		return index;
 	}
 
 	/**
@@ -369,6 +429,9 @@ public class DataPersistor implements Persistor {
 	 * @throws PersistorException
 	 */
 	public int insert(Record record) throws PersistorException {
+		Long last = getIndex(getIndexOrder(false)) + 1;
+		record.setValue(0, last);
+		lastIndex = Long.valueOf(-1);
 		return persistor.insert(record);
 	}
 

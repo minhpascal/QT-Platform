@@ -26,6 +26,7 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.task.TaskRunner;
+import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
@@ -64,7 +65,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	private Long timeTo = null;
 
 	/** The persistor. */
-	private Persistor persistor;
+	private DataPersistor persistor;
 
 	/**
 	 * Constructor.
@@ -124,7 +125,13 @@ public class TaskDownloadTicker extends TaskRunner {
 
 		// Iterate receiving bars.
 		OHLCVIterator iter =
-			getServer().getHistoryManager().getOHLCVIterator(instrument, period, filter, getTimeFrom(), getTimeTo());
+			getServer().getHistoryManager().getOHLCVIterator(
+				instrument,
+				period,
+				offerSide,
+				filter,
+				getTimeFrom(),
+				getTimeTo());
 		while (true) {
 
 			// Check request of cancel.
@@ -211,7 +218,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 * @return The table.
 	 */
 	private Table getTable() {
-		String tableName = Names.getName(instrument, period, filter, offerSide);
+		String tableName = Names.getName(instrument, period);
 		return Tables.getTableOHLCVS(getSession(), server, tableName);
 	}
 
@@ -220,9 +227,9 @@ public class TaskDownloadTicker extends TaskRunner {
 	 * 
 	 * @return The persistor.
 	 */
-	private Persistor getPersistor() {
+	private DataPersistor getPersistor() {
 		if (persistor == null) {
-			persistor = getTable().getPersistor();
+			persistor = new DataPersistor(getTable().getPersistor());
 		}
 		return persistor;
 	}

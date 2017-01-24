@@ -119,7 +119,9 @@ public abstract class MovingAverage extends Indicator {
 			b.append("(" + period + ")");
 			info.addOutput(b.toString(), b.toString(), i);
 		}
-
+		
+		// Set look backward to the indicator info.
+		info.setLookBackward(period);
 	}
 
 	/**

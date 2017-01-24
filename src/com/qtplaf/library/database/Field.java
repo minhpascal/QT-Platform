@@ -307,7 +307,7 @@ public class Field implements Comparable<Object> {
 		if (!isNumber()) {
 			return 0;
 		}
-		if (isInteger() || isLong() || isAutoIncrement()) {
+		if (isInteger() || isLong()) {
 			return 0;
 		}
 		return decimals;
@@ -342,8 +342,6 @@ public class Field implements Comparable<Object> {
 		case String:
 			setHorizontalAlignment(Alignment.Left);
 			break;
-		case AutoIncrement:
-			setPersistent(false);
 		case Decimal:
 		case Double:
 		case Long:
@@ -677,9 +675,6 @@ public class Field implements Comparable<Object> {
 	 * @return The default value.
 	 */
 	public Value getDefaultValue() {
-		if (isAutoIncrement()) {
-			return new Value(0);
-		}
 		if (isBoolean()) {
 			return new Value(false);
 		}
@@ -1242,15 +1237,6 @@ public class Field implements Comparable<Object> {
 			throw new IllegalArgumentException(
 				MessageFormat.format("Invalid value type ({0}) for field type {1}", value.getType(), getType()));
 		}
-	}
-
-	/**
-	 * Check if this field is auto-increment.
-	 *
-	 * @return A boolean.
-	 */
-	public boolean isAutoIncrement() {
-		return getType().isAutoIncrement();
 	}
 
 	/**

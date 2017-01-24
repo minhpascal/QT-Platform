@@ -14,18 +14,12 @@
 
 package com.qtplaf.library.trading.data;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.Condition;
-import com.qtplaf.library.database.Criteria;
-import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
-import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
-import com.qtplaf.library.database.RecordIterator;
-import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.util.list.ArrayDelist;
 import com.qtplaf.library.util.list.Delist;
@@ -46,21 +40,22 @@ import com.qtplaf.library.util.list.Delist;
  */
 public class PersistorDataList extends DataList {
 
-	/** Logger instance. */
-	private static final Logger logger = LogManager.getLogger();
-
 	/**
 	 * The underlying persistor.
 	 */
 	private DataPersistor persistor;
 	/**
-	 * The page size to cache data, default is 5000.
+	 * A map to cache retrieved records by relative index.
 	 */
-	private int pageSize = 100;
+	private Map<Integer, Record> map = new HashMap<>();
 	/**
-	 * The cached page.
+	 * The stack to get the FIFO order.
 	 */
-	private Delist<Record> page = new ArrayDelist<>();
+	private Delist<Record> list = new ArrayDelist<>();
+	/**
+	 * The cache size, default 1000.
+	 */
+	private int cacheSize = 1000;
 
 	/**
 	 * @param session
@@ -69,15 +64,6 @@ public class PersistorDataList extends DataList {
 	public PersistorDataList(Session session, DataInfo dataInfo, Persistor persistor) {
 		super(session, dataInfo);
 		this.persistor = new DataPersistor(persistor);
-	}
-
-	/**
-	 * Set the page size.
-	 * 
-	 * @param pageSize The page size.
-	 */
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
 	}
 
 	/**
@@ -121,128 +107,48 @@ public class PersistorDataList extends DataList {
 	@Override
 	public Data get(int index) {
 
-		// First check data in the current page.
-		if (inPage(index)) {
-			return getDataFromPage(index);
+		Data data = getFromCache(index);
+		if (data != null) {
+			return data;
 		}
 
-		// The the page that should contain the data.
-		loadPage(index);
-		if (inPage(index)) {
-			return getDataFromPage(index);
-		}
-
-		throw new IllegalStateException();
+		Record record = persistor.getRecord(Long.valueOf(index));
+		addToCache(index, record);
+		return persistor.getData(record);
 	}
 
 	/**
-	 * Check if the relative list index is in the loaded page.
+	 * Add the record to the cache.
 	 * 
-	 * @param index The index in the list.
-	 * @return A boolean.
+	 * @param index The index relative to 0.
+	 * @param record The record.
 	 */
-	private boolean inPage(int index) {
-
-		// Page is empty, not in.
-		if (page.isEmpty()) {
-			return false;
-		}
-
-		// First persistor index in the page is greater than persistor index.
-		if (getIndex(page.getFirst()) > getIndex(index)) {
-			return false;
-		}
-
-		// Last persistor index in the page is less than persistor index.
-		if (getIndex(page.getLast()) < getIndex(index)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Returns the data in the page given the list index, knowing that data is in the page.
-	 * 
-	 * @param index The list index.
-	 * @return The data.
-	 */
-	private Data getDataFromPage(int index) {
-		int pageIndex = getIndex(index) - getIndex(page.getFirst());
-		return persistor.getData(page.get(pageIndex));
-	}
-
-	/**
-	 * Returns the persistor index given the relative index in the list that starts at 0.
-	 * 
-	 * @param index The index in the list.
-	 * @return The persistor index.
-	 * @throws PersistorException
-	 */
-	private int getIndex(int index) {
-		return persistor.getIndex(Long.valueOf(index)).intValue();
-	}
-
-	/**
-	 * Returns the index in the record.
-	 * 
-	 * @param record The source record.
-	 * @return The index.
-	 */
-	private int getIndex(Record record) {
-		return persistor.getIndex(record).intValue();
-	}
-
-	/**
-	 * Close the iterator.
-	 * 
-	 * @param iter The record iterator.
-	 */
-	private void close(RecordIterator iter) {
-		try {
-			if (iter != null) {
-				iter.close();
+	private void addToCache(int index, Record record) {
+		if (list.size() == cacheSize) {
+			// Remove 1/5 or the cache.
+			int countRemove = cacheSize / 5;
+			while (countRemove > 0) {
+				Record remove = list.removeFirst();
+				int key = persistor.getIndex(remove).intValue() - 1;
+				map.remove(key);
+				countRemove--;
 			}
-		} catch (PersistorException exc) {
-			logger.catching(exc);
 		}
+		map.put(index,  record);
+		list.addLast(record);
 	}
 
 	/**
-	 * Load a page that should contain the list index.
+	 * Returns the data from the cache.
 	 * 
-	 * @param index The list index to be cached.
+	 * @param index The relative index starting at 0.
+	 * @return The data or null if not present in the cache.
 	 */
-	private void loadPage(int index) {
-
-		// First persistor index to scan.
-		int persistorIndex = getIndex(index);
-		if (persistorIndex < 0) {
-			persistorIndex = 0;
+	private Data getFromCache(int index) {
+		Record record = map.get(index);
+		if (record != null) {
+			return persistor.getData(record);
 		}
-
-		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldGE(persistor.getField(0), new Value(persistorIndex)));
-
-		Order order = new Order();
-		order.add(persistor.getField(0), true);
-
-		RecordIterator iter = null;
-		try {
-			iter = persistor.iterator(criteria, order);
-			page.clear();
-			int size = 0;
-			while (iter.hasNext()) {
-				if (++size > pageSize) {
-					break;
-				}
-				Record record = iter.next();
-				page.addLast(record);
-			}
-		} catch (PersistorException exc) {
-			logger.catching(exc);
-		} finally {
-			close(iter);
-		}
+		return null;
 	}
 }

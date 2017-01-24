@@ -879,7 +879,7 @@ public class Domains {
 		field.setSession(session);
 		field.setName(name);
 		field.setAlias(alias);
-		field.setType(Types.AutoIncrement);
+		field.setType(Types.Long);
 		field.setHeader(session.getString("fieldOHLCVIndexLabel"));
 		field.setLabel(session.getString("fieldOHLCVIndexLabel"));
 		field.setTitle(session.getString("fieldOHLCVIndexHeader"));

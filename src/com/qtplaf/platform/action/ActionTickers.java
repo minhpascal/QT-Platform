@@ -29,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.PageRecordSet;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -48,6 +47,8 @@ import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.DataList;
+import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.Instrument;
@@ -165,9 +166,7 @@ public class ActionTickers extends AbstractAction {
 		public void actionPerformed(ActionEvent e) {
 			String instrument = form.getEditField(Tickers.Fields.InstrumentId).getValue().toString();
 			String period = form.getEditField(Tickers.Fields.PeriodId).getValue().toString();
-			String filter = form.getEditField(Tickers.Fields.DataFilter).getValue().toString();
-			String offerSide = form.getEditField(Tickers.Fields.OfferSide).getValue().toString();
-			Value tableName = new Value(Names.getName(instrument, period, filter, offerSide));
+			Value tableName = new Value(Names.getName(instrument, period));
 			form.getEditField(Tickers.Fields.TableName).setValue(tableName);
 		}
 	}
@@ -463,7 +462,8 @@ public class ActionTickers extends AbstractAction {
 					return;
 				}
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
-				Persistor persistor = Persistors.getPersistorOHLCV(session, server, tableName);
+				DataPersistor persistor = new DataPersistor(Persistors.getPersistorOHLCV(session, server, tableName));
+				persistor.setSensitive(false);
 
 				String serverId = record.getValue(Tickers.Fields.ServerId).getString();
 				String instrId = record.getValue(Tickers.Fields.InstrumentId).getString();
@@ -484,9 +484,7 @@ public class ActionTickers extends AbstractAction {
 				tableModelRecord.addColumn(OHLCVS.Fields.Close);
 				tableModelRecord.addColumn(OHLCVS.Fields.Volume);
 
-				PageRecordSet recordSet = new PageRecordSet();
-				recordSet.setPersistor(persistor);
-				tableModelRecord.setRecordSet(recordSet);
+				tableModelRecord.setRecordSet(new DataRecordSet(persistor));
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);
@@ -570,7 +568,7 @@ public class ActionTickers extends AbstractAction {
 					new float[] { 3.0f },
 					0.0f));
 				avgList.getPlotProperties(0).setStroke(new BasicStroke());
-				plotData.add(avgList);
+//				plotData.add(avgList);
 				
 				// Chart title.
 				StringBuilder title = new StringBuilder();

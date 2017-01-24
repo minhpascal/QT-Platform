@@ -721,7 +721,6 @@ public class Record implements Comparable<Object> {
 			case ByteArray:
 				b.append(value.getByteArray());
 				break;
-			case AutoIncrement:
 			case Decimal:
 			case Double:
 			case Integer:

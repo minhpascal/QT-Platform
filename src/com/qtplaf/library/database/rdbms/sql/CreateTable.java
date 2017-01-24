@@ -76,7 +76,7 @@ public class CreateTable extends Statement {
 		boolean comma = false;
 		for (int i = 0; i < getTable().getFieldCount(); i++) {
 			Field field = getTable().getField(i);
-			if (field.isAutoIncrement() || field.isPersistent()) {
+			if (field.isPersistent()) {
 				if (comma) {
 					b.append(", ");
 				}
