@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 
@@ -52,16 +53,17 @@ public class SimpleMovingAverage extends MovingAverage {
 	}
 
 	/**
-	 * Calculates the indicator.
+	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
-	 * This indicator already calculated data is used to improve calculation performance.
+	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
+	 * calculated values or use them to improve calculation performance.
 	 * 
 	 * @param index The data index.
-	 * @param inputSources The list of input sources.
-	 * @param inputIndexes The list of input indexes to be considered.
+	 * @param indicatorSources The list of indicator sources.
+	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public Data calculate(int index, List<IndicatorSource> indicatorSources) {
+	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
 		// If index < 0 do nothing.
 		if (index < 0) {
 			return null;

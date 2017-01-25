@@ -70,16 +70,17 @@ public class ExponentialMovingAverage extends MovingAverage {
 	}
 
 	/**
-	 * Calculates the indicator.
+	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
-	 * This indicator already calculated data is used to improve calculation performance.
+	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
+	 * calculated values or use them to improve calculation performance.
 	 * 
 	 * @param index The data index.
-	 * @param inputSources The list of input sources.
-	 * @param inputIndexes The list of input indexes to be considered.
+	 * @param indicatorSources The list of indicator sources.
+	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public Data calculate(int index, List<IndicatorSource> indicatorSources) {
+	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
 
 		// If index < 0 do nothing.
 		if (index < 0) {
@@ -104,9 +105,11 @@ public class ExponentialMovingAverage extends MovingAverage {
 			DataList dataList = source.getDataList();
 			List<Integer> indexes = source.getIndexes();
 			for (Integer dataIndex : indexes) {
-				double lastAverage = 0;
-				// TODO
-//				double lastAverage = indicatorData.get(index - 1).getValue(averageIndex);
+				Data lastData = indicatorData.get(index - 1);
+				if (!lastData.isValid()) {
+					lastData = calculate(index - 1, indicatorSources, indicatorData);
+				}
+				double lastAverage = lastData.getValue(averageIndex);
 				double nextValue = dataList.get(index).getValue(dataIndex);
 				double average = nextValue * alpha + (1 - alpha) * lastAverage;
 				averages[averageIndex] += average;

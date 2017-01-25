@@ -47,7 +47,7 @@ import com.qtplaf.library.trading.data.PlotProperties;
  * @author Miquel Sas
  */
 public class JChartPlotter extends JPanel {
-	
+
 	/**
 	 * The parent chart container.
 	 */
@@ -178,7 +178,7 @@ public class JChartPlotter extends JPanel {
 
 		// The graphics object.
 		Graphics2D g2 = (Graphics2D) g;
-		
+
 		// Set plotters.
 		setDataPlotters();
 
@@ -239,27 +239,27 @@ public class JChartPlotter extends JPanel {
 				for (DataList dataList : notFromScratch) {
 					plotChartData(g2, dataList, index);
 				}
-			}			
+			}
 		}
 		if (!fromScratch.isEmpty()) {
 			for (DataList dataList : fromScratch) {
 				for (int index = startIndex; index < endIndex; index++) {
 					plotChartData(g2, dataList, index);
 				}
-			}			
+			}
 		}
-//		for (int i = 0; i < plotData.size(); i++) {
-//			DataList dataList = plotData.get(i);
-//			if (isPlotFromScratch(dataList)) {
-//				for (int index = startIndex; index < endIndex; index++) {
-//					plotChartData(g2, dataList, index);
-//				}
-//			} else {
-//				for (int index = startIndexClip; index < endIndexClip; index++) {
-//					plotChartData(g2, dataList, index);
-//				}
-//			}
-//		}
+		// for (int i = 0; i < plotData.size(); i++) {
+		// DataList dataList = plotData.get(i);
+		// if (isPlotFromScratch(dataList)) {
+		// for (int index = startIndex; index < endIndex; index++) {
+		// plotChartData(g2, dataList, index);
+		// }
+		// } else {
+		// for (int index = startIndexClip; index < endIndexClip; index++) {
+		// plotChartData(g2, dataList, index);
+		// }
+		// }
+		// }
 
 		// Terminate plots.
 		for (int i = 0; i < plotData.size(); i++) {

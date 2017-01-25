@@ -35,6 +35,10 @@ public class IndicatorDataList extends DataList {
 	 * The list of indicator sources that the indicator will use to calculate data.
 	 */
 	private List<IndicatorSource> indicatorSources;
+	/**
+	 * A data list to cache this indicator calculated data.
+	 */
+	private ArrayDataList indicatorData;
 
 	/**
 	 * Constructor.
@@ -53,7 +57,28 @@ public class IndicatorDataList extends DataList {
 		this.indicator = indicator;
 		this.indicatorSources = indicatorSources;
 		this.indicator.start(indicatorSources);
+
+		this.indicatorData = new ArrayDataList(session, dataInfo);
+
 		initializePlotProperties();
+	}
+
+	/**
+	 * Returns the underlying indicator of this indicator data list.
+	 * 
+	 * @return The indicator.
+	 */
+	public Indicator getIndicator() {
+		return indicator;
+	}
+
+	/**
+	 * Returns the indicator data size already calculated.
+	 * 
+	 * @return The indicator data size already calculated.
+	 */
+	public int getIndicatorDataSize() {
+		return indicatorData.size();
 	}
 
 	/**
@@ -96,7 +121,43 @@ public class IndicatorDataList extends DataList {
 	 */
 	@Override
 	public Data get(int index) {
-		return indicator.calculate(index, indicatorSources);
+		Data data = indicator.calculate(index, indicatorSources, indicatorData);
+		setIndicatorData(index, data);
+		return data;
+	}
+
+	/**
+	 * Sets the indicator data when this indicator is reentrant.
+	 * 
+	 * @param index The index of the data.
+	 * @param data The data.
+	 */
+	private void setIndicatorData(int index, Data data) {
+
+		// Shoud never happen.
+		if (index < 0) {
+			throw new IllegalArgumentException();
+		}
+
+		// Index is in the range of already cached data.
+		if (index < indicatorData.size()) {
+			indicatorData.set(index, data);
+			return;
+		}
+
+		// Index is exactly a new incoming data.
+		if (index == indicatorData.size()) {
+			indicatorData.add(data);
+			return;
+		}
+
+		// Index is far from the last element.
+		while (indicatorData.size() < index) {
+			Data invalidData = new Data();
+			invalidData.setValid(false);
+			indicatorData.add(invalidData);
+		}
+		indicatorData.add(data);
 	}
 
 }

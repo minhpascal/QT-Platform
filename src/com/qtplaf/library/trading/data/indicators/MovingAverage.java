@@ -123,7 +123,6 @@ public abstract class MovingAverage extends Indicator {
 		// Set look backward to the indicator info.
 		info.setLookBackward(period);
 	}
-
 	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
@@ -132,9 +131,10 @@ public abstract class MovingAverage extends Indicator {
 	 * 
 	 * @param index The data index.
 	 * @param indicatorSources The list of indicator sources.
+	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources);
+	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
 
 	/**
 	 * Returns the average data calculated from the begining to the argument index, when index is less that period.

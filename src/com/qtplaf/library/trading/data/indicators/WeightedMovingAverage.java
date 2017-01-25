@@ -52,18 +52,18 @@ public class WeightedMovingAverage extends MovingAverage {
 		// Setup the input parameter and default value: period.
 		info.addParameter(getPeriodParameter());
 	}
-
 	/**
-	 * Calculates the indicator.
+	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
-	 * This indicator already calculated data is used to improve calculation performance.
+	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
+	 * calculated values or use them to improve calculation performance.
 	 * 
 	 * @param index The data index.
-	 * @param inputSources The list of input sources.
-	 * @param inputIndexes The list of input indexes to be considered.
+	 * @param indicatorSources The list of indicator sources.
+	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public Data calculate(int index, List<IndicatorSource> indicatorSources) {
+	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
 
 		// If index < 0 do nothing.
 		if (index < 0) {

@@ -19,8 +19,17 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 
 /**
- * Indicator base class. Implementations must define the <b><i>IndicatorInfo</i></b> and implement the
- * <b><i>calculate</i></b> method.
+ * Indicator base class.
+ * <p>
+ * Implementations must define the <b><i>IndicatorInfo</i></b> that, additionally to the base <b><i>DataInfo</i></b>
+ * outputs, indicates the input parameters and their values.
+ * <p>
+ * Implementations must also implement the <b><i>calculate</i></b> method. This method receives 3 parameters:
+ * <ul>
+ * <li>The index of the data to be calculated.</li>
+ * <li>The list of indicator sources defined in the <b><i>IndicatorInfo</i></b> as inputs.</li>
+ * <li>The list of already calculated values.</li>
+ * </ul>
  * 
  * @author Miquel Sas
  */
@@ -39,7 +48,7 @@ public abstract class Indicator {
 		indicator.start(indicatorSources);
 		int size = indicatorSources.get(0).getDataList().size();
 		for (int index = 0; index < size; index++) {
-			Data data = indicator.calculate(index, indicatorSources);
+			Data data = indicator.calculate(index, indicatorSources, indicatorData);
 			indicatorData.add(data);
 		}
 		indicatorData.initializePlotProperties();
@@ -129,11 +138,14 @@ public abstract class Indicator {
 
 	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
+	 * <p>
+	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
+	 * calculated values or use them to improve calculation performance.
 	 * 
 	 * @param index The data index.
 	 * @param indicatorSources The list of indicator sources.
 	 * @param indicatorData This indicator already calculated data.
 	 * @return The result data.
 	 */
-	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources);
+	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
 }

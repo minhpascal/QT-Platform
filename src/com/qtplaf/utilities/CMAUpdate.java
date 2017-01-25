@@ -22,6 +22,9 @@ import java.util.Locale;
 
 import javax.swing.AbstractAction;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qtplaf.library.app.Argument;
 import com.qtplaf.library.app.ArgumentManager;
 import com.qtplaf.library.app.Session;
@@ -39,6 +42,13 @@ import com.qtplaf.library.util.list.ListUtils;
  * @author Miquel Sas
  */
 public class CMAUpdate {
+
+	/** Logger configuration. */
+	static {
+		System.setProperty("log4j.configurationFile", "LoggerQTPlatform.xml");
+	}
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
 	
 	enum Environment {
 		Production,
@@ -117,18 +127,22 @@ public class CMAUpdate {
 			System.exit(1);
 		}
 
-		// The list of tasks.
-		List<Task> tasks = getTaskList(session, argMngr);
-
-		// Progress manager.
-		ProgressManager progressManager = new ProgressManager(session);
-		progressManager.setTitle("CMA Updater");
-		progressManager.setPanelProgressWidth(1000);
-		for (Task task : tasks) {
-			progressManager.addTask(task);
+		try {
+			// The list of tasks.
+			List<Task> tasks = getTaskList(session, argMngr);
+	
+			// Progress manager.
+			ProgressManager progressManager = new ProgressManager(session);
+			progressManager.setTitle("CMA Updater");
+			progressManager.setPanelProgressWidth(1000);
+			for (Task task : tasks) {
+				progressManager.addTask(task);
+			}
+			progressManager.addPreCloseAction(new ActionClose(session));
+			progressManager.showFrame(true);
+		} catch (Exception exc) {
+			logger.catching(exc);
 		}
-		progressManager.addPreCloseAction(new ActionClose(session));
-		progressManager.showFrame(true);
 	}
 
 	/**

@@ -69,6 +69,16 @@ public class ArrayDataList extends DataList {
 	}
 
 	/**
+	 * Set the data at the given in dex.
+	 * 
+	 * @param index The index.
+	 * @param data The data.
+	 */
+	public void set(int index, Data data) {
+		dataList.set(index, data);
+	}
+
+	/**
 	 * Returns <tt>true</tt> if this list contains no elements.
 	 *
 	 * @return <tt>true</tt> if this list contains no elements.

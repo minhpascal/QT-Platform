@@ -46,7 +46,6 @@ import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.chart.JFrameChart;
-import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.IndicatorDataList;
@@ -56,6 +55,7 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotType;
+import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
@@ -545,14 +545,16 @@ public class ActionTickers extends AbstractAction {
 				
 				// Build the plot data.
 				DataInfo dataInfo = new PriceInfo(session, instrument, period);
-				DataList dataList = new PersistorDataList(session, dataInfo, persistor);
+				PersistorDataList dataList = new PersistorDataList(session, dataInfo, persistor);
+				dataList.setCacheSize(-1);
 				dataList.setPlotType(PlotType.Candlestick);
 				dataList.initializePlotProperties();
 				PlotData plotData = new PlotData();
 				plotData.add(dataList);
 				
 				// Add a 50 period SMA
-				SimpleMovingAverage sma = new SimpleMovingAverage(new Session(Locale.UK));
+				SimpleMovingAverage sma = new SimpleMovingAverage(session);
+//				ExponentialMovingAverage sma = new ExponentialMovingAverage(new Session(Locale.UK));
 				sma.getIndicatorInfo().getParameter(0).getValue().setInteger(50);
 				IndicatorSource source = new IndicatorSource(dataList, 0);
 				IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
@@ -568,7 +570,7 @@ public class ActionTickers extends AbstractAction {
 					new float[] { 3.0f },
 					0.0f));
 				avgList.getPlotProperties(0).setStroke(new BasicStroke());
-//				plotData.add(avgList);
+				plotData.add(avgList);
 				
 				// Chart title.
 				StringBuilder title = new StringBuilder();

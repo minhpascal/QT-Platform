@@ -120,6 +120,21 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
+	 * Returns the list of indicator data lists in this plot data.
+	 * 
+	 * @return The list of indicator data lists,
+	 */
+	public List<IndicatorDataList> getIndicatorDataLists() {
+		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
+		for (DataList dataList : dataLists) {
+			if (dataList instanceof IndicatorDataList) {
+				indicatorDataLists.add((IndicatorDataList) dataList);
+			}
+		}
+		return indicatorDataLists;
+	}
+
+	/**
 	 * Merge data lists so all have the same size.
 	 */
 	private void mergeDataLists() {
@@ -370,6 +385,38 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
+	 * Ensure that indicators are calculated up to the start index minus one.
+	 * 
+	 * @param plotData The plot data.
+	 * @param startIndex The index to ensure calculation of indicators.
+	 */
+	private void ensureIndicatorsCalculated() {
+		// Index 0, no need to do nothing.
+		if (startIndex == 0) {
+			return;
+		}
+		
+		// If no indicator data lists...
+		List<IndicatorDataList> indicatorDataLists = getIndicatorDataLists();
+		if (indicatorDataLists.isEmpty()) {
+			return;
+		}
+		
+		// Get the minimum size already calculated. All should be the same, and if it is index - 1, do nothing.
+		int minimumSize = Integer.MAX_VALUE;
+		for (IndicatorDataList indicatorDataList : indicatorDataLists) {
+			minimumSize = Math.min(minimumSize, indicatorDataList.getIndicatorDataSize());
+		}
+		
+		// Get item data fo force calculation and caching.
+		for (int index = minimumSize; index < startIndex; index++) {
+			for (IndicatorDataList indicatorDataList : indicatorDataLists) {
+				indicatorDataList.get(index);
+			}			
+		}
+	}
+
+	/**
 	 * Calculates plot frame based on start and end index: minimum and maximum values, start end end time.
 	 */
 	public void calculateFrame() {
@@ -378,7 +425,10 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		if (isEmpty()) {
 			throw new IllegalStateException();
 		}
-
+		
+		// Ensure that indicators are calculated up to the start index minus one.
+		ensureIndicatorsCalculated();
+		
 		int dataSize = get(0).size();
 		double maxValue = Double.MIN_VALUE;
 		double minValue = Double.MAX_VALUE;
