@@ -68,7 +68,7 @@ public class SimpleMovingAverage extends MovingAverage {
 		if (index < 0) {
 			return null;
 		}
-		int period = getIndicatorInfo().getParameter(ParamPeriod).getValue().getInteger();
+		int period = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
 		return getAverage(period, index, indicatorSources);
 	}
 }

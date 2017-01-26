@@ -38,7 +38,7 @@ public class IndicatorDataList extends DataList {
 	/**
 	 * A data list to cache this indicator calculated data.
 	 */
-	private ArrayDataList indicatorData;
+	private MapDataList indicatorData;
 
 	/**
 	 * Constructor.
@@ -58,7 +58,7 @@ public class IndicatorDataList extends DataList {
 		this.indicatorSources = indicatorSources;
 		this.indicator.start(indicatorSources);
 
-		this.indicatorData = new ArrayDataList(session, dataInfo);
+		this.indicatorData = new MapDataList(session, dataInfo);
 
 		initializePlotProperties();
 	}
@@ -108,9 +108,8 @@ public class IndicatorDataList extends DataList {
 	 * @return A boolean indicating if the elementt was added.
 	 */
 	@Override
-	public boolean add(Data data) {
+	public void add(Data data) {
 		// TODO Auto-generated method stub
-		return false;
 	}
 
 	/**
@@ -121,43 +120,28 @@ public class IndicatorDataList extends DataList {
 	 */
 	@Override
 	public Data get(int index) {
+		return calculate(index);
+	}
+
+	/**
+	 * Calculate and store data at the given index.
+	 * 
+	 * @param index The index.
+	 * @return The calculated data.
+	 */
+	public Data calculate(int index) {
 		Data data = indicator.calculate(index, indicatorSources, indicatorData);
-		setIndicatorData(index, data);
+		indicatorData.put(index, data);
 		return data;
 	}
 
 	/**
-	 * Sets the indicator data when this indicator is reentrant.
+	 * Remove the calculated data index.
 	 * 
-	 * @param index The index of the data.
-	 * @param data The data.
+	 * @param index The index to remove.
+	 * @return The removed data.
 	 */
-	private void setIndicatorData(int index, Data data) {
-
-		// Shoud never happen.
-		if (index < 0) {
-			throw new IllegalArgumentException();
-		}
-
-		// Index is in the range of already cached data.
-		if (index < indicatorData.size()) {
-			indicatorData.set(index, data);
-			return;
-		}
-
-		// Index is exactly a new incoming data.
-		if (index == indicatorData.size()) {
-			indicatorData.add(data);
-			return;
-		}
-
-		// Index is far from the last element.
-		while (indicatorData.size() < index) {
-			Data invalidData = new Data();
-			invalidData.setValid(false);
-			indicatorData.add(invalidData);
-		}
-		indicatorData.add(data);
+	public Data remove(int index) {
+		return indicatorData.remove(index);
 	}
-
 }

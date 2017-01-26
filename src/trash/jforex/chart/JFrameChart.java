@@ -182,7 +182,7 @@ public class JFrameChart extends JFrame {
 			buttonIndicators.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
 			buttonIndicators.setIcon(
 				ImageIconUtils.getImageIcon(Icons.chart_16x16_toolbar_indicators));
-			buttonIndicators.setToolTipText("Indicators");
+			buttonIndicators.setToolTipText("IndicatorUtils");
 			buttonIndicators.setMargin(new Insets(1, 1, 1, 1));
 			buttonIndicators.addActionListener(new ActionListenerIndicatorsButton(chartManager));
 			toolBar.add(buttonIndicators);

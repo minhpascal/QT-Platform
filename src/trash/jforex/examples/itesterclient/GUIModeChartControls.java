@@ -382,7 +382,7 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
 
 		List<JButton> chartControlButtons = new ArrayList<JButton>();
 
-		chartControlButtons.add(new JButton("Add Indicators") {
+		chartControlButtons.add(new JButton("Add IndicatorUtils") {
 			{
 				addActionListener(new ActionListener() {
 					@Override

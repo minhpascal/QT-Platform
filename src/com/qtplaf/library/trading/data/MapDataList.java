@@ -14,23 +14,23 @@
 
 package com.qtplaf.library.trading.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.info.DataInfo;
 
 /**
- * A data list which underlying data is an in-memory list.
+ * A data list which underlying data is an in-memory sorted map.
  * 
  * @author Miquel Sas
  */
-public class ArrayDataList extends DataList {
+public class MapDataList extends DataList {
 
 	/**
 	 * The list of data.
 	 */
-	private List<Data> dataList = new ArrayList<>();
+	private Map<Integer, Data> dataList = new TreeMap<>();
 
 	/**
 	 * Constructor assigning the data type..
@@ -38,7 +38,7 @@ public class ArrayDataList extends DataList {
 	 * @param session The working session.
 	 * @param dataType The data type.
 	 */
-	public ArrayDataList(Session session, DataInfo dataInfo) {
+	public MapDataList(Session session, DataInfo dataInfo) {
 		super(session, dataInfo);
 	}
 
@@ -49,12 +49,9 @@ public class ArrayDataList extends DataList {
 	 * @return A boolean indicating if the elementt was added.
 	 */
 	@Override
-	public boolean add(Data data) {
-		boolean added = dataList.add(data);
-		if (added) {
-			notifyChange(new DataListEvent(this, data, dataList.size() - 1, DataListEvent.Operation.Add));
-		}
-		return added;
+	public void add(Data data) {
+		dataList.put(size(), data);
+		notifyChange(new DataListEvent(this, data, dataList.size() - 1, DataListEvent.Operation.Add));
 	}
 
 	/**
@@ -69,13 +66,23 @@ public class ArrayDataList extends DataList {
 	}
 
 	/**
-	 * Set the data at the given in dex.
+	 * Put the data at the given in dex.
 	 * 
 	 * @param index The index.
 	 * @param data The data.
 	 */
-	public void set(int index, Data data) {
-		dataList.set(index, data);
+	public void put(int index, Data data) {
+		dataList.put(index, data);
+	}
+
+	/**
+	 * Remove data at the given index.
+	 * 
+	 * @param index The index.
+	 * @return The removed data.
+	 */
+	public Data remove(int index) {
+		return dataList.remove(index);
 	}
 
 	/**

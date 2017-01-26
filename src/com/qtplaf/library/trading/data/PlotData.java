@@ -385,7 +385,7 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
-	 * Ensure that indicators are calculated up to the start index minus one.
+	 * Ensure that indicators are calculated from look backward up to the start index minus one.
 	 * 
 	 * @param plotData The plot data.
 	 * @param startIndex The index to ensure calculation of indicators.
@@ -395,24 +395,32 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		if (startIndex == 0) {
 			return;
 		}
-		
+
 		// If no indicator data lists...
 		List<IndicatorDataList> indicatorDataLists = getIndicatorDataLists();
 		if (indicatorDataLists.isEmpty()) {
 			return;
 		}
-		
-		// Get the minimum size already calculated. All should be the same, and if it is index - 1, do nothing.
-		int minimumSize = Integer.MAX_VALUE;
+
+		// Get the maximum look backward.
+		int lookBackward = 0;
 		for (IndicatorDataList indicatorDataList : indicatorDataLists) {
-			minimumSize = Math.min(minimumSize, indicatorDataList.getIndicatorDataSize());
+			Indicator indicator = indicatorDataList.getIndicator();
+			lookBackward = Math.max(lookBackward, indicator.getIndicatorInfo().getLookBackward());
 		}
 		
-		// Get item data fo force calculation and caching.
-		for (int index = minimumSize; index < startIndex; index++) {
-			for (IndicatorDataList indicatorDataList : indicatorDataLists) {
-				indicatorDataList.get(index);
-			}			
+		// Remove calculated from start to end, and calculate again.
+		int start = Math.max(0, startIndex - lookBackward + 1);
+		int end = startIndex - 1;
+		for (IndicatorDataList indicatorDataList : indicatorDataLists) {
+			for (int index = start; index <= end; index++) {
+				indicatorDataList.remove(index);
+			}
+		}
+		for (IndicatorDataList indicatorDataList : indicatorDataLists) {
+			for (int index = start; index <= end; index++) {
+				indicatorDataList.calculate(index);
+			}
 		}
 	}
 
@@ -425,10 +433,10 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		if (isEmpty()) {
 			throw new IllegalStateException();
 		}
-		
+
 		// Ensure that indicators are calculated up to the start index minus one.
 		ensureIndicatorsCalculated();
-		
+
 		int dataSize = get(0).size();
 		double maxValue = Double.MIN_VALUE;
 		double minValue = Double.MAX_VALUE;

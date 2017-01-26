@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.data.ArrayDataList;
+import com.qtplaf.library.trading.data.MapDataList;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.OHLCV;
@@ -39,7 +39,7 @@ public class BarFileReader {
 		throws IOException {
 
 		Session session = new Session(Locale.UK);
-		DataList dataList = new ArrayDataList(session, new PriceInfo(session, instrument, period));
+		DataList dataList = new MapDataList(session, new PriceInfo(session, instrument, period));
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		String line;

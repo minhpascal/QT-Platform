@@ -55,7 +55,7 @@ public class STDDEVATRIndicator implements IIndicator {
 	@Override
 	public void onStart(IIndicatorContext context) {
 
-		// Indicators provider is used to fetch the indicators
+		// IndicatorUtils provider is used to fetch the indicators
 		atrIndicator = context.getIndicatorsProvider().getIndicator("ATR");
 		stddevIndicator = context.getIndicatorsProvider().getIndicator("STDDEV");
 

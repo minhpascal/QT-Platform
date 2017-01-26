@@ -88,7 +88,7 @@ public class ExponentialMovingAverage extends MovingAverage {
 		}
 
 		// The unique data list and the index of the data.
-		int period = getIndicatorInfo().getParameter(ParamPeriod).getValue().getInteger();
+		int period = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
 
 		// If index < period, calculate the mean from scratch.
 		if (index < period) {
@@ -105,11 +105,13 @@ public class ExponentialMovingAverage extends MovingAverage {
 			DataList dataList = source.getDataList();
 			List<Integer> indexes = source.getIndexes();
 			for (Integer dataIndex : indexes) {
+				double lastAverage = 0;
 				Data lastData = indicatorData.get(index - 1);
-				if (!lastData.isValid()) {
-					lastData = calculate(index - 1, indicatorSources, indicatorData);
+				if (lastData != null) {
+					lastAverage = lastData.getValue(averageIndex);
+				} else {
+					lastAverage = dataList.get(index).getValue(dataIndex);
 				}
-				double lastAverage = lastData.getValue(averageIndex);
 				double nextValue = dataList.get(index).getValue(dataIndex);
 				double average = nextValue * alpha + (1 - alpha) * lastAverage;
 				averages[averageIndex] += average;

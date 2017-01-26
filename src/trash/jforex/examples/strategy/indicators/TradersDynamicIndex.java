@@ -153,7 +153,7 @@ public class TradersDynamicIndex implements IIndicator, IDrawingIndicator
     private double[][] inputs = new double[1][];
     private double[][] outputs = new double[NUMBER_OF_OUPUTS][];
     
-    // Indicators for calculating TDI stuff
+    // IndicatorUtils for calculating TDI stuff
     private IIndicator rsiIndicator;
     private IIndicator maRSI;
     private IIndicator maSignal;

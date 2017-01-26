@@ -41,7 +41,11 @@ public abstract class MovingAverage extends Indicator {
 	/**
 	 * The name of the PERIOD parameter.
 	 */
-	public static final String ParamPeriod = "PERIOD";
+	public static final String ParamPeriodName = "PERIOD";
+	/**
+	 * The index of the PERIOD parameter.
+	 */
+	public static final int ParamPeriodIndex = 0;
 
 	/**
 	 * Constructor.
@@ -59,8 +63,8 @@ public abstract class MovingAverage extends Indicator {
 	 */
 	protected ParameterInfo getPeriodParameter() {
 		Field period = new Field();
-		period.setName(ParamPeriod);
-		period.setAlias(ParamPeriod);
+		period.setName(ParamPeriodName);
+		period.setAlias(ParamPeriodName);
 		period.setLabel("Period");
 		period.setTitle("Average period");
 		period.setType(Types.Integer);
@@ -108,7 +112,7 @@ public abstract class MovingAverage extends Indicator {
 
 		// Output infos
 		int numIndexes = getNumIndexes();
-		int period = info.getParameter(ParamPeriod).getValue().getInteger();
+		int period = info.getParameter(ParamPeriodName).getValue().getInteger();
 		String indicatorName = info.getName();
 		for (int i = 0; i < numIndexes; i++) {
 			StringBuilder b = new StringBuilder();

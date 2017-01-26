@@ -130,12 +130,15 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
-	 * Returns the <tt>Data</tt> in the record.
+	 * Returns the <tt>Data</tt> in the record or null if out of range.
 	 * 
 	 * @param record The source record.
 	 * @return The <tt>Data</tt>.
 	 */
 	public Data getData(Record record) {
+		if (record == null) {
+			return null;
+		}
 		long time = record.getValue(1).getLong();
 		List<Double> values = new ArrayList<>();
 		for (int i = 2; i < record.getFieldCount(); i++) {

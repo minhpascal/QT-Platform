@@ -111,9 +111,8 @@ public class PersistorDataList extends DataList {
 	 * @return A boolean indicating if the elementt was added.
 	 */
 	@Override
-	public boolean add(Data data) {
+	public void add(Data data) {
 		// TODO Pending to implement
-		return false;
 	}
 
 	/**

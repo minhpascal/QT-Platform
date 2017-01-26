@@ -20,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.ListSelectionModel;
@@ -50,12 +49,13 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
+import com.qtplaf.library.trading.data.IndicatorUtils;
 import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotType;
-import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
@@ -488,7 +488,7 @@ public class ActionTickers extends AbstractAction {
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);
-				
+
 				StringBuilder title = new StringBuilder();
 				title.append(server.getName());
 				title.append(", ");
@@ -499,7 +499,7 @@ public class ActionTickers extends AbstractAction {
 				title.append(tableName);
 				title.append("]");
 				frame.setTitle(title.toString());
-				
+
 				frame.setComponent(panelTableRecord);
 
 				frame.addAction(new ActionClose(session));
@@ -537,12 +537,11 @@ public class ActionTickers extends AbstractAction {
 				String serverId = record.getValue(Tickers.Fields.ServerId).getString();
 				String instrId = record.getValue(Tickers.Fields.InstrumentId).getString();
 				String periodId = record.getValue(Tickers.Fields.PeriodId).getString();
-				
+
 				Period period = Period.parseId(periodId);
 				Record recordInstr = Records.getRecordInstrument(session, serverId, instrId);
 				Instrument instrument = Records.fromRecordInstrument(recordInstr);
-				
-				
+
 				// Build the plot data.
 				DataInfo dataInfo = new PriceInfo(session, instrument, period);
 				PersistorDataList dataList = new PersistorDataList(session, dataInfo, persistor);
@@ -551,27 +550,11 @@ public class ActionTickers extends AbstractAction {
 				dataList.initializePlotProperties();
 				PlotData plotData = new PlotData();
 				plotData.add(dataList);
-				
-				// Add a 50 period SMA
-				SimpleMovingAverage sma = new SimpleMovingAverage(session);
-//				ExponentialMovingAverage sma = new ExponentialMovingAverage(new Session(Locale.UK));
-				sma.getIndicatorInfo().getParameter(0).getValue().setInteger(50);
-				IndicatorSource source = new IndicatorSource(dataList, 0);
-				IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
-				avgList.getPlotProperties(0).setColorBullishEven(Color.BLACK);
-				avgList.getPlotProperties(0).setColorBearishEven(Color.BLACK);
-				avgList.getPlotProperties(0).setColorBullishOdd(Color.BLACK);
-				avgList.getPlotProperties(0).setColorBearishOdd(Color.BLACK);
-				avgList.getPlotProperties(0).setStroke(new BasicStroke(
-					0.0f,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_MITER,
-					3.0f,
-					new float[] { 3.0f },
-					0.0f));
-				avgList.getPlotProperties(0).setStroke(new BasicStroke());
-				plotData.add(avgList);
-				
+
+				// By default in this view add two SMA of 50 and 200 periods.
+				plotData.add(IndicatorUtils.getSMA(dataList, 50, OHLCV.Index.Close.getIndex(), Color.RED));
+				plotData.add(IndicatorUtils.getSMA(dataList, 200, OHLCV.Index.Close.getIndex(), Color.BLACK));
+
 				// Chart title.
 				StringBuilder title = new StringBuilder();
 				title.append(server.getName());
@@ -582,7 +565,7 @@ public class ActionTickers extends AbstractAction {
 				title.append(" [");
 				title.append(tableName);
 				title.append("]");
-				
+
 				// The chart frame.
 				JFrameChart frame = new JFrameChart(session);
 				frame.setTitle(title.toString());
@@ -591,7 +574,7 @@ public class ActionTickers extends AbstractAction {
 				frame.getChart().getPlotParameters().setChartCrossCursorCircleRadius(-1);
 				frame.getChart().getPlotParameters().setChartCrossCursorStroke(new BasicStroke());
 				frame.getChart().addPlotData(plotData);
-				
+
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}

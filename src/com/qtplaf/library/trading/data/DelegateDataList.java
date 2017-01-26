@@ -47,8 +47,8 @@ public class DelegateDataList extends DataList {
 	 * @return A boolean indicating if the elementt was added.
 	 */
 	@Override
-	public boolean add(Data data) {
-		return dataList.add(data);
+	public void add(Data data) {
+		dataList.add(data);
 	}
 
 	/**

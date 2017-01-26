@@ -71,7 +71,7 @@ public class WeightedMovingAverage extends MovingAverage {
 		}
 
 		// The unique data list and the index of the data.
-		int periodParameter = getIndicatorInfo().getParameter(ParamPeriod).getValue().getInteger();
+		int periodParameter = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
 
 		// Applied period.
 		int period = Math.min(periodParameter, index + 1);

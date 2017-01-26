@@ -383,7 +383,7 @@ public class GUIModeChartControlsNothing extends JFrame implements ITesterUserIn
 
 		List<JButton> chartControlButtons = new ArrayList<JButton>();
 
-		chartControlButtons.add(new JButton("Add Indicators") {
+		chartControlButtons.add(new JButton("Add IndicatorUtils") {
 			{
 				addActionListener(new ActionListener() {
 					@Override

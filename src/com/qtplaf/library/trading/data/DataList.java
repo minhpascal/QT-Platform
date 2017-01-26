@@ -106,9 +106,8 @@ public abstract class DataList {
 	 * Add the data element to this list.
 	 * 
 	 * @param data The data element.
-	 * @return A boolean indicating if the elementt was added.
 	 */
-	public abstract boolean add(Data data);
+	public abstract void add(Data data);
 
 	/**
 	 * Returns the data element at the given index.

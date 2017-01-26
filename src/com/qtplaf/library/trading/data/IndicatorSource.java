@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Indicator data source. Indicators can be calculated over a list of data lists, using a set of indexes for each data
+ * Indicator data source. IndicatorUtils can be calculated over a list of data lists, using a set of indexes for each data
  * list. The indicator source packs data list and the set of indexes to apply.
  * 
  * @author Miquel Sas
