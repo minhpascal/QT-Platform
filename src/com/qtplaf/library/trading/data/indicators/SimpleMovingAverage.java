@@ -64,11 +64,9 @@ public class SimpleMovingAverage extends MovingAverage {
 	 * @return The result data.
 	 */
 	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
-		// If index < 0 do nothing.
 		if (index < 0) {
 			return null;
 		}
-		int period = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
-		return getAverage(period, index, indicatorSources);
+		return getSMA(this, index, indicatorSources, indicatorData);
 	}
 }

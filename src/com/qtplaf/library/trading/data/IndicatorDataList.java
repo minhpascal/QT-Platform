@@ -64,6 +64,35 @@ public class IndicatorDataList extends DataList {
 	}
 
 	/**
+	 * Check whether this indicator data list is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof IndicatorDataList) {
+			IndicatorDataList idl = (IndicatorDataList) obj;
+			if (!getIndicator().equals(idl.getIndicator())) {
+				return false;
+			}
+			if (!getIndicatorSources().equals(idl.getIndicatorSources())) {
+				return false;
+			}
+			return super.equals(idl);
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the list of indicator sources.
+	 * 
+	 * @return The list of indicator sources.
+	 */
+	public List<IndicatorSource> getIndicatorSources() {
+		return indicatorSources;
+	}
+
+	/**
 	 * Returns the underlying indicator of this indicator data list.
 	 * 
 	 * @return The indicator.

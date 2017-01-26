@@ -28,10 +28,6 @@ import com.qtplaf.library.trading.data.Indicator;
 public class IndicatorInfo extends DataInfo {
 
 	/**
-	 * The indicator that this info is attached at.
-	 */
-	private Indicator indicator;
-	/**
 	 * A boolean that indicates if this indicator has to be plotted in its own chart container, mainly because the
 	 * values range is different than the values ranges of the data sources.
 	 */
@@ -61,17 +57,36 @@ public class IndicatorInfo extends DataInfo {
 	 */
 	public IndicatorInfo(Session session, Indicator indicator) {
 		super(session);
-		this.indicator = indicator;
 		setDataType(DataType.Indicator);
 	}
 
 	/**
-	 * Returns the indicator this info is attached at.
+	 * Check whether this indicator info is equal to the argument object.
 	 * 
-	 * @return The indicator.
+	 * @return A boolean.
 	 */
-	public Indicator getIndicator() {
-		return indicator;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof IndicatorInfo) {
+			IndicatorInfo info = (IndicatorInfo) obj;
+			int count = getInputCount();
+			if (count != info.getInputCount()) {
+				return false;
+			}
+			for (int i = 0; i < count; i++) {
+				if (!getInput(i).equals(info.getInput(i))) {
+					return false;
+				}
+			}
+			if (getLookBackward() != info.getLookBackward()) {
+				return false;
+			}
+			if (getLookForward() != info.getLookForward()) {
+				return false;
+			}
+			return super.equals(info);
+		}
+		return false;
 	}
 
 	/**

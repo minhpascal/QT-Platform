@@ -19,6 +19,8 @@ import java.util.List;
 
 import com.qtplaf.library.util.Calendar;
 import com.qtplaf.library.util.NumberUtils;
+import com.qtplaf.library.util.list.ArrayDelist;
+import com.qtplaf.library.util.list.Delist;
 
 /**
  * A container for the data to plot in a <i>JChartContainer</i>.
@@ -120,18 +122,55 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
-	 * Returns the list of indicator data lists in this plot data.
+	 * Returns the list of indicator data lists in this plot data, in the order of precendence they are to be
+	 * calculated. If an indicator uses the data of another indicator, the last one must be calculated first.
 	 * 
 	 * @return The list of indicator data lists,
 	 */
 	public List<IndicatorDataList> getIndicatorDataLists() {
 		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
-		for (DataList dataList : dataLists) {
+		for (int i = 0; i < size(); i++) {
+			DataList dataList = get(i);
 			if (dataList instanceof IndicatorDataList) {
-				indicatorDataLists.add((IndicatorDataList) dataList);
+				IndicatorDataList indicatorDataList = (IndicatorDataList) dataList;
 			}
 		}
 		return indicatorDataLists;
+	}
+
+	/**
+	 * Returns the list of first level indicator data lists.
+	 * 
+	 * @return The list of first level indicator data lists.
+	 */
+	private List<IndicatorDataList> getFirstLevelIndicatorDataLists() {
+		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
+		for (int i = 0; i < size(); i++) {
+			DataList dataList = get(i);
+			if (dataList instanceof IndicatorDataList) {
+				IndicatorDataList indicatorDataList = (IndicatorDataList) dataList;
+				indicatorDataLists.add(indicatorDataList);
+			}
+		}
+		return indicatorDataLists;
+	}
+
+	/**
+	 * Returns the list of indicator data lists that the argument indicator data list requires as indicator sources.
+	 * 
+	 * @param parent The parent indicator data list.
+	 * @return The list of chilkdren required indicator data lists.
+	 */
+	private List<IndicatorDataList> getIndicatorDataLists(IndicatorDataList parent) {
+		List<IndicatorDataList> children = new ArrayList<>();
+		List<IndicatorSource> sources = parent.getIndicatorSources();
+		for (IndicatorSource source : sources) {
+			if (source.getDataList() instanceof IndicatorDataList) {
+				IndicatorDataList child = (IndicatorDataList) source.getDataList();
+				children.add(child);
+			}
+		}
+		return children;
 	}
 
 	/**
@@ -408,7 +447,7 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 			Indicator indicator = indicatorDataList.getIndicator();
 			lookBackward = Math.max(lookBackward, indicator.getIndicatorInfo().getLookBackward());
 		}
-		
+
 		// Remove calculated from start to end, and calculate again.
 		int start = Math.max(0, startIndex - lookBackward + 1);
 		int end = startIndex - 1;

@@ -114,6 +114,29 @@ public class OutputInfo {
 	}
 
 	/**
+	 * Check whether this output info is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof OutputInfo) {
+			OutputInfo out = (OutputInfo) obj;
+			if (!getName().equals(out.getName())) {
+				return false;
+			}
+			if (getIndex() != out.getIndex()) {
+				return false;
+			}
+			if (isPlot() != out.isPlot()) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the name.
 	 * 
 	 * @return The name.

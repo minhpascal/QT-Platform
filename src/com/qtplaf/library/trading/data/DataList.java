@@ -71,6 +71,38 @@ public abstract class DataList {
 	}
 
 	/**
+	 * Check whether the argument object is equal to this data list.
+	 * 
+	 * A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof DataList) {
+			DataList dataList = (DataList) obj;
+			if (!getDataInfo().equals(dataList.getDataInfo())) {
+				return false;
+			}
+			if (!getPlotType().equals(dataList.getPlotType())) {
+				return false;
+			}
+			if (!getIndexOHLCV().equals(dataList.getIndexOHLCV())) {
+				return false;
+			}
+			int count = getPlotPropertiesCount();
+			if (count != dataList.getPlotPropertiesCount()) {
+				return false;
+			}
+			for (int i = 0; i < count; i++) {
+				if (!getPlotProperties(i).equals(dataList.getPlotProperties(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the working session.
 	 * 
 	 * @return The working session.

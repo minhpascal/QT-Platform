@@ -176,6 +176,31 @@ public class ParameterInfo {
 	}
 
 	/**
+	 * Check whether this parameter info is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ParameterInfo) {
+			ParameterInfo pi = (ParameterInfo) obj;
+			if (!getField().equals(pi.getField())) {
+				return false;
+			}
+			if (size() != pi.size()) {
+				return false;
+			}
+			for (int i = 0; i < size(); i++) {
+				if (!getValue(i).equals(pi.getValue(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Check if the value is acceptable.
 	 * 
 	 * @param value The value to check.

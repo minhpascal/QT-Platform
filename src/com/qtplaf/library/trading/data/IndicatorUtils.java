@@ -18,7 +18,10 @@ import java.awt.Color;
 import java.util.Arrays;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
+import com.qtplaf.library.trading.data.indicators.MeanSquaredMovingAverage;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
+import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
 
 /**
  * Indicator utilities.
@@ -35,9 +38,95 @@ public class IndicatorUtils {
 	 * @param color Plot color.
 	 * @return The indicator data list.
 	 */
-	public static IndicatorDataList getSMA(DataList dataList, int period, int index, Color color) {
+	public static IndicatorDataList getExponentialMovingAverage(
+		DataList dataList,
+		int period,
+		int index,
+		Color color) {
+
+		Session session = dataList.getSession();
+		ExponentialMovingAverage ema = new ExponentialMovingAverage(session);
+		ema.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
+		IndicatorDataList avgList = new IndicatorDataList(session, ema, ema.getIndicatorInfo(), Arrays.asList(source));
+		avgList.getPlotProperties(0).setColorBullishEven(color);
+		avgList.getPlotProperties(0).setColorBearishEven(color);
+		avgList.getPlotProperties(0).setColorBullishOdd(color);
+		avgList.getPlotProperties(0).setColorBearishOdd(color);
+		return avgList;
+	}
+
+	/**
+	 * Returns a simple SMA configurated indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the SMA.
+	 * @param index The index in the data of the source to calculate the average.
+	 * @param color Plot color.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getSimpleMovingAverage(
+		DataList dataList,
+		int period,
+		int index,
+		Color color) {
+
 		Session session = dataList.getSession();
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
+		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
+		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
+		avgList.getPlotProperties(0).setColorBullishEven(color);
+		avgList.getPlotProperties(0).setColorBearishEven(color);
+		avgList.getPlotProperties(0).setColorBullishOdd(color);
+		avgList.getPlotProperties(0).setColorBearishOdd(color);
+		return avgList;
+	}
+
+	/**
+	 * Returns a simple WMA configurated indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the SMA.
+	 * @param index The index in the data of the source to calculate the average.
+	 * @param color Plot color.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getWeightedMovingAverage(
+		DataList dataList,
+		int period,
+		int index,
+		Color color) {
+
+		Session session = dataList.getSession();
+		WeightedMovingAverage sma = new WeightedMovingAverage(session);
+		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
+		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
+		avgList.getPlotProperties(0).setColorBullishEven(color);
+		avgList.getPlotProperties(0).setColorBearishEven(color);
+		avgList.getPlotProperties(0).setColorBullishOdd(color);
+		avgList.getPlotProperties(0).setColorBearishOdd(color);
+		return avgList;
+	}
+
+	/**
+	 * Returns a simple WMA configurated indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the SMA.
+	 * @param index The index in the data of the source to calculate the average.
+	 * @param color Plot color.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getMeanSquaredMovingAverage(
+		DataList dataList,
+		int period,
+		int index,
+		Color color) {
+
+		Session session = dataList.getSession();
+		MeanSquaredMovingAverage sma = new MeanSquaredMovingAverage(session);
 		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
 		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));

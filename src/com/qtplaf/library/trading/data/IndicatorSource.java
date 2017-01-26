@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Indicator data source. IndicatorUtils can be calculated over a list of data lists, using a set of indexes for each data
- * list. The indicator source packs data list and the set of indexes to apply.
+ * Indicator data source. IndicatorUtils can be calculated over a list of data lists, using a set of indexes for each
+ * data list. The indicator source packs data list and the set of indexes to apply.
  * 
  * @author Miquel Sas
  */
@@ -58,7 +58,28 @@ public class IndicatorSource {
 	}
 
 	/**
+	 * Check whether this indicator source is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof IndicatorSource) {
+			IndicatorSource is = (IndicatorSource) obj;
+			if (!getDataList().equals(is.getDataList())) {
+				return false;
+			}
+			if (!getIndexes().equals(is.getIndexes())) {
+				return false;
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
+
+	/**
 	 * Returns the data list.
+	 * 
 	 * @return the dataList
 	 */
 	public DataList getDataList() {
@@ -67,6 +88,7 @@ public class IndicatorSource {
 
 	/**
 	 * Sets the data list.
+	 * 
 	 * @param dataList The data list.
 	 */
 	public void setDataList(DataList dataList) {
@@ -75,6 +97,7 @@ public class IndicatorSource {
 
 	/**
 	 * Returns the list of indexes.
+	 * 
 	 * @return The list of indexes.
 	 */
 	public List<Integer> getIndexes() {
@@ -83,6 +106,7 @@ public class IndicatorSource {
 
 	/**
 	 * Sets the list of indexes.
+	 * 
 	 * @param indexes The list of indexes.
 	 */
 	public void setIndexes(List<Integer> indexes) {
@@ -91,6 +115,7 @@ public class IndicatorSource {
 
 	/**
 	 * Sets the list of indexes.
+	 * 
 	 * @param indexes The list of indexes.
 	 */
 	public void setIndexes(int... indexes) {

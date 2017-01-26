@@ -148,4 +148,25 @@ public abstract class Indicator {
 	 * @return The result data.
 	 */
 	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
+
+	/**
+	 * Check if this indicator is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Indicator) {
+			Indicator indicator = (Indicator) obj;
+			if (!getIndicatorInfo().equals(indicator.getIndicatorInfo())) {
+				return false;
+			}
+			if (numIndexes != indicator.getNumIndexes()) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
 }

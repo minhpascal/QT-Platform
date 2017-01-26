@@ -552,8 +552,10 @@ public class ActionTickers extends AbstractAction {
 				plotData.add(dataList);
 
 				// By default in this view add two SMA of 50 and 200 periods.
-				plotData.add(IndicatorUtils.getSMA(dataList, 50, OHLCV.Index.Close.getIndex(), Color.RED));
-				plotData.add(IndicatorUtils.getSMA(dataList, 200, OHLCV.Index.Close.getIndex(), Color.BLACK));
+				plotData.add(IndicatorUtils.getExponentialMovingAverage(dataList, 50, OHLCV.Index.Close.getIndex(), Color.RED));
+				plotData.add(IndicatorUtils.getSimpleMovingAverage(dataList, 50, OHLCV.Index.Close.getIndex(), Color.BLACK));
+				plotData.add(IndicatorUtils.getWeightedMovingAverage(dataList, 50, OHLCV.Index.Close.getIndex(), Color.GRAY));
+//				plotData.add(IndicatorUtils.getMeanSquaredMovingAverage(dataList, 50, OHLCV.Index.Close.getIndex(), Color.GREEN));
 
 				// Chart title.
 				StringBuilder title = new StringBuilder();

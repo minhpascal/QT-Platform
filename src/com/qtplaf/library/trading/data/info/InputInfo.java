@@ -129,4 +129,26 @@ public class InputInfo {
 	public InputType getPossibleInputSource(int index) {
 		return possibleInputSources.get(index);
 	}
+
+	/**
+	 * Check whether this input info is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof InputInfo) {
+			InputInfo in = (InputInfo) obj;
+			int count = getPossibleInputSourcesCount();
+			if (count != in.getPossibleInputSourcesCount()) {
+				return false;
+			}
+			for (int i = 0; i < count; i++) {
+				if (!getPossibleInputSource(i).equals(in.getPossibleInputSource(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

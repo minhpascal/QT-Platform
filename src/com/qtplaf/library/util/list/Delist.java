@@ -16,6 +16,7 @@ package com.qtplaf.library.util.list;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
@@ -389,7 +390,7 @@ public interface Delist<E> {
 	 * @return a list iterator over the elements in this list (in proper sequence)
 	 */
 	ListIterator<E> listIterator();
-	
+
 	/**
 	 * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified position
 	 * in the list. The specified index indicates the first element that would be returned by an initial call to
@@ -403,4 +404,11 @@ public interface Delist<E> {
 	 * @throws IndexOutOfBoundsException if the index is out of range ({@code index < 0 || index > size()})
 	 */
 	ListIterator<E> listIterator(int index);
+
+	/**
+	 * Returns this Delist as a list.
+	 * 
+	 * @return The list.
+	 */
+	List<E> getList();
 }

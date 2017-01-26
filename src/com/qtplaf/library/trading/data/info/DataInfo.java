@@ -84,6 +84,47 @@ public abstract class DataInfo {
 	}
 
 	/**
+	 * Check whether this data info is equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof DataInfo) {
+			DataInfo info = (DataInfo) obj;
+			if (!getName().equals(info.getName())) {
+				return false;
+			}
+			if (!getDataType().equals(info.getDataType())) {
+				return false;
+			}
+			if (!getInstrument().equals(info.getInstrument())) {
+				return false;
+			}
+			if (!getPeriod().equals(info.getPeriod())) {
+				return false;
+			}
+			if (getPipScale() != info.getPipScale()) {
+				return false;
+			}
+			if (getTickScale() != info.getTickScale()) {
+				return false;
+			}
+			int count = getOutputCount();
+			if (count != info.getOutputCount()) {
+				return false;
+			}
+			for (int i = 0; i < count; i++) {
+				if (!getOutput(i).equals(info.getOutput(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the working session.
 	 * 
 	 * @return The working session.

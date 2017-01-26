@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.data.indicators.validators;
+package com.qtplaf.library.trading.data.info.validators;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Validator;

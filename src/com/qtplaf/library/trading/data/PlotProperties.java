@@ -66,15 +66,51 @@ public class PlotProperties {
 	 */
 	private double brightnessFactor = 0.95;
 	/**
-	 * The plot type tp apply to the data item pointed by this plot properties.
-	 */
-	private PlotType plotType = PlotType.Line;
-
-	/**
 	 * Default constructor.
 	 */
 	public PlotProperties() {
 		super();
+	}
+
+	/**
+	 * Check whether this plot properties are equal to the argument object.
+	 * 
+	 * @return A boolean.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PlotProperties) {
+			PlotProperties pp = (PlotProperties) obj;
+			if (!getColorBullishEven().equals(pp.getColorBullishEven())) {
+				return false;
+			}
+			if (!getColorBearishEven().equals(pp.getColorBearishEven())) {
+				return false;
+			}
+			if (!getColorBullishOdd().equals(pp.getColorBullishOdd())) {
+				return false;
+			}
+			if (!getColorBearishOdd().equals(pp.getColorBearishOdd())) {
+				return false;
+			}
+			if (!getColorBorder().equals(pp.getColorBorder())) {
+				return false;
+			}
+			if (isPaintBorder() != pp.isPaintBorder()) {
+				return false;
+			}
+			if (isColorRaised() != pp.isColorRaised()) {
+				return false;
+			}
+			if (!getStroke().equals(pp.getStroke())) {
+				return false;
+			}
+			if (getBrightnessFactor() != pp.getBrightnessFactor()) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -256,24 +292,6 @@ public class PlotProperties {
 			throw new IllegalArgumentException("Brightness factor must be > 0 and < 1");
 		}
 		this.brightnessFactor = brightnessFactor;
-	}
-
-	/**
-	 * Returns the plot type tp apply to the data item pointed by this plot properties.
-	 * 
-	 * @return The plot type tp apply to the data item pointed by this plot properties.
-	 */
-	public PlotType getPlotType() {
-		return plotType;
-	}
-
-	/**
-	 * Sets the plot type tp apply to the data item pointed by this plot properties.
-	 * 
-	 * @param plotType The plot type tp apply to the data item pointed by this plot properties.
-	 */
-	public void setPlotType(PlotType plotType) {
-		this.plotType = plotType;
 	}
 
 }

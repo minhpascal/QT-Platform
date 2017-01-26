@@ -13,7 +13,6 @@
  */
 package com.qtplaf.library.trading.data.indicators;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
@@ -29,11 +28,6 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
  */
 public class ExponentialMovingAverage extends MovingAverage {
 	
-	/**
-	 * The alpha factor.
-	 */
-	private double alpha;
-
 	/**
 	 * Constructor.
 	 * 
@@ -59,17 +53,6 @@ public class ExponentialMovingAverage extends MovingAverage {
 	}
 
 	/**
-	 * Called before starting calculations to give the indicator the opportunity to initialize any internal resources.
-	 * 
-	 * @param indicatorSources The list of indicator sources.
-	 */
-	public void start(List<IndicatorSource> indicatorSources) {
-		super.start(indicatorSources);
-		double period = getIndicatorInfo().getParameter(0).getValue().getInteger();
-		alpha = 2 / (period + 1);
-	}
-
-	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
 	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
@@ -81,47 +64,9 @@ public class ExponentialMovingAverage extends MovingAverage {
 	 * @return The result data.
 	 */
 	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
-
-		// If index < 0 do nothing.
 		if (index < 0) {
 			return null;
 		}
-
-		// The unique data list and the index of the data.
-		int period = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
-
-		// If index < period, calculate the mean from scratch.
-		if (index < period) {
-			return getAverage(period, index, indicatorSources);
-		}
-
-		// Improved performance calculation retrieving from the last calculated average the first value of the series
-		// (divided by the period) and adding the new value of the series (also divided bythe period).
-		int numIndexes = getNumIndexes();
-		double[] averages = new double[numIndexes];
-		Arrays.fill(averages, 0);
-		int averageIndex = 0;
-		for (IndicatorSource source : indicatorSources) {
-			DataList dataList = source.getDataList();
-			List<Integer> indexes = source.getIndexes();
-			for (Integer dataIndex : indexes) {
-				double lastAverage = 0;
-				Data lastData = indicatorData.get(index - 1);
-				if (lastData != null) {
-					lastAverage = lastData.getValue(averageIndex);
-				} else {
-					lastAverage = dataList.get(index).getValue(dataIndex);
-				}
-				double nextValue = dataList.get(index).getValue(dataIndex);
-				double average = nextValue * alpha + (1 - alpha) * lastAverage;
-				averages[averageIndex] += average;
-				averageIndex++;
-			}
-		}
-		
-		Data data = new Data();
-		data.setData(averages);
-		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
-		return data;
+		return getEMA(this, index, indicatorSources, indicatorData);
 	}
 }

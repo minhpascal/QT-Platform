@@ -568,4 +568,13 @@ public class ArrayDelist<E> implements Delist<E> {
 		return list.toString();
 	}
 
+	/**
+	 * Returns this Delist as a list.
+	 * 
+	 * @return The list.
+	 */
+	public List<E> getList() {
+		return list;
+	}
+
 }

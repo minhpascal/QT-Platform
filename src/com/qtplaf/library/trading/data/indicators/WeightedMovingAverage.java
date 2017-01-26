@@ -13,7 +13,6 @@
  */
 package com.qtplaf.library.trading.data.indicators;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
@@ -52,6 +51,7 @@ public class WeightedMovingAverage extends MovingAverage {
 		// Setup the input parameter and default value: period.
 		info.addParameter(getPeriodParameter());
 	}
+
 	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
@@ -64,46 +64,9 @@ public class WeightedMovingAverage extends MovingAverage {
 	 * @return The result data.
 	 */
 	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
-
-		// If index < 0 do nothing.
 		if (index < 0) {
 			return null;
 		}
-
-		// The unique data list and the index of the data.
-		int periodParameter = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
-
-		// Applied period.
-		int period = Math.min(periodParameter, index + 1);
-		int startIndex = index - period + 1;
-		int endIndex = index;
-
-		// Must be calculated for all the period each time.
-		int numIndexes = getNumIndexes();
-		double[] averages = new double[numIndexes];
-		double[] weights = new double[numIndexes];
-		Arrays.fill(averages, 0);
-		Arrays.fill(weights, 0);
-		double weight = 1;
-		for (int i = startIndex; i <= endIndex; i++) {
-			int averageIndex = 0;
-			for (IndicatorSource source : indicatorSources) {
-				DataList dataList = source.getDataList();
-				List<Integer> indexes = source.getIndexes();
-				for (Integer dataIndex : indexes) {
-					averages[averageIndex] += (dataList.get(i).getValue(dataIndex) * weight);
-					weights[averageIndex] += weight;
-					averageIndex++;
-				}
-			}
-			weight += 1;
-		}
-		for (int i = 0; i < averages.length; i++) {
-			averages[i] = averages[i] / weights[i];
-		}
-		Data data = new Data();
-		data.setData(averages);
-		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
-		return data;
+		return getWMA(this, index, indicatorSources, indicatorData);
 	}
 }

@@ -25,11 +25,11 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Indicator;
 import com.qtplaf.library.trading.data.IndicatorSource;
-import com.qtplaf.library.trading.data.indicators.validators.IntegerValidator;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.InputInfo;
 import com.qtplaf.library.trading.data.info.ParameterInfo;
+import com.qtplaf.library.trading.data.info.validators.IntegerValidator;
 
 /**
  * Base class for moving averages.
@@ -37,6 +37,160 @@ import com.qtplaf.library.trading.data.info.ParameterInfo;
  * @author Miquel Sas
  */
 public abstract class MovingAverage extends Indicator {
+
+	/**
+	 * Returns the EMA data calculated from the begining to the argument index, when index is less that period.
+	 * 
+	 * @param ma The MA indicator.
+	 * @param index The index to calculate.
+	 * @param indicatorSources The indicator sources.
+	 * @param indicatorData The already indicator calculated data.
+	 * @return
+	 */
+	public static Data getEMA(
+		MovingAverage ma, 
+		int index, 
+		List<IndicatorSource> indicatorSources, 
+		DataList indicatorData) {
+
+		int numIndexes = ma.getNumIndexes();
+		int period = ma.getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
+		double alpha = Double.valueOf(2) / Double.valueOf(period + 1);
+		
+		// If index < period, calculate the mean from scratch.
+		if (index < period) {
+			return getSMA(ma, index, indicatorSources, indicatorData);
+		}
+
+		// Improved performance calculation retrieving from the last calculated average the first value of the series
+		// (divided by the period) and adding the new value of the series (also divided bythe period).
+		double[] averages = new double[numIndexes];
+		Arrays.fill(averages, 0);
+		int averageIndex = 0;
+		for (IndicatorSource source : indicatorSources) {
+			DataList dataList = source.getDataList();
+			List<Integer> indexes = source.getIndexes();
+			for (Integer dataIndex : indexes) {
+				double lastAverage = 0;
+				Data lastData = indicatorData.get(index - 1);
+				if (lastData != null) {
+					lastAverage = lastData.getValue(averageIndex);
+				} else {
+					lastAverage = dataList.get(index).getValue(dataIndex);
+				}
+				double nextValue = dataList.get(index).getValue(dataIndex);
+				double average = nextValue * alpha + (1 - alpha) * lastAverage;
+				averages[averageIndex] += average;
+				averageIndex++;
+			}
+		}
+		
+		Data data = new Data();
+		data.setData(averages);
+		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
+		return data;
+	}
+
+	/**
+	 * Returns the SMA data calculated from the begining to the argument index, when index is less that period.
+	 * 
+	 * @param ma The MA indicator.
+	 * @param index The index to calculate.
+	 * @param indicatorSources The indicator sources.
+	 * @param indicatorData The already indicator calculated data.
+	 * @return
+	 */
+	public static Data getSMA(
+		MovingAverage ma, 
+		int index, 
+		List<IndicatorSource> indicatorSources, 
+		DataList indicatorData) {
+		
+		// Num indexes and period.
+		int numIndexes = ma.getNumIndexes();
+		int period = ma.getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
+		
+		double[] averages = new double[numIndexes];
+		Arrays.fill(averages, 0);
+		int start = 0;
+		if (index >= period) {
+			start = index - period + 1;
+		}
+		for (int i = start; i <= index; i++) {
+			int averageIndex = 0;
+			for (IndicatorSource source : indicatorSources) {
+				DataList dataList = source.getDataList();
+				List<Integer> indexes = source.getIndexes();
+				for (Integer dataIndex : indexes) {
+					averages[averageIndex] += dataList.get(i).getValue(dataIndex);
+					averageIndex++;
+				}
+			}
+		}
+		double divisor = index + 1;
+		if (index >= period) {
+			divisor = period;
+		}
+		for (int i = 0; i < averages.length; i++) {
+			averages[i] = averages[i] / divisor;
+		}
+		Data data = new Data();
+		data.setData(averages);
+		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
+		return data;
+	}
+
+	/**
+	 * Returns the WMA data calculated from the begining to the argument index, when index is less that period.
+	 * 
+	 * @param ma The MA indicator.
+	 * @param index The index to calculate.
+	 * @param indicatorSources The indicator sources.
+	 * @param indicatorData The already indicator calculated data.
+	 * @return
+	 */
+	public static Data getWMA(
+		MovingAverage ma, 
+		int index, 
+		List<IndicatorSource> indicatorSources, 
+		DataList indicatorData) {
+		
+		// Num indexes and period.
+		int numIndexes = ma.getNumIndexes();
+		int period = ma.getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
+
+		// Applied period.
+		period = Math.min(period, index + 1);
+		int startIndex = index - period + 1;
+		int endIndex = index;
+
+		// Must be calculated for all the period each time.
+		double[] averages = new double[numIndexes];
+		double[] weights = new double[numIndexes];
+		Arrays.fill(averages, 0);
+		Arrays.fill(weights, 0);
+		double weight = 1;
+		for (int i = startIndex; i <= endIndex; i++) {
+			int averageIndex = 0;
+			for (IndicatorSource source : indicatorSources) {
+				DataList dataList = source.getDataList();
+				List<Integer> indexes = source.getIndexes();
+				for (Integer dataIndex : indexes) {
+					averages[averageIndex] += (dataList.get(i).getValue(dataIndex) * weight);
+					weights[averageIndex] += weight;
+					averageIndex++;
+				}
+			}
+			weight += 1;
+		}
+		for (int i = 0; i < averages.length; i++) {
+			averages[i] = averages[i] / weights[i];
+		}
+		Data data = new Data();
+		data.setData(averages);
+		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
+		return data;
+	}
 
 	/**
 	 * The name of the PERIOD parameter.
@@ -123,10 +277,11 @@ public abstract class MovingAverage extends Indicator {
 			b.append("(" + period + ")");
 			info.addOutput(b.toString(), b.toString(), i);
 		}
-		
+
 		// Set look backward to the indicator info.
 		info.setLookBackward(period);
 	}
+
 	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
@@ -139,46 +294,6 @@ public abstract class MovingAverage extends Indicator {
 	 * @return The result data.
 	 */
 	public abstract Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData);
-
-	/**
-	 * Returns the average data calculated from the begining to the argument index, when index is less that period.
-	 * 
-	 * @param period The period of the average.
-	 * @param index The index.
-	 * @param indicatorSources The list of indicator sources.
-	 * @return The average data element.
-	 */
-	protected Data getAverage(int period, int index, List<IndicatorSource> indicatorSources) {
-		int numIndexes = getNumIndexes();
-		double[] averages = new double[numIndexes];
-		Arrays.fill(averages, 0);
-		int start = 0;
-		if (index >= period) {
-			start = index - period + 1;
-		}
-		for (int i = start; i <= index; i++) {
-			int averageIndex = 0;
-			for (IndicatorSource source : indicatorSources) {
-				DataList dataList = source.getDataList();
-				List<Integer> indexes = source.getIndexes();
-				for (Integer dataIndex : indexes) {
-					averages[averageIndex] += dataList.get(i).getValue(dataIndex);
-					averageIndex++;
-				}
-			}
-		}
-		double divisor = index + 1;
-		if (index >= period) {
-			divisor = period;
-		}
-		for (int i = 0; i < averages.length; i++) {
-			averages[i] = averages[i] / divisor;
-		}
-		Data data = new Data();
-		data.setData(averages);
-		data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
-		return data;
-	}
 
 	/**
 	 * Returns the source data.
