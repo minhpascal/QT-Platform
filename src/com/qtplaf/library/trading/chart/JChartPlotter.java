@@ -13,7 +13,6 @@
  */
 package com.qtplaf.library.trading.chart;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -23,7 +22,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -38,7 +36,6 @@ import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
-import com.qtplaf.library.trading.data.PlotProperties;
 
 /**
  * The chart panel that effectively plots charts. The types of charts are <i>line</i>, <i>bar</i>, <i>candlestick</i>
@@ -222,21 +219,23 @@ public class JChartPlotter extends JPanel {
 		if (endIndexCheck < endIndex - margin) {
 			endIndexClip = endIndexCheck + margin;
 		}
-
-		// Plot first data list that do not need to be plotted from scratch.
-		List<DataList> fromScratch = new ArrayList<>();
-		List<DataList> notFromScratch = new ArrayList<>();
-		for (int i = 0; i < plotData.size(); i++) {
-			DataList dataList = plotData.get(i);
-			if (isPlotFromScratch(dataList)) {
-				fromScratch.add(dataList);
-			} else {
-				notFromScratch.add(dataList);
+		
+		// Plot first non indicator data lists.
+		List<DataList> nonIndicator = plotData.getDataListsNonIndicator();
+		List<DataList> fromClip = plotData.getDataListsIndicatorToPlotClip();
+		List<DataList> fromScratch = plotData.getDataListsIndicatorToPlotFromScratch();
+		
+		// Do plot.
+		if (!nonIndicator.isEmpty()) {
+			for (int index = startIndexClip; index < endIndexClip; index++) {
+				for (DataList dataList : nonIndicator) {
+					plotChartData(g2, dataList, index);
+				}
 			}
 		}
-		if (!notFromScratch.isEmpty()) {
+		if (!fromClip.isEmpty()) {
 			for (int index = startIndexClip; index < endIndexClip; index++) {
-				for (DataList dataList : notFromScratch) {
+				for (DataList dataList : fromClip) {
 					plotChartData(g2, dataList, index);
 				}
 			}
@@ -248,18 +247,6 @@ public class JChartPlotter extends JPanel {
 				}
 			}
 		}
-		// for (int i = 0; i < plotData.size(); i++) {
-		// DataList dataList = plotData.get(i);
-		// if (isPlotFromScratch(dataList)) {
-		// for (int index = startIndex; index < endIndex; index++) {
-		// plotChartData(g2, dataList, index);
-		// }
-		// } else {
-		// for (int index = startIndexClip; index < endIndexClip; index++) {
-		// plotChartData(g2, dataList, index);
-		// }
-		// }
-		// }
 
 		// Terminate plots.
 		for (int i = 0; i < plotData.size(); i++) {
@@ -291,24 +278,6 @@ public class JChartPlotter extends JPanel {
 
 		// Do plot.
 		dataList.getDataPlotter().plotDataIndex(g2, dataList, index);
-	}
-
-	/**
-	 * Check if a data list has to be plotted from scratch, mainly because it plots lines with dashes.
-	 * 
-	 * @param dataList The data list.
-	 * @return A boolean that indicates if the data list has to be plotte from scratch.
-	 */
-	private boolean isPlotFromScratch(DataList dataList) {
-		int count = dataList.getPlotPropertiesCount();
-		for (int i = 0; i < count; i++) {
-			PlotProperties plotProperties = dataList.getPlotProperties(i);
-			BasicStroke stroke = (BasicStroke) plotProperties.getStroke();
-			if (stroke.getDashArray() != null) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

@@ -26,7 +26,7 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
  * 
  * @author Miquel Sas
  */
-public class WeightedMovingAverage extends MovingAverage {
+public class WeightedMovingAverage extends PeriodIndicator {
 
 	/**
 	 * Constructor.

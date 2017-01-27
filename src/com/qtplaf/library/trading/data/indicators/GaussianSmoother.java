@@ -31,7 +31,7 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
  * 
  * @author Miquel Sas
  */
-public class GaussianSmoother extends MovingAverage {
+public class GaussianSmoother extends PeriodIndicator {
 
 	/**
 	 * Constructor.

@@ -26,7 +26,7 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
  * 
  * @author Miquel Sas
  */
-public class SimpleMovingAverage extends MovingAverage {
+public class SimpleMovingAverage extends PeriodIndicator {
 
 	/**
 	 * Constructor.

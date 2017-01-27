@@ -26,7 +26,7 @@ import com.qtplaf.library.trading.data.PlotType;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.GaussianSmoother;
-import com.qtplaf.library.trading.data.indicators.MovingAverage;
+import com.qtplaf.library.trading.data.indicators.PeriodIndicator;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
 import com.qtplaf.library.trading.data.readers.BarFileReader;
@@ -283,7 +283,7 @@ public class TestFrameChart {
 		IndicatorSource source = new IndicatorSource(dataList, indexes);
 
 		SimpleMovingAverage sma = new SimpleMovingAverage(new Session(Locale.UK));
-		sma.getIndicatorInfo().getParameter(MovingAverage.ParamPeriodName).getValue().setInteger(period);
+		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodName).getValue().setInteger(period);
 		DataList avgList = Indicator.calculate(new Session(Locale.UK), sma, Arrays.asList(source));
 
 		if (color != null) {
@@ -319,7 +319,7 @@ public class TestFrameChart {
 
 		Session session = new Session(Locale.UK);
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
-		sma.getIndicatorInfo().getParameter(MovingAverage.ParamPeriodName).getValue().setInteger(period);
+		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodName).getValue().setInteger(period);
 		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
 
 		if (color != null) {
@@ -354,7 +354,7 @@ public class TestFrameChart {
 		IndicatorSource source = new IndicatorSource(dataList, indexes);
 
 		WeightedMovingAverage sma = new WeightedMovingAverage(new Session(Locale.UK));
-		sma.getIndicatorInfo().getParameter(MovingAverage.ParamPeriodName).getValue().setInteger(period);
+		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodName).getValue().setInteger(period);
 		DataList avgList = Indicator.calculate(new Session(Locale.UK), sma, Arrays.asList(source));
 
 		if (color != null) {
@@ -387,7 +387,7 @@ public class TestFrameChart {
 		IndicatorSource source = new IndicatorSource(dataList, indexes);
 
 		GaussianSmoother sma = new GaussianSmoother(new Session(Locale.UK));
-		sma.getIndicatorInfo().getParameter(MovingAverage.ParamPeriodName).getValue().setInteger(period);
+		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodName).getValue().setInteger(period);
 		DataList avgList = Indicator.calculate(new Session(Locale.UK), sma, Arrays.asList(source));
 
 		if (color != null) {
@@ -422,7 +422,7 @@ public class TestFrameChart {
 		IndicatorSource source = new IndicatorSource(dataList, indexes);
 
 		ExponentialMovingAverage ema = new ExponentialMovingAverage(new Session(Locale.UK));
-		ema.getIndicatorInfo().getParameter(MovingAverage.ParamPeriodName).getValue().setInteger(period);
+		ema.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodName).getValue().setInteger(period);
 		DataList avgList = Indicator.calculate(new Session(Locale.UK), ema, Arrays.asList(source));
 
 		if (color != null) {

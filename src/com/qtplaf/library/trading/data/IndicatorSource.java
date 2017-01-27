@@ -125,4 +125,14 @@ public class IndicatorSource {
 		}
 	}
 
+	/**
+	 * Returns a string representation of this source.
+	 * 
+	 * @return A readable string representation.
+	 */
+	@Override
+	public String toString() {
+		return getDataList().toString();
+	}
+
 }

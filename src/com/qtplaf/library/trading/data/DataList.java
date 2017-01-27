@@ -13,6 +13,7 @@
  */
 package com.qtplaf.library.trading.data;
 
+import java.awt.BasicStroke;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -238,7 +239,7 @@ public abstract class DataList {
 			plotPropertiesList.add(new PlotProperties());
 			break;
 		case Indicator:
-			int count = get(0).size();
+			int count = getDataInfo().getOutputCount();
 			for (int i = 0; i < count; i++) {
 				plotPropertiesList.add(new PlotProperties());
 			}
@@ -319,5 +320,33 @@ public abstract class DataList {
 	 */
 	public void setDataPlotter(DataPlotter dataPlotter) {
 		this.dataPlotter = dataPlotter;
+	}
+
+	/**
+	 * Check if a data list has to be plotted from scratch, mainly because it plots lines with dashes.
+	 * 
+	 * @param dataList The data list.
+	 * @return A boolean that indicates if the data list has to be plotte from scratch.
+	 */
+	public boolean isPlotFromScratch() {
+		int count = getPlotPropertiesCount();
+		for (int i = 0; i < count; i++) {
+			PlotProperties plotProperties = getPlotProperties(i);
+			BasicStroke stroke = (BasicStroke) plotProperties.getStroke();
+			if (stroke.getDashArray() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a string representation.
+	 * 
+	 * @return A readable string representation.
+	 */
+	@Override
+	public String toString() {
+		return getDataInfo().toString();
 	}
 }

@@ -149,6 +149,10 @@ public class IndicatorDataList extends DataList {
 	 */
 	@Override
 	public Data get(int index) {
+		Data data = indicatorData.get(index);
+		if (data != null) {
+			return data;
+		}
 		return calculate(index);
 	}
 

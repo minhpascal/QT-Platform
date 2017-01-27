@@ -32,11 +32,11 @@ import com.qtplaf.library.trading.data.info.ParameterInfo;
 import com.qtplaf.library.trading.data.info.validators.IntegerValidator;
 
 /**
- * Base class for moving averages.
+ * Base class for indicators that uses a period parameters
  * 
  * @author Miquel Sas
  */
-public abstract class MovingAverage extends Indicator {
+public abstract class PeriodIndicator extends Indicator {
 
 	/**
 	 * Returns the EMA data calculated from the begining to the argument index, when index is less that period.
@@ -48,7 +48,7 @@ public abstract class MovingAverage extends Indicator {
 	 * @return
 	 */
 	public static Data getEMA(
-		MovingAverage ma, 
+		PeriodIndicator ma, 
 		int index, 
 		List<IndicatorSource> indicatorSources, 
 		DataList indicatorData) {
@@ -101,7 +101,7 @@ public abstract class MovingAverage extends Indicator {
 	 * @return
 	 */
 	public static Data getSMA(
-		MovingAverage ma, 
+		PeriodIndicator ma, 
 		int index, 
 		List<IndicatorSource> indicatorSources, 
 		DataList indicatorData) {
@@ -150,7 +150,7 @@ public abstract class MovingAverage extends Indicator {
 	 * @return
 	 */
 	public static Data getWMA(
-		MovingAverage ma, 
+		PeriodIndicator ma, 
 		int index, 
 		List<IndicatorSource> indicatorSources, 
 		DataList indicatorData) {
@@ -206,7 +206,7 @@ public abstract class MovingAverage extends Indicator {
 	 * 
 	 * @param session The working session.
 	 */
-	public MovingAverage(Session session) {
+	public PeriodIndicator(Session session) {
 		super(session);
 	}
 

@@ -36,6 +36,8 @@ public class PriceInfo extends DataInfo {
 		super(session);
 		setDataType(DataType.Price);
 		setInstrument(instrument);
+		setName(instrument.getId());
+		setDescription(instrument.getDescription());
 		setPeriod(period);
 		addOutput("Open", "O", 0, "Open OHLCV value");
 		addOutput("High", "H", 1, "High OHLCV value");

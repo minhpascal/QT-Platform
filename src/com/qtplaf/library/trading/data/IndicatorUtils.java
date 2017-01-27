@@ -16,10 +16,11 @@ package com.qtplaf.library.trading.data;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
-import com.qtplaf.library.trading.data.indicators.MeanSquaredMovingAverage;
+import com.qtplaf.library.trading.data.indicators.MeanSquaredTranslation;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
 
@@ -74,7 +75,7 @@ public class IndicatorUtils {
 		Session session = dataList.getSession();
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
 		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
-		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
+		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
 		avgList.getPlotProperties(0).setColorBullishEven(color);
 		avgList.getPlotProperties(0).setColorBearishEven(color);
@@ -119,21 +120,25 @@ public class IndicatorUtils {
 	 * @param color Plot color.
 	 * @return The indicator data list.
 	 */
-	public static IndicatorDataList getMeanSquaredMovingAverage(
-		DataList dataList,
+	public static IndicatorDataList getMeanSquaredTranslation(
+		DataList outputList,
+		int outputIndex,
+		DataList inputList,
+		int inputIndex,
 		int period,
-		int index,
 		Color color) {
 
-		Session session = dataList.getSession();
-		MeanSquaredMovingAverage sma = new MeanSquaredMovingAverage(session);
-		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
-		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
-		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
-		avgList.getPlotProperties(0).setColorBullishEven(color);
-		avgList.getPlotProperties(0).setColorBearishEven(color);
-		avgList.getPlotProperties(0).setColorBullishOdd(color);
-		avgList.getPlotProperties(0).setColorBearishOdd(color);
-		return avgList;
+		Session session = outputList.getSession();
+		MeanSquaredTranslation ms = new MeanSquaredTranslation(session);
+		ms.getIndicatorInfo().getParameter(MeanSquaredTranslation.ParamPeriodIndex).getValue().setInteger(period);
+		IndicatorSource outputSource = new IndicatorSource(outputList, outputIndex);
+		IndicatorSource inputSource = new IndicatorSource(inputList, inputIndex);
+		List<IndicatorSource> sources = Arrays.asList(outputSource, inputSource);
+		IndicatorDataList msList = new IndicatorDataList(session, ms, ms.getIndicatorInfo(), sources);
+		msList.getPlotProperties(0).setColorBullishEven(color);
+		msList.getPlotProperties(0).setColorBearishEven(color);
+		msList.getPlotProperties(0).setColorBullishOdd(color);
+		msList.getPlotProperties(0).setColorBearishOdd(color);
+		return msList;
 	}
 }

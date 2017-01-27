@@ -169,4 +169,14 @@ public abstract class Indicator {
 		return false;
 	}
 
+	/**
+	 * Returns a string representation.
+	 * 
+	 * @return A string representation.
+	 */
+	@Override
+	public String toString() {
+		return getIndicatorInfo().toString();
+	}
+
 }

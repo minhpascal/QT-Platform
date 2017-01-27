@@ -25,17 +25,28 @@ import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 
 /**
- * A moving average, SMA, EMA or WMA that minimizes the euclidean distance between the average and the source values.
- * Generates two output values for each input value.
+ * Minimizes the Euclidean distance between the two indicator sources:
+ * <ul>
+ * <li>First data source: output translate to input to minimize the mean squared, normally an average.</li>
+ * <li>Second data source: input or reference, the price or another average..</li>
+ * </ul>
+ * Has one parameter that is the period to retrieve backward data.
  * 
  * @author Miquel Sas
  */
-public class MeanSquaredMovingAverage extends MovingAverage {
+public class MeanSquaredTranslation extends PeriodIndicator {
+	
+	/** Output source index. */
+	public static final int Output = 0;
+	/** Input source index. */
+	public static final int Input = 1;
+	/** Index of result. */
+	public static final int Index = 0;
 
 	/**
 	 * @param session
 	 */
-	public MeanSquaredMovingAverage(Session session) {
+	public MeanSquaredTranslation(Session session) {
 		super(session);
 
 		// Indicator info to be configured.
@@ -59,7 +70,29 @@ public class MeanSquaredMovingAverage extends MovingAverage {
 	 * 
 	 * @param indicatorSources The list of indicator sources.
 	 */
+	private void validate(List<IndicatorSource> indicatorSources) {
+		// Two and only two data sources.
+		if (indicatorSources.size() != 2) {
+			throw new IllegalArgumentException("Two and only two data sources are required.");
+		}
+		// One index per data source.
+		for (int i = 0; i < indicatorSources.size(); i++) {
+			IndicatorSource source = indicatorSources.get(i);
+			if (source.getIndexes().size() != 1) {
+				throw new IllegalArgumentException("Source " + i + " must have only one index.");
+			}
+		}
+	}
+
+	/**
+	 * Called before starting calculations to give the indicator the opportunity to initialize any internal resources.
+	 * 
+	 * @param indicatorSources The list of indicator sources.
+	 */
 	public void start(List<IndicatorSource> indicatorSources) {
+		
+		// Validate sources.
+		validate(indicatorSources);
 
 		// Calculate the number of indexes for later use.
 		calculateNumIndexes(indicatorSources);
@@ -67,38 +100,25 @@ public class MeanSquaredMovingAverage extends MovingAverage {
 		// Fill aditional info
 		IndicatorInfo info = getIndicatorInfo();
 
-		// Instrument, period and scale from the first source.
-		DataInfo input = indicatorSources.get(0).getDataList().getDataInfo();
-		info.setInstrument(input.getInstrument());
-		info.setPeriod(input.getPeriod());
-		info.setPipScale(input.getPipScale());
-		info.setTickScale(input.getTickScale());
+		// Instrument, period and scale from the output source.
+		DataInfo dataInfoInput = indicatorSources.get(Output).getDataList().getDataInfo();
+		info.setInstrument(dataInfoInput.getInstrument());
+		info.setPeriod(dataInfoInput.getPeriod());
+		info.setPipScale(dataInfoInput.getPipScale());
+		info.setTickScale(dataInfoInput.getTickScale());
 
-		// Output infos
-		int numIndexes = getNumIndexes();
+		// One output info refered to output and input, with index 0.
 		int period = info.getParameter(ParamPeriodName).getValue().getInteger();
-
-		String indicatorName = "WMA";
-		for (int i = 0; i < numIndexes; i++) {
-			StringBuilder b = new StringBuilder();
-			b.append(indicatorName);
-			if (numIndexes > 1) {
-				b.append("-" + i);
-			}
-			b.append("(" + period + ")");
-			info.addOutput(b.toString(), b.toString(), i);
-		}
-
-		indicatorName = "MSWMA";
-		for (int i = 0; i < numIndexes; i++) {
-			StringBuilder b = new StringBuilder();
-			b.append(indicatorName);
-			if (numIndexes > 1) {
-				b.append("-" + i);
-			}
-			b.append("(" + period + ")");
-			info.addOutput(b.toString(), b.toString(), i);
-		}
+		IndicatorSource output = indicatorSources.get(Output);
+		IndicatorSource input = indicatorSources.get(Input);
+		StringBuilder name = new StringBuilder();
+		name.append(output.getDataList().getDataInfo().getName());
+		name.append("-");
+		name.append(input.getDataList().getDataInfo().getName());
+		name.append(" (");
+		name.append(period);
+		name.append(")");
+		info.addOutput(name.toString(), name.toString(), Index);
 
 		// Set look backward to the indicator info.
 		info.setLookBackward(period);
@@ -123,46 +143,35 @@ public class MeanSquaredMovingAverage extends MovingAverage {
 
 		int period = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
 		period = Math.min(period, index + 1);
-		double[] averages = new double[2];
-
-		// Calculate the average and assing it to the averages.
-		Data data = getWMA(this, index, indicatorSources, indicatorData);
-		averages[0] = data.getValue(0);
-
-		IndicatorSource source = indicatorSources.get(0);
-		int sourceIndex = source.getIndexes().get(0);
-		DataList sourceData = source.getDataList();
-
-		double[] sourceValues = new double[period];
-		int resultIndex = 0;
+		
+		// Output and input.
+		IndicatorSource outputSource = indicatorSources.get(Output);
+		IndicatorSource inputSource = indicatorSources.get(Input);
+		int outputIndex = outputSource.getIndexes().get(0);
+		int inputIndex = inputSource.getIndexes().get(0);
+		DataList outputData = outputSource.getDataList();
+		DataList inputData = inputSource.getDataList();
+		double[] output = new double[period];
+		double[] input = new double[period];
+		int arrayIndex = 0;
 		int startIndex = index - period + 1;
 		for (int i = startIndex; i <= index; i++) {
-			sourceValues[resultIndex] = sourceData.get(i).getValue(sourceIndex);
-			resultIndex++;
-		}
-
-		double[] averageValues = new double[period];
-		int averageIndex = 0;
-		for (int i = startIndex; i < index; i++) {
-			averageValues[averageIndex] = indicatorData.get(i).getValue(0);
-			averageIndex++;
-		}
-		averageValues[period - 1] = averages[0];
-		
-		double[] output = averageValues;
-		double[] input = sourceValues;
+			output[arrayIndex] = outputData.get(i).getValue(outputIndex);
+			input[arrayIndex] = inputData.get(i).getValue(inputIndex);
+			arrayIndex++;
+		}		
 		double[] meanSquaredValues = Calculator.meanSquaredMinimum(output, input, 0.01, 0.00000000001, 1000000);
-
-		averages[1] = meanSquaredValues[period - 1];
-
-		int meanSquaredIndex = 0;
+		
+		// Set indicator data up to index - 1.
+		arrayIndex = 0;
 		for (int i = startIndex; i < index; i++) {
-			indicatorData.get(i).setValue(1, meanSquaredValues[meanSquaredIndex]);
-			meanSquaredIndex++;
+			indicatorData.get(i).setValue(Index, meanSquaredValues[arrayIndex]);
+			arrayIndex++;
 		}
 
+		// The result data.
 		Data result = new Data();
-		result.setValues(averages);
+		result.setValue(Index, meanSquaredValues[arrayIndex]);
 		return result;
 	}
 
