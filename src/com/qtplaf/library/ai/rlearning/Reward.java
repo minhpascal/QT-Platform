@@ -12,18 +12,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package test.com.msasc.library.math;
+package com.qtplaf.library.ai.rlearning;
 
-import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
-
-public class TestNormalize {
+/**
+ * The reward function to apply to a transition.
+ *
+ * @author Miquel Sas
+ */
+public abstract class Reward {
 
 	/**
-	 * @param args
+	 * Constructor.
 	 */
-	public static void main(String[] args) {
-		NormalizedStateValueDescriptor nv = new NormalizedStateValueDescriptor(+1.0, -1.0, 1);
-		System.out.println(nv.size());
-		System.out.println(nv.getValue(0.35));
+	public Reward() {
+		super();
 	}
+
+	/**
+	 * Returns the reward of a transition.
+	 * 
+	 * @param transition The transition to compute.
+	 * @return The reward.
+	 */
+	public abstract double get(Transition transition);
 }

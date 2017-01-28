@@ -14,9 +14,10 @@
 package com.qtplaf.library.ai.rlearning;
 
 import com.qtplaf.library.math.Calculator;
+import com.qtplaf.library.util.NumberUtils;
 
 /**
- * A normalized state value descriptor.
+ * A normalized state value descriptor. Values are normalized only with the ranges [1, 0], [0, -1] or [1, -1].
  * 
  * @author Miquel Sas
  */
@@ -32,6 +33,7 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 	private double minimum;
 
 	/**
+	 * Constructor assigning maximum and minimum.
 	 * 
 	 * @param maximum The maximum.
 	 * @param minimum The minimum.
@@ -40,6 +42,20 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 		super();
 		this.maximum = maximum;
 		this.minimum = minimum;
+	}
+
+	/**
+	 * Constructor assigning maximum and minimum.
+	 * 
+	 * @param maximum The maximum.
+	 * @param minimum The minimum.
+	 * @param scale The scale.
+	 */
+	public NormalizedStateValueDescriptor(double maximum, double minimum, int scale) {
+		super();
+		this.maximum = maximum;
+		this.minimum = minimum;
+		setScale(scale);
 	}
 
 	/**
@@ -61,6 +77,25 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 	}
 
 	/**
+	 * Returns the number of value of this normalized value descriptor.
+	 * 
+	 * @return The number of values.
+	 */
+	public int size() {
+		int base = getScale() * 10;
+		if (getMaximum() > 0 && getMinimum() >= 0) {
+			return base + 1;
+		}
+		if (getMaximum() <= 0 && getMinimum() < 0) {
+			return base + 1;
+		}
+		if (getMaximum() > 0 && getMinimum() < 0) {
+			return (base * 2) + 1;
+		}
+		return 0;
+	}
+
+	/**
 	 * Returns the state value given a data value, conveniently normalised..
 	 * 
 	 * @param value The data value.
@@ -68,7 +103,16 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 	 */
 	@Override
 	public double getValue(double value) {
-		return Calculator.normalize(value, maximum, minimum);
+		return NumberUtils.round(Calculator.normalize(value, maximum, minimum), getScale());
 	}
 
+	/**
+	 * Check that the value descriptor has the necessary properties set.
+	 */
+	public void validate() {
+		if (maximum == minimum) {
+			throw new IllegalStateException();
+		}
+		super.validate();
+	}
 }

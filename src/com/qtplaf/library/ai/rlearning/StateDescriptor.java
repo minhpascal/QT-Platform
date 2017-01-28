@@ -41,6 +41,7 @@ public class StateDescriptor {
 	 * @param descriptor The value descriptor.
 	 */
 	public void addValueDescriptor(StateValueDescriptor descriptor) {
+		descriptor.validate();
 		descriptors.add(descriptor);
 	}
 

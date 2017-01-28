@@ -14,7 +14,7 @@
 package com.qtplaf.library.ai.rlearning;
 
 /**
- * Defines a values in a reinforcement learning strategy.
+ * Defines values in a reinforcement learning strategy.
  * 
  * @author Miquel Sas
  */

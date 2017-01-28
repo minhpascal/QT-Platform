@@ -100,7 +100,7 @@ public class NumberUtils extends org.apache.commons.lang3.math.NumberUtils {
 		double v = value * p;
 		long   l = java.lang.Math.round(v);
 		double r = l / p;
-		// Ensure exect decimals because sometimes floating point operations yield numbers like 0.49999999999 for 0.5
+		// Ensure exact decimals because sometimes floating point operations yield numbers like 0.49999999999 for 0.5
 		return new BigDecimal(r).setScale(decimals,BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 

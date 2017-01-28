@@ -21,13 +21,17 @@ package com.qtplaf.library.ai.rlearning;
 public abstract class StateValueDescriptor {
 
 	/**
-	 * The scale.
+	 * A short id of the value.
 	 */
-	private int scale;
+	private String id;
 	/**
 	 * An optional description.
 	 */
 	private String description;
+	/**
+	 * The scale.
+	 */
+	private int scale;
 
 	/**
 	 * Default constructor.
@@ -37,21 +41,21 @@ public abstract class StateValueDescriptor {
 	}
 
 	/**
-	 * Returns the scale.
+	 * Returns the id.
 	 * 
-	 * @return The scale.
+	 * @return The id.
 	 */
-	public int getScale() {
-		return scale;
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * Sets the scale.
+	 * Sets the id.
 	 * 
-	 * @param scale The scale.
+	 * @param id The id.
 	 */
-	public void setScale(int scale) {
-		this.scale = scale;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -73,10 +77,43 @@ public abstract class StateValueDescriptor {
 	}
 
 	/**
+	 * Returns the scale.
+	 * 
+	 * @return The scale.
+	 */
+	public int getScale() {
+		return scale;
+	}
+
+	/**
+	 * Sets the scale.
+	 * 
+	 * @param scale The scale.
+	 */
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	/**
 	 * Returns the state value given a data value.
 	 * 
 	 * @param value The data value.
 	 * @return The state value.
 	 */
 	public abstract double getValue(double value);
+	
+	/**
+	 * Check that the value descriptor has the necessary properties set.
+	 */
+	public void validate() {
+		if (getId() == null) {
+			throw new IllegalStateException();
+		}
+		if (getDescription() == null) {
+			throw new IllegalStateException();
+		}
+		if (getScale() < 0) {
+			throw new IllegalStateException();
+		}
+	}
 }
