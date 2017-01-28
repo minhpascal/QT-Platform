@@ -15,14 +15,15 @@
 package com.qtplaf.library.trading.data;
 
 import java.awt.Color;
-import java.util.Arrays;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.MeanSquaredTranslation;
+import com.qtplaf.library.trading.data.indicators.PeriodIndicator;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * Indicator utilities.
@@ -47,9 +48,10 @@ public class IndicatorUtils {
 
 		Session session = dataList.getSession();
 		ExponentialMovingAverage ema = new ExponentialMovingAverage(session);
-		ema.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
-		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
-		IndicatorDataList avgList = new IndicatorDataList(session, ema, ema.getIndicatorInfo(), Arrays.asList(source));
+		ema.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, index);
+		IndicatorDataList avgList =
+			new IndicatorDataList(session, ema, ema.getIndicatorInfo(), ListUtils.asList(source));
 		avgList.getPlotProperties(0).setColorBullishEven(color);
 		avgList.getPlotProperties(0).setColorBearishEven(color);
 		avgList.getPlotProperties(0).setColorBullishOdd(color);
@@ -74,9 +76,10 @@ public class IndicatorUtils {
 
 		Session session = dataList.getSession();
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
-		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
+		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
-		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
+		IndicatorDataList avgList =
+			new IndicatorDataList(session, sma, sma.getIndicatorInfo(), ListUtils.asList(source));
 		avgList.getPlotProperties(0).setColorBullishEven(color);
 		avgList.getPlotProperties(0).setColorBearishEven(color);
 		avgList.getPlotProperties(0).setColorBullishOdd(color);
@@ -101,9 +104,10 @@ public class IndicatorUtils {
 
 		Session session = dataList.getSession();
 		WeightedMovingAverage sma = new WeightedMovingAverage(session);
-		sma.getIndicatorInfo().getParameter(SimpleMovingAverage.ParamPeriodIndex).getValue().setInteger(period);
-		IndicatorSource source = new IndicatorSource(dataList, OHLCV.Index.Close.getIndex());
-		IndicatorDataList avgList = new IndicatorDataList(session, sma, sma.getIndicatorInfo(), Arrays.asList(source));
+		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, index);
+		IndicatorDataList avgList =
+			new IndicatorDataList(session, sma, sma.getIndicatorInfo(), ListUtils.asList(source));
 		avgList.getPlotProperties(0).setColorBullishEven(color);
 		avgList.getPlotProperties(0).setColorBearishEven(color);
 		avgList.getPlotProperties(0).setColorBullishOdd(color);
@@ -112,12 +116,14 @@ public class IndicatorUtils {
 	}
 
 	/**
-	 * Returns a simple WMA configurated indicator data list.
+	 * Returns a mean squared translation.
 	 * 
-	 * @param dataList The source data list.
-	 * @param period The period of the SMA.
-	 * @param index The index in the data of the source to calculate the average.
-	 * @param color Plot color.
+	 * @param outputList Output data list.
+	 * @param outputIndex Output index in the data.
+	 * @param inputList Input data list.
+	 * @param inputIndex Input index in the data.
+	 * @param period Period.
+	 * @param color Color.
 	 * @return The indicator data list.
 	 */
 	public static IndicatorDataList getMeanSquaredTranslation(
@@ -130,10 +136,10 @@ public class IndicatorUtils {
 
 		Session session = outputList.getSession();
 		MeanSquaredTranslation ms = new MeanSquaredTranslation(session);
-		ms.getIndicatorInfo().getParameter(MeanSquaredTranslation.ParamPeriodIndex).getValue().setInteger(period);
+		ms.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource outputSource = new IndicatorSource(outputList, outputIndex);
 		IndicatorSource inputSource = new IndicatorSource(inputList, inputIndex);
-		List<IndicatorSource> sources = Arrays.asList(outputSource, inputSource);
+		List<IndicatorSource> sources = ListUtils.asList(outputSource, inputSource);
 		IndicatorDataList msList = new IndicatorDataList(session, ms, ms.getIndicatorInfo(), sources);
 		msList.getPlotProperties(0).setColorBullishEven(color);
 		msList.getPlotProperties(0).setColorBearishEven(color);

@@ -142,6 +142,9 @@ public class OutputInfo {
 	 * @return The name.
 	 */
 	public String getName() {
+		if (name == null && shortName != null) {
+			return shortName;
+		}
 		return name;
 	}
 
@@ -160,6 +163,9 @@ public class OutputInfo {
 	 * @return The short name.
 	 */
 	public String getShortName() {
+		if (shortName == null && name != null) {
+			return name;
+		}
 		return shortName;
 	}
 
@@ -224,6 +230,24 @@ public class OutputInfo {
 	 */
 	public void setPlot(boolean plot) {
 		this.plot = plot;
+	}
+
+	/**
+	 * Returns a string representation of this output info.
+	 * 
+	 * @return A string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append("[");
+		b.append(getName());
+		b.append(", ");
+		b.append(getIndex());
+		b.append(", ");
+		b.append(isPlot() ? "plotted" : "hidden");
+		b.append("]");
+		return b.toString();
 	}
 
 }

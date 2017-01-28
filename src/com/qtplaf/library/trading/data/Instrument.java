@@ -345,15 +345,15 @@ public class Instrument {
 	 */
 	public String toString() {
 		StringBuilder b = new StringBuilder();
+		b.append("[");
 		b.append("id='" + getId() + "'");
 		b.append(", ");
-		b.append("description='" + getDescription() + "'");
+		b.append("pv=" + getPipValueAsBigDecimal().toPlainString());
 		b.append(", ");
-		b.append("pip-value=" + getPipValueAsBigDecimal().toPlainString());
+		b.append("tv=" + getTickValueAsBigDecimal().toPlainString());
 		b.append(", ");
-		b.append("minimum-value=" + getTickValueAsBigDecimal().toPlainString());
-		b.append(", ");
-		b.append("currencies: " + getPrimaryCurrency() + "/" + getSecondaryCurrency());
+		b.append(getPrimaryCurrency() + "/" + getSecondaryCurrency());
+		b.append("]");
 		return b.toString();
 	}
 

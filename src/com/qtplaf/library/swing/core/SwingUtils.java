@@ -30,7 +30,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +53,7 @@ import com.qtplaf.library.swing.EditField;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.library.util.StringUtils;
 import com.qtplaf.library.util.TextServer;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * Swing utilities. Since <code>javax.swing.SwingUtilities</code> has a private constructor and can not be extended,
@@ -411,7 +411,7 @@ public class SwingUtils {
 	 * @param buttons The list of buttons to set the mnemonics.
 	 */
 	public static void setMnemonics(JButton... buttons) {
-		setMnemonics(Arrays.asList(buttons));
+		setMnemonics(ListUtils.asList(buttons));
 	}
 
 	/**

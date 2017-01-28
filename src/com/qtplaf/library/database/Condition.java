@@ -15,8 +15,9 @@ package com.qtplaf.library.database;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A condition used to build filtering criteria.
@@ -743,7 +744,7 @@ public class Condition {
 	public Condition(Field field, Operator operator, Value... values) {
 		this.field = field;
 		this.operator = operator;
-		this.values.addAll(Arrays.asList(values));
+		this.values.addAll(ListUtils.asList(values));
 		validate(field, operator, this.values);
 	}
 

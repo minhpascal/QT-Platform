@@ -429,13 +429,15 @@ public abstract class DataInfo {
 	 */
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		b.append("Name: " + getName() + "\n");
-		b.append("Title: " + getTitle() + "\n");
-		b.append("Data type: " + getDataType() + "\n");
-		b.append("Instrument: " + getInstrument() + "\n");
-		b.append("Period: " + getPeriod() + "\n");
-		b.append("Pip scale: " + getPipScale() + "\n");
-		b.append("Tick scale: " + getTickScale() + "\n");
+		b.append(getInstrument());
+		b.append(", ");
+		b.append("[");
+		b.append(getName());
+		b.append(", ");
+		b.append(getDataType());
+		b.append(", ");
+		b.append(getPeriod());
+		b.append("]");
 		return b.toString();
 	}
 }

@@ -14,7 +14,6 @@
 package com.qtplaf.library.database;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.qtplaf.library.util.list.ListUtils;
 
@@ -61,7 +60,7 @@ public class ValueArray extends ArrayList<Value> implements Comparable<Object> {
 		if (values == null || values.length == 0) {
 			return false;
 		}
-		addAll(Arrays.asList(values));
+		addAll(ListUtils.asList(values));
 		return true;
 	}
 

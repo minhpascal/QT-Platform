@@ -35,13 +35,15 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
  * @author Miquel Sas
  */
 public class MeanSquaredTranslation extends PeriodIndicator {
-	
+
 	/** Output source index. */
 	public static final int Output = 0;
 	/** Input source index. */
 	public static final int Input = 1;
 	/** Index of result. */
 	public static final int Index = 0;
+	/** Size of result. */
+	public static final int Size = 1;
 
 	/**
 	 * @param session
@@ -90,7 +92,7 @@ public class MeanSquaredTranslation extends PeriodIndicator {
 	 * @param indicatorSources The list of indicator sources.
 	 */
 	public void start(List<IndicatorSource> indicatorSources) {
-		
+
 		// Validate sources.
 		validate(indicatorSources);
 
@@ -143,7 +145,7 @@ public class MeanSquaredTranslation extends PeriodIndicator {
 
 		int period = getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
 		period = Math.min(period, index + 1);
-		
+
 		// Output and input.
 		IndicatorSource outputSource = indicatorSources.get(Output);
 		IndicatorSource inputSource = indicatorSources.get(Input);
@@ -159,19 +161,22 @@ public class MeanSquaredTranslation extends PeriodIndicator {
 			output[arrayIndex] = outputData.get(i).getValue(outputIndex);
 			input[arrayIndex] = inputData.get(i).getValue(inputIndex);
 			arrayIndex++;
-		}		
-		double[] meanSquaredValues = Calculator.meanSquaredMinimum(output, input, 0.01, 0.00000000001, 1000000);
-		
-		// Set indicator data up to index - 1.
-		arrayIndex = 0;
-		for (int i = startIndex; i < index; i++) {
-			indicatorData.get(i).setValue(Index, meanSquaredValues[arrayIndex]);
-			arrayIndex++;
 		}
+		double[] meanSquaredValues = Calculator.meanSquaredMinimum(output, input, 0.01, 0.00000000001, 1000000);
+
+		// Set indicator data up to index - 1.
+		// IndicatorDataList meanSquaredData = (IndicatorDataList) indicatorData;
+		// arrayIndex = 0;
+		// for (int i = startIndex; i < index; i++) {
+		// Data data = new Data(Size);
+		// data.setValue(Index, meanSquaredValues[arrayIndex]);
+		// meanSquaredData.put(i, data);
+		// arrayIndex++;
+		// }
 
 		// The result data.
-		Data result = new Data();
-		result.setValue(Index, meanSquaredValues[arrayIndex]);
+		Data result = new Data(Size);
+		result.setValue(Index, meanSquaredValues[meanSquaredValues.length - 1]);
 		return result;
 	}
 

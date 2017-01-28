@@ -65,7 +65,6 @@ public class Data {
 		return new OHLCV(time, open, high, low, close, volume);
 	}
 
-
 	/**
 	 * The data.
 	 */
@@ -86,6 +85,16 @@ public class Data {
 	 */
 	public Data() {
 		super();
+	}
+
+	/**
+	 * Constructs a data of the given size.
+	 * 
+	 * @param size The size or number of values.
+	 */
+	public Data(int size) {
+		super();
+		data = new double[size];
 	}
 
 	/**

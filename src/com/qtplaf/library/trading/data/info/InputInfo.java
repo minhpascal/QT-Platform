@@ -84,12 +84,28 @@ public class InputInfo {
 			}
 			return false;
 		}
+
+		/**
+		 * Returns a string representation of this input type.
+		 * 
+		 * @return A string representation.
+		 */
+		@Override
+		public String toString() {
+			StringBuilder b = new StringBuilder();
+			b.append("[");
+			b.append(getDataType());
+			b.append(", ");
+			b.append(values);
+			b.append("]");
+			return b.toString();
+		}
 	}
 
 	/**
-	 * The list of possible input source types with the number of values required fro each type.
+	 * The list of input source types with the number of values required from each type.
 	 */
-	private List<InputType> possibleInputSources = new ArrayList<>();
+	private List<InputType> inputSources = new ArrayList<>();
 
 	/**
 	 * Default constructor.
@@ -106,28 +122,28 @@ public class InputInfo {
 	 */
 	public void addPossibleInputSource(DataType dataType, int values) {
 		InputType inputType = new InputType(dataType, values);
-		if (possibleInputSources.contains(inputType)) {
-			possibleInputSources.add(inputType);
+		if (inputSources.contains(inputType)) {
+			inputSources.add(inputType);
 		}
 	}
 
 	/**
-	 * Returns the number of possible input sources.
+	 * Returns the number of input sources.
 	 * 
 	 * @return The number of possible input sources.
 	 */
-	public int getPossibleInputSourcesCount() {
-		return possibleInputSources.size();
+	public int getInputSourcesCount() {
+		return inputSources.size();
 	}
 
 	/**
-	 * Returns the possible input source at the given index.
+	 * Returns the input source at the given index.
 	 * 
 	 * @param index The index.
 	 * @return The input source.
 	 */
-	public InputType getPossibleInputSource(int index) {
-		return possibleInputSources.get(index);
+	public InputType getInputSource(int index) {
+		return inputSources.get(index);
 	}
 
 	/**
@@ -138,17 +154,34 @@ public class InputInfo {
 	public boolean equals(Object obj) {
 		if (obj instanceof InputInfo) {
 			InputInfo in = (InputInfo) obj;
-			int count = getPossibleInputSourcesCount();
-			if (count != in.getPossibleInputSourcesCount()) {
+			int count = getInputSourcesCount();
+			if (count != in.getInputSourcesCount()) {
 				return false;
 			}
 			for (int i = 0; i < count; i++) {
-				if (!getPossibleInputSource(i).equals(in.getPossibleInputSource(i))) {
+				if (!getInputSource(i).equals(in.getInputSource(i))) {
 					return false;
 				}
 			}
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns a string representation of this input info.
+	 * 
+	 * @return A string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		for (int i = 0; i < getInputSourcesCount(); i++) {
+			if (i > 0) {
+				b.append(", ");
+			}
+			b.append(getInputSource(i));
+		}
+		return b.toString();
 	}
 }

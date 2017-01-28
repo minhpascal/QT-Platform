@@ -77,6 +77,34 @@ public class ListUtils {
 	}
 
 	/**
+	 * Check whether two lists are equal.
+	 * 
+	 * @param l1 List 1.
+	 * @param l2 List 2.
+	 * @return A boolean.
+	 */
+	public static boolean equals(List<?> l1, List<?> l2) {
+		if (l1.size() != l2.size()) {
+			return false;
+		}
+		for (int i = 0; i < l1.size(); i++) {
+			if (l1.get(i) == null && l2.get(i) != null) {
+				return false;
+			}
+			if (l1.get(i) != null && l2.get(i) == null) {
+				return false;
+			}
+			if (l1.get(i) == null && l2.get(i) == null) {
+				continue;
+			}
+			if (!l1.get(i).equals(l2.get(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Compares an array list of comparable objects to the argument object. Returns a negative integer, zero, or a
 	 * positive integer as this list is less than, equal to, or greater than the specified argument list. Throws an
 	 * UnsupportedOperationException if the argument is not an

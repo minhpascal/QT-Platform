@@ -18,7 +18,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -48,7 +47,6 @@ import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.IndicatorDataList;
-import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.IndicatorUtils;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.OHLCV;
@@ -56,7 +54,6 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotType;
-import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Filter;
@@ -543,21 +540,22 @@ public class ActionTickers extends AbstractAction {
 				Instrument instrument = Records.fromRecordInstrument(recordInstr);
 
 				// Build the plot data.
-				DataInfo dataInfo = new PriceInfo(session, instrument, period);
-				PersistorDataList dataList = new PersistorDataList(session, dataInfo, persistor);
-				dataList.setCacheSize(-1);
-				dataList.setPlotType(PlotType.Candlestick);
-				dataList.initializePlotProperties();
+				DataInfo infoPrice = new PriceInfo(session, instrument, period);
+				PersistorDataList price = new PersistorDataList(session, infoPrice, persistor);
+				price.setCacheSize(-1);
+				price.setPlotType(PlotType.Candlestick);
+				price.initializePlotProperties();
 				PlotData plotData = new PlotData();
-				plotData.add(dataList);
+				plotData.add(price);
 
 				// By default in this view add two SMA of 50 and 200 periods.
-//				plotData.add(IndicatorUtils.getExponentialMovingAverage(dataList, 50, OHLCV.Index.Close.getIndex(), Color.RED));
-				IndicatorDataList wma = IndicatorUtils.getWeightedMovingAverage(dataList, 20, OHLCV.Index.Close.getIndex(), Color.GRAY);
-				plotData.add(IndicatorUtils.getWeightedMovingAverage(dataList, 13, OHLCV.Index.Close.getIndex(), Color.GRAY));
-				plotData.add(IndicatorUtils.getSimpleMovingAverage(wma, 5, 0, Color.BLACK));
-				plotData.add(IndicatorUtils.getSimpleMovingAverage(dataList, 200, OHLCV.Index.Close.getIndex(), Color.BLACK));
-//				plotData.add(IndicatorUtils.getMeanSquaredMovingAverage(dataList, 50, OHLCV.Index.Close.getIndex(), Color.GREEN));
+				IndicatorDataList sma50 =
+					IndicatorUtils.getSimpleMovingAverage(price, 50, OHLCV.Index.Close.getIndex(), Color.GRAY);
+				IndicatorDataList sma200 =
+					IndicatorUtils.getSimpleMovingAverage(price, 200, OHLCV.Index.Close.getIndex(), Color.GRAY);
+				
+				plotData.add(sma50);
+				plotData.add(sma200);
 
 				// Chart title.
 				StringBuilder title = new StringBuilder();

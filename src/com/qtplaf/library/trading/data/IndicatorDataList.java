@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A data list that retrieves its data from an indicator, thus calculating the data each time it is retrieved through
@@ -75,7 +76,7 @@ public class IndicatorDataList extends DataList {
 			if (!getIndicator().equals(idl.getIndicator())) {
 				return false;
 			}
-			if (!getIndicatorSources().equals(idl.getIndicatorSources())) {
+			if (!ListUtils.equals(getIndicatorSources(), idl.getIndicatorSources())) {
 				return false;
 			}
 			return super.equals(idl);
@@ -163,9 +164,19 @@ public class IndicatorDataList extends DataList {
 	 * @return The calculated data.
 	 */
 	public Data calculate(int index) {
-		Data data = indicator.calculate(index, indicatorSources, indicatorData);
+		Data data = indicator.calculate(index, indicatorSources, this);
 		indicatorData.put(index, data);
 		return data;
+	}
+
+	/**
+	 * Put data at the given index.
+	 * 
+	 * @param index The index.
+	 * @param data The data.
+	 */
+	public void put(int index, Data data) {
+		indicatorData.put(index, data);
 	}
 
 	/**
@@ -176,5 +187,23 @@ public class IndicatorDataList extends DataList {
 	 */
 	public Data remove(int index) {
 		return indicatorData.remove(index);
+	}
+
+	/**
+	 * Returns a string representation of this indicator data list.
+	 * 
+	 * @return A string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append(super.toString());
+		if (indicatorSources != null) {
+			for (int i = 0; i < indicatorSources.size(); i++) {
+				b.append("\nSource: ");
+				b.append(indicatorSources.get(i));
+			}
+		}
+		return b.toString();
 	}
 }

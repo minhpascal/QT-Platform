@@ -845,6 +845,9 @@ public class Calculator {
 
 		// Previous mean squared.
 		double meanSquaredPrevious = meanSquared(result, input);
+		
+		// Error.
+		double error = Double.MAX_VALUE;
 
 		// The sign.
 		double sign = 1d;
@@ -865,7 +868,7 @@ public class Calculator {
 			double meanSquaredCurrent = meanSquared(result, input);
 
 			// Error.
-			double error = Math.abs(meanSquaredCurrent - meanSquaredPrevious);
+			error = Math.abs(meanSquaredCurrent - meanSquaredPrevious);
 
 			// Break if error is less than minimum error.
 			if (error < maximumError) {
