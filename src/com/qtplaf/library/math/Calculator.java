@@ -42,14 +42,14 @@ public class Calculator {
 	 * @return The mean.
 	 */
 	public static double mean(double[] values) {
-		if (values.length == 0) {
+		if (size(values) == 0) {
 			return 0;
 		}
 		double mean = 0;
 		for (double value : values) {
 			mean += value;
 		}
-		mean /= values.length;
+		mean /= size(values);
 		return mean;
 	}
 
@@ -61,7 +61,7 @@ public class Calculator {
 	 * @return The standard deviation.
 	 */
 	public static double stddev(double[] values, double mean) {
-		if (values.length <= 1) {
+		if (size(values) <= 1) {
 			return 0;
 		}
 		double variance = 0;
@@ -69,7 +69,7 @@ public class Calculator {
 			double difference = value - mean;
 			variance += (difference * difference);
 		}
-		variance /= (values.length - 1);
+		variance /= (size(values) - 1);
 		return Math.sqrt(variance);
 	}
 
@@ -193,8 +193,9 @@ public class Calculator {
 				minimum = value;
 			}
 		}
-		double[] normalized = new double[values.length];
-		for (int i = 0; i < values.length; i++) {
+		int size = size(values);
+		double[] normalized = new double[size];
+		for (int i = 0; i < size; i++) {
 			normalized[i] = normalize(values[i], maximum, minimum);
 		}
 		return normalized;
@@ -219,8 +220,9 @@ public class Calculator {
 	 * @return The list normalized.
 	 */
 	public static double[] normalize(double[] values, double mean, double stddev) {
-		double[] normalized = new double[values.length];
-		for (int i = 0; i < values.length; i++) {
+		int size = size(values);
+		double[] normalized = new double[size];
+		for (int i = 0; i < size; i++) {
 			double value = values[i];
 			if (stddev == 0) {
 				normalized[i] = 0;
@@ -302,12 +304,25 @@ public class Calculator {
 	 * @return The division vector.
 	 */
 	public static double[] divide(double value, double[] vector) {
-		int size = vector.length;
+		int size = size(vector);
 		double[] product = new double[size];
 		for (int i = 0; i < size; i++) {
 			product[i] = vector[i] / value;
 		}
 		return product;
+	}
+
+	/**
+	 * Divide a vector by a scalar value assinging it to the vector.
+	 * 
+	 * @param value The scalar value used to multiply the matrix.
+	 * @param vactor The vector.
+	 */
+	public static void divideAssign(double value, double[] vector) {
+		int size = size(vector);
+		for (int i = 0; i < size; i++) {
+			vector[i] /= value;
+		}
 	}
 
 	/**
@@ -337,12 +352,25 @@ public class Calculator {
 	 * @return The product vector.
 	 */
 	public static double[] multiply(double value, double[] vector) {
-		int size = vector.length;
+		int size = size(vector);
 		double[] product = new double[size];
 		for (int i = 0; i < size; i++) {
 			product[i] = vector[i] * value;
 		}
 		return product;
+	}
+
+	/**
+	 * Multiply a vector by a scalar value and assign it to the vector values.
+	 * 
+	 * @param value The scalar value used to multiply the matrix.
+	 * @param vector The vector.
+	 */
+	public static void multiplyAssign(double value, double[] vector) {
+		int size = size(vector);
+		for (int i = 0; i < size; i++) {
+			vector[i] *= value;
+		}
 	}
 
 	/**
@@ -435,7 +463,7 @@ public class Calculator {
 	 * @return The diagonal matrix.
 	 */
 	public static double[][] diagonalMatrix(double[] values) {
-		int size = values.length;
+		int size = size(values);
 		double[][] diagonal = new double[size][size];
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
@@ -524,7 +552,7 @@ public class Calculator {
 	 * @param vector The source vector.
 	 */
 	public static void addAssign(double value, double[] vector) {
-		int size = vector.length;
+		int size = size(vector);
 		for (int i = 0; i < size; i++) {
 			vector[i] = value + vector[i];
 		}
@@ -597,7 +625,7 @@ public class Calculator {
 	 * @param vector The vector.
 	 */
 	public static void subtractAssign(double value, double[] vector) {
-		int size = vector.length;
+		int size = size(vector);
 		for (int i = 0; i < size; i++) {
 			vector[i] -= value;
 		}
@@ -611,7 +639,7 @@ public class Calculator {
 	 * @return The subtraction vector.
 	 */
 	public static double[] subtract(double value, double[] vector) {
-		int size = vector.length;
+		int size = size(vector);
 		double[] subtraction = new double[size];
 		for (int i = 0; i < size; i++) {
 			subtraction[i] = vector[i] - value;
@@ -797,7 +825,7 @@ public class Calculator {
 	 * @return The squared Euclidean norm.
 	 */
 	public static double squaredEuclideanNorm(double[] v) {
-		int length = v.length;
+		int length = size(v);
 		double norm = 0;
 		for (int i = 0; i < length; i++) {
 			norm += Math.pow(v[i], 2);
@@ -823,12 +851,12 @@ public class Calculator {
 	 * @return The squared Euclidean distance.
 	 */
 	public static double squaredEuclideanDistance(double[] a, double[] b) {
-		if (a.length != b.length) {
+		if (size(a) != size(b)) {
 			throw new IllegalArgumentException("Vector lengths must be the same.");
 		}
-		int length = a.length;
+		int size = size(a);
 		double distance = 0;
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < size; i++) {
 			distance += Math.pow(a[i] - b[i], 2);
 		}
 		return distance;
@@ -867,7 +895,7 @@ public class Calculator {
 	 * @return The Euclidean distance.
 	 */
 	public static double meanSquared(double[] a, double[] b) {
-		double size = a.length;
+		double size = size(a);
 		return euclideanDistance(a, b) * 2 / size;
 	}
 
@@ -889,7 +917,7 @@ public class Calculator {
 		int maximumIterations) {
 
 		// Size and result.
-		int size = output.length;
+		int size = size(output);
 		double[] result = new double[size];
 		for (int i = 0; i < size; i++) {
 			result[i] = output[i];

@@ -20,10 +20,12 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.math.Calculator;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Indicator;
+import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
@@ -98,6 +100,7 @@ public abstract class PeriodIndicator extends Indicator {
 	 * @param index The index to calculate.
 	 * @param indicatorSources The indicator sources.
 	 * @param indicatorData The already indicator calculated data.
+	 * @param optimize A boolean that indicates whether to optimize.
 	 * @return
 	 */
 	public static Data getSMA(
@@ -105,17 +108,87 @@ public abstract class PeriodIndicator extends Indicator {
 		int index, 
 		List<IndicatorSource> indicatorSources, 
 		DataList indicatorData) {
+		return getSMA(ma, index, indicatorSources, indicatorData, false);
+	}
+
+	/**
+	 * Returns the SMA data calculated from the begining to the argument index, when index is less that period.
+	 * 
+	 * @param ma The MA indicator.
+	 * @param index The index to calculate.
+	 * @param indicatorSources The indicator sources.
+	 * @param indicatorData The already indicator calculated data.
+	 * @param optimize A boolean that indicates whether to optimize.
+	 * @return
+	 */
+	public static Data getSMA(
+		PeriodIndicator ma, 
+		int index, 
+		List<IndicatorSource> indicatorSources, 
+		DataList indicatorData,
+		boolean optimize) {
 		
 		// Num indexes and period.
 		int numIndexes = ma.getNumIndexes();
 		int period = ma.getIndicatorInfo().getParameter(ParamPeriodName).getValue().getInteger();
 		
-		double[] averages = new double[numIndexes];
-		Arrays.fill(averages, 0);
 		int start = 0;
+		boolean canOptimize = (index > period);
 		if (index >= period) {
 			start = index - period + 1;
 		}
+		
+		if (optimize && canOptimize) {
+			if (indicatorData instanceof IndicatorDataList) {
+				IndicatorDataList indicatorDataList = (IndicatorDataList) indicatorData;
+				canOptimize = indicatorDataList.hasCalculated(index - 1);
+				if (canOptimize) {
+					int averageIndex;
+					double divisor = period;
+					
+					double[] delAvgs = new double[numIndexes];
+					Arrays.fill(delAvgs, 0);
+					int deleteIndex = start - 1;
+					averageIndex = 0;
+					for (IndicatorSource source : indicatorSources) {
+						DataList dataList = source.getDataList();
+						List<Integer> indexes = source.getIndexes();
+						for (Integer dataIndex : indexes) {
+							delAvgs[averageIndex] = dataList.get(deleteIndex).getValue(dataIndex) / divisor;
+							averageIndex++;
+						}
+					}
+					
+					double[] currAvgs = new double[numIndexes];
+					Arrays.fill(currAvgs, 0);
+					int currentIndex = index - 1;
+					for (int i = 0; i < numIndexes; i++) {
+						currAvgs[i] = indicatorDataList.get(currentIndex).getValue(i);
+					}
+					
+					double[] addAvgs = new double[numIndexes];
+					Arrays.fill(addAvgs, 0);
+					averageIndex = 0;
+					for (IndicatorSource source : indicatorSources) {
+						DataList dataList = source.getDataList();
+						List<Integer> indexes = source.getIndexes();
+						for (Integer dataIndex : indexes) {
+							addAvgs[averageIndex] = dataList.get(index).getValue(dataIndex) / divisor;
+							averageIndex++;
+						}
+					}
+
+					double[] averages = Calculator.add(addAvgs, Calculator.subtract(currAvgs, delAvgs));
+					Data data = new Data();
+					data.setData(averages);
+					data.setTime(indicatorSources.get(0).getDataList().get(index).getTime());
+					return data;				
+				}
+			}
+		}
+		
+		double[] averages = new double[numIndexes];
+		Arrays.fill(averages, 0);
 		for (int i = start; i <= index; i++) {
 			int averageIndex = 0;
 			for (IndicatorSource source : indicatorSources) {

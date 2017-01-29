@@ -104,4 +104,14 @@ public class MapDataList extends DataList {
 	public int size() {
 		return dataList.size();
 	}
+
+	/**
+	 * Returns a boolean indicating if the mapped list contains the index.
+	 * 
+	 * @param index The index to check.
+	 * @return A boolean.
+	 */
+	public boolean contains(int index) {
+		return dataList.containsKey(index);
+	}
 }

@@ -29,6 +29,11 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
 public class SimpleMovingAverage extends PeriodIndicator {
 
 	/**
+	 * A boolean that indicates if calculation should be optimized by removing the last value and adding the next.
+	 */
+	private boolean optimize = true;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param session The working session.
@@ -53,6 +58,24 @@ public class SimpleMovingAverage extends PeriodIndicator {
 	}
 
 	/**
+	 * Returns the optimize flag.
+	 * 
+	 * @return The optimize flag.
+	 */
+	public boolean isOptimize() {
+		return optimize;
+	}
+
+	/**
+	 * Set the optimize flag.
+	 * 
+	 * @param optimize The optimize flag.
+	 */
+	public void setOptimize(boolean optimize) {
+		this.optimize = optimize;
+	}
+
+	/**
 	 * Calculates the indicator data at the given index, for the list of indicator sources.
 	 * <p>
 	 * This indicator already calculated data is passed as a parameter because some indicators may need previous
@@ -67,6 +90,6 @@ public class SimpleMovingAverage extends PeriodIndicator {
 		if (index < 0) {
 			return null;
 		}
-		return getSMA(this, index, indicatorSources, indicatorData);
+		return getSMA(this, index, indicatorSources, indicatorData, isOptimize());
 	}
 }

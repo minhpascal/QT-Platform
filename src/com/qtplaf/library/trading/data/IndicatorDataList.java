@@ -190,6 +190,16 @@ public class IndicatorDataList extends DataList {
 	}
 
 	/**
+	 * Returns a boolean indicating if the argument index has been calculated.
+	 * 
+	 * @param index The index to check.
+	 * @return A boolean indicating if the argument index has been calculated.
+	 */
+	public boolean hasCalculated(int index) {
+		return indicatorData.contains(index);
+	}
+
+	/**
 	 * Returns a string representation of this indicator data list.
 	 * 
 	 * @return A string representation.

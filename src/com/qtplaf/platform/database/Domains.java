@@ -720,15 +720,13 @@ public class Domains {
 	 * @return The field definition.
 	 */
 	public static Field getOpen(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Double);
-		field.setHeader(session.getString("fieldOHLCVOpenLabel"));
-		field.setLabel(session.getString("fieldOHLCVOpenLabel"));
-		field.setTitle(session.getString("fieldOHLCVOpenHeader"));
-		return field;
+		return getDouble(
+			session,
+			name,
+			alias,
+			session.getString("fieldOHLCVOpenHeader"),
+			session.getString("fieldOHLCVOpenLabel"),
+			session.getString("fieldOHLCVOpenLabel"));
 	}
 
 	/**
@@ -751,15 +749,13 @@ public class Domains {
 	 * @return The field definition.
 	 */
 	public static Field getHigh(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Double);
-		field.setHeader(session.getString("fieldOHLCVHighLabel"));
-		field.setLabel(session.getString("fieldOHLCVHighLabel"));
-		field.setTitle(session.getString("fieldOHLCVHighHeader"));
-		return field;
+		return getDouble(
+			session,
+			name,
+			alias,
+			session.getString("fieldOHLCVHighHeader"),
+			session.getString("fieldOHLCVHighLabel"),
+			session.getString("fieldOHLCVHighLabel"));
 	}
 
 	/**
@@ -782,15 +778,13 @@ public class Domains {
 	 * @return The field definition.
 	 */
 	public static Field getLow(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Double);
-		field.setHeader(session.getString("fieldOHLCVLowLabel"));
-		field.setLabel(session.getString("fieldOHLCVLowLabel"));
-		field.setTitle(session.getString("fieldOHLCVLowHeader"));
-		return field;
+		return getDouble(
+			session,
+			name,
+			alias,
+			session.getString("fieldOHLCVLowHeader"),
+			session.getString("fieldOHLCVLowLabel"),
+			session.getString("fieldOHLCVLowLabel"));
 	}
 
 	/**
@@ -813,15 +807,13 @@ public class Domains {
 	 * @return The field definition.
 	 */
 	public static Field getClose(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Double);
-		field.setHeader(session.getString("fieldOHLCVCloseLabel"));
-		field.setLabel(session.getString("fieldOHLCVCloseLabel"));
-		field.setTitle(session.getString("fieldOHLCVCloseHeader"));
-		return field;
+		return getDouble(
+			session,
+			name,
+			alias,
+			session.getString("fieldOHLCVCloseHeader"),
+			session.getString("fieldOHLCVCloseLabel"),
+			session.getString("fieldOHLCVCloseLabel"));
 	}
 
 	/**
@@ -844,15 +836,13 @@ public class Domains {
 	 * @return The field definition.
 	 */
 	public static Field getVolume(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Double);
-		field.setHeader(session.getString("fieldOHLCVVolumeLabel"));
-		field.setLabel(session.getString("fieldOHLCVVolumeLabel"));
-		field.setTitle(session.getString("fieldOHLCVVolumeHeader"));
-		return field;
+		return getDouble(
+			session,
+			name,
+			alias,
+			session.getString("fieldOHLCVVolumeHeader"),
+			session.getString("fieldOHLCVVolumeLabel"),
+			session.getString("fieldOHLCVVolumeLabel"));
 	}
 
 	/**
@@ -885,4 +875,33 @@ public class Domains {
 		field.setTitle(session.getString("fieldOHLCVIndexHeader"));
 		return field;
 	}
+
+	/**
+	 * Returns field definition for a double value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @return The field definition.
+	 */
+	public static Field getDouble(
+		Session session,
+		String name,
+		String alias,
+		String header,
+		String label,
+		String title) {
+
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.Double);
+		field.setHeader(header);
+		field.setLabel(label);
+		field.setTitle(title);
+
+		return field;
+	}
+
 }

@@ -23,6 +23,7 @@ import com.qtplaf.library.trading.data.indicators.MeanSquaredTranslation;
 import com.qtplaf.library.trading.data.indicators.PeriodIndicator;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
+import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.util.list.ListUtils;
 
 /**
@@ -32,7 +33,7 @@ import com.qtplaf.library.util.list.ListUtils;
  */
 public class IndicatorUtils {
 	/**
-	 * Returns a simple SMA configurated indicator data list.
+	 * Returns an EMA indicator data list.
 	 * 
 	 * @param dataList The source data list.
 	 * @param period The period of the SMA.
@@ -42,9 +43,9 @@ public class IndicatorUtils {
 	 */
 	public static IndicatorDataList getExponentialMovingAverage(
 		DataList dataList,
-		int period,
 		int index,
-		Color color) {
+		Color color,
+		int period) {
 
 		Session session = dataList.getSession();
 		ExponentialMovingAverage ema = new ExponentialMovingAverage(session);
@@ -60,7 +61,7 @@ public class IndicatorUtils {
 	}
 
 	/**
-	 * Returns a simple SMA configurated indicator data list.
+	 * Returns a SMA indicator data list.
 	 * 
 	 * @param dataList The source data list.
 	 * @param period The period of the SMA.
@@ -70,9 +71,9 @@ public class IndicatorUtils {
 	 */
 	public static IndicatorDataList getSimpleMovingAverage(
 		DataList dataList,
-		int period,
 		int index,
-		Color color) {
+		Color color,
+		int period) {
 
 		Session session = dataList.getSession();
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
@@ -88,7 +89,7 @@ public class IndicatorUtils {
 	}
 
 	/**
-	 * Returns a simple WMA configurated indicator data list.
+	 * Returns a WMA indicator data list.
 	 * 
 	 * @param dataList The source data list.
 	 * @param period The period of the SMA.
@@ -98,9 +99,9 @@ public class IndicatorUtils {
 	 */
 	public static IndicatorDataList getWeightedMovingAverage(
 		DataList dataList,
-		int period,
 		int index,
-		Color color) {
+		Color color,
+		int period) {
 
 		Session session = dataList.getSession();
 		WeightedMovingAverage sma = new WeightedMovingAverage(session);
@@ -113,6 +114,52 @@ public class IndicatorUtils {
 		avgList.getPlotProperties(0).setColorBullishOdd(color);
 		avgList.getPlotProperties(0).setColorBearishOdd(color);
 		return avgList;
+	}
+
+	/**
+	 * Returns a smoothed SMA indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the SMA.
+	 * @param index The index in the data of the source to calculate the average.
+	 * @param color Plot color.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getSmoothedSimpleMovingAverage(
+		DataList dataList,
+		int index,
+		Color color,
+		int period,
+		int... smoothingPeriods) {
+
+		Session session = dataList.getSession();
+		int indexPeriod = PeriodIndicator.ParamPeriodIndex;
+
+		SimpleMovingAverage sma = new SimpleMovingAverage(session);
+		IndicatorInfo inf = sma.getIndicatorInfo();
+		inf.getParameter(indexPeriod).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, index);
+		IndicatorDataList lst = new IndicatorDataList(session, sma, inf, ListUtils.asList(source));
+		lst.getPlotProperties(0).setColorBullishEven(color);
+		lst.getPlotProperties(0).setColorBearishEven(color);
+		lst.getPlotProperties(0).setColorBullishOdd(color);
+		lst.getPlotProperties(0).setColorBearishOdd(color);
+		
+		int indexSma = 0;
+		for (int smooth : smoothingPeriods) {
+			SimpleMovingAverage smoothedSma = new SimpleMovingAverage(session);
+			inf = smoothedSma.getIndicatorInfo();
+			inf.getParameter(indexPeriod).getValue().setInteger(smooth);
+			source = new IndicatorSource(lst, indexSma);
+			lst = new IndicatorDataList(session, smoothedSma, inf, ListUtils.asList(source));
+			lst.getPlotProperties(0).setColorBullishEven(color);
+			lst.getPlotProperties(0).setColorBearishEven(color);
+			lst.getPlotProperties(0).setColorBullishOdd(color);
+			lst.getPlotProperties(0).setColorBearishOdd(color);
+			sma = smoothedSma;
+		}
+
+		return lst;
 	}
 
 	/**

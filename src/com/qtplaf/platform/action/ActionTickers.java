@@ -550,46 +550,39 @@ public class ActionTickers extends AbstractAction {
 
 				// By default in this view add two SMA of 50 and 200 periods.
 				IndicatorDataList sma50 =
-					IndicatorUtils.getSimpleMovingAverage(price, 50, OHLCV.Index.Close.getIndex(), Color.GRAY);
+					IndicatorUtils.getSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 50);
 				IndicatorDataList sma200 =
-					IndicatorUtils.getSimpleMovingAverage(price, 200, OHLCV.Index.Close.getIndex(), Color.BLACK);
-				
-//				plotData.add(sma50);
-//				plotData.add(sma200);
-				
-				IndicatorDataList sma5 =
-					IndicatorUtils.getSimpleMovingAverage(price, 5, OHLCV.Index.Close.getIndex(), Color.GRAY);
-				IndicatorDataList ssma5 =
-					IndicatorUtils.getSimpleMovingAverage(sma5, 3, 0, Color.RED);
-				IndicatorDataList sssma5 =
-					IndicatorUtils.getSimpleMovingAverage(ssma5, 3, 0, Color.RED);
+					IndicatorUtils.getSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.BLACK, 200);
 
-				IndicatorDataList sma21 =
-					IndicatorUtils.getSimpleMovingAverage(price, 21, OHLCV.Index.Close.getIndex(), Color.GRAY);
-				IndicatorDataList ssma21 =
-					IndicatorUtils.getSimpleMovingAverage(sma21, 8, 0, Color.RED);
-				IndicatorDataList sssma21 =
-					IndicatorUtils.getSimpleMovingAverage(ssma21, 5, 0, Color.GRAY);
-				
-				IndicatorDataList sma89 =
-					IndicatorUtils.getSimpleMovingAverage(price, 89, OHLCV.Index.Close.getIndex(), Color.GRAY);
-				IndicatorDataList ssma89 =
-					IndicatorUtils.getSimpleMovingAverage(sma89, 21, 0, Color.RED);
-				IndicatorDataList sssma89 =
-					IndicatorUtils.getSimpleMovingAverage(ssma89, 13, 0, Color.BLACK);
+				 plotData.add(sma50);
+				 plotData.add(sma200);
 
-				IndicatorDataList sma377 =
-					IndicatorUtils.getWeightedMovingAverage(price, 377, OHLCV.Index.Close.getIndex(), Color.GRAY);
-				IndicatorDataList ssma377 =
-					IndicatorUtils.getWeightedMovingAverage(sma377, 34, 0, Color.RED);
-				IndicatorDataList sssma377 =
-					IndicatorUtils.getWeightedMovingAverage(ssma377, 21, 0, Color.BLACK);
+//				IndicatorDataList sma5 =
+//					IndicatorUtils
+//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 5, 3, 3);
+//				IndicatorDataList sma21 =
+//					IndicatorUtils
+//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 21, 5, 5);
+//				IndicatorDataList sma89 =
+//					IndicatorUtils
+//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 89, 13, 13);
+//				IndicatorDataList sma377 =
+//					IndicatorUtils
+//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 377, 21, 21);
+//				IndicatorDataList sma1597 =
+//					IndicatorUtils
+//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 1597, 34, 34);
+//				IndicatorDataList sma6765 =
+//					IndicatorUtils
+//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 6765, 55, 55);
 
-				plotData.add(sssma5);
-				plotData.add(sssma21);
-				plotData.add(sssma89);
-				plotData.add(sssma377);
-				
+//				plotData.add(sma5);
+//				plotData.add(sma21);
+//				plotData.add(sma89);
+//				plotData.add(sma377);
+//				plotData.add(sma1597);
+//				plotData.add(sma6765);
+
 				// Chart title.
 				StringBuilder title = new StringBuilder();
 				title.append(server.getName());
