@@ -552,11 +552,44 @@ public class ActionTickers extends AbstractAction {
 				IndicatorDataList sma50 =
 					IndicatorUtils.getSimpleMovingAverage(price, 50, OHLCV.Index.Close.getIndex(), Color.GRAY);
 				IndicatorDataList sma200 =
-					IndicatorUtils.getSimpleMovingAverage(price, 200, OHLCV.Index.Close.getIndex(), Color.GRAY);
+					IndicatorUtils.getSimpleMovingAverage(price, 200, OHLCV.Index.Close.getIndex(), Color.BLACK);
 				
-				plotData.add(sma50);
-				plotData.add(sma200);
+//				plotData.add(sma50);
+//				plotData.add(sma200);
+				
+				IndicatorDataList sma5 =
+					IndicatorUtils.getSimpleMovingAverage(price, 5, OHLCV.Index.Close.getIndex(), Color.GRAY);
+				IndicatorDataList ssma5 =
+					IndicatorUtils.getSimpleMovingAverage(sma5, 3, 0, Color.RED);
+				IndicatorDataList sssma5 =
+					IndicatorUtils.getSimpleMovingAverage(ssma5, 3, 0, Color.RED);
 
+				IndicatorDataList sma21 =
+					IndicatorUtils.getSimpleMovingAverage(price, 21, OHLCV.Index.Close.getIndex(), Color.GRAY);
+				IndicatorDataList ssma21 =
+					IndicatorUtils.getSimpleMovingAverage(sma21, 8, 0, Color.RED);
+				IndicatorDataList sssma21 =
+					IndicatorUtils.getSimpleMovingAverage(ssma21, 5, 0, Color.GRAY);
+				
+				IndicatorDataList sma89 =
+					IndicatorUtils.getSimpleMovingAverage(price, 89, OHLCV.Index.Close.getIndex(), Color.GRAY);
+				IndicatorDataList ssma89 =
+					IndicatorUtils.getSimpleMovingAverage(sma89, 21, 0, Color.RED);
+				IndicatorDataList sssma89 =
+					IndicatorUtils.getSimpleMovingAverage(ssma89, 13, 0, Color.BLACK);
+
+				IndicatorDataList sma377 =
+					IndicatorUtils.getWeightedMovingAverage(price, 377, OHLCV.Index.Close.getIndex(), Color.GRAY);
+				IndicatorDataList ssma377 =
+					IndicatorUtils.getWeightedMovingAverage(sma377, 34, 0, Color.RED);
+				IndicatorDataList sssma377 =
+					IndicatorUtils.getWeightedMovingAverage(ssma377, 21, 0, Color.BLACK);
+
+				plotData.add(sssma5);
+				plotData.add(sssma21);
+				plotData.add(sssma89);
+				plotData.add(sssma377);
+				
 				// Chart title.
 				StringBuilder title = new StringBuilder();
 				title.append(server.getName());

@@ -22,6 +22,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import com.qtplaf.library.swing.event.Mask;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.ColorUtils;
 
@@ -148,6 +149,18 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 	 * @param e The mouse event.
 	 */
 	public void mouseDragged(MouseEvent e) {
+		// Only button1, scroll.
+		if (Mask.check(e, Mask.Button1)) {
+			dragScroll(e);
+		}
+	}
+
+	/**
+	 * Scroll dragging with only button1 pressed.
+	 * 
+	 * @param e The mouse event.
+	 */
+	private void dragScroll(MouseEvent e) {
 		PlotData plotData = chartPlotter.getChartContainer().getPlotData();
 		if (plotData == null) {
 			return;
@@ -157,36 +170,39 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 			mouseDraggingX = e.getX();
 		}
 		if (mouseDragging) {
-			int x = e.getX();
-			if (x >= 0 && x <= chartPlotter.getSize().getWidth()) {
-				if (mouseDraggingX != x) {
-					// The absolute width factor.
-					double widthFactor =
-						Math.abs(((double) (x - mouseDraggingX)) / chartPlotter.getSize().getWidth());
-					// Convert the width factor into index length.
-					int startIndex = plotData.getStartIndex();
-					int endIndex = plotData.getEndIndex();
-					int indexScroll = Math.abs((int) ((endIndex - startIndex) * widthFactor));
-					if (indexScroll < 1) {
-						indexScroll = 1;
+			// No modifiers, do scroll.
+			if ((e.getModifiersEx() & 0) == 0) {
+				int x = e.getX();
+				if (x >= 0 && x <= chartPlotter.getSize().getWidth()) {
+					if (mouseDraggingX != x) {
+						// The absolute width factor.
+						double widthFactor =
+							Math.abs(((double) (x - mouseDraggingX)) / chartPlotter.getSize().getWidth());
+						// Convert the width factor into index length.
+						int startIndex = plotData.getStartIndex();
+						int endIndex = plotData.getEndIndex();
+						int indexScroll = Math.abs((int) ((endIndex - startIndex) * widthFactor));
+						if (indexScroll < 1) {
+							indexScroll = 1;
+						}
+						// Scroll plot data.
+						if (x < mouseDraggingX) {
+							plotData.scroll(indexScroll);
+						} else {
+							plotData.scroll(-indexScroll);
+						}
+						plotData.calculateFrame();
+						mouseDraggingX = x;
+
+						// Set the mouse point to the chart plotter to paint the cursor as required.
+						chartPlotter.setMousePoint(e.getPoint(), false);
+
+						// Draw the value in the vertical axis.
+						chartPlotter.getChartContainer().getChartVerticalAxis().setMousePoint(e.getPoint(), false);
+
+						// Propagate changes.
+						chartPlotter.getChartContainer().getChart().propagateFrameChanges(plotData);
 					}
-					// Scroll plot data.
-					if (x < mouseDraggingX) {
-						plotData.scroll(indexScroll);
-					} else {
-						plotData.scroll(-indexScroll);
-					}
-					plotData.calculateFrame();
-					mouseDraggingX = x;
-
-					// Set the mouse point to the chart plotter to paint the cursor as required.
-					chartPlotter.setMousePoint(e.getPoint(), false);
-
-					// Draw the value in the vertical axis.
-					chartPlotter.getChartContainer().getChartVerticalAxis().setMousePoint(e.getPoint(), false);
-
-					// Propagate changes.
-					chartPlotter.getChartContainer().getChart().propagateFrameChanges(plotData);
 				}
 			}
 		}
@@ -246,10 +262,13 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 		}
 		barsToScrollOrZoom *= e.getWheelRotation();
 
-		// If the control key is down, zoom, otherwise scroll.
-		if ((e.getModifiersEx() & MouseWheelEvent.CTRL_DOWN_MASK) == MouseWheelEvent.CTRL_DOWN_MASK) {
+		// If the control key is down, zoom.
+		if (Mask.check(e, Mask.Ctrl)) {
 			plotData.zoom(barsToScrollOrZoom);
-		} else {
+		}
+
+		// Only wheel, scroll.
+		if (Mask.check(e, 0)) {
 			plotData.scroll(barsToScrollOrZoom);
 		}
 

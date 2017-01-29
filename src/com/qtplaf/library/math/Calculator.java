@@ -267,6 +267,16 @@ public class Calculator {
 	}
 
 	/**
+	 * Returns the size of a vector.
+	 * 
+	 * @param vector The vector.
+	 * @return The size.
+	 */
+	public static int size(double[] vector) {
+		return vector.length;
+	}
+
+	/**
 	 * Returns the argument matrix transposed.
 	 * 
 	 * @param matrix The matrix to transpose.
@@ -465,12 +475,46 @@ public class Calculator {
 	 * @return The translated vector.
 	 */
 	public static double[] add(double value, double[] vector) {
-		int size = vector.length;
+		int size = size(vector);
 		double[] result = new double[size];
 		for (int i = 0; i < size; i++) {
 			result[i] = value + vector[i];
 		}
 		return result;
+	}
+
+	/**
+	 * Add the values of vectors a and b.
+	 * 
+	 * @param a Vector a.
+	 * @param b Vector b.
+	 * @return The result of adding the values.
+	 */
+	public static double[] add(double[] a, double[] b) {
+		checkVectorsSizes(a, b);
+		int size = size(a);
+		double[] r = new double[size];
+		for (int i = 0; i < size; i++) {
+			r[i] = a[i] + b[i];
+		}
+		return r;
+	}
+
+	/**
+	 * Subtract the values of vector b from vector a.
+	 * 
+	 * @param a Vector a.
+	 * @param b Vector b.
+	 * @return The result of subtracting the values.
+	 */
+	public static double[] subtract(double[] a, double[] b) {
+		checkVectorsSizes(a, b);
+		int size = size(a);
+		double[] r = new double[size];
+		for (int i = 0; i < size; i++) {
+			r[i] = a[i] - b[i];
+		}
+		return r;
 	}
 
 	/**
@@ -515,6 +559,17 @@ public class Calculator {
 	private static void checkMatricesDimensions(double[][] a, double[][] b) {
 		if (rows(a) != rows(b) || columns(a) != columns(b)) {
 			throw new IllegalArgumentException("Matrices dimensions must agree");
+		}
+	}
+
+	/**
+	 * Check that the sizes of the vectors are the same.
+	 * 
+	 * @param a Vector a.
+	 */
+	private static void checkVectorsSizes(double[] a, double[] b) {
+		if (size(a) != size(b)) {
+			throw new IllegalArgumentException("Vectors sizes must agree");
 		}
 	}
 
@@ -845,7 +900,7 @@ public class Calculator {
 
 		// Previous mean squared.
 		double meanSquaredPrevious = meanSquared(result, input);
-		
+
 		// Error.
 		double error = Double.MAX_VALUE;
 
