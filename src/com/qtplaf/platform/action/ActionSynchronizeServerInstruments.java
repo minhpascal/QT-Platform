@@ -30,6 +30,7 @@ import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.tables.Instruments;
@@ -51,7 +52,7 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionSynchronizeServerInstruments.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionSynchronizeServerInstruments.this);
+				Server server = LaunchArgs.getServer(ActionSynchronizeServerInstruments.this);
 				StatusBar statusBar = ActionUtils.getStatusBar(ActionSynchronizeServerInstruments.this);
 
 				statusBar.setStatus("Connecting to server " + server.getName(), 1, 5);
@@ -109,5 +110,4 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		new Thread(new Synchronizer()).start();
 	}
-
 }

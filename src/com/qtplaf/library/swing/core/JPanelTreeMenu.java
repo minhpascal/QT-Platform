@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -61,13 +60,13 @@ public class JPanelTreeMenu extends JPanel {
 			KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode, modifiers);
 
 			// Accelerator key.
-			DefaultMutableTreeNode nodeAccKey = findNode(keyStroke);
+			TreeMenuNode nodeAccKey = findNode(keyStroke);
 			if (nodeAccKey != null) {
 				TreePath path = getTreePath(nodeAccKey);
 				getTree().setSelectionPath(path);
 				getTree().expandPath(path);
 				ActionEvent accEv = new ActionEvent(e.getSource(), 0, null, System.currentTimeMillis(), 0);
-				getMenuItem(nodeAccKey).execute(accEv, getStatusBar());
+				nodeAccKey.getMenuItem().execute(accEv, getStatusBar());
 				return;
 			}
 
@@ -93,7 +92,7 @@ public class JPanelTreeMenu extends JPanel {
 			if (e.getClickCount() == 2) {
 				TreePath path = getTree().getPathForLocation(e.getX(), e.getY());
 				if (path != null) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+					TreeMenuNode node = (TreeMenuNode) path.getLastPathComponent();
 					if (node == getSelectedNode()) {
 						execute(node);
 						return;
@@ -169,7 +168,7 @@ public class JPanelTreeMenu extends JPanel {
 	 * Proce execute (VK_ENTER), expanding, collapsing or executing the option.
 	 */
 	public void processExecute() {
-		DefaultMutableTreeNode node = getSelectedNode();
+		TreeMenuNode node = getSelectedNode();
 		if (node != null) {
 			if (node.isLeaf()) {
 				execute(node);
@@ -189,7 +188,7 @@ public class JPanelTreeMenu extends JPanel {
 	 * 
 	 * @param node The node.
 	 */
-	private void execute(DefaultMutableTreeNode node) {
+	private void execute(TreeMenuNode node) {
 		if (node.isLeaf()) {
 			TreeMenuItem treeMenuItem = getSelectedMenuItem();
 			if (treeMenuItem != null) {
@@ -216,10 +215,10 @@ public class JPanelTreeMenu extends JPanel {
 	 * @param childMenuItem The menu item to add.
 	 */
 	public void addMenuItem(String level, TreeMenuItem childMenuItem) {
-		DefaultMutableTreeNode parentNode = findNode(level);
+		TreeMenuNode parentNode = findNode(level);
 		TreeMenuItem parentMenuItem = null;
 		if (parentNode != null) {
-			parentMenuItem = getMenuItem(parentNode);
+			parentMenuItem = parentNode.getMenuItem();
 		}
 		addMenuItem(parentMenuItem, childMenuItem);
 	}
@@ -244,7 +243,7 @@ public class JPanelTreeMenu extends JPanel {
 	public void addMenuItem(TreeMenuItem parentMenuItem, TreeMenuItem childMenuItem, boolean refresh) {
 
 		// Find the parent node.
-		DefaultMutableTreeNode parentNode;
+		TreeMenuNode parentNode;
 		if (parentMenuItem == null) {
 			parentNode = getRootNode();
 			parentMenuItem = getRootMenuItem();
@@ -267,7 +266,7 @@ public class JPanelTreeMenu extends JPanel {
 			}
 
 			// Do add the child.
-			DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(childMenuItem);
+			TreeMenuNode childNode = new TreeMenuNode(childMenuItem);
 			childMenuItem.setNode(childNode);
 			parentNode.add(childNode);
 			if (refresh) {
@@ -300,7 +299,7 @@ public class JPanelTreeMenu extends JPanel {
 	private JTree getTree() {
 		if (tree == null) {
 			TreeMenuItem rootMenuItem = new TreeMenuItem(getSession());
-			DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(rootMenuItem);
+			TreeMenuNode rootNode = new TreeMenuNode(rootMenuItem);
 			rootMenuItem.setNode(rootNode);
 			DefaultTreeModel model = new DefaultTreeModel(rootNode);
 			tree = new JTree(model);
@@ -334,8 +333,8 @@ public class JPanelTreeMenu extends JPanel {
 	 * 
 	 * @return The root node.
 	 */
-	private DefaultMutableTreeNode getRootNode() {
-		return (DefaultMutableTreeNode) getTreeModel().getRoot();
+	private TreeMenuNode getRootNode() {
+		return (TreeMenuNode) getTreeModel().getRoot();
 	}
 
 	/**
@@ -344,7 +343,7 @@ public class JPanelTreeMenu extends JPanel {
 	 * @return The root menu item.
 	 */
 	private TreeMenuItem getRootMenuItem() {
-		return getMenuItem(getRootNode());
+		return getRootNode().getMenuItem();
 	}
 
 	/**
@@ -352,10 +351,10 @@ public class JPanelTreeMenu extends JPanel {
 	 * 
 	 * @return The selected tree node or null.
 	 */
-	public DefaultMutableTreeNode getSelectedNode() {
+	public TreeMenuNode getSelectedNode() {
 		TreePath selectionPath = getTree().getSelectionPath();
 		if (selectionPath != null) {
-			return (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+			return (TreeMenuNode) selectionPath.getLastPathComponent();
 		}
 		return null;
 	}
@@ -366,9 +365,9 @@ public class JPanelTreeMenu extends JPanel {
 	 * @return The selected menu item or null.
 	 */
 	public TreeMenuItem getSelectedMenuItem() {
-		DefaultMutableTreeNode selectedNode = getSelectedNode();
+		TreeMenuNode selectedNode = getSelectedNode();
 		if (selectedNode != null) {
-			return getMenuItem(selectedNode);
+			return selectedNode.getMenuItem();
 		}
 		return null;
 	}
@@ -379,11 +378,11 @@ public class JPanelTreeMenu extends JPanel {
 	 * @param menuItem The source menu item.
 	 * @return The tree node or null.
 	 */
-	private DefaultMutableTreeNode findNode(TreeMenuItem menuItem) {
-		Enumeration<DefaultMutableTreeNode> enumeration = getEnumeration();
+	private TreeMenuNode findNode(TreeMenuItem menuItem) {
+		Enumeration<TreeMenuNode> enumeration = getEnumeration();
 		while (enumeration.hasMoreElements()) {
-			DefaultMutableTreeNode node = enumeration.nextElement();
-			if (getMenuItem(node) == menuItem) {
+			TreeMenuNode node = enumeration.nextElement();
+			if (node.getMenuItem() == menuItem) {
 				return node;
 			}
 		}
@@ -396,11 +395,11 @@ public class JPanelTreeMenu extends JPanel {
 	 * @param level The seach level.
 	 * @return The the node of the level or null.
 	 */
-	private DefaultMutableTreeNode findNode(String level) {
-		Enumeration<DefaultMutableTreeNode> enumeration = getEnumeration();
+	private TreeMenuNode findNode(String level) {
+		Enumeration<TreeMenuNode> enumeration = getEnumeration();
 		while (enumeration.hasMoreElements()) {
-			DefaultMutableTreeNode node = enumeration.nextElement();
-			if (getMenuItem(node).getLevel().equals(level)) {
+			TreeMenuNode node = enumeration.nextElement();
+			if (node.getMenuItem().getLevel().equals(level)) {
 				return node;
 			}
 		}
@@ -413,11 +412,11 @@ public class JPanelTreeMenu extends JPanel {
 	 * @param level The seach level.
 	 * @return The the node of the level or null.
 	 */
-	private DefaultMutableTreeNode findNode(KeyStroke keyStroke) {
-		Enumeration<DefaultMutableTreeNode> enumeration = getEnumeration();
+	private TreeMenuNode findNode(KeyStroke keyStroke) {
+		Enumeration<TreeMenuNode> enumeration = getEnumeration();
 		while (enumeration.hasMoreElements()) {
-			DefaultMutableTreeNode node = enumeration.nextElement();
-			TreeMenuItem menuItem = getMenuItem(node);
+			TreeMenuNode node = enumeration.nextElement();
+			TreeMenuItem menuItem = node.getMenuItem();
 			if (menuItem.getAcceleratorKey() != null && menuItem.getAcceleratorKey().equals(keyStroke)) {
 				return node;
 			}
@@ -431,18 +430,8 @@ public class JPanelTreeMenu extends JPanel {
 	 * @return The enumeration.
 	 */
 	@SuppressWarnings("unchecked")
-	private Enumeration<DefaultMutableTreeNode> getEnumeration() {
-		return (Enumeration<DefaultMutableTreeNode>) getRootNode().breadthFirstEnumeration();
-	}
-
-	/**
-	 * Returns the menu item given the node.
-	 * 
-	 * @param node The node.
-	 * @return The menu item.
-	 */
-	private TreeMenuItem getMenuItem(DefaultMutableTreeNode node) {
-		return (TreeMenuItem) node.getUserObject();
+	private Enumeration<TreeMenuNode> getEnumeration() {
+		return (Enumeration<TreeMenuNode>) getRootNode().breadthFirstEnumeration();
 	}
 
 	/**

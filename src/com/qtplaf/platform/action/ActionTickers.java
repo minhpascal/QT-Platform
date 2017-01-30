@@ -59,6 +59,7 @@ import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.Names;
@@ -190,7 +191,7 @@ public class ActionTickers extends AbstractAction {
 
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				Instrument instrument = Lookup.selectIntrument(session, server);
 				if (instrument == null) {
 					return;
@@ -236,7 +237,7 @@ public class ActionTickers extends AbstractAction {
 
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				List<Record> records = getSelectedRecords();
 				if (records.isEmpty()) {
 					return;
@@ -287,7 +288,7 @@ public class ActionTickers extends AbstractAction {
 
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				List<Record> records = getSelectedRecords();
 				if (records.isEmpty()) {
 					return;
@@ -335,7 +336,7 @@ public class ActionTickers extends AbstractAction {
 
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				List<Record> records = getSelectedRecords();
 				if (records.isEmpty()) {
 					return;
@@ -453,7 +454,7 @@ public class ActionTickers extends AbstractAction {
 		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				Record record = action.getSelectedRecord();
 				if (record == null) {
 					return;
@@ -523,7 +524,7 @@ public class ActionTickers extends AbstractAction {
 		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				Record record = action.getSelectedRecord();
 				if (record == null) {
 					return;
@@ -617,7 +618,7 @@ public class ActionTickers extends AbstractAction {
 		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionTickers.this);
+				Server server = LaunchArgs.getServer(ActionTickers.this);
 				Persistor persistor = Persistors.getPersistorTickers(session);
 				Record masterRecord = persistor.getDefaultRecord();
 
@@ -698,7 +699,7 @@ public class ActionTickers extends AbstractAction {
 
 		JFormRecord form = new JFormRecord(session);
 		form.setRecord(record);
-		form.setTitle(session.getString("qtMenuServersTickersCreate"));
+		form.setTitle(session.getString("qtActionCreateTicker"));
 		form.setEditMode(EditMode.Insert);
 		form.addField(Tickers.Fields.ServerId);
 		form.addField(Tickers.Fields.InstrumentId);

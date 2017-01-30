@@ -31,6 +31,7 @@ import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.RecordSets;
 import com.qtplaf.platform.database.tables.Instruments;
@@ -80,7 +81,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionAvailableInstruments.this);
-				Server server = (Server) ActionUtils.getLaunchArgs(ActionAvailableInstruments.this);
+				Server server = LaunchArgs.getServer(ActionAvailableInstruments.this);
 				Persistor persistor = Persistors.getPersistorInstruments(session);
 				Record masterRecord = persistor.getDefaultRecord();
 

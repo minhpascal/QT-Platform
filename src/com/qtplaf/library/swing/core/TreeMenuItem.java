@@ -23,7 +23,6 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +32,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditMode;
 import com.qtplaf.library.swing.MessageBox;
+import com.qtplaf.library.util.Properties;
 
 /**
  * An item of tree menu system.
@@ -165,7 +165,7 @@ public class TreeMenuItem {
 	/**
 	 * The node that holds this tree menu item.
 	 */
-	private DefaultMutableTreeNode node;
+	private TreeMenuNode node;
 	/**
 	 * A boolean that indicates if the level should be displayed.
 	 */
@@ -177,7 +177,7 @@ public class TreeMenuItem {
 	/**
 	 * Optional launch arguments.
 	 */
-	private Object launchArgs;
+	private Properties launchArgs;
 	/**
 	 * The access key to check security access.
 	 */
@@ -352,7 +352,7 @@ public class TreeMenuItem {
 
 				// Set the session.
 				ActionUtils.setSession(action, getSession());
-				
+
 				// Launch arguments if present.
 				if (getLaunchArgs() != null) {
 					ActionUtils.setLaunchArgs(action, getLaunchArgs());
@@ -391,11 +391,24 @@ public class TreeMenuItem {
 	}
 
 	/**
+	 * Set a launch argument.
+	 * 
+	 * @param key The key.
+	 * @param value The argument.
+	 */
+	public void setLaunchArg(Object key, Object value) {
+		if (launchArgs == null) {
+			launchArgs = new Properties();
+		}
+		launchArgs.setObject(key, value);
+	}
+
+	/**
 	 * Returns the launch arguments.
 	 * 
 	 * @return The launch arguments.
 	 */
-	public Object getLaunchArgs() {
+	public Properties getLaunchArgs() {
 		return launchArgs;
 	}
 
@@ -404,7 +417,7 @@ public class TreeMenuItem {
 	 * 
 	 * @param launchArgs The launch arguments.
 	 */
-	public void setLaunchArgs(Object launchArgs) {
+	public void setLaunchArgs(Properties launchArgs) {
 		this.launchArgs = launchArgs;
 	}
 
@@ -450,7 +463,7 @@ public class TreeMenuItem {
 	 * 
 	 * @return The node that holds this menu item.
 	 */
-	public DefaultMutableTreeNode getNode() {
+	public TreeMenuNode getNode() {
 		return node;
 	}
 
@@ -459,7 +472,7 @@ public class TreeMenuItem {
 	 * 
 	 * @param node The node that holds this menu item.
 	 */
-	public void setNode(DefaultMutableTreeNode node) {
+	public void setNode(TreeMenuNode node) {
 		this.node = node;
 	}
 
@@ -488,7 +501,7 @@ public class TreeMenuItem {
 	 */
 	public TreeMenuItem getParent() {
 		if (getNode() != null) {
-			DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) getNode().getParent();
+			TreeMenuNode parentNode = (TreeMenuNode) getNode().getParent();
 			if (parentNode != null) {
 				return (TreeMenuItem) parentNode.getUserObject();
 			}
@@ -506,7 +519,7 @@ public class TreeMenuItem {
 		if (getNode() != null) {
 			int count = getNode().getChildCount();
 			for (int i = 0; i < count; i++) {
-				DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) getNode().getChildAt(i);
+				TreeMenuNode childNode = (TreeMenuNode) getNode().getChildAt(i);
 				TreeMenuItem child = (TreeMenuItem) childNode.getUserObject();
 				if (child != null) {
 					children.add(child);

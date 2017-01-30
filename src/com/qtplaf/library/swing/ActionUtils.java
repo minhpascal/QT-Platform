@@ -297,8 +297,8 @@ public class ActionUtils {
 	 * @param action The action.
 	 * @return The launch argument object or null.
 	 */
-	public static Object getLaunchArgs(Action action) {
-		return getProperties(action).getObject(KeyLauchArgs);
+	public static Properties getLaunchArgs(Action action) {
+		return (Properties) getProperties(action).getObject(KeyLauchArgs);
 	}
 
 	/**
@@ -479,7 +479,7 @@ public class ActionUtils {
 	 * @param action The action.
 	 * @param launchArgs The launch arguments object.
 	 */
-	public static void setLaunchArgs(Action action, Object launchArgs) {
+	public static void setLaunchArgs(Action action, Properties launchArgs) {
 		getProperties(action).setObject(KeyLauchArgs, launchArgs);
 	}
 

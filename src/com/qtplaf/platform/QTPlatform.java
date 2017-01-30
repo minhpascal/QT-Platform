@@ -52,6 +52,7 @@ import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.RecordSets;
 import com.qtplaf.platform.database.Records;
 import com.qtplaf.platform.database.Tables;
 import com.qtplaf.platform.database.tables.DataFilters;
@@ -116,8 +117,8 @@ public class QTPlatform {
 		frameMenu.setPreExitAction(new PreExitAction());
 
 		// Re-direct out and err.
-//		System.setOut(frameMenu.getConsole().getPrintStream());
-//		System.setErr(frameMenu.getConsole().getPrintStream());
+		// System.setOut(frameMenu.getConsole().getPrintStream());
+		// System.setErr(frameMenu.getConsole().getPrintStream());
 
 		// RunTickers the menu.
 		frameMenu.setVisible(true);
@@ -346,36 +347,64 @@ public class QTPlatform {
 
 			// Server options.
 			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
-			itemServer.setLaunchArgs(server);
+			itemServer.setLaunchArg(LaunchArgs.Server, server);
 			menu.addMenuItem(itemServers, itemServer);
 
 			// Synchronize available instruments
 			TreeMenuItem itemSrvSyncInst =
 				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersSynchronizeInstruments"));
 			itemSrvSyncInst.setActionClass(ActionSynchronizeServerInstruments.class);
-			itemSrvSyncInst.setLaunchArgs(server);
+			itemSrvSyncInst.setLaunchArg(LaunchArgs.Server, server);
 			menu.addMenuItem(itemServer, itemSrvSyncInst);
 
 			// Available instruments
 			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersAvInst"));
 			itemSrvAvInst.setActionClass(ActionAvailableInstruments.class);
-			itemSrvAvInst.setLaunchArgs(server);
+			itemSrvAvInst.setLaunchArg(LaunchArgs.Server, server);
 			menu.addMenuItem(itemServer, itemSrvAvInst);
 
 			// Tickers
 			TreeMenuItem itemSrvTickers = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickers"));
-			itemSrvTickers.setActionClass(ActionTickers.class);
-			itemSrvTickers.setLaunchArgs(server);
 			menu.addMenuItem(itemServer, itemSrvTickers);
 
-			// Test
-			// TreeMenuItem itemSrvTest = TreeMenuItem.getMenuItem(session, "Test");
-			// itemSrvTest.setActionClass(TestAction.class);
-			// itemSrvTest.setLaunchArgs(server);
-			// menu.addMenuItem(itemServer, itemSrvTest);
+			// Tickers define and download.
+			TreeMenuItem itemSrvTickersDef =
+				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickersDefine"));
+			itemSrvTickersDef.setActionClass(ActionTickers.class);
+			itemSrvTickersDef.setLaunchArg(LaunchArgs.Server, server);
+			menu.addMenuItem(itemSrvTickers, itemSrvTickersDef);
+
+			// Tickers statistics.
+			TreeMenuItem itemSrvTickersStats =
+				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickersStatistics"));
+			itemSrvTickersStats.setLaunchArg(LaunchArgs.Server, server);
+			menu.addMenuItem(itemSrvTickers, itemSrvTickersStats);
+			
+			// Set the statistics menu item as argument to define tickers to configure it.
+			itemSrvTickersDef.setLaunchArg(LaunchArgs.Statistics, itemSrvTickersStats);
+			
+			// Configure it also now.
+			configureMenuItemStats(session, itemSrvTickersStats);
+
 		}
 
 		menu.refreshTree();
+	}
+
+	/**
+	 * Configure the statistics menu item of a server.
+	 * 
+	 * @param session Working session.
+	 * @param itemStats The statistics menu item.
+	 */
+	public static void configureMenuItemStats(Session session, TreeMenuItem itemStats) {
+		Server server = LaunchArgs.getServer(itemStats);
+		try {
+			itemStats.getNode().removeAllChildren();
+			RecordSet tickers = RecordSets.getRecordSetTickers(session, server);
+		} catch (Exception exc) {
+			logger.catching(exc);
+		}
 	}
 
 }

@@ -8,7 +8,11 @@
 	<entry key="qtMenuServersSynchronizeInstruments">Synchronize available instruments</entry>
 	<entry key="qtMenuServersAvInst">Available instruments</entry>
 	<entry key="qtMenuServersTickers">Tickers</entry>
-	<entry key="qtMenuServersTickersCreate">Create new ticker</entry>
+	<entry key="qtMenuServersTickersDefine">Define &#38; download</entry>
+	<entry key="qtMenuServersTickersStatistics">Statistics</entry>
+	
+	
+	<entry key="qtActionCreateTicker">Create new ticker</entry>
 	
 	<entry key="qtItemMustBeSet">The {0} must be set</entry>
 	
