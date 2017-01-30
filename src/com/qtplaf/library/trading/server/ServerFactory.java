@@ -78,7 +78,7 @@ public class ServerFactory {
 				return server;
 			}
 		}
-		throw new ServerException("Server " + id + " not supported");
+		throw new ServerException("KeyServer " + id + " not supported");
 	}
 
 	/**

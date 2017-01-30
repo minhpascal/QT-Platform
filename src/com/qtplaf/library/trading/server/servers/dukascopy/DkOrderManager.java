@@ -32,7 +32,7 @@ import com.qtplaf.library.trading.server.ServerException;
 public class DkOrderManager implements OrderManager {
 
 	/**
-	 * Server reference.
+	 * KeyServer reference.
 	 */
 	private DkServer server;
 

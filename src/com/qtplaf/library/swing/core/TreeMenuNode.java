@@ -30,6 +30,7 @@ public class TreeMenuNode extends DefaultMutableTreeNode {
 	 */
 	public TreeMenuNode(TreeMenuItem treeMenuItem) {
 		super(treeMenuItem);
+		treeMenuItem.setNode(this);
 	}
 
 	/**

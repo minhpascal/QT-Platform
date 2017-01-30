@@ -37,7 +37,7 @@ import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkBarFeedLi
 public class DkFeedManager implements FeedManager {
 
 	/**
-	 * Server reference.
+	 * KeyServer reference.
 	 */
 	private DkServer server;
 	/**

@@ -43,6 +43,7 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.swing.core.TreeMenuItem;
 import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
@@ -60,6 +61,7 @@ import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
+import com.qtplaf.platform.QTPlatform;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.Names;
@@ -209,6 +211,8 @@ public class ActionTickers extends AbstractAction {
 				Persistors.getDDL().buildTable(table);
 				getTableModel().insertRecord(record, persistor.getView().getOrderBy());
 				getTableRecord().setSelectedRecord(record);
+				
+				resetMenuStats();
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}
@@ -259,6 +263,8 @@ public class ActionTickers extends AbstractAction {
 					getTableModel().deleteRecord(record);
 				}
 				getTableRecord().setSelectedRow(row);
+				
+				resetMenuStats();
 
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -391,6 +397,8 @@ public class ActionTickers extends AbstractAction {
 			JOptionFrame frame = (JOptionFrame) ActionUtils.getUserObject(this);
 			frame.setVisible(false);
 			frame.dispose();
+			
+			resetMenuStats();
 		}
 	}
 
@@ -687,7 +695,7 @@ public class ActionTickers extends AbstractAction {
 	 * Returns the record to create a new ticker for the given server and instrument.
 	 * 
 	 * @param session Working session.
-	 * @param server Server.
+	 * @param server KeyServer.
 	 * @param instrument Instrument.
 	 * @return The ticker record.
 	 */
@@ -727,5 +735,14 @@ public class ActionTickers extends AbstractAction {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Reset the statistics menu.
+	 */
+	private void resetMenuStats() {
+		Session session = ActionUtils.getSession(this);
+		TreeMenuItem item = LaunchArgs.getMenuItem(this);
+		QTPlatform.configureMenuItemStats(session, item);
 	}
 }

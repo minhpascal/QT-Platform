@@ -35,7 +35,7 @@ import com.qtplaf.library.trading.server.ServerException;
 public class DkHistoryManager implements HistoryManager {
 
 	/**
-	 * Server reference.
+	 * KeyServer reference.
 	 */
 	private DkServer server;
 

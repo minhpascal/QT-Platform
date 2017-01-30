@@ -29,7 +29,7 @@ public class TestMail implements IStrategy {
 
     @Configurable("Recipient mail")
     public String mailAddress = "name.surname@server.com";
-    @Configurable("SMTP Server")
+    @Configurable("SMTP KeyServer")
     public String smtpServer = "mailserver.company.com";
     private IConsole console;
     

@@ -472,7 +472,7 @@ public class TreeMenuItem {
 	 * 
 	 * @param node The node that holds this menu item.
 	 */
-	public void setNode(TreeMenuNode node) {
+	void setNode(TreeMenuNode node) {
 		this.node = node;
 	}
 

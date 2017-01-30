@@ -267,7 +267,6 @@ public class JPanelTreeMenu extends JPanel {
 
 			// Do add the child.
 			TreeMenuNode childNode = new TreeMenuNode(childMenuItem);
-			childMenuItem.setNode(childNode);
 			parentNode.add(childNode);
 			if (refresh) {
 				getTreeModel().nodeStructureChanged(parentNode);
@@ -300,7 +299,6 @@ public class JPanelTreeMenu extends JPanel {
 		if (tree == null) {
 			TreeMenuItem rootMenuItem = new TreeMenuItem(getSession());
 			TreeMenuNode rootNode = new TreeMenuNode(rootMenuItem);
-			rootMenuItem.setNode(rootNode);
 			DefaultTreeModel model = new DefaultTreeModel(rootNode);
 			tree = new JTree(model);
 			tree.setCellRenderer(new TreeMenuItemCellRenderer(getSession()));
@@ -324,7 +322,7 @@ public class JPanelTreeMenu extends JPanel {
 	 * 
 	 * @return The tree model.
 	 */
-	private DefaultTreeModel getTreeModel() {
+	public DefaultTreeModel getTreeModel() {
 		return (DefaultTreeModel) getTree().getModel();
 	}
 
@@ -440,7 +438,7 @@ public class JPanelTreeMenu extends JPanel {
 	 * @param node The target node.
 	 * @return The path.
 	 */
-	private TreePath getTreePath(TreeNode node) {
+	public TreePath getTreePath(TreeNode node) {
 		List<TreeNode> path = new ArrayList<>();
 		while (node != null) {
 			path.add(0, node);

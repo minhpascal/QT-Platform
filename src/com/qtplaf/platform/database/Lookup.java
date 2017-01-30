@@ -34,7 +34,7 @@ public class Lookup {
 	 * Lookup/select the instrument.
 	 * 
 	 * @param session Working session.
-	 * @param server Server.
+	 * @param server KeyServer.
 	 * @return The selected instrument or null.
 	 * @throws Exception
 	 */

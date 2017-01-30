@@ -34,7 +34,7 @@ public class DkConnectionManager implements ConnectionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DkConnectionManager.class);
 
 	/**
-	 * Server reference.
+	 * KeyServer reference.
 	 */
 	private DkServer server;
 	/**
@@ -76,7 +76,7 @@ public class DkConnectionManager implements ConnectionManager {
 
 		// Check if already connected.
 		if (isConnected()) {
-			throw new ServerException("Server is already connected, please disconnect first.");
+			throw new ServerException("KeyServer is already connected, please disconnect first.");
 		}
 
 		// Remember the connection type.

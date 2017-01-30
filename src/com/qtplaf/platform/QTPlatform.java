@@ -32,6 +32,7 @@ import com.qtplaf.library.database.PersistorDDL;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
 import com.qtplaf.library.database.rdbms.DataSourceInfo;
@@ -40,6 +41,8 @@ import com.qtplaf.library.swing.FrameMenu;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.core.JPanelTreeMenu;
 import com.qtplaf.library.swing.core.TreeMenuItem;
+import com.qtplaf.library.swing.core.TreeMenuNode;
+import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
@@ -48,6 +51,7 @@ import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
+import com.qtplaf.platform.action.ActionStatesRawValues;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Names;
@@ -191,7 +195,7 @@ public class QTPlatform {
 			}
 		}
 
-		// Check for the necessary table Server in the system schema.
+		// Check for the necessary table KeyServer in the system schema.
 		if (!ddl.existsTable(Tables.getTableServers(session))) {
 			ddl.buildTable(Tables.getTableServers(session));
 		}
@@ -345,22 +349,22 @@ public class QTPlatform {
 			String title = server.getTitle();
 			String id = server.getId();
 
-			// Server options.
+			// KeyServer options.
 			TreeMenuItem itemServer = TreeMenuItem.getMenuItem(session, name, title, id);
-			itemServer.setLaunchArg(LaunchArgs.Server, server);
+			itemServer.setLaunchArg(LaunchArgs.KeyServer, server);
 			menu.addMenuItem(itemServers, itemServer);
 
 			// Synchronize available instruments
 			TreeMenuItem itemSrvSyncInst =
 				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersSynchronizeInstruments"));
 			itemSrvSyncInst.setActionClass(ActionSynchronizeServerInstruments.class);
-			itemSrvSyncInst.setLaunchArg(LaunchArgs.Server, server);
+			itemSrvSyncInst.setLaunchArg(LaunchArgs.KeyServer, server);
 			menu.addMenuItem(itemServer, itemSrvSyncInst);
 
 			// Available instruments
 			TreeMenuItem itemSrvAvInst = TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersAvInst"));
 			itemSrvAvInst.setActionClass(ActionAvailableInstruments.class);
-			itemSrvAvInst.setLaunchArg(LaunchArgs.Server, server);
+			itemSrvAvInst.setLaunchArg(LaunchArgs.KeyServer, server);
 			menu.addMenuItem(itemServer, itemSrvAvInst);
 
 			// Tickers
@@ -371,18 +375,19 @@ public class QTPlatform {
 			TreeMenuItem itemSrvTickersDef =
 				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickersDefine"));
 			itemSrvTickersDef.setActionClass(ActionTickers.class);
-			itemSrvTickersDef.setLaunchArg(LaunchArgs.Server, server);
+			itemSrvTickersDef.setLaunchArg(LaunchArgs.KeyServer, server);
 			menu.addMenuItem(itemSrvTickers, itemSrvTickersDef);
 
 			// Tickers statistics.
 			TreeMenuItem itemSrvTickersStats =
 				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickersStatistics"));
-			itemSrvTickersStats.setLaunchArg(LaunchArgs.Server, server);
+			itemSrvTickersStats.setLaunchArg(LaunchArgs.KeyServer, server);
+			itemSrvTickersStats.setLaunchArg(LaunchArgs.KeyPanelMenu, menu);
 			menu.addMenuItem(itemSrvTickers, itemSrvTickersStats);
-			
+
 			// Set the statistics menu item as argument to define tickers to configure it.
-			itemSrvTickersDef.setLaunchArg(LaunchArgs.Statistics, itemSrvTickersStats);
-			
+			itemSrvTickersDef.setLaunchArg(LaunchArgs.KeyStatistics, itemSrvTickersStats);
+
 			// Configure it also now.
 			configureMenuItemStats(session, itemSrvTickersStats);
 
@@ -401,7 +406,39 @@ public class QTPlatform {
 		Server server = LaunchArgs.getServer(itemStats);
 		try {
 			itemStats.getNode().removeAllChildren();
-			RecordSet tickers = RecordSets.getRecordSetTickers(session, server);
+			RecordSet rs = RecordSets.getRecordSetTickers(session, server);
+			for (int i = 0; i < rs.size(); i++) {
+				Record rc = rs.get(i);
+
+				Value vSERVER_ID = rc.getValue(Tickers.Fields.ServerId);
+				Value vINSTR_ID = rc.getValue(Tickers.Fields.InstrumentId);
+				Record recordInstr = Records.getRecordInstrument(session, vSERVER_ID, vINSTR_ID);
+
+				Instrument instrument = Records.fromRecordInstrument(recordInstr);
+				Period period = Period.parseId(rc.getValue(Tickers.Fields.PeriodId).getString());
+
+				String labelInstr = instrument.getId();
+				String labelPeriod = period.toString();
+				String tableName = rc.getValue(Tickers.Fields.TableName).getString();
+
+				TreeMenuItem menuItem =
+					TreeMenuItem.getMenuItem(session, labelInstr, labelPeriod, tableName);
+
+				itemStats.getNode().add(new TreeMenuNode(menuItem));
+
+				String rawStateLabel = session.getString("qtMenuStatisticsRawState");
+				
+				TreeMenuItem menuItemRawState =	TreeMenuItem.getMenuItem(session, rawStateLabel);
+				menuItemRawState.setActionClass(ActionStatesRawValues.class);
+				menuItemRawState.setLaunchArg(LaunchArgs.KeyServer, server);
+				menuItemRawState.setLaunchArg(LaunchArgs.KeyInstrument, instrument);
+				menuItemRawState.setLaunchArg(LaunchArgs.KeyPeriod, period);
+				menuItemRawState.setLaunchArg(LaunchArgs.KeyTableName, tableName);
+				
+				menuItem.getNode().add(new TreeMenuNode(menuItemRawState));
+			}
+			
+			LaunchArgs.getPanelMenu(itemStats).getTreeModel().nodeStructureChanged(itemStats.getNode());
 		} catch (Exception exc) {
 			logger.catching(exc);
 		}

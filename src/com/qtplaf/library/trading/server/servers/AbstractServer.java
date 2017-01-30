@@ -24,15 +24,15 @@ import com.qtplaf.library.trading.server.Server;
 public abstract class AbstractServer implements Server {
 
 	/**
-	 * Server name.
+	 * KeyServer name.
 	 */
 	private String name;
 	/**
-	 * Server id.
+	 * KeyServer id.
 	 */
 	private String id;
 	/**
-	 * Server title.
+	 * KeyServer title.
 	 */
 	private String title;
 

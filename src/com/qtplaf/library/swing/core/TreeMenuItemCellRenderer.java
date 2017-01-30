@@ -363,7 +363,7 @@ public class TreeMenuItemCellRenderer implements TreeCellRenderer {
 		int[] widths = new int[labelCount];
 		int widthLevel = 0;
 		int widthAcceleratorKey = 0;
-		int margin = 5;
+		int margin = 10;
 
 		// Iterate through siblings.
 		List<TreeMenuItem> siblings = menuItem.getParent().getChildren();
