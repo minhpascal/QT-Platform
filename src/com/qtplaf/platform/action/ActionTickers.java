@@ -17,7 +17,6 @@ package com.qtplaf.platform.action;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -28,17 +27,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
-import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.EditMode;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.ProgressManager;
 import com.qtplaf.library.swing.action.ActionTableOption;
-import com.qtplaf.library.swing.core.JFormRecord;
-import com.qtplaf.library.swing.core.JFormRecordCustomizer;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
@@ -62,15 +56,14 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
-import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.OHLCVS;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.database.util.FormUtils;
 import com.qtplaf.platform.database.util.InstrumentUtils;
 import com.qtplaf.platform.database.util.PeriodUtils;
 import com.qtplaf.platform.database.util.PersistorUtils;
 import com.qtplaf.platform.database.util.RecordSetUtils;
-import com.qtplaf.platform.database.util.RecordUtils;
 import com.qtplaf.platform.database.util.TableUtils;
 import com.qtplaf.platform.task.TaskDownloadTicker;
 
@@ -88,88 +81,6 @@ public class ActionTickers extends AbstractAction {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-
-	/**
-	 * Customizer to validate the tickers form.
-	 */
-	class TickersFormCustomizer extends JFormRecordCustomizer {
-		/**
-		 * Validate the form.
-		 */
-		@Override
-		public boolean validateForm(JFormRecord form) {
-			try {
-				Session session = ActionUtils.getSession(ActionTickers.this);
-				String mustBeSet = session.getString("qtItemMustBeSet");
-				// Validate the period.
-				Value period = form.getEditField(Tickers.Fields.PeriodId).getValue();
-				Record rcPeriod = RecordUtils.getRecordPeriod(session, period);
-				if (rcPeriod == null) {
-					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemPeriod")));
-					return false;
-				}
-				form.getRecord().setValue(
-					Periods.Fields.PeriodUnitIndex,
-					rcPeriod.getValue(Periods.Fields.PeriodUnitIndex));
-				form.getRecord().setValue(
-					Periods.Fields.PeriodSize,
-					rcPeriod.getValue(Periods.Fields.PeriodSize));
-				// Validate offer side.
-				Value offerSide = form.getEditField(Tickers.Fields.OfferSide).getValue();
-				if (RecordUtils.getRecordOfferSide(session, offerSide) == null) {
-					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemOfferSide")));
-					return false;
-				}
-				// Validate data filter.
-				Value dataFilter = form.getEditField(Tickers.Fields.DataFilter).getValue();
-				if (RecordUtils.getRecordDataFilter(session, dataFilter) == null) {
-					MessageBox.error(session, MessageFormat.format(mustBeSet, session.getString("qtItemDataFilter")));
-					return false;
-				}
-				// Check that the record does not exists.
-				Record record = form.getRecord();
-				Persistor persistor = record.getPersistor();
-				if (persistor.exists(record)) {
-					MessageBox.error(session, "Record already exists");
-					return false;
-				}
-			} catch (PersistorException exc) {
-				logger.catching(exc);
-			}
-			return true;
-		}
-
-	}
-
-	/**
-	 * Value action to build the table name as values are set.
-	 */
-	class ActionTableName extends AbstractAction {
-
-		/** List of form edit fields. */
-		private JFormRecord form;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param editFields List of edit fields in the form.
-		 */
-		public ActionTableName(JFormRecord form) {
-			super();
-			this.form = form;
-		}
-
-		/**
-		 * Perform the action.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String instrument = form.getEditField(Tickers.Fields.InstrumentId).getValue().toString();
-			String period = form.getEditField(Tickers.Fields.PeriodId).getValue().toString();
-			Value tableName = new Value(Names.getName(instrument, period));
-			form.getEditField(Tickers.Fields.TableName).setValue(tableName);
-		}
-	}
 
 	/**
 	 * Action to create a new ticker.
@@ -198,7 +109,7 @@ public class ActionTickers extends AbstractAction {
 				if (instrument == null) {
 					return;
 				}
-				Record record = getTicker(session, server, instrument);
+				Record record = FormUtils.getTicker(session, server, instrument);
 				if (record == null) {
 					return;
 				}
@@ -677,51 +588,5 @@ public class ActionTickers extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		new Thread(new RunTickers()).start();
-	}
-
-	/**
-	 * Returns the record to create a new ticker for the given server and instrument.
-	 * 
-	 * @param session Working session.
-	 * @param server KeyServer.
-	 * @param instrument Instrument.
-	 * @return The ticker record.
-	 */
-	private Record getTicker(Session session, Server server, Instrument instrument) {
-		Persistor persistor = PersistorUtils.getPersistorTickers(session);
-		Record record = persistor.getDefaultRecord();
-		record.getValue(Tickers.Fields.ServerId).setValue(server.getId());
-		record.getValue(Tickers.Fields.InstrumentId).setValue(instrument.getId());
-
-		JFormRecord form = new JFormRecord(session);
-		form.setRecord(record);
-		form.setTitle(session.getString("qtActionCreateTicker"));
-		form.setEditMode(EditMode.Insert);
-		form.addField(Tickers.Fields.ServerId);
-		form.addField(Tickers.Fields.InstrumentId);
-		form.addField(Tickers.Fields.PeriodId);
-		form.addField(Periods.Fields.PeriodName);
-		form.addField(Tickers.Fields.OfferSide);
-		form.addField(Tickers.Fields.DataFilter);
-		form.addField(Tickers.Fields.TableName);
-
-		form.getEditField(Tickers.Fields.ServerId).setEnabled(false);
-		form.getEditField(Tickers.Fields.InstrumentId).setEnabled(false);
-		form.getEditField(Tickers.Fields.TableName).setEnabled(false);
-
-		ActionTableName actionTableName = new ActionTableName(form);
-		form.getEditField(Tickers.Fields.ServerId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Tickers.Fields.InstrumentId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Tickers.Fields.PeriodId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Tickers.Fields.OfferSide).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Tickers.Fields.DataFilter).getEditContext().addValueAction(actionTableName);
-
-		form.setCustomizer(new TickersFormCustomizer());
-
-		if (form.edit()) {
-			return form.getRecord();
-		}
-
-		return null;
 	}
 }

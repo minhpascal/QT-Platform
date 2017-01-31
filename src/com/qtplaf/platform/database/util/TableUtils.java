@@ -23,6 +23,7 @@ import com.qtplaf.platform.database.tables.OHLCVS;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
+import com.qtplaf.platform.database.tables.Statistics;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
@@ -83,6 +84,16 @@ public class TableUtils {
 	}
 
 	/**
+	 * Returns the table definition for the list of statistics, located in the system schema.
+	 * 
+	 * @param session The working session.
+	 * @return The table definition.
+	 */
+	public static Table getTableStatistics(Session session) {
+		return new Statistics(session);
+	}
+
+	/**
 	 * Returns the table definition of downloaded/synchronized tickers. Those tickers by broker downloaded and
 	 * synchronized, used in calculations and chart displays. Downloaded tickers are stored in a separated schema by
 	 * broker.
@@ -104,6 +115,10 @@ public class TableUtils {
 	 */
 	public static Table getTableOHLCVS(Session session, Server server, String name) {
 		return new OHLCVS(session, server, name);
+	}
+	
+	public static Table getTableStatesSource(Session session, Server server, String name) {
+		return null;
 	}
 
 }

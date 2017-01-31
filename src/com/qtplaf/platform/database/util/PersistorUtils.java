@@ -111,6 +111,16 @@ public class PersistorUtils {
 	}
 
 	/**
+	 * Returns the statistics persistor.
+	 * 
+	 * @param session Working session.
+	 * @return The persistor.
+	 */
+	public static Persistor getPersistorStatistics(Session session) {
+		return TableUtils.getTableStatistics(session).getPersistor();
+	}
+
+	/**
 	 * Returns the tickers persistor.
 	 * 
 	 * @param session Working session.

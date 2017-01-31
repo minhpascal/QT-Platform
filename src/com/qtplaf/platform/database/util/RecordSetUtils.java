@@ -23,6 +23,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.Statistics;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
@@ -76,6 +77,22 @@ public class RecordSetUtils {
 		Persistor persistor = PersistorUtils.getPersistorTickers(session);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(persistor.getField(Tickers.Fields.ServerId), new Value(server.getId())));
+		RecordSet recordSet = persistor.select(criteria);
+		return recordSet;
+	}
+
+	/**
+	 * Returns the statistics recordset for the given server.
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @return The statistics recordset.
+	 * @throws Exception
+	 */
+	public static RecordSet getRecordSetStatistics(Session session, Server server) throws Exception {
+		Persistor persistor = PersistorUtils.getPersistorStatistics(session);
+		Criteria criteria = new Criteria();
+		criteria.add(Condition.fieldEQ(persistor.getField(Statistics.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}

@@ -27,6 +27,7 @@ import com.qtplaf.platform.database.util.PersistorUtils;
  */
 public class OfferSides extends Table {
 
+	/** Field names. */
 	public interface Fields {
 		String OfferSide = "offer_side";
 	}

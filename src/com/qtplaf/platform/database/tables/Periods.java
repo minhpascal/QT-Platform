@@ -28,6 +28,7 @@ import com.qtplaf.platform.database.util.PersistorUtils;
  */
 public class Periods extends Table {
 
+	/** Field names. */
 	public interface Fields {
 		String PeriodId = "period_id";
 		String PeriodName = "period_name";

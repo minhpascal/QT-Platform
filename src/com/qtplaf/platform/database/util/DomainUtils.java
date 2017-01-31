@@ -17,6 +17,7 @@ package com.qtplaf.platform.database.util;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Types;
+import com.qtplaf.library.database.Value;
 
 /**
  * Centralizes master field definitions (domains). These definitions do not include table attributes like primary key.
@@ -118,6 +119,45 @@ public class DomainUtils {
 		field.setHeader(session.getString("fieldServerTitleHeader"));
 		field.setLabel(session.getString("fieldServerTitleLabel"));
 		field.setTitle(session.getString("fieldServerTitleLabel"));
+		return field;
+	}
+	
+	/**
+	 * Returns the <b><i>StatisticId</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getStatisticId(Session session, String name) {
+		return getStatisticId(session, name, name);
+	}
+	
+	/**
+	 * Returns the <b><i>StatisticId</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias Field alias.
+	 * @return The field definition.
+	 */
+	public static Field getStatisticId(Session session, String name, String alias) {
+		
+		Field field = new Field();
+		field.setSession(session);
+		
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.String);
+		field.setLength(120);
+		field.setHeader(session.getString("fieldStatisticIdHeader"));
+		field.setLabel(session.getString("fieldStatisticIdLabel"));
+		field.setTitle(session.getString("fieldStatisticIdLabel"));
+		
+		Value vStateSrc = new Value("SRC-5-21-89-377-1597-6765");
+		vStateSrc.setLabel("Source 5, 21, 89, 377, 1597, 6765");
+		field.addPossibleValue(vStateSrc);
+		
 		return field;
 	}
 

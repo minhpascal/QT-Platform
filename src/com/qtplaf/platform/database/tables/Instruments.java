@@ -27,6 +27,7 @@ import com.qtplaf.platform.database.util.PersistorUtils;
  */
 public class Instruments extends Table {
 
+	/** Field names. */
 	public interface Fields {
 		String ServerId = "server_id";
 		String InstrumentId = "instr_id";

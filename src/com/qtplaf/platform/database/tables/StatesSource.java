@@ -33,6 +33,7 @@ import com.qtplaf.platform.database.util.PersistorUtils;
  */
 public class StatesSource extends Table {
 
+	/** Field names. */
 	public static class Fields {
 		public static final String Index = "index";
 		public static final String Time = "time";

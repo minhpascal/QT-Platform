@@ -23,31 +23,30 @@ import com.qtplaf.platform.database.util.DomainUtils;
 import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
- * Tickers table definition.
- * 
+ * Statistics table definition.
+ *
  * @author Miquel Sas
  */
-public class Tickers extends Table {
+public class Statistics extends Table {
 
 	/** Field names. */
 	public interface Fields {
 		String ServerId = "server_id";
 		String InstrumentId = "instr_id";
 		String PeriodId = "period_id";
-		String OfferSide = "offer_side";
-		String DataFilter = "data_filter";
+		String StatisticId = "stat_id";
 		String TableName = "table_name";
 	}
 
 	/** Table name. */
-	public static final String Name = "tickers";
+	public static final String Name = "statistics";
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param session Working session.
 	 */
-	public Tickers(Session session) {
+	public Statistics(Session session) {
 		super(session);
 
 		setName(Name);
@@ -56,13 +55,13 @@ public class Tickers extends Table {
 		addField(DomainUtils.getServerId(session, Fields.ServerId));
 		addField(DomainUtils.getInstrumentId(session, Fields.InstrumentId));
 		addField(DomainUtils.getPeriodId(session, Fields.PeriodId));
-		addField(DomainUtils.getOfferSide(session, Fields.OfferSide));
-		addField(DomainUtils.getDataFilter(session, Fields.DataFilter));
+		addField(DomainUtils.getStatisticId(session, Fields.StatisticId));
 		addField(DomainUtils.getTableName(session, Fields.TableName));
 
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);
 		getField(Fields.PeriodId).setPrimaryKey(true);
+		getField(Fields.StatisticId).setPrimaryKey(true);
 
 		Table tablePeriods = new Periods(session);
 		ForeignKey fkPeriods = new ForeignKey(false);
@@ -70,26 +69,14 @@ public class Tickers extends Table {
 		fkPeriods.setForeignTable(tablePeriods);
 		fkPeriods.add(getField(Fields.PeriodId), tablePeriods.getField(Periods.Fields.PeriodId));
 		addForeignKey(fkPeriods);
-
-		Table tableOfferSides = new OfferSides(session);
-		ForeignKey fkOfferSides = new ForeignKey(false);
-		fkOfferSides.setLocalTable(this);
-		fkOfferSides.setForeignTable(tableOfferSides);
-		fkOfferSides.add(getField(Fields.OfferSide), tableOfferSides.getField(OfferSides.Fields.OfferSide));
-		addForeignKey(fkOfferSides);
-
-		Table tableDataFilters = new DataFilters(session);
-		ForeignKey fkDataFilters = new ForeignKey(false);
-		fkDataFilters.setLocalTable(this);
-		fkDataFilters.setForeignTable(tableDataFilters);
-		fkDataFilters.add(getField(Fields.DataFilter), tableDataFilters.getField(DataFilters.Fields.DataFilter));
-		addForeignKey(fkDataFilters);
+		
 		
 		Order order = new Order();
 		order.add(getField(Fields.ServerId));
 		order.add(getField(Fields.InstrumentId));
 		order.add(tablePeriods.getField(Periods.Fields.PeriodUnitIndex));
 		order.add(tablePeriods.getField(Periods.Fields.PeriodSize));
+		order.add(getField(Fields.StatisticId));
 		
 		setPersistor(PersistorUtils.getPersistor(getComplexView(order)));
 	}

@@ -11,8 +11,6 @@
 	<entry key="qtMenuServersTickersDefine">Define &#38; download</entry>
 	<entry key="qtMenuServersTickersStatistics">Statistics</entry>
 	
-	<entry key="qtMenuStatisticsRawState">Calculate raw state values</entry>
-	
 	
 	<entry key="qtActionCreateTicker">Create new ticker</entry>
 	

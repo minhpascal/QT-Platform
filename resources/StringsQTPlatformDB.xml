@@ -53,6 +53,11 @@
 	<entry key="fieldPeriodSizeLabel">Period size</entry>
 	<entry key="fieldPeriodSizeHeader">Period size</entry>
 	
+	<!-- Statistic -->
+	
+	<entry key="fieldStatisticIdLabel">Statistic id</entry>
+	<entry key="fieldStatisticIdHeader">Statistic id</entry>
+	
 	<!-- Table -->
 	
 	<entry key="fieldTableNameLabel">Table name</entry>

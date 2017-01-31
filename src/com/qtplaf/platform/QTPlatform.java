@@ -48,6 +48,7 @@ import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
+import com.qtplaf.platform.action.ActionStatistics;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Names;
@@ -56,6 +57,7 @@ import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
+import com.qtplaf.platform.database.tables.Statistics;
 import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.database.util.PersistorUtils;
 import com.qtplaf.platform.database.util.RecordUtils;
@@ -223,6 +225,11 @@ public class QTPlatform {
 		if (!ddl.existsTable(Names.getSchema(), Tickers.Name)) {
 			ddl.buildTable(TableUtils.getTableTickers(session));
 		}
+
+		// Check for the necessary table Statistics in the system schema.
+		if (!ddl.existsTable(Names.getSchema(), Statistics.Name)) {
+			ddl.buildTable(TableUtils.getTableStatistics(session));
+		}
 	}
 
 	/**
@@ -377,6 +384,7 @@ public class QTPlatform {
 			TreeMenuItem itemSrvTickersStats =
 				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickersStatistics"));
 			itemSrvTickersStats.setLaunchArg(LaunchArgs.KeyServer, server);
+			itemSrvTickersStats.setActionClass(ActionStatistics.class);
 			menu.addMenuItem(itemSrvTickers, itemSrvTickersStats);
 
 		}

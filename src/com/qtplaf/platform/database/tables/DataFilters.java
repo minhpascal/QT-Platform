@@ -27,6 +27,7 @@ import com.qtplaf.platform.database.util.PersistorUtils;
  */
 public class DataFilters extends Table {
 
+	/** Field names. */
 	public interface Fields {
 		String DataFilter = "data_filter";
 	}

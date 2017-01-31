@@ -23,6 +23,8 @@ import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.tables.Periods;
+import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.database.util.InstrumentUtils;
 import com.qtplaf.platform.database.util.RecordSetUtils;
 
@@ -36,7 +38,7 @@ public class Lookup {
 	 * Lookup/select the instrument.
 	 * 
 	 * @param session Working session.
-	 * @param server KeyServer.
+	 * @param server Server.
 	 * @return The selected instrument or null.
 	 * @throws Exception
 	 */
@@ -57,6 +59,27 @@ public class Lookup {
 		lookup.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
 		Record selected = lookup.lookupRecord(recordSet);
 		return InstrumentUtils.getInstrumentFromRecordInstruments(selected);
+	}
+	
+	/**
+	 * Lookup/select the ticker.
+	 * 
+	 * @param session Working session.
+	 * @param server Server.
+	 * @return The selected ticker or null.
+	 * @throws Exception
+	 */
+	public static Record selectTicker(Session session, Server server) throws Exception {
+		RecordSet recordSet = RecordSetUtils.getRecordSetTickers(session, server);
+		Record masterRecord = recordSet.getFieldList().getDefaultRecord();
+		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
+		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersTickers").toLowerCase());
+		lookup.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		lookup.addColumn(Tickers.Fields.InstrumentId);
+		lookup.addColumn(Periods.Fields.PeriodName);
+		lookup.addColumn(Tickers.Fields.TableName);
+		Record selected = lookup.lookupRecord(recordSet);
+		return selected;
 	}
 
 }

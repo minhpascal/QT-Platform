@@ -29,6 +29,7 @@ import com.qtplaf.platform.database.util.PersistorUtils;
  */
 public class OHLCVS extends Table {
 
+	/** Field names. */
 	public interface Fields {
 		String Index = "index";
 		String Time = "time";
