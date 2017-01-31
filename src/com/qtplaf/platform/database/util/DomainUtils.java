@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database;
+package com.qtplaf.platform.database.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
@@ -23,7 +23,7 @@ import com.qtplaf.library.database.Types;
  * 
  * @author Miquel Sas
  */
-public class Domains {
+public class DomainUtils {
 
 	/**
 	 * Returns the <b><i>ServerId</i></b> field definition.

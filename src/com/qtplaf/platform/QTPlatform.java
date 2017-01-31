@@ -32,7 +32,6 @@ import com.qtplaf.library.database.PersistorDDL;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBEngineAdapter;
 import com.qtplaf.library.database.rdbms.DataSourceInfo;
@@ -41,8 +40,6 @@ import com.qtplaf.library.swing.FrameMenu;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.core.JPanelTreeMenu;
 import com.qtplaf.library.swing.core.TreeMenuItem;
-import com.qtplaf.library.swing.core.TreeMenuNode;
-import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
@@ -51,20 +48,18 @@ import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.library.util.SystemUtils;
 import com.qtplaf.library.util.TextServer;
 import com.qtplaf.platform.action.ActionAvailableInstruments;
-import com.qtplaf.platform.action.ActionStatesRawValues;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
-import com.qtplaf.platform.database.RecordSets;
-import com.qtplaf.platform.database.Records;
-import com.qtplaf.platform.database.Tables;
 import com.qtplaf.platform.database.tables.DataFilters;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.database.util.RecordUtils;
+import com.qtplaf.platform.database.util.TableUtils;
 
 /**
  * Main entry of the QT-Platform.
@@ -176,10 +171,10 @@ public class QTPlatform {
 		DataSourceInfo info = DataSourceInfo.getDataSourceInfo(cnFile);
 		DBEngineAdapter adapter = new PostgreSQLAdapter();
 		DBEngine dbEngine = new DBEngine(adapter, info);
-		Persistors.setDBEngine(dbEngine);
+		PersistorUtils.setDBEngine(dbEngine);
 
 		// Persistor DDL.
-		PersistorDDL ddl = Persistors.getDDL();
+		PersistorDDL ddl = PersistorUtils.getDDL();
 
 		// Check for the system schema.
 		if (!ddl.existsSchema(Names.getSchema())) {
@@ -196,37 +191,37 @@ public class QTPlatform {
 		}
 
 		// Check for the necessary table KeyServer in the system schema.
-		if (!ddl.existsTable(Tables.getTableServers(session))) {
-			ddl.buildTable(Tables.getTableServers(session));
+		if (!ddl.existsTable(TableUtils.getTableServers(session))) {
+			ddl.buildTable(TableUtils.getTableServers(session));
 		}
 		synchronizeSupportedServer(session);
 
 		// Check for the necessary table Periods in the system schema.
 		if (!ddl.existsTable(Names.getSchema(), Periods.Name)) {
-			ddl.buildTable(Tables.getTablePeriods(session));
+			ddl.buildTable(TableUtils.getTablePeriods(session));
 		}
 		synchronizeStandardPeriods(session);
 
 		// Check for the necessary table OfferSides in the system schema.
 		if (!ddl.existsTable(Names.getSchema(), OfferSides.Name)) {
-			ddl.buildTable(Tables.getTableOfferSides(session));
+			ddl.buildTable(TableUtils.getTable_OfferSides(session));
 		}
 		synchronizeStandardOfferSides(session, dbEngine);
 
 		// Check for the necessary table DataFilters in the system schema.
 		if (!ddl.existsTable(Names.getSchema(), DataFilters.Name)) {
-			ddl.buildTable(Tables.getTableDataFilters(session));
+			ddl.buildTable(TableUtils.getTableDataFilters(session));
 		}
 		synchronizeStandardDataFilters(session);
 
 		// Check for the necessary table Instruments in the system schema.
 		if (!ddl.existsTable(Names.getSchema(), Instruments.Name)) {
-			ddl.buildTable(Tables.getTableInstruments(session));
+			ddl.buildTable(TableUtils.getTableInstruments(session));
 		}
 
 		// Check for the necessary table Tickers in the system schema.
 		if (!ddl.existsTable(Names.getSchema(), Tickers.Name)) {
-			ddl.buildTable(Tables.getTableTickers(session));
+			ddl.buildTable(TableUtils.getTableTickers(session));
 		}
 	}
 
@@ -238,9 +233,9 @@ public class QTPlatform {
 	 */
 	private static void synchronizeStandardPeriods(Session session) throws Exception {
 		List<Period> periods = Period.getStandardPeriods();
-		Persistor persistor = Persistors.getPersistorPeriods(session);
+		Persistor persistor = PersistorUtils.getPersistorPeriods(session);
 		for (Period period : periods) {
-			Record record = Records.getRecordPeriod(persistor.getDefaultRecord(), period);
+			Record record = RecordUtils.getRecordPeriod(persistor.getDefaultRecord(), period);
 			if (!persistor.exists(record)) {
 				persistor.insert(record);
 			}
@@ -256,9 +251,9 @@ public class QTPlatform {
 	 */
 	private static void synchronizeStandardOfferSides(Session session, DBEngine dbEngine) throws Exception {
 		OfferSide[] offerSides = OfferSide.values();
-		Table table = Tables.getTableOfferSides(session);
+		Table table = TableUtils.getTable_OfferSides(session);
 		for (OfferSide offerSide : offerSides) {
-			Record record = Records.getRecordOfferSide(table.getDefaultRecord(), offerSide);
+			Record record = RecordUtils.getRecordOfferSide(table.getDefaultRecord(), offerSide);
 			if (!dbEngine.existsRecord(table, record)) {
 				dbEngine.executeInsert(table, record);
 			}
@@ -273,9 +268,9 @@ public class QTPlatform {
 	 */
 	private static void synchronizeStandardDataFilters(Session session) throws Exception {
 		Filter[] dataFilters = Filter.values();
-		Persistor persistor = Persistors.getPersistorDataFilters(session);
+		Persistor persistor = PersistorUtils.getPersistorDataFilters(session);
 		for (Filter dataFilter : dataFilters) {
-			Record record = Records.getRecordDataFilter(persistor.getDefaultRecord(), dataFilter);
+			Record record = RecordUtils.getRecordDataFilter(persistor.getDefaultRecord(), dataFilter);
 			if (!persistor.exists(record)) {
 				persistor.insert(record);
 			}
@@ -290,7 +285,7 @@ public class QTPlatform {
 	 */
 	private static void synchronizeSupportedServer(Session session) throws Exception {
 		List<Server> servers = ServerFactory.getSupportedServers();
-		Persistor persistor = Persistors.getPersistorServers(session);
+		Persistor persistor = PersistorUtils.getPersistorServers(session);
 		RecordSet recordSet = persistor.select(null);
 
 		// Remove not supported servers.
@@ -323,7 +318,7 @@ public class QTPlatform {
 				}
 			}
 			if (!included) {
-				persistor.insert(Records.getRecordServer(persistor.getDefaultRecord(), server));
+				persistor.insert(RecordUtils.getRecordServer(persistor.getDefaultRecord(), server));
 			}
 		}
 	}
@@ -382,66 +377,11 @@ public class QTPlatform {
 			TreeMenuItem itemSrvTickersStats =
 				TreeMenuItem.getMenuItem(session, session.getString("qtMenuServersTickersStatistics"));
 			itemSrvTickersStats.setLaunchArg(LaunchArgs.KeyServer, server);
-			itemSrvTickersStats.setLaunchArg(LaunchArgs.KeyPanelMenu, menu);
 			menu.addMenuItem(itemSrvTickers, itemSrvTickersStats);
-
-			// Set the statistics menu item as argument to define tickers to configure it.
-			itemSrvTickersDef.setLaunchArg(LaunchArgs.KeyStatistics, itemSrvTickersStats);
-
-			// Configure it also now.
-			configureMenuItemStats(session, itemSrvTickersStats);
 
 		}
 
 		menu.refreshTree();
-	}
-
-	/**
-	 * Configure the statistics menu item of a server.
-	 * 
-	 * @param session Working session.
-	 * @param itemStats The statistics menu item.
-	 */
-	public static void configureMenuItemStats(Session session, TreeMenuItem itemStats) {
-		Server server = LaunchArgs.getServer(itemStats);
-		try {
-			itemStats.getNode().removeAllChildren();
-			RecordSet rs = RecordSets.getRecordSetTickers(session, server);
-			for (int i = 0; i < rs.size(); i++) {
-				Record rc = rs.get(i);
-
-				Value vSERVER_ID = rc.getValue(Tickers.Fields.ServerId);
-				Value vINSTR_ID = rc.getValue(Tickers.Fields.InstrumentId);
-				Record recordInstr = Records.getRecordInstrument(session, vSERVER_ID, vINSTR_ID);
-
-				Instrument instrument = Records.fromRecordInstrument(recordInstr);
-				Period period = Period.parseId(rc.getValue(Tickers.Fields.PeriodId).getString());
-
-				String labelInstr = instrument.getId();
-				String labelPeriod = period.toString();
-				String tableName = rc.getValue(Tickers.Fields.TableName).getString();
-
-				TreeMenuItem menuItem =
-					TreeMenuItem.getMenuItem(session, labelInstr, labelPeriod, tableName);
-
-				itemStats.getNode().add(new TreeMenuNode(menuItem));
-
-				String rawStateLabel = session.getString("qtMenuStatisticsRawState");
-				
-				TreeMenuItem menuItemRawState =	TreeMenuItem.getMenuItem(session, rawStateLabel);
-				menuItemRawState.setActionClass(ActionStatesRawValues.class);
-				menuItemRawState.setLaunchArg(LaunchArgs.KeyServer, server);
-				menuItemRawState.setLaunchArg(LaunchArgs.KeyInstrument, instrument);
-				menuItemRawState.setLaunchArg(LaunchArgs.KeyPeriod, period);
-				menuItemRawState.setLaunchArg(LaunchArgs.KeyTableName, tableName);
-				
-				menuItem.getNode().add(new TreeMenuNode(menuItemRawState));
-			}
-			
-			LaunchArgs.getPanelMenu(itemStats).getTreeModel().nodeStructureChanged(itemStats.getNode());
-		} catch (Exception exc) {
-			logger.catching(exc);
-		}
 	}
 
 }

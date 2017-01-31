@@ -23,6 +23,8 @@ import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.util.InstrumentUtils;
+import com.qtplaf.platform.database.util.RecordSetUtils;
 
 /**
  * Centralizes lookup operations.
@@ -39,7 +41,7 @@ public class Lookup {
 	 * @throws Exception
 	 */
 	public static Instrument selectIntrument(Session session, Server server) throws Exception {
-		RecordSet recordSet = RecordSets.getRecordSetAvailableInstruments(session, server);
+		RecordSet recordSet = RecordSetUtils.getRecordSetAvailableInstruments(session, server);
 		Record masterRecord = recordSet.getFieldList().getDefaultRecord();
 		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
 		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersAvInst").toLowerCase());
@@ -54,7 +56,7 @@ public class Lookup {
 		lookup.addColumn(Instruments.Fields.InstrumentPrimaryCurrency);
 		lookup.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
 		Record selected = lookup.lookupRecord(recordSet);
-		return Records.fromRecordInstrument(selected);
+		return InstrumentUtils.getInstrumentFromRecordInstruments(selected);
 	}
 
 }

@@ -22,9 +22,9 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.list.ListUtils;
-import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.util.DomainUtils;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * Source table to calculate RL states for given instrument and period.
@@ -169,13 +169,13 @@ public class StatesSource extends Table {
 	public void configure() {
 
 		// Index, time and price fields.
-		addField(Domains.getIndex(getSession(), Fields.Index));
-		addField(Domains.getTime(getSession(), Fields.Time));
-		addField(Domains.getOpen(getSession(), Fields.Open));
-		addField(Domains.getHigh(getSession(), Fields.High));
-		addField(Domains.getLow(getSession(), Fields.Low));
-		addField(Domains.getClose(getSession(), Fields.Close));
-		addField(Domains.getTimeFmt(getSession(), Fields.TimeFmt));
+		addField(DomainUtils.getIndex(getSession(), Fields.Index));
+		addField(DomainUtils.getTime(getSession(), Fields.Time));
+		addField(DomainUtils.getOpen(getSession(), Fields.Open));
+		addField(DomainUtils.getHigh(getSession(), Fields.High));
+		addField(DomainUtils.getLow(getSession(), Fields.Low));
+		addField(DomainUtils.getClose(getSession(), Fields.Close));
+		addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
 
 		// Averages fields.
 		for (int i = 0; i < averages.size(); i++) {
@@ -183,7 +183,7 @@ public class StatesSource extends Table {
 			String name = Fields.averageName(average.getPeriod());
 			String header = Fields.averageHeader(average.getPeriod());
 			String label = Fields.averageLabel(average.getPeriod(), average.getSmooths());
-			addField(Domains.getDouble(getSession(), name, name, header, label, label));
+			addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 		
 		// Spreads between averages.
@@ -195,7 +195,7 @@ public class StatesSource extends Table {
 				String name = Fields.spreadName(averageFast.getPeriod(), averageSlow.getPeriod());
 				String header = Fields.spreadHeader(averageFast.getPeriod(), averageSlow.getPeriod());
 				String label = Fields.spreadLabel(averageFast.getPeriod(), averageSlow.getPeriod());
-				addField(Domains.getDouble(getSession(), name, name, header, label, label));
+				addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 			}
 		}
 		
@@ -205,7 +205,7 @@ public class StatesSource extends Table {
 			String name = Fields.speedName(average.getPeriod());
 			String header = Fields.speedHeader(average.getPeriod());
 			String label = Fields.speedLabel(average.getPeriod());
-			addField(Domains.getDouble(getSession(), name, name, header, label, label));
+			addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 
 		// Primary key on Time.
@@ -217,7 +217,7 @@ public class StatesSource extends Table {
 		index.setUnique(true);
 		addIndex(index);
 
-		setPersistor(Persistors.getPersistor(getSimpleView()));
+		setPersistor(PersistorUtils.getPersistor(getSimpleView()));
 
 	}
 }

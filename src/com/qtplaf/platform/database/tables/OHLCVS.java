@@ -18,9 +18,9 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.util.DomainUtils;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * OHLCVS table definition.
@@ -53,14 +53,14 @@ public class OHLCVS extends Table {
 		setName(name);
 		setSchema(Names.getSchema(server));
 
-		addField(Domains.getIndex(session, Fields.Index));
-		addField(Domains.getTime(session, Fields.Time));
-		addField(Domains.getOpen(session, Fields.Open));
-		addField(Domains.getHigh(session, Fields.High));
-		addField(Domains.getLow(session, Fields.Low));
-		addField(Domains.getClose(session, Fields.Close));
-		addField(Domains.getVolume(session, Fields.Volume));
-		addField(Domains.getTimeFmt(session, Fields.TimeFmt));
+		addField(DomainUtils.getIndex(session, Fields.Index));
+		addField(DomainUtils.getTime(session, Fields.Time));
+		addField(DomainUtils.getOpen(session, Fields.Open));
+		addField(DomainUtils.getHigh(session, Fields.High));
+		addField(DomainUtils.getLow(session, Fields.Low));
+		addField(DomainUtils.getClose(session, Fields.Close));
+		addField(DomainUtils.getVolume(session, Fields.Volume));
+		addField(DomainUtils.getTimeFmt(session, Fields.TimeFmt));
 
 		getField(Fields.Time).setPrimaryKey(true);
 		
@@ -69,7 +69,7 @@ public class OHLCVS extends Table {
 		index.setUnique(true);
 		addIndex(index);
 		
-		setPersistor(Persistors.getPersistor(getSimpleView()));
+		setPersistor(PersistorUtils.getPersistor(getSimpleView()));
 	}
 
 }

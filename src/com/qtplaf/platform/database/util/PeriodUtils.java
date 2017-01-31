@@ -12,31 +12,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.action;
+package com.qtplaf.platform.database.util;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
+import com.qtplaf.library.database.Record;
+import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.platform.database.tables.Tickers;
 
 /**
- *
+ * Centralizes period operations.
  *
  * @author Miquel Sas
  */
-public class ActionStatesRawValues extends AbstractAction {
+public class PeriodUtils {
 
 	/**
-	 * Constructor.
+	 * Returns the period from the tickers record.
+	 * 
+	 * @param record The tickers record.
+	 * @return The period.
 	 */
-	public ActionStatesRawValues() {
-		super();
+	public static Period getPeriodFromRecordTickers(Record record) {
+		String periodId = record.getValue(Tickers.Fields.PeriodId).getString();
+		return Period.parseId(periodId);
 	}
-
-	/**
-	 * Perform the action.
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	}
-
 }

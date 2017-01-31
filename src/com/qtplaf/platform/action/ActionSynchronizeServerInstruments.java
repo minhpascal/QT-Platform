@@ -32,8 +32,8 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.Persistors;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * Synchronize server available instruments.
@@ -62,7 +62,7 @@ public class ActionSynchronizeServerInstruments extends AbstractAction {
 				List<Instrument> instruments = server.getAvailableInstruments();
 
 				statusBar.setStatus("Deleting registered instruments", 3, 5);
-				Persistor persistor = Persistors.getPersistorInstruments(session);
+				Persistor persistor = PersistorUtils.getPersistorInstruments(session);
 				persistor.delete((Criteria) null);
 
 				statusBar.setStatus("Inserting available instruments", 4, 5);

@@ -12,9 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database;
-
-import java.util.Currency;
+package com.qtplaf.platform.database.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
@@ -36,10 +34,10 @@ import com.qtplaf.platform.database.tables.Servers;
 
 /**
  * Centralizes record operations.
- * 
+ *
  * @author Miquel Sas
  */
-public class Records {
+public class RecordUtils {
 
 	/**
 	 * Returns the filled record for the server.
@@ -52,6 +50,51 @@ public class Records {
 		record.setValue(Servers.Fields.ServerId, server.getId());
 		record.setValue(Servers.Fields.ServerName, server.getName());
 		record.setValue(Servers.Fields.ServerTitle, server.getTitle());
+		return record;
+	}
+
+	/**
+	 * Returns the period record from the database, given the period id.
+	 * 
+	 * @param session The working session.
+	 * @param period The period id value.
+	 * @return The record or null.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordPeriod(Session session, Value period) throws PersistorException {
+		Persistor persistor = PersistorUtils.getPersistorPeriods(session);
+		return persistor.getRecord(period);
+	}
+
+	/**
+	 * Returns the filled record for the period.
+	 * 
+	 * @param record The blank period record.
+	 * @param period The period.
+	 * @return The record.
+	 */
+	public static Record getRecordPeriod(Record record, Period period) {
+		record.setValue(Periods.Fields.PeriodId, period.getId());
+		record.setValue(Periods.Fields.PeriodName, period.toString());
+		record.setValue(Periods.Fields.PeriodSize, period.getSize());
+		record.setValue(Periods.Fields.PeriodUnitIndex, period.getUnit().ordinal());
+		return record;
+	}
+
+	/**
+	 * Returns the OHLCV record.
+	 * 
+	 * @param record The default OHLCV record.
+	 * @param ohlcv The OHLCV bar.
+	 * @return The filled record.
+	 */
+	public static Record getRecordOHLCV(Record record, OHLCV ohlcv) {
+		record.getValue(OHLCVS.Fields.Time).setLong(ohlcv.getTime());
+		record.getValue(OHLCVS.Fields.Open).setDouble(ohlcv.getOpen());
+		record.getValue(OHLCVS.Fields.High).setDouble(ohlcv.getHigh());
+		record.getValue(OHLCVS.Fields.Low).setDouble(ohlcv.getLow());
+		record.getValue(OHLCVS.Fields.Close).setDouble(ohlcv.getClose());
+		record.getValue(OHLCVS.Fields.Volume).setDouble(ohlcv.getVolume());
 		return record;
 	}
 
@@ -100,61 +143,8 @@ public class Records {
 	 */
 	public static Record getRecordInstrument(Session session, Value server, Value instrument)
 		throws PersistorException {
-		Persistor persistor = Persistors.getPersistorInstruments(session);
+		Persistor persistor = PersistorUtils.getPersistorInstruments(session);
 		return persistor.getRecord(server, instrument);
-	}
-
-	/**
-	 * Returns the instrument definition given the instrument record.
-	 * 
-	 * @param record The instrument record.
-	 * @return The instrument definition.
-	 */
-	public static Instrument fromRecordInstrument(Record record) {
-		if (record == null) {
-			return null;
-		}
-		Instrument instrument = new Instrument();
-		instrument.setId(record.getValue(Instruments.Fields.InstrumentId).getString());
-		instrument.setDescription(record.getValue(Instruments.Fields.InstrumentDesc).getString());
-		instrument.setPipValue(record.getValue(Instruments.Fields.InstrumentPipValue).getDouble());
-		instrument.setPipScale(record.getValue(Instruments.Fields.InstrumentPipScale).getInteger());
-		instrument.setTickValue(record.getValue(Instruments.Fields.InstrumentTickValue).getDouble());
-		instrument.setTickScale(record.getValue(Instruments.Fields.InstrumentTickScale).getInteger());
-		instrument.setVolumeScale(record.getValue(Instruments.Fields.InstrumentVolumeScale).getInteger());
-		String primaryCurrency = record.getValue(Instruments.Fields.InstrumentPrimaryCurrency).getString();
-		instrument.setPrimaryCurrency(Currency.getInstance(primaryCurrency));
-		String secondaryCurrency = record.getValue(Instruments.Fields.InstrumentSecondaryCurrency).getString();
-		instrument.setSecondaryCurrency(Currency.getInstance(secondaryCurrency));
-		return instrument;
-	}
-
-	/**
-	 * Returns the filled record for the period.
-	 * 
-	 * @param record The blank period record.
-	 * @param period The period.
-	 * @return The record.
-	 */
-	public static Record getRecordPeriod(Record record, Period period) {
-		record.setValue(Periods.Fields.PeriodId, period.getId());
-		record.setValue(Periods.Fields.PeriodName, period.toString());
-		record.setValue(Periods.Fields.PeriodSize, period.getSize());
-		record.setValue(Periods.Fields.PeriodUnitIndex, period.getUnit().ordinal());
-		return record;
-	}
-
-	/**
-	 * Returns the period record from the database, given the period id.
-	 * 
-	 * @param session The working session.
-	 * @param period The period id value.
-	 * @return The record or null.
-	 * @throws PersistorException
-	 */
-	public static Record getRecordPeriod(Session session, Value period) throws PersistorException {
-		Persistor persistor = Persistors.getPersistorPeriods(session);
-		return persistor.getRecord(period);
 	}
 
 	/**
@@ -178,7 +168,7 @@ public class Records {
 	 * @throws PersistorException
 	 */
 	public static Record getRecordOfferSide(Session session, Value offerSide) throws PersistorException {
-		Persistor persistor = Persistors.getPersistorOfferSides(session);
+		Persistor persistor = PersistorUtils.getPersistorOfferSides(session);
 		return persistor.getRecord(offerSide);
 	}
 
@@ -203,25 +193,8 @@ public class Records {
 	 * @throws PersistorException
 	 */
 	public static Record getRecordDataFilter(Session session, Value dataFilter) throws PersistorException {
-		Persistor persistor = Persistors.getPersistorDataFilters(session);
+		Persistor persistor = PersistorUtils.getPersistorDataFilters(session);
 		return persistor.getRecord(dataFilter);
-	}
-
-	/**
-	 * Returns the OHLCV record.
-	 * 
-	 * @param record The default OHLCV record.
-	 * @param ohlcv The OHLCV bar.
-	 * @return The filled record.
-	 */
-	public static Record getRecordOHLCV(Record record, OHLCV ohlcv) {
-		record.getValue(OHLCVS.Fields.Time).setLong(ohlcv.getTime());
-		record.getValue(OHLCVS.Fields.Open).setDouble(ohlcv.getOpen());
-		record.getValue(OHLCVS.Fields.High).setDouble(ohlcv.getHigh());
-		record.getValue(OHLCVS.Fields.Low).setDouble(ohlcv.getLow());
-		record.getValue(OHLCVS.Fields.Close).setDouble(ohlcv.getClose());
-		record.getValue(OHLCVS.Fields.Volume).setDouble(ohlcv.getVolume());
-		return record;
 	}
 
 }

@@ -16,9 +16,9 @@ package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.util.DomainUtils;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * Offer sides table definition.
@@ -45,11 +45,11 @@ public class OfferSides extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 		
-		addField(Domains.getOfferSide(session, Fields.OfferSide));
+		addField(DomainUtils.getOfferSide(session, Fields.OfferSide));
 		
 		getField(Fields.OfferSide).setPrimaryKey(true);
 		
-		setPersistor(Persistors.getPersistor(getSimpleView()));
+		setPersistor(PersistorUtils.getPersistor(getSimpleView()));
 	}
 
 }

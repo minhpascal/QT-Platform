@@ -17,9 +17,9 @@ package com.qtplaf.platform.database.tables;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.util.DomainUtils;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * Servers table definition.
@@ -49,10 +49,10 @@ public class Periods extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 		
-		addField(Domains.getPeriodId(session, Fields.PeriodId));
-		addField(Domains.getPeriodName(session, Fields.PeriodName));
-		addField(Domains.getPeriodUnitIndex(session, Fields.PeriodUnitIndex));
-		addField(Domains.getPeriodSize(session, Fields.PeriodSize));
+		addField(DomainUtils.getPeriodId(session, Fields.PeriodId));
+		addField(DomainUtils.getPeriodName(session, Fields.PeriodName));
+		addField(DomainUtils.getPeriodUnitIndex(session, Fields.PeriodUnitIndex));
+		addField(DomainUtils.getPeriodSize(session, Fields.PeriodSize));
 		
 		getField(Fields.PeriodId).setPrimaryKey(true);
 
@@ -60,7 +60,7 @@ public class Periods extends Table {
 		order.add(getField(Fields.PeriodUnitIndex));
 		order.add(getField(Fields.PeriodSize));
 
-		setPersistor(Persistors.getPersistor(getSimpleView(order)));
+		setPersistor(PersistorUtils.getPersistor(getSimpleView(order)));
 	}
 
 }

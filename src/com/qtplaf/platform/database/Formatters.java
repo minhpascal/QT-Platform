@@ -24,6 +24,8 @@ import com.qtplaf.platform.database.formatters.OHLCVPip;
 import com.qtplaf.platform.database.formatters.OHLCVTimeFmt;
 import com.qtplaf.platform.database.formatters.OHLCVVolume;
 import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.util.InstrumentUtils;
+import com.qtplaf.platform.database.util.RecordUtils;
 
 /**
  * Centralizes formatters intallation into persistors.
@@ -55,8 +57,8 @@ public class Formatters {
 		persistor.getField(OHLCVS.Fields.TimeFmt).setFormatter(timeFmt);
 		persistor.getField(OHLCVS.Fields.TimeFmt).setCalculator(timeFmt);
 
-		Record recordInstr = Records.getRecordInstrument(session, serverId, instrId);
-		Instrument instrument = Records.fromRecordInstrument(recordInstr);
+		Record recordInstr = RecordUtils.getRecordInstrument(session, serverId, instrId);
+		Instrument instrument = InstrumentUtils.getInstrumentFromRecordInstruments(recordInstr);
 		persistor.getField(OHLCVS.Fields.Open).setFormatter(new OHLCVPip(session, instrument));
 		persistor.getField(OHLCVS.Fields.High).setFormatter(new OHLCVPip(session, instrument));
 		persistor.getField(OHLCVS.Fields.Low).setFormatter(new OHLCVPip(session, instrument));

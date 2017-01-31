@@ -32,9 +32,9 @@ import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
-import com.qtplaf.platform.database.Persistors;
-import com.qtplaf.platform.database.RecordSets;
 import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.database.util.RecordSetUtils;
 
 /**
  * Shows the list of available instruments for the server set as launch argument.
@@ -82,7 +82,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionAvailableInstruments.this);
 				Server server = LaunchArgs.getServer(ActionAvailableInstruments.this);
-				Persistor persistor = Persistors.getPersistorInstruments(session);
+				Persistor persistor = PersistorUtils.getPersistorInstruments(session);
 				Record masterRecord = persistor.getDefaultRecord();
 
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
@@ -97,7 +97,7 @@ public class ActionAvailableInstruments extends AbstractAction {
 				tableModelRecord.addColumn(Instruments.Fields.InstrumentVolumeScale);
 				tableModelRecord.addColumn(Instruments.Fields.InstrumentPrimaryCurrency);
 				tableModelRecord.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
-				tableModelRecord.setRecordSet(RecordSets.getRecordSetAvailableInstruments(session, server));
+				tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetAvailableInstruments(session, server));
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);

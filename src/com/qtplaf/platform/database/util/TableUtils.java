@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database;
+package com.qtplaf.platform.database.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
@@ -26,11 +26,12 @@ import com.qtplaf.platform.database.tables.Servers;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
- * Caches table definitions and centralizes table access.
- * 
+ * Centralizes table operations.
+ *
  * @author Miquel Sas
  */
-public class Tables {
+public class TableUtils {
+
 	/**
 	 * Returns the table definition for standard data filters.
 	 * 
@@ -57,7 +58,7 @@ public class Tables {
 	 * @param session The working session.
 	 * @return The table definition.
 	 */
-	public static Table getTableOfferSides(Session session) {
+	public static Table getTable_OfferSides(Session session) {
 		return new OfferSides(session);
 	}
 
@@ -104,4 +105,5 @@ public class Tables {
 	public static Table getTableOHLCVS(Session session, Server server, String name) {
 		return new OHLCVS(session, server, name);
 	}
+
 }

@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database;
+package com.qtplaf.platform.database.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
@@ -26,11 +26,11 @@ import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
- * Centralizes record sets generation.
- * 
+ * Centralizes recordset operations.
+ *
  * @author Miquel Sas
  */
-public class RecordSets {
+public class RecordSetUtils {
 
 	/**
 	 * Returns a record set with the available instruments for the argument server.
@@ -41,12 +41,12 @@ public class RecordSets {
 	 * @throws Exception
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
-
-		Persistor persistor = Persistors.getPersistorInstruments(session);
+	
+		Persistor persistor = PersistorUtils.getPersistorInstruments(session);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(persistor.getField(Instruments.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
-
+	
 		// Track max pip and tick scale to set their values decimals.
 		int maxPipScale = 0;
 		int maxTickScale = 0;
@@ -60,7 +60,7 @@ public class RecordSets {
 			record.getValue(Instruments.Fields.InstrumentPipValue).setDecimals(maxPipScale);
 			record.getValue(Instruments.Fields.InstrumentTickValue).setDecimals(maxTickScale);
 		}
-
+	
 		return recordSet;
 	}
 
@@ -73,7 +73,7 @@ public class RecordSets {
 	 * @throws Exception
 	 */
 	public static RecordSet getRecordSetTickers(Session session, Server server) throws Exception {
-		Persistor persistor = Persistors.getPersistorTickers(session);
+		Persistor persistor = PersistorUtils.getPersistorTickers(session);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(persistor.getField(Tickers.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);

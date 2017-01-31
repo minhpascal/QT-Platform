@@ -18,9 +18,9 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.util.DomainUtils;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * Tickers table definition.
@@ -52,12 +52,12 @@ public class Tickers extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 
-		addField(Domains.getServerId(session, Fields.ServerId));
-		addField(Domains.getInstrumentId(session, Fields.InstrumentId));
-		addField(Domains.getPeriodId(session, Fields.PeriodId));
-		addField(Domains.getOfferSide(session, Fields.OfferSide));
-		addField(Domains.getDataFilter(session, Fields.DataFilter));
-		addField(Domains.getTableName(session, Fields.TableName));
+		addField(DomainUtils.getServerId(session, Fields.ServerId));
+		addField(DomainUtils.getInstrumentId(session, Fields.InstrumentId));
+		addField(DomainUtils.getPeriodId(session, Fields.PeriodId));
+		addField(DomainUtils.getOfferSide(session, Fields.OfferSide));
+		addField(DomainUtils.getDataFilter(session, Fields.DataFilter));
+		addField(DomainUtils.getTableName(session, Fields.TableName));
 
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);
@@ -90,7 +90,7 @@ public class Tickers extends Table {
 		order.add(tablePeriods.getField(Periods.Fields.PeriodUnitIndex));
 		order.add(tablePeriods.getField(Periods.Fields.PeriodSize));
 		
-		setPersistor(Persistors.getPersistor(getComplexView(order)));
+		setPersistor(PersistorUtils.getPersistor(getComplexView(order)));
 	}
 
 }

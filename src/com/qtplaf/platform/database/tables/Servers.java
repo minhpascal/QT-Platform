@@ -16,9 +16,9 @@ package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Persistors;
+import com.qtplaf.platform.database.util.DomainUtils;
+import com.qtplaf.platform.database.util.PersistorUtils;
 
 /**
  * Servers table definition.
@@ -47,13 +47,13 @@ public class Servers extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 		
-		addField(Domains.getServerId(session, Fields.ServerId));
-		addField(Domains.getServerName(session, Fields.ServerName));
-		addField(Domains.getServerTitle(session, Fields.ServerTitle));
+		addField(DomainUtils.getServerId(session, Fields.ServerId));
+		addField(DomainUtils.getServerName(session, Fields.ServerName));
+		addField(DomainUtils.getServerTitle(session, Fields.ServerTitle));
 		
 		getField(Fields.ServerId).setPrimaryKey(true);
 		
-		setPersistor(Persistors.getPersistor(getSimpleView()));
+		setPersistor(PersistorUtils.getPersistor(getSimpleView()));
 	}
 
 }

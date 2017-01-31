@@ -36,9 +36,9 @@ import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.Records;
-import com.qtplaf.platform.database.Tables;
 import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.util.RecordUtils;
+import com.qtplaf.platform.database.util.TableUtils;
 
 /**
  * Task to download a ticker from a server, starting at the last data downloaded, up to the last data available in the
@@ -159,7 +159,7 @@ public class TaskDownloadTicker extends TaskRunner {
 			notifyStepStart(step, getStepMessage(step, steps));
 
 			// Get the data record.
-			Record record = Records.getRecordOHLCV(getPersistor().getDefaultRecord(), ohlcv);
+			Record record = RecordUtils.getRecordOHLCV(getPersistor().getDefaultRecord(), ohlcv);
 
 			// Insert the record.
 			getPersistor().insert(record);
@@ -219,7 +219,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private Table getTable() {
 		String tableName = Names.getName(instrument, period);
-		return Tables.getTableOHLCVS(getSession(), server, tableName);
+		return TableUtils.getTableOHLCVS(getSession(), server, tableName);
 	}
 
 	/**
