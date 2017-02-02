@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database.util;
+package com.qtplaf.platform.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
@@ -23,7 +23,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.Statistics;
+import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
@@ -92,7 +92,7 @@ public class RecordSetUtils {
 	public static RecordSet getRecordSetStatistics(Session session, Server server) throws Exception {
 		Persistor persistor = PersistorUtils.getPersistorStatistics(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(Statistics.Fields.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(StatisticsDefs.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}

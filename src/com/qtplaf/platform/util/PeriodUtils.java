@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database.util;
+package com.qtplaf.platform.util;
 
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Period;

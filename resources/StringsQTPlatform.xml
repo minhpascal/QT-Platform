@@ -13,6 +13,7 @@
 	
 	
 	<entry key="qtActionCreateTicker">Create new ticker</entry>
+	<entry key="qtActionCreateStatistics">Create new statistics</entry>
 	
 	<entry key="qtItemMustBeSet">The {0} must be set</entry>
 	

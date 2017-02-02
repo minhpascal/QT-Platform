@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  * 
  * @author Miquel Sas
  */
-public interface Delist<E> {
+public interface Delist<E> extends Collection<E> {
 	/**
 	 * Returns the number of elements in this delist.
 	 *

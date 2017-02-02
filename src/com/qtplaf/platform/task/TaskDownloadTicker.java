@@ -37,8 +37,8 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.OHLCVS;
-import com.qtplaf.platform.database.util.RecordUtils;
-import com.qtplaf.platform.database.util.TableUtils;
+import com.qtplaf.platform.util.RecordUtils;
+import com.qtplaf.platform.util.TableUtils;
 
 /**
  * Task to download a ticker from a server, starting at the last data downloaded, up to the last data available in the

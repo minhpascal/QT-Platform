@@ -31,13 +31,17 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
-import com.qtplaf.platform.database.tables.Statistics;
-import com.qtplaf.platform.database.util.PersistorUtils;
-import com.qtplaf.platform.database.util.RecordSetUtils;
+import com.qtplaf.platform.database.tables.StatisticsDefs;
+import com.qtplaf.platform.util.InstrumentUtils;
+import com.qtplaf.platform.util.PeriodUtils;
+import com.qtplaf.platform.util.PersistorUtils;
+import com.qtplaf.platform.util.RecordSetUtils;
 
 /**
  * Statistics definitions.
@@ -104,6 +108,9 @@ public class ActionStatistics extends AbstractAction {
 					return;
 				}
 				
+				Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
+				Period period = PeriodUtils.getPeriodFromRecordTickers(record);
+				
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}
@@ -127,10 +134,10 @@ public class ActionStatistics extends AbstractAction {
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(Statistics.Fields.InstrumentId);
+				tableModelRecord.addColumn(StatisticsDefs.Fields.InstrumentId);
 				tableModelRecord.addColumn(Periods.Fields.PeriodName);
-				tableModelRecord.addColumn(Statistics.Fields.StatisticId);
-				tableModelRecord.addColumn(Statistics.Fields.TableName);
+				tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticId);
+				tableModelRecord.addColumn(StatisticsDefs.Fields.TableName);
 
 				tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(session, server));
 				tableRecord.setModel(tableModelRecord);

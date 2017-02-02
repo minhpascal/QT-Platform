@@ -19,8 +19,8 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.util.DomainUtils;
-import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * OHLCVS table definition.

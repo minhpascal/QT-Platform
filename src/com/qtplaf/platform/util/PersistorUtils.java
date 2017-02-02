@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database.util;
+package com.qtplaf.platform.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;

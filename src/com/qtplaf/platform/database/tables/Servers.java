@@ -17,8 +17,8 @@ package com.qtplaf.platform.database.tables;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.util.DomainUtils;
-import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Servers table definition.

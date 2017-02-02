@@ -25,8 +25,8 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.database.util.InstrumentUtils;
-import com.qtplaf.platform.database.util.RecordSetUtils;
+import com.qtplaf.platform.util.InstrumentUtils;
+import com.qtplaf.platform.util.RecordSetUtils;
 
 /**
  * Centralizes lookup operations.

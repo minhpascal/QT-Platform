@@ -33,7 +33,7 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Synchronize server available instruments.

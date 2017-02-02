@@ -19,15 +19,15 @@ import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.util.DomainUtils;
-import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Statistics table definition.
  *
  * @author Miquel Sas
  */
-public class Statistics extends Table {
+public class StatisticsDefs extends Table {
 
 	/** Field names. */
 	public interface Fields {
@@ -46,7 +46,7 @@ public class Statistics extends Table {
 	 * 
 	 * @param session Working session.
 	 */
-	public Statistics(Session session) {
+	public StatisticsDefs(Session session) {
 		super(session);
 
 		setName(Name);

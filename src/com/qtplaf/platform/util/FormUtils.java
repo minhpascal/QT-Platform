@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database.util;
+package com.qtplaf.platform.util;
 
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
@@ -36,6 +36,7 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.Periods;
+import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
@@ -203,14 +204,36 @@ public class FormUtils {
 	}
 	
 	/**
-	 * Returns
-	 * @param session
-	 * @param server
-	 * @param instrument
-	 * @param period
-	 * @return
+	 * Returns the statistics record.
+	 * 
+	 * @param session Working session.
+	 * @param server KeyServer.
+	 * @param instrument Instrument.
+	 * @param period Period.
+	 * @return The statistics record.
 	 */
 	public static Record getStatistic(Session session, Server server, Instrument instrument, Period period) {
+		Persistor persistor = PersistorUtils.getPersistorStatistics(session);
+		Record record = persistor.getDefaultRecord();
+		record.getValue(StatisticsDefs.Fields.ServerId).setValue(server.getId());
+		record.getValue(StatisticsDefs.Fields.InstrumentId).setValue(instrument.getId());
+		record.getValue(StatisticsDefs.Fields.PeriodId).setValue(period.getId());
+		
+		JFormRecord form = new JFormRecord(session);
+		form.setRecord(record);
+		form.setTitle(session.getString("qtActionCreateStatistics"));
+		form.setEditMode(EditMode.Insert);
+		form.addField(StatisticsDefs.Fields.ServerId);
+		form.addField(StatisticsDefs.Fields.InstrumentId);
+		form.addField(StatisticsDefs.Fields.PeriodId);
+		form.addField(Periods.Fields.PeriodName);
+		form.addField(StatisticsDefs.Fields.StatisticId);
+		form.addField(StatisticsDefs.Fields.TableName);
+		
+		form.getEditField(StatisticsDefs.Fields.ServerId).setEnabled(false);
+		form.getEditField(StatisticsDefs.Fields.InstrumentId).setEnabled(false);
+		form.getEditField(StatisticsDefs.Fields.PeriodId).setEnabled(false);
+		form.getEditField(StatisticsDefs.Fields.TableName).setEnabled(false);
 		
 		return null;
 	}

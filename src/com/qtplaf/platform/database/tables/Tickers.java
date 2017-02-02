@@ -19,8 +19,8 @@ import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.util.DomainUtils;
-import com.qtplaf.platform.database.util.PersistorUtils;
+import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Tickers table definition.

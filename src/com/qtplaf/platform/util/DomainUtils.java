@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database.util;
+package com.qtplaf.platform.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
@@ -154,8 +154,8 @@ public class DomainUtils {
 		field.setLabel(session.getString("fieldStatisticIdLabel"));
 		field.setTitle(session.getString("fieldStatisticIdLabel"));
 		
-		Value vStateSrc = new Value("SRC-5-21-89-377-1597-6765");
-		vStateSrc.setLabel("Source 5, 21, 89, 377, 1597, 6765");
+		Value vStateSrc = new Value(StatsUtils.Id_Src_01);
+		vStateSrc.setLabel(StatsUtils.Desc_Src_01);
 		field.addPossibleValue(vStateSrc);
 		
 		return field;

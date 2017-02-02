@@ -33,8 +33,8 @@ import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.util.PersistorUtils;
-import com.qtplaf.platform.database.util.RecordSetUtils;
+import com.qtplaf.platform.util.PersistorUtils;
+import com.qtplaf.platform.util.RecordSetUtils;
 
 /**
  * Shows the list of available instruments for the server set as launch argument.

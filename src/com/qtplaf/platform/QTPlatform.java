@@ -57,11 +57,11 @@ import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
-import com.qtplaf.platform.database.tables.Statistics;
+import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.database.util.PersistorUtils;
-import com.qtplaf.platform.database.util.RecordUtils;
-import com.qtplaf.platform.database.util.TableUtils;
+import com.qtplaf.platform.util.PersistorUtils;
+import com.qtplaf.platform.util.RecordUtils;
+import com.qtplaf.platform.util.TableUtils;
 
 /**
  * Main entry of the QT-Platform.
@@ -227,7 +227,7 @@ public class QTPlatform {
 		}
 
 		// Check for the necessary table Statistics in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Statistics.Name)) {
+		if (!ddl.existsTable(Names.getSchema(), StatisticsDefs.Name)) {
 			ddl.buildTable(TableUtils.getTableStatistics(session));
 		}
 	}

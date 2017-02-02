@@ -543,7 +543,7 @@ public class ArrayDelist<E> implements Delist<E> {
 	public ListIterator<E> listIterator() {
 		return list.listIterator();
 	}
-	
+
 	/**
 	 * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified position
 	 * in the list. The specified index indicates the first element that would be returned by an initial call to
@@ -575,6 +575,58 @@ public class ArrayDelist<E> implements Delist<E> {
 	 */
 	public List<E> getList() {
 		return list;
+	}
+
+	/**
+	 * Returns the normal collection iterator.
+	 * 
+	 * @return The normal ascending iterator.
+	 */
+	@Override
+	public Iterator<E> iterator() {
+		return list.iterator();
+	}
+
+	/**
+	 * Add an element at the end.
+	 * 
+	 * @return e Ther element to add.
+	 */
+	@Override
+	public boolean add(E e) {
+		return list.add(e);
+	}
+
+	/**
+	 * Check if the collection is contained.
+	 * 
+	 * @param c The argument collection.
+	 */
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return list.contains(c);
+	}
+
+	/**
+	 * Add a collection at the end.
+	 * 
+	 * @param c The collection to add.
+	 */
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		return list.addAll(c);
+	}
+
+	/**
+	 * Retains only the elements in this collection that are contained in the specified collection (optional operation).
+	 * In other words, removes from this collection all of its elements that are not contained in the specified
+	 * collection.
+	 * 
+	 * @param c The collection to retain.
+	 */
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return list.retainAll(c);
 	}
 
 }

@@ -59,13 +59,13 @@ import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.OHLCVS;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.database.util.FormUtils;
-import com.qtplaf.platform.database.util.InstrumentUtils;
-import com.qtplaf.platform.database.util.PeriodUtils;
-import com.qtplaf.platform.database.util.PersistorUtils;
-import com.qtplaf.platform.database.util.RecordSetUtils;
-import com.qtplaf.platform.database.util.TableUtils;
 import com.qtplaf.platform.task.TaskDownloadTicker;
+import com.qtplaf.platform.util.FormUtils;
+import com.qtplaf.platform.util.InstrumentUtils;
+import com.qtplaf.platform.util.PeriodUtils;
+import com.qtplaf.platform.util.PersistorUtils;
+import com.qtplaf.platform.util.RecordSetUtils;
+import com.qtplaf.platform.util.TableUtils;
 
 /**
  * Edit the list of server tickers.

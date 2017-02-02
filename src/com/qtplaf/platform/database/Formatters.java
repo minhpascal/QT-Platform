@@ -24,8 +24,8 @@ import com.qtplaf.platform.database.formatters.OHLCVPip;
 import com.qtplaf.platform.database.formatters.OHLCVTimeFmt;
 import com.qtplaf.platform.database.formatters.OHLCVVolume;
 import com.qtplaf.platform.database.tables.OHLCVS;
-import com.qtplaf.platform.database.util.InstrumentUtils;
-import com.qtplaf.platform.database.util.RecordUtils;
+import com.qtplaf.platform.util.InstrumentUtils;
+import com.qtplaf.platform.util.RecordUtils;
 
 /**
  * Centralizes formatters intallation into persistors.

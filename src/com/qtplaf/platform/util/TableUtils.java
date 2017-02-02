@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.database.util;
+package com.qtplaf.platform.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
@@ -23,7 +23,7 @@ import com.qtplaf.platform.database.tables.OHLCVS;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
-import com.qtplaf.platform.database.tables.Statistics;
+import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
 
 /**
@@ -90,7 +90,7 @@ public class TableUtils {
 	 * @return The table definition.
 	 */
 	public static Table getTableStatistics(Session session) {
-		return new Statistics(session);
+		return new StatisticsDefs(session);
 	}
 
 	/**
