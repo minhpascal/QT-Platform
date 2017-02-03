@@ -227,7 +227,7 @@ public class FormUtils {
 		form.addField(StatisticsDefs.Fields.InstrumentId);
 		form.addField(StatisticsDefs.Fields.PeriodId);
 		form.addField(Periods.Fields.PeriodName);
-		form.addField(StatisticsDefs.Fields.StatisticId);
+		form.addField(StatisticsDefs.Fields.StatisticsId);
 		form.addField(StatisticsDefs.Fields.TableName);
 		
 		form.getEditField(StatisticsDefs.Fields.ServerId).setEnabled(false);

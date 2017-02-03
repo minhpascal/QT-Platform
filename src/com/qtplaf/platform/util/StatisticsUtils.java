@@ -26,11 +26,12 @@ import com.qtplaf.platform.statistics.StatesSource;
 
 /**
  * Utilities to manage statistics.
+ * <p>
+ * Statatistics are inherently difficult to standardize and thus are code dependent.
  *
  * @author Miquel Sas
  */
-public class StatsUtils {
-	
+public class StatisticsUtils {
 	public static final String Id_Src_01 = "SCR_01";
 	public static final String Desc_Src_01 = "Source (5-21-89-377-1597-6765)";
 

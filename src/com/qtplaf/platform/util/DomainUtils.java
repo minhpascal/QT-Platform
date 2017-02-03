@@ -14,10 +14,16 @@
 
 package com.qtplaf.platform.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.platform.statistics.StatisticsManager.Reference;
 
 /**
  * Centralizes master field definitions (domains). These definitions do not include table attributes like primary key.
@@ -121,43 +127,127 @@ public class DomainUtils {
 		field.setTitle(session.getString("fieldServerTitleLabel"));
 		return field;
 	}
-	
+
 	/**
-	 * Returns the <b><i>StatisticId</i></b> field definition.
+	 * Returns the <b><i>StatisticsId</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getStatisticId(Session session, String name) {
-		return getStatisticId(session, name, name);
+	public static Field getStatisticsId(Session session, String name) {
+		return getStatisticsId(session, name, name);
 	}
-	
+
 	/**
-	 * Returns the <b><i>StatisticId</i></b> field definition.
+	 * Returns the <b><i>StatisticsId</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @param alias Field alias.
 	 * @return The field definition.
 	 */
-	public static Field getStatisticId(Session session, String name, String alias) {
-		
+	public static Field getStatisticsId(Session session, String name, String alias) {
+
 		Field field = new Field();
 		field.setSession(session);
-		
+
 		field.setName(name);
 		field.setAlias(alias);
 		field.setType(Types.String);
-		field.setLength(120);
-		field.setHeader(session.getString("fieldStatisticIdHeader"));
-		field.setLabel(session.getString("fieldStatisticIdLabel"));
-		field.setTitle(session.getString("fieldStatisticIdLabel"));
-		
-		Value vStateSrc = new Value(StatsUtils.Id_Src_01);
-		vStateSrc.setLabel(StatsUtils.Desc_Src_01);
-		field.addPossibleValue(vStateSrc);
-		
+		field.setLength(40);
+		field.setHeader(session.getString("fieldStatisticsIdHeader"));
+		field.setLabel(session.getString("fieldStatisticsIdLabel"));
+		field.setTitle(session.getString("fieldStatisticsIdLabel"));
+
+		return field;
+	}
+
+	/**
+	 * Returns the list of possible values of the <b><i>StatisticsId</i></b> field.
+	 * 
+	 * @param session Working session.
+	 * @return The list of possible values.
+	 */
+	public static List<Value> getStatisticsIdPossibleValues(Session session) {
+		List<Value> values = new ArrayList<>();
+		RecordSet rs = RecordSetUtils.getRecordSetStatisticsReferences(session);
+		for (int i = 0; i < rs.size(); i++) {
+			Record rc = rs.get(i);
+			Value value = new Value(rc.getValue(Reference.Id).getString());
+			value.setLabel(rc.getValue(Reference.Title).getString());
+			values.add(value);
+		}
+		return values;
+	}
+
+	/**
+	 * Returns the <b><i>StatisticsTitle</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getStatisticsTitle(Session session, String name) {
+		return getStatisticsTitle(session, name, name);
+	}
+
+	/**
+	 * Returns the <b><i>StatisticsTitle</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias Field alias.
+	 * @return The field definition.
+	 */
+	public static Field getStatisticsTitle(Session session, String name, String alias) {
+
+		Field field = new Field();
+		field.setSession(session);
+
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.String);
+		field.setLength(100);
+		field.setHeader(session.getString("fieldStatisticsTitleHeader"));
+		field.setLabel(session.getString("fieldStatisticsTitleLabel"));
+		field.setTitle(session.getString("fieldStatisticsTitleLabel"));
+
+		return field;
+	}
+
+	/**
+	 * Returns the <b><i>StatisticsDesc</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getStatisticsDesc(Session session, String name) {
+		return getStatisticsDesc(session, name, name);
+	}
+
+	/**
+	 * Returns the <b><i>StatisticsDesc</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias Field alias.
+	 * @return The field definition.
+	 */
+	public static Field getStatisticsDesc(Session session, String name, String alias) {
+
+		Field field = new Field();
+		field.setSession(session);
+
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.String);
+		field.setLength(200);
+		field.setHeader(session.getString("fieldStatisticsDescHeader"));
+		field.setLabel(session.getString("fieldStatisticsDescLabel"));
+		field.setTitle(session.getString("fieldStatisticsDescLabel"));
+
 		return field;
 	}
 

@@ -14,9 +14,13 @@
 
 package com.qtplaf.platform.util;
 
+import java.util.List;
+
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
+import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
@@ -25,6 +29,8 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.statistics.StatisticsManager;
+import com.qtplaf.platform.statistics.StatisticsManager.Reference;
 
 /**
  * Centralizes recordset operations.
@@ -42,12 +48,12 @@ public class RecordSetUtils {
 	 * @throws Exception
 	 */
 	public static RecordSet getRecordSetAvailableInstruments(Session session, Server server) throws Exception {
-	
+
 		Persistor persistor = PersistorUtils.getPersistorInstruments(session);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(persistor.getField(Instruments.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
-	
+
 		// Track max pip and tick scale to set their values decimals.
 		int maxPipScale = 0;
 		int maxTickScale = 0;
@@ -61,7 +67,7 @@ public class RecordSetUtils {
 			record.getValue(Instruments.Fields.InstrumentPipValue).setDecimals(maxPipScale);
 			record.getValue(Instruments.Fields.InstrumentTickValue).setDecimals(maxTickScale);
 		}
-	
+
 		return recordSet;
 	}
 
@@ -97,4 +103,31 @@ public class RecordSetUtils {
 		return recordSet;
 	}
 
+	/**
+	 * Returns the recordset of statistics references.
+	 * 
+	 * @param session The working session.
+	 * @return The recordset of statistics references.
+	 */
+	public static RecordSet getRecordSetStatisticsReferences(Session session) {
+
+		FieldList fields = new FieldList();
+		Field fieldId = DomainUtils.getStatisticsId(session, Reference.Id);
+		fieldId.setPrimaryKey(true);
+		fields.addField(fieldId);
+		fields.addField(DomainUtils.getStatisticsTitle(session, Reference.Title));
+		fields.addField(DomainUtils.getStatisticsDesc(session, Reference.Description));
+
+		RecordSet rs = new RecordSet(fields);
+		List<Reference> items = StatisticsManager.getReferences();
+		for (Reference item : items) {
+			Record rc = fields.getDefaultRecord();
+			rc.setValue(Reference.Id, item.getId());
+			rc.setValue(Reference.Title, item.getTitle());
+			rc.setValue(Reference.Description, item.getDescription());
+			rs.add(rc);
+		}
+
+		return rs;
+	}
 }

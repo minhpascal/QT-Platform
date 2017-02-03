@@ -32,6 +32,10 @@ public abstract class Statistics {
 	 */
 	private String id;
 	/**
+	 * A title or short description.
+	 */
+	private String title;
+	/**
 	 * A description.
 	 */
 	private String description;
@@ -116,6 +120,24 @@ public abstract class Statistics {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	/**
+	 * Return the title.
+	 * 
+	 * @return The title.
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * Set the title.
+	 * 
+	 * @param title The title.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	/**

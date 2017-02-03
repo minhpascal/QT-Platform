@@ -136,7 +136,7 @@ public class ActionStatistics extends AbstractAction {
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
 				tableModelRecord.addColumn(StatisticsDefs.Fields.InstrumentId);
 				tableModelRecord.addColumn(Periods.Fields.PeriodName);
-				tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticId);
+				tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticsId);
 				tableModelRecord.addColumn(StatisticsDefs.Fields.TableName);
 
 				tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(session, server));

@@ -50,6 +50,7 @@ public class StatesSource extends Statistics {
 		public static final String High = "high";
 		public static final String Low = "low";
 		public static final String Close = "close";
+		public static final String Range = "range";
 
 		public static String averageName(int period) {
 			return "sma_" + period;
@@ -307,6 +308,14 @@ public class StatesSource extends Statistics {
 		table.addField(DomainUtils.getLow(getSession(), Fields.Low));
 		table.addField(DomainUtils.getClose(getSession(), Fields.Close));
 		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
+		
+		// Percentual range
+		{
+			String name = Fields.Range;
+			String header = Fields.Range;
+			String label = "Range factor";
+			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
+		}
 
 		// Sort averages by period ascending.
 		ListUtils.sort(averages);

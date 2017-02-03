@@ -1,0 +1,215 @@
+/*
+ * Copyright (C) 2015 Miquel Sas
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+package com.qtplaf.platform.statistics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qtplaf.library.app.Session;
+import com.qtplaf.library.statistics.Statistics;
+import com.qtplaf.library.trading.data.Instrument;
+import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.library.util.list.ListUtils;
+
+/**
+ * Manager of access to statistics.
+ *
+ * @author Miquel Sas
+ */
+public class StatisticsManager {
+
+	/**
+	 * Add defined statistics references.
+	 */
+	static {
+		String id, title, description;
+
+		id = "stsrc_01";
+		title = "States source (5-21-89-377-1597-6765)";
+		description = "First step in states statistics using a rainbow of averages.";
+		add(id, title, description);
+	}
+
+	/**
+	 * An item is a defined statistics, identified by a code or id and a description.
+	 */
+	public static class Reference implements Comparable<Reference> {
+
+		public static final String Id = "id";
+		public static final String Title = "title";
+		public static final String Description = "desc";
+
+		private String id;
+		private String title;
+		private String description;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param id The id or code.
+		 * @param title The title or short description.
+		 */
+		public Reference(String id, String title) {
+			super();
+			this.id = id;
+			this.title = title;
+			this.description = title;
+		}
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param id The id or code.
+		 * @param title The title or short description.
+		 * @param description The description.
+		 */
+		public Reference(String id, String title, String description) {
+			super();
+			this.id = id;
+			this.title = title;
+			this.description = description;
+		}
+
+		/**
+		 * Returns the statistics id.
+		 * 
+		 * @return The id.
+		 */
+		public String getId() {
+			return id;
+		}
+
+		/**
+		 * Returns the statistics title.
+		 * 
+		 * @return The title or short description.
+		 */
+		public String getTitle() {
+			return title;
+		}
+
+		/**
+		 * Returns the statistics description.
+		 * 
+		 * @return The description.
+		 */
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public int hashCode() {
+			return getId().hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Reference) {
+				Reference item = (Reference) obj;
+				return getId().equals(item.getId());
+			}
+			return false;
+		}
+
+		@Override
+		public int compareTo(Reference item) {
+			return getId().compareTo(item.getId());
+		}
+
+		@Override
+		public String toString() {
+			return getId() + " - " + getTitle();
+		}
+	}
+
+	/**
+	 * The list of defined statistics.
+	 */
+	private static List<Reference> references = new ArrayList<Reference>();
+
+	/**
+	 * Add a statistics reference.
+	 * 
+	 * @param id The id.
+	 * @param title The title.
+	 * @param description The description.
+	 */
+	private static void add(String id, String title, String description) {
+		references.add(new Reference(id, title, description));
+	}
+
+	/**
+	 * Returns the reference with the given id or null.
+	 * 
+	 * @param id The id.
+	 * @return The reference or null.
+	 */
+	private static Reference getReference(String id) {
+		for (Reference reference : references) {
+			if (reference.getId().toLowerCase().equals(id.toLowerCase())) {
+				return reference;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the list of defined statistics references.
+	 * 
+	 * @return The list of defined statistics references.
+	 */
+	public static List<Reference> getReferences() {
+		ListUtils.sort(StatisticsManager.references);
+		List<Reference> references = new ArrayList<Reference>(StatisticsManager.references);
+		return references;
+	}
+
+	/**
+	 * Returns the statictics of smoothed averages: 5, 21, 89, 377, 1597, 6765
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @return The statistics definition.
+	 */
+	public static Statistics getStatesSource(
+		Session session,
+		Server server,
+		Instrument instrument,
+		Period period,
+		String id) {
+
+		StatesSource ss = new StatesSource(session, server, instrument, period);
+		
+		Reference reference = getReference(id);
+		if (reference == null) {
+			throw new IllegalStateException();
+		}
+		ss.setId(reference.getId());
+		ss.setTitle(reference.getTitle());
+		ss.setDescription(reference.getDescription());
+
+		ss.addAverage(5, 3, 3);
+		ss.addAverage(21, 5, 5);
+		ss.addAverage(89, 13, 13);
+		ss.addAverage(377, 21, 21);
+		ss.addAverage(1597, 34, 34);
+		ss.addAverage(6765, 55, 55);
+
+		return ss;
+	}
+}

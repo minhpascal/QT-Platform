@@ -34,7 +34,7 @@ public class StatisticsDefs extends Table {
 		String ServerId = "server_id";
 		String InstrumentId = "instr_id";
 		String PeriodId = "period_id";
-		String StatisticId = "stat_id";
+		String StatisticsId = "stats_id";
 		String TableName = "table_name";
 	}
 
@@ -55,13 +55,15 @@ public class StatisticsDefs extends Table {
 		addField(DomainUtils.getServerId(session, Fields.ServerId));
 		addField(DomainUtils.getInstrumentId(session, Fields.InstrumentId));
 		addField(DomainUtils.getPeriodId(session, Fields.PeriodId));
-		addField(DomainUtils.getStatisticId(session, Fields.StatisticId));
+		addField(DomainUtils.getStatisticsId(session, Fields.StatisticsId));
 		addField(DomainUtils.getTableName(session, Fields.TableName));
+		
+		getField(Fields.StatisticsId).addPossibleValues(DomainUtils.getStatisticsIdPossibleValues(session));
 
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);
 		getField(Fields.PeriodId).setPrimaryKey(true);
-		getField(Fields.StatisticId).setPrimaryKey(true);
+		getField(Fields.StatisticsId).setPrimaryKey(true);
 
 		Table tablePeriods = new Periods(session);
 		ForeignKey fkPeriods = new ForeignKey(false);
@@ -76,7 +78,7 @@ public class StatisticsDefs extends Table {
 		order.add(getField(Fields.InstrumentId));
 		order.add(tablePeriods.getField(Periods.Fields.PeriodUnitIndex));
 		order.add(tablePeriods.getField(Periods.Fields.PeriodSize));
-		order.add(getField(Fields.StatisticId));
+		order.add(getField(Fields.StatisticsId));
 		
 		setPersistor(PersistorUtils.getPersistor(getComplexView(order)));
 	}
