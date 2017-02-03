@@ -59,6 +59,7 @@
 
 	<entry key="actionAcceptName">Accept</entry>
 	<entry key="actionBrowseName">Browse</entry>
+	<entry key="actionCalculateName">Calculate</entry>
 	<entry key="actionCancelName">Cancel</entry>
 	<entry key="actionChartName">Chart</entry>
 	<entry key="actionClearName">Clear</entry>

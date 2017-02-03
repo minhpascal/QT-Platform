@@ -27,6 +27,7 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.swing.EditMode;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.core.JFormRecord;
@@ -34,10 +35,12 @@ import com.qtplaf.library.swing.core.JFormRecordCustomizer;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.statistics.StatisticsManager;
 
 /**
  * Centralizes form operations.
@@ -53,6 +56,52 @@ public class FormUtils {
 	 * Form customizers.
 	 */
 	public static class Customizers {
+
+		/**
+		 * Customizer to validate the statistics form.
+		 */
+		public static class StatisticsFormCustomizer extends JFormRecordCustomizer {
+
+			private Session session;
+
+			/**
+			 * Constructor.
+			 * 
+			 * @param session Working session.
+			 */
+			public StatisticsFormCustomizer(Session session) {
+				super();
+				this.session = session;
+			}
+
+			/**
+			 * Validate the form.
+			 */
+			@Override
+			public boolean validateForm(JFormRecord form) {
+				try {
+					// Validate the period.
+					Value period = form.getEditField(StatisticsDefs.Fields.PeriodId).getValue();
+					Record rcPeriod = RecordUtils.getRecordPeriod(session, period);
+					form.getRecord().setValue(
+						Periods.Fields.PeriodUnitIndex,
+						rcPeriod.getValue(Periods.Fields.PeriodUnitIndex));
+					form.getRecord().setValue(
+						Periods.Fields.PeriodSize,
+						rcPeriod.getValue(Periods.Fields.PeriodSize));
+					// Check that the record does not exists.
+					Record record = form.getRecord();
+					Persistor persistor = record.getPersistor();
+					if (persistor.exists(record)) {
+						MessageBox.error(session, "Record already exists");
+						return false;
+					}
+				} catch (PersistorException exc) {
+					logger.catching(exc);
+				}
+				return true;
+			}
+		}
 
 		/**
 		 * Customizer to validate the tickers form.
@@ -120,7 +169,7 @@ public class FormUtils {
 		}
 
 	}
-	
+
 	/**
 	 * Value actions.
 	 */
@@ -129,7 +178,7 @@ public class FormUtils {
 		/**
 		 * Value action to build the table name as values are set.
 		 */
-		public static class ActionTableName extends AbstractAction {
+		public static class ActionTableNameStatistics extends AbstractAction {
 
 			/** List of form edit fields. */
 			private JFormRecord form;
@@ -139,7 +188,57 @@ public class FormUtils {
 			 * 
 			 * @param editFields List of edit fields in the form.
 			 */
-			public ActionTableName(JFormRecord form) {
+			public ActionTableNameStatistics(JFormRecord form) {
+				super();
+				this.form = form;
+			}
+
+			/**
+			 * Perform the action.
+			 */
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String periodId = form.getEditField(StatisticsDefs.Fields.PeriodId).getValue().toString();
+					if (periodId.isEmpty()) {
+						return;
+					}
+					
+					String serverId = form.getEditField(StatisticsDefs.Fields.ServerId).getValue().toString();
+					String instrId = form.getEditField(StatisticsDefs.Fields.InstrumentId).getValue().toString();
+					String statsId = form.getEditField(StatisticsDefs.Fields.StatisticsId).getValue().toString();
+ 
+					Session session = form.getSession();
+					Server server = ServerFactory.getServer(serverId);
+					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
+					Period period = Period.parseId(periodId);
+
+					Statistics statistics =
+						StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+					Value tableName = new Value(statistics.getTable().getName());
+					
+					form.getRecord().setValue(StatisticsDefs.Fields.TableName, tableName);
+					form.getEditField(StatisticsDefs.Fields.TableName).setValue(tableName);
+				} catch (Exception exc) {
+					logger.catching(exc);
+				}
+			}
+		}
+
+		/**
+		 * Value action to build the table name as values are set.
+		 */
+		public static class ActionTableNameTickers extends AbstractAction {
+
+			/** List of form edit fields. */
+			private JFormRecord form;
+
+			/**
+			 * Constructor.
+			 * 
+			 * @param editFields List of edit fields in the form.
+			 */
+			public ActionTableNameTickers(JFormRecord form) {
 				super();
 				this.form = form;
 			}
@@ -187,8 +286,7 @@ public class FormUtils {
 		form.getEditField(Tickers.Fields.InstrumentId).setEnabled(false);
 		form.getEditField(Tickers.Fields.TableName).setEnabled(false);
 
-		ValueActions.ActionTableName actionTableName = new ValueActions.ActionTableName(form);
-		form.getEditField(Tickers.Fields.ServerId).getEditContext().addValueAction(actionTableName);
+		ValueActions.ActionTableNameTickers actionTableName = new ValueActions.ActionTableNameTickers(form);
 		form.getEditField(Tickers.Fields.InstrumentId).getEditContext().addValueAction(actionTableName);
 		form.getEditField(Tickers.Fields.PeriodId).getEditContext().addValueAction(actionTableName);
 		form.getEditField(Tickers.Fields.OfferSide).getEditContext().addValueAction(actionTableName);
@@ -202,7 +300,7 @@ public class FormUtils {
 
 		return null;
 	}
-	
+
 	/**
 	 * Returns the statistics record.
 	 * 
@@ -212,13 +310,14 @@ public class FormUtils {
 	 * @param period Period.
 	 * @return The statistics record.
 	 */
-	public static Record getStatistic(Session session, Server server, Instrument instrument, Period period) {
+	public static Record getStatistics(Session session, Server server, Instrument instrument, Period period) {
 		Persistor persistor = PersistorUtils.getPersistorStatistics(session);
 		Record record = persistor.getDefaultRecord();
 		record.getValue(StatisticsDefs.Fields.ServerId).setValue(server.getId());
 		record.getValue(StatisticsDefs.Fields.InstrumentId).setValue(instrument.getId());
 		record.getValue(StatisticsDefs.Fields.PeriodId).setValue(period.getId());
-		
+		record.getValue(Periods.Fields.PeriodName).setValue(period.toString());
+
 		JFormRecord form = new JFormRecord(session);
 		form.setRecord(record);
 		form.setTitle(session.getString("qtActionCreateStatistics"));
@@ -229,12 +328,23 @@ public class FormUtils {
 		form.addField(Periods.Fields.PeriodName);
 		form.addField(StatisticsDefs.Fields.StatisticsId);
 		form.addField(StatisticsDefs.Fields.TableName);
-		
+
 		form.getEditField(StatisticsDefs.Fields.ServerId).setEnabled(false);
 		form.getEditField(StatisticsDefs.Fields.InstrumentId).setEnabled(false);
 		form.getEditField(StatisticsDefs.Fields.PeriodId).setEnabled(false);
 		form.getEditField(StatisticsDefs.Fields.TableName).setEnabled(false);
-		
+
+		ValueActions.ActionTableNameStatistics actionTableName = new ValueActions.ActionTableNameStatistics(form);
+		form.getEditField(StatisticsDefs.Fields.InstrumentId).getEditContext().addValueAction(actionTableName);
+		form.getEditField(StatisticsDefs.Fields.PeriodId).getEditContext().addValueAction(actionTableName);
+		form.getEditField(StatisticsDefs.Fields.StatisticsId).getEditContext().addValueAction(actionTableName);
+
+		form.setCustomizer(new Customizers.StatisticsFormCustomizer(session));
+
+		if (form.edit()) {
+			return form.getRecord();
+		}
+
 		return null;
 	}
 

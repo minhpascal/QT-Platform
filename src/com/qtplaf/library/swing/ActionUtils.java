@@ -722,6 +722,21 @@ public class ActionUtils {
 	}
 
 	/**
+	 * Configure the action as an action calculate.
+	 * 
+	 * @param session Working session.
+	 * @param action The action.
+	 */
+	public static void configureCalculate(Session session, Action action) {
+		setSourceName(action, session.getString("actionCalculateName"));
+		setShortDescription(action, session.getString("actionCalculateName"));
+		setAcceleratorKey(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK));
+		setSession(action, session);
+		setActionGroup(action, ActionGroup.Operation);
+		setSmallIcon(action, ImageIconUtils.getImageIcon(Icons.app_16x16_execute));
+	}
+
+	/**
 	 * Configure the action as an action cancel.
 	 * 
 	 * @param session Working session.

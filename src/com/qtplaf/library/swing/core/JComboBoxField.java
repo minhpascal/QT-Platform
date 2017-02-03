@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -297,6 +298,24 @@ public class JComboBoxField extends JComboBox<JComboBoxField.Item> implements Ed
 		// Fire value actions if required.
 		if (fireValueActions) {
 			getEditContext().fireValueActions(this, previousValue, value);
+		}
+	}
+	
+	/**
+	 * Fire state changed.
+	 */
+	@Override
+	protected void fireItemStateChanged(ItemEvent e) {
+		super.fireItemStateChanged(e);
+		if (e.getID() == ItemEvent.ITEM_STATE_CHANGED) {
+			Item previousItem = null;
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				previousItem = (Item)e.getItem();
+			}
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				Item currentItem = (Item)e.getItem();
+				getEditContext().fireValueActions(this,previousItem,currentItem);
+			}
 		}
 	}
 

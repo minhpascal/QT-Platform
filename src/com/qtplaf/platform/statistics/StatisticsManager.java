@@ -30,18 +30,8 @@ import com.qtplaf.library.util.list.ListUtils;
  * @author Miquel Sas
  */
 public class StatisticsManager {
-
-	/**
-	 * Add defined statistics references.
-	 */
-	static {
-		String id, title, description;
-
-		id = "stsrc_01";
-		title = "States source (5-21-89-377-1597-6765)";
-		description = "First step in states statistics using a rainbow of averages.";
-		add(id, title, description);
-	}
+	
+	private static final String StateSource_01 = "stsrc_01";
 
 	/**
 	 * An item is a defined statistics, identified by a code or id and a description.
@@ -150,6 +140,21 @@ public class StatisticsManager {
 	private static void add(String id, String title, String description) {
 		references.add(new Reference(id, title, description));
 	}
+	
+	/**
+	 * Initialize the statistics references.
+	 */
+	private static void initializeReferences() {
+		if (!references.isEmpty()) {
+			return;
+		}
+		String id, title, description;
+
+		id = StateSource_01;
+		title = "States source (5-21-89-377-1597-6765)";
+		description = "First step in states statistics using a rainbow of averages.";
+		add(id, title, description);
+	}
 
 	/**
 	 * Returns the reference with the given id or null.
@@ -158,6 +163,7 @@ public class StatisticsManager {
 	 * @return The reference or null.
 	 */
 	private static Reference getReference(String id) {
+		initializeReferences();
 		for (Reference reference : references) {
 			if (reference.getId().toLowerCase().equals(id.toLowerCase())) {
 				return reference;
@@ -172,11 +178,33 @@ public class StatisticsManager {
 	 * @return The list of defined statistics references.
 	 */
 	public static List<Reference> getReferences() {
+		initializeReferences();
 		ListUtils.sort(StatisticsManager.references);
 		List<Reference> references = new ArrayList<Reference>(StatisticsManager.references);
 		return references;
 	}
-
+	
+	/**
+	 * Returns the statictics.
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @return The statistics definition.
+	 */
+	public static Statistics getStatistics(
+		Session session,
+		Server server,
+		Instrument instrument,
+		Period period,
+		String id) {
+		if (id.equals(StateSource_01)) {
+			return getStatesSource(session, server, instrument, period, id);
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns the statictics of smoothed averages: 5, 21, 89, 377, 1597, 6765
 	 * 
@@ -186,7 +214,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	public static Statistics getStatesSource(
+	private static Statistics getStatesSource(
 		Session session,
 		Server server,
 		Instrument instrument,

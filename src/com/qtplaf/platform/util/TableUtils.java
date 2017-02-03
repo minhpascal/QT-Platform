@@ -116,9 +116,5 @@ public class TableUtils {
 	public static Table getTableOHLCVS(Session session, Server server, String name) {
 		return new OHLCVS(session, server, name);
 	}
-	
-	public static Table getTableStatesSource(Session session, Server server, String name) {
-		return null;
-	}
 
 }

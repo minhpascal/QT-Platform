@@ -552,7 +552,6 @@ public class ActionTickers extends AbstractAction {
 				ActionDelete actionDelete = new ActionDelete(session);
 				ActionUtils.setSortIndex(actionDelete, 1);
 				frame.addAction(actionDelete);
-				frame.addAction(actionCreate);
 
 				ActionBrowse actionBrowse = new ActionBrowse(session);
 				ActionUtils.setSortIndex(actionBrowse, 2);

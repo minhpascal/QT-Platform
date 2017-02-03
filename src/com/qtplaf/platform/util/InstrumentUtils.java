@@ -37,6 +37,24 @@ public class InstrumentUtils {
 	private static final Logger logger = LogManager.getLogger();
 
 	/**
+	 * returns the instrument.
+	 * 
+	 * @param session Working session.
+	 * @param serverId Server id.
+	 * @param instrumentId Instrument id.
+	 * @return The instrument.
+	 */
+	public static Instrument getInstrument(Session session, String serverId, String instrumentId) {
+		try {
+			Record recordInstr = RecordUtils.getRecordInstrument(session, serverId, instrumentId);
+			return getInstrumentFromRecordInstruments(recordInstr);
+		} catch (Exception exc) {
+			logger.catching(exc);
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the instrument from the tickers record.
 	 * 
 	 * @param session Working session.

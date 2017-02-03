@@ -15,6 +15,7 @@
 package com.qtplaf.platform.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.ListSelectionModel;
@@ -25,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.Table;
+import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.action.ActionTableOption;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
@@ -38,6 +42,8 @@ import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
+import com.qtplaf.platform.statistics.StatisticsManager;
+import com.qtplaf.platform.util.FormUtils;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.PeriodUtils;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -76,7 +82,7 @@ public class ActionStatistics extends AbstractAction {
 			JOptionFrame frame = (JOptionFrame) ActionUtils.getUserObject(this);
 			frame.setVisible(false);
 			frame.dispose();
-			
+
 		}
 	}
 
@@ -103,17 +109,109 @@ public class ActionStatistics extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionStatistics.this);
 				Server server = LaunchArgs.getServer(ActionStatistics.this);
-				Record record = Lookup.selectTicker(session, server);
-				if (record == null) {
+				Record rcTicker = Lookup.selectTicker(session, server);
+				if (rcTicker == null) {
 					return;
 				}
-				
-				Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
-				Period period = PeriodUtils.getPeriodFromRecordTickers(record);
-				
+
+				Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, rcTicker);
+				Period period = PeriodUtils.getPeriodFromRecordTickers(rcTicker);
+				Record rcStats = FormUtils.getStatistics(session, server, instrument, period);
+				if (rcStats == null) {
+					return;
+				}
+				String statsId = rcStats.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+				Statistics stats = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				// Create the statistics record.
+				Persistor persistor = PersistorUtils.getPersistorStatistics(session);
+				persistor.insert(rcStats);
+				PersistorUtils.getDDL().buildTable(stats.getTable());
+				getTableModel().insertRecord(rcStats, persistor.getView().getOrderBy());
+				getTableRecord().setSelectedRecord(rcStats);
+
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}
+		}
+	}
+
+	/**
+	 * Action to delete a ticker (and its data).
+	 */
+	class ActionDelete extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionDelete(Session session) {
+			super();
+			ActionUtils.configureDelete(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			try {
+				Session session = ActionUtils.getSession(ActionStatistics.this);
+				Server server = LaunchArgs.getServer(ActionStatistics.this);
+				List<Record> records = getSelectedRecords();
+				if (records.isEmpty()) {
+					return;
+				}
+
+				// Ask delete.
+				String question = session.getString("qtAskDeleteStatistic");
+				if (MessageBox.question(session, question, MessageBox.yesNo) != MessageBox.yes) {
+					return;
+				}
+
+				// Delete records and tables.
+				String serverId = server.getId();
+				int row = getTableRecord().getSelectedRow();
+				for (Record record : records) {
+					PersistorUtils.getPersistorStatistics(session).delete(record);
+					String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
+					String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
+					String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
+					Period period = Period.parseId(periodId);
+					Statistics statistics =
+						StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+					Table table = statistics.getTable();
+					PersistorUtils.getDDL().dropTable(table);
+					getTableModel().deleteRecord(record);
+				}
+				getTableRecord().setSelectedRow(row);
+
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+	}
+
+	/**
+	 * Action to calculate a statistics.
+	 */
+	class ActionCalculate extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionCalculate(Session session) {
+			super();
+			ActionUtils.configureCalculate(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
 		}
 	}
 
@@ -150,6 +248,14 @@ public class ActionStatistics extends AbstractAction {
 				ActionCreate actionCreate = new ActionCreate(session);
 				ActionUtils.setSortIndex(actionCreate, 0);
 				frame.addAction(actionCreate);
+
+				ActionDelete actionDelete = new ActionDelete(session);
+				ActionUtils.setSortIndex(actionDelete, 1);
+				frame.addAction(actionDelete);
+				
+				ActionCalculate actionCalculate = new ActionCalculate(session);
+				ActionUtils.setSortIndex(actionCalculate, 2);
+				frame.addAction(actionCalculate);
 
 				frame.addAction(new ActionClose(session));
 				frame.setSize(0.6, 0.8);

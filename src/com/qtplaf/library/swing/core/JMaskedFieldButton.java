@@ -205,6 +205,27 @@ public class JMaskedFieldButton extends JPanel implements EditField {
 	}
 
 	/**
+	 * Returns a boolean indicating if the underlying component is enabled.
+	 * 
+	 * @return A boolean indicating if the underlying component is enabled.
+	 */
+	@Override
+	public boolean isEnabled() {
+		return getMaskedField().isEnabled();
+	}
+
+	/**
+	 * Sets a boolean indicating if the underlying component is enabled.
+	 * 
+	 * @param enabled A boolean indicating if the underlying component is enabled.
+	 */
+	@Override
+	public void setEnabled(boolean enabled) {
+		getMaskedField().setEnabled(enabled);
+		getButton().setEnabled(enabled);
+	}
+
+	/**
 	 * Returns the component that will process the events of this edit field.
 	 * 
 	 * @return The {@link Component}.
