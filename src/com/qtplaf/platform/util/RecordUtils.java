@@ -197,4 +197,24 @@ public class RecordUtils {
 		return persistor.getRecord(dataFilter);
 	}
 
+	/**
+	 * Returns the tickers record.
+	 * 
+	 * @param session Working session.
+	 * @param server Server.
+	 * @param instrument Instrument.
+	 * @param period Period.
+	 * @return The tickers record.
+	 * @throws PersistorException
+	 */
+	public static Record getRecordTicker(Session session, Server server, Instrument instrument, Period period)
+		throws PersistorException {
+		Persistor persistor = PersistorUtils.getPersistorTickers(session);
+		Value serverId = new Value(server.getId());
+		Value instrId = new Value(instrument.getId());
+		Value periodId = new Value(period.getId());
+		return persistor.getRecord(serverId, instrId, periodId);
+
+	}
+
 }

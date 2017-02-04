@@ -53,7 +53,7 @@ public class StatesSource extends Statistics {
 		public static final String Range = "range";
 
 		public static String averageName(int period) {
-			return "sma_" + period;
+			return "average_" + period;
 		}
 
 		public static String averageHeader(int period) {
@@ -62,7 +62,7 @@ public class StatesSource extends Statistics {
 
 		public static String averageLabel(int period, int... smooths) {
 			StringBuilder b = new StringBuilder();
-			b.append("SMA ");
+			b.append("Average ");
 			b.append(period);
 			for (int smooth : smooths) {
 				b.append(", ");
@@ -104,7 +104,7 @@ public class StatesSource extends Statistics {
 		}
 
 		public static String speedLabel(int period) {
-			return "Spread " + period;
+			return "Speed " + period;
 		}
 	}
 
@@ -112,7 +112,7 @@ public class StatesSource extends Statistics {
 	 * Defines a smoothed SMA used as a movement descriptor.
 	 */
 	public static class Average implements Comparable<Average> {
-		/** SMA period. */
+		/** Average period. */
 		private int period;
 		/** Smoothing periods. */
 		private int[] smooths;
@@ -120,7 +120,7 @@ public class StatesSource extends Statistics {
 		/**
 		 * Constructor.
 		 * 
-		 * @param period SMA period.
+		 * @param period Average period.
 		 * @param averages Smoothing periods.
 		 */
 		public Average(int period, int[] smooths) {
@@ -155,6 +155,23 @@ public class StatesSource extends Statistics {
 			return Integer.valueOf(getPeriod()).compareTo(Integer.valueOf(avg.getPeriod()));
 		}
 
+		/**
+		 * Returns the id of the average.
+		 * 
+		 * @return The id.
+		 */
+		public String getId() {
+			StringBuilder b = new StringBuilder();
+			b.append("avg_");
+			b.append(period);
+			if (smooths != null) {
+				for (int smooth : smooths) {
+					b.append("_");
+					b.append(smooth);
+				}
+			}
+			return b.toString();
+		}
 	}
 
 	/**
@@ -289,6 +306,30 @@ public class StatesSource extends Statistics {
 	}
 
 	/**
+	 * Returns the list of fields that should be included in a <tt>Data</tt> of the corresponding indicator. It excludes
+	 * index, time and formatted time.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getIndicatorOutputFields() {
+		List<Field> fields = new ArrayList<>();
+		Table table = getTable();
+		for (int i = 0; i < table.getFieldCount(); i++) {
+			if (table.getField(i).getName().equals(Fields.Index)) {
+				continue;
+			}
+			if (table.getField(i).getName().equals(Fields.Time)) {
+				continue;
+			}
+			if (table.getField(i).getName().equals(Fields.TimeFmt)) {
+				continue;
+			}
+			fields.add(table.getField(i));
+		}
+		return fields;
+	}
+
+	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
@@ -308,7 +349,7 @@ public class StatesSource extends Statistics {
 		table.addField(DomainUtils.getLow(getSession(), Fields.Low));
 		table.addField(DomainUtils.getClose(getSession(), Fields.Close));
 		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
-		
+
 		// Percentual range
 		{
 			String name = Fields.Range;

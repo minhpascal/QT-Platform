@@ -122,6 +122,22 @@ public class IndicatorUtils {
 	 * @param dataList The source data list.
 	 * @param period The period of the SMA.
 	 * @param index The index in the data of the source to calculate the average.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getSmoothedSimpleMovingAverage(
+		DataList dataList,
+		int index,
+		int period,
+		int... smoothingPeriods) {
+		return getSmoothedSimpleMovingAverage(dataList, index, Color.BLACK, period, smoothingPeriods);
+	}
+
+	/**
+	 * Returns a smoothed SMA indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the SMA.
+	 * @param index The index in the data of the source to calculate the average.
 	 * @param color Plot color.
 	 * @return The indicator data list.
 	 */
