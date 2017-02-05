@@ -14,7 +14,9 @@
 package com.qtplaf.library.trading.data.info;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.Data;
@@ -68,6 +70,10 @@ public abstract class DataInfo {
 	 * The list of informations about outputs.
 	 */
 	private List<OutputInfo> outputs = new ArrayList<>();
+	/**
+	 * Map of output indexes.
+	 */
+	private Map<String, Integer> mapIndexes = new HashMap<>();
 	/**
 	 * The working session.
 	 */
@@ -141,7 +147,7 @@ public abstract class DataInfo {
 	 * @param index The index in the data.
 	 */
 	public void addOutput(String name, String shortName, int index) {
-		outputs.add(new OutputInfo(name, shortName, index));
+		addOutput(new OutputInfo(name, shortName, index));
 	}
 
 	/**
@@ -153,7 +159,31 @@ public abstract class DataInfo {
 	 * @param plot A boolean indicating if this output has to be plotted.
 	 */
 	public void addOutput(String name, String shortName, int index, boolean plot) {
-		outputs.add(new OutputInfo(name, shortName, index, plot));
+		addOutput(new OutputInfo(name, shortName, index, plot));
+	}
+
+	/**
+	 * Add the output and map the index to the name.
+	 * 
+	 * @param output The output.
+	 */
+	private void addOutput(OutputInfo output) {
+		outputs.add(output);
+		mapIndexes.put(output.getName(), output.getIndex());
+	}
+
+	/**
+	 * Returns the output index given the name of the output.
+	 * 
+	 * @param name The name of the output.
+	 * @return The output index or -1 if the name is not valid.
+	 */
+	public int getOutputIndex(String name) {
+		Integer index = mapIndexes.get(name);
+		if (index == null) {
+			return -1;
+		}
+		return index.intValue();
 	}
 
 	/**

@@ -43,6 +43,7 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.statistics.StatesSource;
 import com.qtplaf.platform.statistics.StatesSource.Average;
+import com.qtplaf.platform.statistics.StatesSource.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -61,10 +62,8 @@ public class StatesSourceIndicator extends Indicator {
 
 	/** Underlying states source statistics. */
 	private StatesSource statesSource;
-
 	/** Caching of data lists. */
 	private Map<String, DataList> mapDataLists = new HashMap<>();
-
 	/** This indicator data list. */
 	private IndicatorDataList indicatorDataList;
 
@@ -97,22 +96,22 @@ public class StatesSourceIndicator extends Indicator {
 	 */
 	public IndicatorDataList getDataList() {
 		if (indicatorDataList == null) {
-			
+
 			List<IndicatorSource> sources = new ArrayList<>();
-			
+
 			// Price (High, Low, Close).
 			sources.add(new IndicatorSource(
 				getDataListPrice(),
 				OHLCV.Index.High.getIndex(),
 				OHLCV.Index.Low.getIndex(),
 				OHLCV.Index.Close.getIndex()));
-			
+
 			// Averages.
 			List<Average> averages = statesSource.getAverages();
 			for (Average average : averages) {
 				sources.add(new IndicatorSource(getDataListAverage(average), 0));
 			}
-			
+
 			// This indicator data list.
 			indicatorDataList = new IndicatorDataList(getSession(), this, getIndicatorInfo(), sources);
 		}
@@ -126,14 +125,14 @@ public class StatesSourceIndicator extends Indicator {
 	 * @return The data list for the average.
 	 */
 	private DataList getDataListAverage(Average average) {
-		DataList dataList = mapDataLists.get(average.getId());
+		DataList dataList = mapDataLists.get(average.getName());
 		if (dataList == null) {
 			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 				getDataListPrice(),
 				OHLCV.Index.Close.getIndex(),
 				average.getPeriod(),
 				average.getSmooths());
-			mapDataLists.put(average.getId(), dataList);
+			mapDataLists.put(average.getName(), dataList);
 		}
 		return dataList;
 	}
@@ -170,6 +169,29 @@ public class StatesSourceIndicator extends Indicator {
 	}
 
 	/**
+	 * Returns the data price for a given index.
+	 * 
+	 * @param index The index.
+	 * @return The <tt>Data</tt>,
+	 */
+	private Data getInputDataPrice(int index) {
+		DataList dataList = mapDataLists.get(KeyPrice);
+		return dataList.get(index);
+	}
+
+	/**
+	 * Returns the average <tt>Data</tt> for a given indeX
+	 * 
+	 * @param index The index.
+	 * @param average The average.
+	 * @return The <tt>Data</tt>,
+	 */
+	private Data getInputDataAverage(int index, Average average) {
+		DataList dataList = mapDataLists.get(average.getName());
+		return dataList.get(index);
+	}
+
+	/**
 	 * Called before starting calculations to give the indicator the opportunity to initialize any internal resources.
 	 * 
 	 * @param indicatorSources The list of indicator sources.
@@ -190,7 +212,86 @@ public class StatesSourceIndicator extends Indicator {
 	 */
 	@Override
 	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
-		return null;
+
+		IndicatorInfo info = getIndicatorInfo();
+		double[] values = new double[info.getOutputCount()];
+
+		// Price values.
+		Data price = getInputDataPrice(index);
+		double high = price.getValue(OHLCV.Index.High.getIndex());
+		double low = price.getValue(OHLCV.Index.Low.getIndex());
+		double close = price.getValue(OHLCV.Index.Close.getIndex());
+		values[info.getOutputIndex(StatesSource.Fields.High)] = high;
+		values[info.getOutputIndex(StatesSource.Fields.Low)] = low;
+		values[info.getOutputIndex(StatesSource.Fields.Close)] = close;
+
+		// Percentual range.
+		double range = (high - low) / low;
+		values[info.getOutputIndex(StatesSource.Fields.Range)] = range;
+
+		// Averages.
+		List<Average> averages = statesSource.getAverages();
+		for (Average average : averages) {
+			Data data = getInputDataAverage(index, average);
+			values[info.getOutputIndex(average.getName())] = data.getValue(0);
+		}
+
+		// Price spreads vs the fastest average.
+		{
+			Average fastAvg = averages.get(0);
+			Data data = getInputDataAverage(index, fastAvg);
+			double avgValue = data.getValue(0);
+			// High spread.
+			{
+				double spread = (high / avgValue) - 1;
+				values[info.getOutputIndex(Fields.spreadPriceName(Fields.High, fastAvg.getPeriod()))] = spread;
+			}
+			// Low spread.
+			{
+				double spread = (low / avgValue) - 1;
+				values[info.getOutputIndex(Fields.spreadPriceName(Fields.Low, fastAvg.getPeriod()))] = spread;
+			}
+			// Close spread.
+			{
+				double spread = (close / avgValue) - 1;
+				values[info.getOutputIndex(Fields.spreadPriceName(Fields.Close, fastAvg.getPeriod()))] = spread;
+			}
+		}
+
+		// Spreads between averages.
+		for (int i = 0; i < averages.size(); i++) {
+			Average averageFast = averages.get(i);
+			int periodFast = averageFast.getPeriod();
+			Data dataFast = getInputDataAverage(index, averageFast);
+			double valueFast = dataFast.getValue(0);
+			for (int j = i + 1; j < averages.size(); j++) {
+				Average averageSlow = averages.get(j);
+				int periodSlow = averageSlow.getPeriod();
+				Data dataSlow = getInputDataAverage(index, averageSlow);
+				double valueSlow = dataSlow.getValue(0);
+				double spread = (valueFast / valueSlow) - 1;
+				values[info.getOutputIndex(Fields.spreadAvgName(periodFast, periodSlow))] = spread;
+			}
+		}
+
+		// Speed (tangent) percentual of averages.
+		if (index > 0) {
+			for (int i = 0; i < averages.size(); i++) {
+				Data dataCurr = getInputDataAverage(index, averages.get(i));
+				double valueCurr = dataCurr.getValue(0);
+				Data dataPrev = getInputDataAverage(index - 1, averages.get(i));
+				double valuePrev = dataPrev.getValue(0);
+				double speed = (valueCurr / valuePrev) - 1;
+				values[info.getOutputIndex(Fields.speedName(averages.get(i).getPeriod()))] = speed;
+			}
+		}
+		
+		// Result data.
+		long time = price.getTime();
+		Data data = new Data();
+		data.setTime(time);
+		data.setValues(values);
+		return data;
 	}
 
 }

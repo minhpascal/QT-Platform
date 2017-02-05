@@ -156,21 +156,12 @@ public class StatesSource extends Statistics {
 		}
 
 		/**
-		 * Returns the id of the average.
+		 * Returns the name of the average.
 		 * 
-		 * @return The id.
+		 * @return The name.
 		 */
-		public String getId() {
-			StringBuilder b = new StringBuilder();
-			b.append("avg_");
-			b.append(period);
-			if (smooths != null) {
-				for (int smooth : smooths) {
-					b.append("_");
-					b.append(smooth);
-				}
-			}
-			return b.toString();
+		public String getName() {
+			return Fields.averageName(getPeriod());
 		}
 	}
 
@@ -220,6 +211,7 @@ public class StatesSource extends Statistics {
 	 */
 	public void addAverage(int period, int... smooths) {
 		averages.add(new Average(period, smooths));
+		ListUtils.sort(averages);
 		setup();
 	}
 
@@ -275,7 +267,6 @@ public class StatesSource extends Statistics {
 		if (averages.isEmpty()) {
 			throw new IllegalStateException();
 		}
-
 		clear();
 		Table table = getTable();
 		for (int i = 0; i < table.getFieldCount(); i++) {
@@ -357,9 +348,6 @@ public class StatesSource extends Statistics {
 			String label = "Range factor";
 			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
-
-		// Sort averages by period ascending.
-		ListUtils.sort(averages);
 
 		// Averages fields.
 		for (int i = 0; i < averages.size(); i++) {

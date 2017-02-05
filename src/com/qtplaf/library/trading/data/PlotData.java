@@ -120,81 +120,13 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
-	 * Returns the list of indicator data lists in this plot data, in the order of precendence they are to be
-	 * calculated. If an indicator uses the data of another indicator, the last one must be calculated first.
-	 * 
-	 * @return The list of indicator data lists,
-	 */
-	public List<IndicatorDataList> getIndicatorDataListsToCalculate() {
-		List<IndicatorDataList> firstLevelIndicatorDataLists = getIndicatorDataLists();
-		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
-		fillIndicatorDataLists(indicatorDataLists, firstLevelIndicatorDataLists);
-		return indicatorDataLists;
-	}
-
-	/**
-	 * Fill the result indicator data list in the appropriate calculation order.
-	 * 
-	 * @param result The result list.
-	 * @param parent The parent list.
-	 */
-	private void fillIndicatorDataLists(List<IndicatorDataList> result, List<IndicatorDataList> parent) {
-		// Process required first.
-		for (IndicatorDataList list : parent) {
-			List<IndicatorDataList> required = getIndicatorDataListsRequired(list);
-			fillIndicatorDataLists(result, required);
-		}
-		// Process current level.
-		for (IndicatorDataList list : parent) {
-			if (!result.contains(list)) {
-				result.add(list);
-			}
-		}
-	}
-
-	/**
-	 * Returns the list of first level indicator data lists.
-	 * 
-	 * @return The list of first level indicator data lists.
-	 */
-	public List<IndicatorDataList> getIndicatorDataLists() {
-		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
-		for (int i = 0; i < size(); i++) {
-			DataList dataList = get(i);
-			if (dataList instanceof IndicatorDataList) {
-				IndicatorDataList indicatorDataList = (IndicatorDataList) dataList;
-				indicatorDataLists.add(indicatorDataList);
-			}
-		}
-		return indicatorDataLists;
-	}
-
-	/**
-	 * Returns the list of indicator data lists that the argument indicator data list requires as indicator sources.
-	 * 
-	 * @param parent The parent indicator data list.
-	 * @return The list of chilkdren required indicator data lists.
-	 */
-	private List<IndicatorDataList> getIndicatorDataListsRequired(IndicatorDataList parent) {
-		List<IndicatorDataList> children = new ArrayList<>();
-		List<IndicatorSource> sources = parent.getIndicatorSources();
-		for (IndicatorSource source : sources) {
-			if (source.getDataList() instanceof IndicatorDataList) {
-				IndicatorDataList child = (IndicatorDataList) source.getDataList();
-				children.add(child);
-			}
-		}
-		return children;
-	}
-
-	/**
 	 * Returns the list of first level indicator data lists to plot from scratch.
 	 * 
 	 * @return The list of first level indicator data lists to plot from scratch.
 	 */
 	public List<DataList> getDataListsIndicatorToPlotFromScratch() {
 		List<DataList> fromScratch = new ArrayList<>();
-		List<IndicatorDataList> firstLevel = getIndicatorDataLists();
+		List<IndicatorDataList> firstLevel = DataList.getIndicatorDataLists(dataLists);
 		for (IndicatorDataList dataList : firstLevel) {
 			if (dataList.isPlotFromScratch()) {
 				fromScratch.add(dataList);
@@ -210,7 +142,7 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 */
 	public List<DataList> getDataListsIndicatorToPlotClip() {
 		List<DataList> fromScratch = new ArrayList<>();
-		List<IndicatorDataList> firstLevel = getIndicatorDataLists();
+		List<IndicatorDataList> firstLevel = DataList.getIndicatorDataLists(dataLists);
 		for (IndicatorDataList dataList : firstLevel) {
 			if (!dataList.isPlotFromScratch()) {
 				fromScratch.add(dataList);
@@ -498,7 +430,7 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		}
 
 		// If no indicator data lists...
-		List<IndicatorDataList> indicatorDataLists = getIndicatorDataListsToCalculate();
+		List<IndicatorDataList> indicatorDataLists = DataList.getIndicatorDataListsToCalculate(dataLists);
 		if (indicatorDataLists.isEmpty()) {
 			return;
 		}

@@ -30,6 +30,76 @@ import com.qtplaf.library.trading.data.info.VolumeInfo;
 public abstract class DataList {
 
 	/**
+	 * Returns the list of first level indicator data lists, given a list of data lists.
+	 * 
+	 * @param dataLists The source list of data lists.
+	 * @return The list of first level indicator data lists.
+	 */
+	public static List<IndicatorDataList> getIndicatorDataLists(List<DataList> dataLists) {
+		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
+		for (int i = 0; i < dataLists.size(); i++) {
+			DataList dataList = dataLists.get(i);
+			if (dataList instanceof IndicatorDataList) {
+				IndicatorDataList indicatorDataList = (IndicatorDataList) dataList;
+				indicatorDataLists.add(indicatorDataList);
+			}
+		}
+		return indicatorDataLists;
+	}
+
+	/**
+	 * Returns the list of indicator data lists, in the order of precendence they are to be calculated. If an indicator
+	 * uses the data of another indicator, the last one must be calculated first.
+	 * 
+	 * @param dataLists The source list of data lists.
+	 * @return The list of indicator data lists,
+	 */
+	public static List<IndicatorDataList> getIndicatorDataListsToCalculate(List<DataList> dataLists) {
+		List<IndicatorDataList> firstLevelIndicatorDataLists = getIndicatorDataLists(dataLists);
+		List<IndicatorDataList> indicatorDataLists = new ArrayList<>();
+		fillIndicatorDataLists(indicatorDataLists, firstLevelIndicatorDataLists);
+		return indicatorDataLists;
+	}
+
+	/**
+	 * Fill the result indicator data list in the appropriate calculation order.
+	 * 
+	 * @param result The result list.
+	 * @param parent The parent list.
+	 */
+	private static void fillIndicatorDataLists(List<IndicatorDataList> result, List<IndicatorDataList> parent) {
+		// Process required first.
+		for (IndicatorDataList list : parent) {
+			List<IndicatorDataList> required = getIndicatorDataListsRequired(list);
+			fillIndicatorDataLists(result, required);
+		}
+		// Process current level.
+		for (IndicatorDataList list : parent) {
+			if (!result.contains(list)) {
+				result.add(list);
+			}
+		}
+	}
+
+	/**
+	 * Returns the list of indicator data lists that the argument indicator data list requires as indicator sources.
+	 * 
+	 * @param parent The parent indicator data list.
+	 * @return The list of chilkdren required indicator data lists.
+	 */
+	private static List<IndicatorDataList> getIndicatorDataListsRequired(IndicatorDataList parent) {
+		List<IndicatorDataList> children = new ArrayList<>();
+		List<IndicatorSource> sources = parent.getIndicatorSources();
+		for (IndicatorSource source : sources) {
+			if (source.getDataList() instanceof IndicatorDataList) {
+				IndicatorDataList child = (IndicatorDataList) source.getDataList();
+				children.add(child);
+			}
+		}
+		return children;
+	}
+
+	/**
 	 * The data info.
 	 */
 	private DataInfo dataInfo;
