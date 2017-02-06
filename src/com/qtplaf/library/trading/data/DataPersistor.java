@@ -174,6 +174,26 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
+	 * Returns the record given a data element.
+	 * 
+	 * @param data The element.
+	 * @return The record.
+	 */
+	public Record getRecord(Data data) {
+		Record record = getDefaultRecord();
+		// First index (0) is reserved.
+		record.setValue(1, data.getTime());
+		// Index of data.
+		int index = 1;
+		for (int i = 2; i < record.getFieldCount(); i++) {
+			if (record.getField(i).isPersistent()) {
+				record.setValue(i, data.getValue(++index));
+			}
+		}
+		return record;
+	}
+
+	/**
 	 * Returns the record given a relative index in that starts at 0.
 	 * 
 	 * @param index The index in the list.
@@ -422,6 +442,17 @@ public class DataPersistor implements Persistor {
 	 */
 	public boolean refresh(Record record) throws PersistorException {
 		return persistor.refresh(record);
+	}
+
+	/**
+	 * Insert a data element that conforms to the persistor contract.
+	 * 
+	 * @param data The data element.
+	 * @return The number of already inserted records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int insert(Data data) throws PersistorException {
+		return insert(getRecord(data));
 	}
 
 	/**

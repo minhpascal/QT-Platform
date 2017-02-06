@@ -30,6 +30,7 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.list.ListUtils;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.task.TaskStatesSource;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -284,7 +285,7 @@ public class StatesSource extends Statistics {
 	 * @return The calculator task.
 	 */
 	public Task getTask() {
-		return null;
+		return new TaskStatesSource(getSession(), this);
 	}
 
 	/**

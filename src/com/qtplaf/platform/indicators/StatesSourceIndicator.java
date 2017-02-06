@@ -90,6 +90,15 @@ public class StatesSourceIndicator extends Indicator {
 	}
 
 	/**
+	 * Returns the underlying states source statistics.
+	 * 
+	 * @return The underlying states source statistics.
+	 */
+	public StatesSource getStatesSource() {
+		return statesSource;
+	}
+
+	/**
 	 * Returns this indicator data list conveniently configurated.
 	 * 
 	 * @return The data list.
@@ -124,7 +133,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * @param average The average.
 	 * @return The data list for the average.
 	 */
-	private DataList getDataListAverage(Average average) {
+	public IndicatorDataList getDataListAverage(Average average) {
 		DataList dataList = mapDataLists.get(average.getName());
 		if (dataList == null) {
 			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
@@ -134,7 +143,7 @@ public class StatesSourceIndicator extends Indicator {
 				average.getSmooths());
 			mapDataLists.put(average.getName(), dataList);
 		}
-		return dataList;
+		return (IndicatorDataList) dataList;
 	}
 
 	/**
@@ -142,7 +151,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * 
 	 * @return The price data list.
 	 */
-	private DataList getDataListPrice() {
+	public PersistorDataList getDataListPrice() {
 		DataList price = mapDataLists.get(KeyPrice);
 		if (price == null) {
 			try {
@@ -165,7 +174,17 @@ public class StatesSourceIndicator extends Indicator {
 				logger.catching(exc);
 			}
 		}
-		return price;
+		return (PersistorDataList) price;
+	}
+
+	/**
+	 * Returns the list of indicator data lists to perform the calculations.
+	 * 
+	 * @return The list of indicator data lists.
+	 */
+	public List<IndicatorDataList> getIndicatorDataListsToCalculate() {
+		List<DataList> dataLists = new ArrayList<>(mapDataLists.values());
+		return DataList.getIndicatorDataListsToCalculate(dataLists);
 	}
 
 	/**
@@ -285,7 +304,7 @@ public class StatesSourceIndicator extends Indicator {
 				values[info.getOutputIndex(Fields.speedName(averages.get(i).getPeriod()))] = speed;
 			}
 		}
-		
+
 		// Result data.
 		long time = price.getTime();
 		Data data = new Data();
