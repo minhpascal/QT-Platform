@@ -100,16 +100,6 @@ public class Names {
 	}
 
 	/**
-	 * Returns the instrument id given an OHLCV tablle name.
-	 * 
-	 * @param tableName The table name.
-	 * @return The instrument id.
-	 */
-	public static String getInstrumentId(String tableName) {
-		return StringUtils.split(tableName,"_")[0];
-	}
-
-	/**
 	 * Returns the period id given an OHLCV tablle name.
 	 * 
 	 * @param tableName The table name.

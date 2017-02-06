@@ -41,8 +41,8 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.statistics.Average;
 import com.qtplaf.platform.statistics.StatesSource;
-import com.qtplaf.platform.statistics.StatesSource.Average;
 import com.qtplaf.platform.statistics.StatesSource.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
@@ -134,14 +134,14 @@ public class StatesSourceIndicator extends Indicator {
 	 * @return The data list for the average.
 	 */
 	public IndicatorDataList getDataListAverage(Average average) {
-		DataList dataList = mapDataLists.get(average.getName());
+		DataList dataList = mapDataLists.get(Average.getAverageName(average));
 		if (dataList == null) {
 			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 				getDataListPrice(),
 				OHLCV.Index.Close.getIndex(),
 				average.getPeriod(),
 				average.getSmooths());
-			mapDataLists.put(average.getName(), dataList);
+			mapDataLists.put(Average.getAverageName(average), dataList);
 		}
 		return (IndicatorDataList) dataList;
 	}
@@ -206,7 +206,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * @return The <tt>Data</tt>,
 	 */
 	private Data getInputDataAverage(int index, Average average) {
-		DataList dataList = mapDataLists.get(average.getName());
+		DataList dataList = mapDataLists.get(Average.getAverageName(average));
 		return dataList.get(index);
 	}
 
@@ -252,7 +252,7 @@ public class StatesSourceIndicator extends Indicator {
 		List<Average> averages = statesSource.getAverages();
 		for (Average average : averages) {
 			Data data = getInputDataAverage(index, average);
-			values[info.getOutputIndex(average.getName())] = data.getValue(0);
+			values[info.getOutputIndex(Average.getAverageName(average))] = data.getValue(0);
 		}
 
 		// Price spreads vs the fastest average.
@@ -263,33 +263,31 @@ public class StatesSourceIndicator extends Indicator {
 			// High spread.
 			{
 				double spread = (high / avgValue) - 1;
-				values[info.getOutputIndex(Fields.spreadPriceName(Fields.High, fastAvg.getPeriod()))] = spread;
+				values[info.getOutputIndex(Average.getSpreadName(Fields.High, fastAvg))] = spread;
 			}
 			// Low spread.
 			{
 				double spread = (low / avgValue) - 1;
-				values[info.getOutputIndex(Fields.spreadPriceName(Fields.Low, fastAvg.getPeriod()))] = spread;
+				values[info.getOutputIndex(Average.getSpreadName(Fields.Low, fastAvg))] = spread;
 			}
 			// Close spread.
 			{
 				double spread = (close / avgValue) - 1;
-				values[info.getOutputIndex(Fields.spreadPriceName(Fields.Close, fastAvg.getPeriod()))] = spread;
+				values[info.getOutputIndex(Average.getSpreadName(Fields.Close, fastAvg))] = spread;
 			}
 		}
 
 		// Spreads between averages.
 		for (int i = 0; i < averages.size(); i++) {
 			Average averageFast = averages.get(i);
-			int periodFast = averageFast.getPeriod();
 			Data dataFast = getInputDataAverage(index, averageFast);
 			double valueFast = dataFast.getValue(0);
 			for (int j = i + 1; j < averages.size(); j++) {
 				Average averageSlow = averages.get(j);
-				int periodSlow = averageSlow.getPeriod();
 				Data dataSlow = getInputDataAverage(index, averageSlow);
 				double valueSlow = dataSlow.getValue(0);
 				double spread = (valueFast / valueSlow) - 1;
-				values[info.getOutputIndex(Fields.spreadAvgName(periodFast, periodSlow))] = spread;
+				values[info.getOutputIndex(Average.getSpreadName(averageFast, averageSlow))] = spread;
 			}
 		}
 
@@ -301,7 +299,7 @@ public class StatesSourceIndicator extends Indicator {
 				Data dataPrev = getInputDataAverage(index - 1, averages.get(i));
 				double valuePrev = dataPrev.getValue(0);
 				double speed = (valueCurr / valuePrev) - 1;
-				values[info.getOutputIndex(Fields.speedName(averages.get(i).getPeriod()))] = speed;
+				values[info.getOutputIndex(Average.getSpeedName(averages.get(i)))] = speed;
 			}
 		}
 

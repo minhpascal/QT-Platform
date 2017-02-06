@@ -52,118 +52,6 @@ public class StatesSource extends Statistics {
 		public static final String Low = "low";
 		public static final String Close = "close";
 		public static final String Range = "range";
-
-		public static String averageName(int period) {
-			return "average_" + period;
-		}
-
-		public static String averageHeader(int period) {
-			return averageName(period);
-		}
-
-		public static String averageLabel(int period, int... smooths) {
-			StringBuilder b = new StringBuilder();
-			b.append("Average ");
-			b.append(period);
-			for (int smooth : smooths) {
-				b.append(", ");
-				b.append(smooth);
-			}
-			return b.toString();
-		}
-
-		public static String spreadPriceName(String price, int periodFast) {
-			return "spread_" + price + "_" + periodFast;
-		}
-
-		public static String spreadPriceHeader(String price, int periodFast) {
-			return spreadPriceName(price, periodFast);
-		}
-
-		public static String spreadPriceLabel(String price, int periodFast) {
-			return "Spread " + price + " - " + periodFast;
-		}
-
-		public static String spreadAvgName(int periodFast, int periodSlow) {
-			return "spread_" + periodFast + "_" + periodSlow;
-		}
-
-		public static String spreadAvgHeader(int periodFast, int periodSlow) {
-			return spreadAvgName(periodFast, periodSlow);
-		}
-
-		public static String spreadAvgLabel(int periodFast, int periodSlow) {
-			return "Spread " + periodFast + " - " + periodSlow;
-		}
-
-		public static String speedName(int period) {
-			return "speed_" + period;
-		}
-
-		public static String speedHeader(int period) {
-			return averageName(period);
-		}
-
-		public static String speedLabel(int period) {
-			return "Speed " + period;
-		}
-	}
-
-	/**
-	 * Defines a smoothed SMA used as a movement descriptor.
-	 */
-	public static class Average implements Comparable<Average> {
-		/** Average period. */
-		private int period;
-		/** Smoothing periods. */
-		private int[] smooths;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param period Average period.
-		 * @param averages Smoothing periods.
-		 */
-		public Average(int period, int[] smooths) {
-			super();
-			this.period = period;
-			this.smooths = smooths;
-		}
-
-		/**
-		 * Returns the SMA period.
-		 * 
-		 * @return The SMA period.
-		 */
-		public int getPeriod() {
-			return period;
-		}
-
-		/**
-		 * Returns the smoothing periods.
-		 * 
-		 * @return The smoothing periods.
-		 */
-		public int[] getSmooths() {
-			return smooths;
-		}
-
-		/**
-		 * Compare to sort.
-		 */
-		@Override
-		public int compareTo(Average avg) {
-			return Integer.valueOf(getPeriod()).compareTo(Integer.valueOf(avg.getPeriod()));
-		}
-
-		/**
-		 * Returns the name of the average.
-		 * 
-		 * @return The name.
-		 */
-		public String getName() {
-			return Fields.averageName(getPeriod());
-		}
 	}
 
 	/**
@@ -353,9 +241,9 @@ public class StatesSource extends Statistics {
 		// Averages fields.
 		for (int i = 0; i < averages.size(); i++) {
 			Average average = averages.get(i);
-			String name = Fields.averageName(average.getPeriod());
-			String header = Fields.averageHeader(average.getPeriod());
-			String label = Fields.averageLabel(average.getPeriod(), average.getSmooths());
+			String name = Average.getAverageName(average);
+			String header = Average.getAverageHeader(average);
+			String label = Average.getAverageLabel(average);
 			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 
@@ -363,23 +251,23 @@ public class StatesSource extends Statistics {
 		Average fastAvg = averages.get(0);
 		// High spread.
 		{
-			String name = Fields.spreadPriceName(Fields.High, fastAvg.getPeriod());
-			String header = Fields.spreadPriceHeader(Fields.High, fastAvg.getPeriod());
-			String label = Fields.spreadPriceLabel(Fields.High, fastAvg.getPeriod());
+			String name = Average.getSpreadName(Fields.High, fastAvg);
+			String header = Average.getSpreadHeader(Fields.High, fastAvg);
+			String label = Average.getSpreadLabel(Fields.High, fastAvg);
 			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 		// Low spread.
 		{
-			String name = Fields.spreadPriceName(Fields.Low, fastAvg.getPeriod());
-			String header = Fields.spreadPriceHeader(Fields.Low, fastAvg.getPeriod());
-			String label = Fields.spreadPriceLabel(Fields.Low, fastAvg.getPeriod());
+			String name = Average.getSpreadName(Fields.Low, fastAvg);
+			String header = Average.getSpreadHeader(Fields.Low, fastAvg);
+			String label = Average.getSpreadLabel(Fields.Low, fastAvg);
 			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 		// Close spread.
 		{
-			String name = Fields.spreadPriceName(Fields.Close, fastAvg.getPeriod());
-			String header = Fields.spreadPriceHeader(Fields.Close, fastAvg.getPeriod());
-			String label = Fields.spreadPriceLabel(Fields.Close, fastAvg.getPeriod());
+			String name = Average.getSpreadName(Fields.Close, fastAvg);
+			String header = Average.getSpreadHeader(Fields.Close, fastAvg);
+			String label = Average.getSpreadLabel(Fields.Close, fastAvg);
 			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 
@@ -388,9 +276,9 @@ public class StatesSource extends Statistics {
 			Average averageFast = averages.get(i);
 			for (int j = i + 1; j < averages.size(); j++) {
 				Average averageSlow = averages.get(j);
-				String name = Fields.spreadAvgName(averageFast.getPeriod(), averageSlow.getPeriod());
-				String header = Fields.spreadAvgHeader(averageFast.getPeriod(), averageSlow.getPeriod());
-				String label = Fields.spreadAvgLabel(averageFast.getPeriod(), averageSlow.getPeriod());
+				String name = Average.getSpreadName(averageFast, averageSlow);
+				String header = Average.getSpreadHeader(averageFast, averageSlow);
+				String label = Average.getSpreadLabel(averageFast, averageSlow);
 				table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 			}
 		}
@@ -398,9 +286,9 @@ public class StatesSource extends Statistics {
 		// Speed (tangent) of averages.
 		for (int i = 0; i < averages.size(); i++) {
 			Average average = averages.get(i);
-			String name = Fields.speedName(average.getPeriod());
-			String header = Fields.speedHeader(average.getPeriod());
-			String label = Fields.speedLabel(average.getPeriod());
+			String name = Average.getSpeedName(average);
+			String header = Average.getSpeedHeader(average);
+			String label = Average.getSpeedLabel(average);
 			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
 		}
 
