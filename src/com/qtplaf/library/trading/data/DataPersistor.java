@@ -184,10 +184,10 @@ public class DataPersistor implements Persistor {
 		// First index (0) is reserved.
 		record.setValue(1, data.getTime());
 		// Index of data.
-		int index = 1;
+		int index = 0;
 		for (int i = 2; i < record.getFieldCount(); i++) {
 			if (record.getField(i).isPersistent()) {
-				record.setValue(i, data.getValue(++index));
+				record.setValue(i, data.getValue(index++));
 			}
 		}
 		return record;

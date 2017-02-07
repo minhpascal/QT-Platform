@@ -42,6 +42,26 @@ public class TaskStatesSource extends TaskRunner {
 	public TaskStatesSource(Session session, StatesSource statesSource) {
 		super(session);
 		this.indicator = new StatesSourceIndicator(session, statesSource);
+		
+		StringBuilder name = new StringBuilder();
+		name.append(statesSource.getServer().getId());
+		name.append("-");
+		name.append(statesSource.getInstrument().getId());
+		name.append("-");
+		name.append(statesSource.getPeriod().toString());
+		name.append("-");
+		name.append(statesSource.getId());
+		setName(name.toString());
+		
+		StringBuilder desc = new StringBuilder();
+		desc.append(statesSource.getServer().getName());
+		desc.append(" - ");
+		desc.append(statesSource.getInstrument().getId());
+		desc.append(" - ");
+		desc.append(statesSource.getPeriod().toString());
+		desc.append(" - ");
+		desc.append(statesSource.getDescription());
+		setDescription(desc.toString());
 	}
 
 	/**
@@ -89,10 +109,17 @@ public class TaskStatesSource extends TaskRunner {
 		}
 		persistor.getDDL().buildTable(table);
 		
-		// The list of indicator data lists that must be calculated prior as sources.
-		List<IndicatorDataList> sourceLists = indicator.getIndicatorDataListsToCalculate();
 		// And the result indicator data list.
 		IndicatorDataList indicatorList = indicator.getDataList();
+		// The list of indicator data lists that must be calculated prior as sources.
+		List<IndicatorDataList> sources = indicator.getIndicatorDataListsToCalculate();
+		
+		// No need to maintain all data cached in the indicator data lists. Remove when max lookback is achieved.
+		int lookBackward = 0;
+		for (IndicatorDataList source : sources) {
+			lookBackward = Math.max(lookBackward, source.getIndicator().getIndicatorInfo().getLookBackward());
+		}
+		lookBackward = Math.max(lookBackward, indicatorList.getIndicator().getIndicatorInfo().getLookBackward());
 		
 		// The current index to calculate.
 		int index = 0;
@@ -118,12 +145,29 @@ public class TaskStatesSource extends TaskRunner {
 			notifyStepStart(step, getStepMessage(step, steps, null, null));
 			
 			// Calculate required sources for the current index.
-			for (IndicatorDataList sourceList : sourceLists) {
-				sourceList.calculate(index);
+			for (IndicatorDataList source : sources) {
+				source.calculate(index);
 			}
 			// Calculate the result indicator and save the data.
 			Data data = indicatorList.calculate(index);
 			persistor.insert(data);
+			
+			// Remove when index greater than max look backward.
+			if (index > lookBackward) {
+				int start = index - lookBackward;
+				for (IndicatorDataList source : sources) {
+					for (int i = start; i >= 0; i--) {
+						if (source.remove(i) == null) {
+							break;
+						}
+					}
+				}				
+				for (int i = start; i >= 0; i--) {
+					if (indicatorList.remove(i) == null) {
+						break;
+					}
+				}
+			}
 			
 			// Skip to next index.
 			index++;

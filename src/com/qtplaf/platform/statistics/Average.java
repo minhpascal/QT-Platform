@@ -66,7 +66,7 @@ public class Average implements Comparable<Average> {
 	 * @return The spread name.
 	 */
 	public static String getSpreadName(String id, Average avg) {
-		return "spread_" + id + " - " + avg.getPeriod();
+		return "spread_" + id + "_" + avg.getPeriod();
 	}
 
 	/**
@@ -195,5 +195,13 @@ public class Average implements Comparable<Average> {
 	@Override
 	public int compareTo(Average avg) {
 		return Integer.valueOf(getPeriod()).compareTo(Integer.valueOf(avg.getPeriod()));
+	}
+
+	/**
+	 * Returns a string representation.
+	 */
+	@Override
+	public String toString() {
+		return getAverageLabel(this);
 	}
 }

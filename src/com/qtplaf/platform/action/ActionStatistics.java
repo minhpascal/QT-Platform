@@ -30,6 +30,7 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.MessageBox;
+import com.qtplaf.library.swing.ProgressManager;
 import com.qtplaf.library.swing.action.ActionTableOption;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
@@ -39,6 +40,8 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
+import com.qtplaf.platform.action.ActionTickers.ActionBrowse;
+import com.qtplaf.platform.action.ActionTickers.RunBrowse;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
@@ -212,6 +215,50 @@ public class ActionStatistics extends AbstractAction {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			try {
+				Session session = ActionUtils.getSession(ActionStatistics.this);
+				Server server = LaunchArgs.getServer(ActionStatistics.this);
+				Record record = getSelectedRecord();
+				if (record == null) {
+					return;
+				}
+				String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
+				String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
+				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
+				Period period = Period.parseId(periodId);
+				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				ProgressManager progress = new ProgressManager(session);
+				progress.setSize(0.4, 0.4);
+				progress.addTask(statistics.getTask());
+				progress.showFrame();
+
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
+		}
+	}
+
+	/**
+	 * Action to browse the current ticker.
+	 */
+	class ActionBrowse extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionBrowse(Session session) {
+			super();
+			ActionUtils.configureBrowse(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// new Thread(new RunBrowse(this)).start();
 		}
 	}
 
@@ -252,9 +299,13 @@ public class ActionStatistics extends AbstractAction {
 				ActionDelete actionDelete = new ActionDelete(session);
 				ActionUtils.setSortIndex(actionDelete, 1);
 				frame.addAction(actionDelete);
-				
+
+				ActionBrowse actionBrowse = new ActionBrowse(session);
+				ActionUtils.setSortIndex(actionBrowse, 2);
+				frame.addAction(actionBrowse);
+
 				ActionCalculate actionCalculate = new ActionCalculate(session);
-				ActionUtils.setSortIndex(actionCalculate, 2);
+				ActionUtils.setSortIndex(actionCalculate, 3);
 				frame.addAction(actionCalculate);
 
 				frame.addAction(new ActionClose(session));
