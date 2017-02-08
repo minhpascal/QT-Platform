@@ -494,7 +494,7 @@ public class JTableRecord extends JTable {
 				int count = 0;
 				if (getRowCount() > adjustColumnSizesRows && adjustColumnSizesRows > 0) {
 					count = adjustColumnSizesRows;
-				} else {
+				} else if (getRowCount() > 0) {
 					count = getRowCount();
 				}
 				for (int row = 0; row < count; row++) {

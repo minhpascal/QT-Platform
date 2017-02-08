@@ -23,12 +23,10 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.statistics.Output;
-import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.library.util.list.ListUtils;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.task.TaskStatesSource;
 import com.qtplaf.platform.util.DomainUtils;
@@ -41,7 +39,7 @@ import com.qtplaf.platform.util.PersistorUtils;
  *
  * @author Miquel Sas
  */
-public class StatesSource extends Statistics {
+public class StatesSource extends StatesAverages {
 
 	/** Field names. */
 	public static class Fields {
@@ -55,28 +53,6 @@ public class StatesSource extends Statistics {
 	}
 
 	/**
-	 * Working session.
-	 */
-	private Session session;
-	/**
-	 * The server.
-	 */
-	private Server server;
-	/**
-	 * The instrument.
-	 */
-	private Instrument instrument;
-	/**
-	 * The period.
-	 */
-	private Period period;
-
-	/**
-	 * The list of smoothed SMA definitions.
-	 */
-	private List<Average> averages = new ArrayList<Average>();
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param session Working session.
@@ -85,75 +61,14 @@ public class StatesSource extends Statistics {
 	 * @param period The period.
 	 */
 	public StatesSource(Session session, Server server, Instrument instrument, Period period) {
-		super();
-		this.session = session;
-		this.server = server;
-		this.instrument = instrument;
-		this.period = period;
-	}
-
-	/**
-	 * Add a smoothed simple moving average
-	 * 
-	 * @param period
-	 * @param averages
-	 */
-	public void addAverage(int period, int... smooths) {
-		averages.add(new Average(period, smooths));
-		ListUtils.sort(averages);
-		setup();
-	}
-
-	/**
-	 * Returns the list of averages that defines this statistics.
-	 * 
-	 * @return The list of smoothed averages.
-	 */
-	public List<Average> getAverages() {
-		return averages;
-	}
-
-	/**
-	 * Returns the working session.
-	 * 
-	 * @return The working session.
-	 */
-	public Session getSession() {
-		return session;
-	}
-
-	/**
-	 * Returns the server.
-	 * 
-	 * @return The server.
-	 */
-	public Server getServer() {
-		return server;
-	}
-
-	/**
-	 * Returns the instrument.
-	 * 
-	 * @return The instrument.
-	 */
-	public Instrument getInstrument() {
-		return instrument;
-	}
-
-	/**
-	 * Returns the period.
-	 * 
-	 * @return The period.
-	 */
-	public Period getPeriod() {
-		return period;
+		super(session, server, instrument, period);
 	}
 
 	/**
 	 * Setup after adding the averages.
 	 */
-	private void setup() {
-		if (averages.isEmpty()) {
+	protected void setup() {
+		if (getAverages().isEmpty()) {
 			throw new IllegalStateException();
 		}
 		clear();
@@ -173,7 +88,7 @@ public class StatesSource extends Statistics {
 	 * @return The calculator task.
 	 */
 	public Task getTask() {
-		return new TaskStatesSource(getSession(), this);
+		return new TaskStatesSource(this);
 	}
 
 	/**
@@ -210,6 +125,44 @@ public class StatesSource extends Statistics {
 	}
 
 	/**
+	 * Returns the list of field names to calculate ranges (min-max).
+	 * 
+	 * @return The list of fieldd names.
+	 */
+	public List<String> getNamesToCalculateRanges() {
+		List<String> names = new ArrayList<>();
+
+		// Percentual range
+		names.add(Fields.Range);
+
+		// Price spreads.
+		Average fastAvg = getAverages().get(0);
+		// High spread.
+		names.add(Average.getSpreadName(Fields.High, fastAvg));
+		// Low spread.
+		names.add(Average.getSpreadName(Fields.Low, fastAvg));
+		// Close spread.
+		names.add(Average.getSpreadName(Fields.Close, fastAvg));
+		
+		// Spreads between averages.
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average averageFast = getAverages().get(i);
+			for (int j = i + 1; j < getAverages().size(); j++) {
+				Average averageSlow = getAverages().get(j);
+				names.add(Average.getSpreadName(averageFast, averageSlow));
+			}
+		}
+
+		// Speed (tangent) of averages.
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average average = getAverages().get(i);
+			names.add(Average.getSpeedName(average));
+		}
+		
+		return names;
+	}
+
+	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
@@ -239,8 +192,8 @@ public class StatesSource extends Statistics {
 		}
 
 		// Averages fields.
-		for (int i = 0; i < averages.size(); i++) {
-			Average average = averages.get(i);
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average average = getAverages().get(i);
 			String name = Average.getAverageName(average);
 			String header = Average.getAverageHeader(average);
 			String label = Average.getAverageLabel(average);
@@ -248,7 +201,7 @@ public class StatesSource extends Statistics {
 		}
 
 		// Price spreads.
-		Average fastAvg = averages.get(0);
+		Average fastAvg = getAverages().get(0);
 		// High spread.
 		{
 			String name = Average.getSpreadName(Fields.High, fastAvg);
@@ -272,10 +225,10 @@ public class StatesSource extends Statistics {
 		}
 
 		// Spreads between averages.
-		for (int i = 0; i < averages.size(); i++) {
-			Average averageFast = averages.get(i);
-			for (int j = i + 1; j < averages.size(); j++) {
-				Average averageSlow = averages.get(j);
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average averageFast = getAverages().get(i);
+			for (int j = i + 1; j < getAverages().size(); j++) {
+				Average averageSlow = getAverages().get(j);
 				String name = Average.getSpreadName(averageFast, averageSlow);
 				String header = Average.getSpreadHeader(averageFast, averageSlow);
 				String label = Average.getSpreadLabel(averageFast, averageSlow);
@@ -284,8 +237,8 @@ public class StatesSource extends Statistics {
 		}
 
 		// Speed (tangent) of averages.
-		for (int i = 0; i < averages.size(); i++) {
-			Average average = averages.get(i);
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average average = getAverages().get(i);
 			String name = Average.getSpeedName(average);
 			String header = Average.getSpeedHeader(average);
 			String label = Average.getSpeedLabel(average);

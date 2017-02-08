@@ -51,16 +51,22 @@ public class IOList<E> {
 	}
 
 	/**
-	 * Returns the output list to be processed, tranferring from input prior.
-	 * 
-	 * @return The output list to be processed.
+	 * Transfer input data to output.
 	 */
-	public List<E> getOutput() {
+	public void transfer() {
 		synchronized (inpuLock) {
 			while (!input.isEmpty()) {
 				output.add(input.remove(0));
 			}
 		}
+	}
+
+	/**
+	 * Returns the output list to be processed. Prior to retrieve the list, <tt>trasnfer</tt> should be called.
+	 * 
+	 * @return The output list to be processed.
+	 */
+	public List<E> getOutput() {
 		return output;
 	}
 

@@ -521,16 +521,18 @@ public class Table implements Comparable<Object> {
 	 */
 	public Index getPrimaryKey() {
 		if (primaryKey == null) {
-			primaryKey = new Index();
-			primaryKey.setTable(this);
-			primaryKey.setUnique(true);
-			// Default name
-			primaryKey.setName(getName() + "_PK");
-			primaryKey.setSchema(getSchema());
-			primaryKey.setDescription(getName() + " primary key");
-			List<Field> primaryKeyFields = getPrimaryKeyFields();
-			for (Field field : primaryKeyFields) {
-				primaryKey.add(field);
+			if (!getPrimaryKeyFields().isEmpty()) {
+				primaryKey = new Index();
+				primaryKey.setTable(this);
+				primaryKey.setUnique(true);
+				// Default name
+				primaryKey.setName(getName() + "_PK");
+				primaryKey.setSchema(getSchema());
+				primaryKey.setDescription(getName() + " primary key");
+				List<Field> primaryKeyFields = getPrimaryKeyFields();
+				for (Field field : primaryKeyFields) {
+					primaryKey.add(field);
+				}
 			}
 		}
 		return primaryKey;

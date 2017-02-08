@@ -1151,7 +1151,7 @@ public class JPanelProgress extends JPanel {
 
 		double processCurrenTime = System.currentTimeMillis();
 		double timeElapsed = processCurrenTime - processStartTime;
-		double timeEstimated = timeElapsed * (100.0 / performed);
+		double timeEstimated = timeElapsed * (100.0 / Double.valueOf(performed));
 		double timeRemaining = timeEstimated - timeElapsed;
 
 		b.append(getSession().getString("tokenTime"));

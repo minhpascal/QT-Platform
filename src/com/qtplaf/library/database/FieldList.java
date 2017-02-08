@@ -351,13 +351,6 @@ public class FieldList {
 					primaryKeyFields.add(field);
 				}
 			}
-			if (primaryKeyFields.isEmpty()) {
-				for (Field field : fields) {
-					if (field.isLocal() && !field.isVirtual()) {
-						primaryKeyFields.add(field);
-					}
-				}
-			}
 		}
 		return primaryKeyFields;
 	}

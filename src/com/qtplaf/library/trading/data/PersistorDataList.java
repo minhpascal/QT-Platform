@@ -60,7 +60,7 @@ public class PersistorDataList extends DataList {
 	/**
 	 * The page size to read chunks.
 	 */
-	private int pageSize = 1000;
+	private int pageSize = 100;
 
 	/**
 	 * @param session
@@ -156,7 +156,7 @@ public class PersistorDataList extends DataList {
 		Record record = recordSet.get(0);
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record rc = recordSet.get(i);
-			int rcIndex = persistor.getDataListIndex(rc).intValue();
+			int rcIndex = persistor.getIndex(rc).intValue();
 			addToCache(rcIndex, recordSet.get(i));
 		}
 		return persistor.getData(record);
@@ -173,9 +173,7 @@ public class PersistorDataList extends DataList {
 			// Remove 1/5 or the cache.
 			int countRemove = cacheSize / 5;
 			while (countRemove > 0) {
-				Record remove = list.removeFirst();
-				int key = persistor.getIndex(remove).intValue() - 1;
-				map.remove(key);
+				map.remove(index);
 				countRemove--;
 			}
 		}

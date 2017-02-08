@@ -58,6 +58,14 @@ public class ProgressManager {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				List<Task> tasks = progress.getTasks();
+				
+				for (Task task : tasks) {
+					if (!task.isTerminated()) {
+						MessageBox.warning(getSession(), "Task " + task.getName() + " is not terminated");
+						return;
+					}
+				}
+				
 				for (Action action : preCloseActions) {
 					ActionUtils.setTasks(action, tasks);
 					action.actionPerformed(e);

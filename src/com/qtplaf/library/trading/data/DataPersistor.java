@@ -40,7 +40,7 @@ import com.qtplaf.library.util.list.ListUtils;
  * A persistor for elements of timed <tt>Data</tt>. The general contract for a persistor of timed <tt>Data</tt> is that
  * fields must be defined as follows:
  * <ul>
- * <li>The first field is always the index, that starts at 1, indexed and unique. This field value at insert time is
+ * <li>The first field is always the index, that starts at 0, indexed and unique. This field value at insert time is
  * managed by this persistor.</li>
  * <li>The second field is a long, the time of the timed data.</li>
  * <li>All subsequent <b>persistent</b> fields are of type double and are considered data.</li>
@@ -163,28 +163,6 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
-	 * Returns the persistor index given a relative index that starts at 0.
-	 * 
-	 * @param index The index in the list.
-	 * @return The persistor index.
-	 * @throws PersistorException
-	 */
-	public Long getPersistorIndex(Long index) {
-		return getFirstIndex() + index;
-	}
-
-	/**
-	 * Retyurns the index on a data list given the record.
-	 * 
-	 * @param record The recrod.
-	 * @return The index in the data list.
-	 */
-	public Long getDataListIndex(Record record) {
-		Long index = getIndex(record);
-		return index - getFirstIndex();
-	}
-
-	/**
 	 * Returns the record given a data element.
 	 * 
 	 * @param data The element.
@@ -213,7 +191,7 @@ public class DataPersistor implements Persistor {
 	 */
 	public Record getRecord(Long index) {
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(getField(0), new Value(getPersistorIndex(index))));
+		criteria.add(Condition.fieldEQ(getField(0), new Value(index)));
 		Record record = null;
 		RecordIterator iter = null;
 		try {
@@ -241,7 +219,7 @@ public class DataPersistor implements Persistor {
 		RecordIterator iter = null;
 		try {
 			Criteria criteria = new Criteria();
-			criteria.add(Condition.fieldGE(getField(0), new Value(getPersistorIndex(index))));
+			criteria.add(Condition.fieldGE(getField(0), new Value(index)));
 			Order order = new Order();
 			order.add(getField(0));
 			iter = iterator(criteria, order);
@@ -294,7 +272,7 @@ public class DataPersistor implements Persistor {
 	 * @return The first index applying the order.
 	 */
 	private Long getIndex(Order order) {
-		Long index = Long.valueOf(0);
+		Long index = Long.valueOf(-1);
 		RecordIterator iter = null;
 		try {
 			iter = persistor.iterator(null, order);
@@ -317,6 +295,9 @@ public class DataPersistor implements Persistor {
 	 */
 	public Long size() {
 		long first = getFirstIndex();
+		if (first < 0) {
+			return Long.valueOf(0);
+		}
 		long last = getLastIndex();
 		return (last - first + 1);
 	}
@@ -486,14 +467,15 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
-	 * Insert a data element that conforms to the persistor contract.
+	 * Insert a data element that conforms to the persistor contract, setting the index.
 	 * 
 	 * @param data The data element.
 	 * @return The number of already inserted records (one or zero).
 	 * @throws PersistorException
 	 */
 	public int insert(Data data) throws PersistorException {
-		return insert(getRecord(data));
+		Record record = getRecord(data);
+		return insert(record);
 	}
 
 	/**
@@ -504,9 +486,9 @@ public class DataPersistor implements Persistor {
 	 * @throws PersistorException
 	 */
 	public int insert(Record record) throws PersistorException {
-		Long last = getIndex(getIndexOrder(false)) + 1;
+		Long last = getLastIndex() + 1;
 		record.setValue(0, last);
-		lastIndex = Long.valueOf(-1);
+		lastIndex = last;
 		return persistor.insert(record);
 	}
 

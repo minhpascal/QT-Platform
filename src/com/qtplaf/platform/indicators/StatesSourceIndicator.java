@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
@@ -70,11 +69,10 @@ public class StatesSourceIndicator extends Indicator {
 	/**
 	 * Constructor.
 	 * 
-	 * @param session Working session.
 	 * @param statesSource The underlying states source statistics.
 	 */
-	public StatesSourceIndicator(Session session, StatesSource statesSource) {
-		super(session);
+	public StatesSourceIndicator(StatesSource statesSource) {
+		super(statesSource.getSession());
 		this.statesSource = statesSource;
 
 		// Fill indicator info.

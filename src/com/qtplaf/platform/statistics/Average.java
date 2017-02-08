@@ -110,7 +110,7 @@ public class Average implements Comparable<Average> {
 	 * @return The header for the spread.
 	 */
 	public static String getSpreadHeader(Average avgFast, Average avgSlow) {
-		return "Spread " + avgFast.getPeriod() + " - " + avgSlow.getPeriod();
+		return getSpreadName(avgFast, avgSlow);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class Average implements Comparable<Average> {
 	 * @return The label for the spread.
 	 */
 	public static String getSpreadLabel(Average avgFast, Average avgSlow) {
-		return getSpreadName(avgFast, avgSlow);
+		return "Spread " + avgFast.getPeriod() + " - " + avgSlow.getPeriod();
 	}
 
 	/**

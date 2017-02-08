@@ -1011,6 +1011,29 @@ public class DomainUtils {
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getDouble(Session session, String name) {
+		return getDouble(session, name, name);
+	}
+
+	/**
+	 * Returns field definition for a double value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @return The field definition.
+	 */
+	public static Field getDouble(Session session, String name, String alias) {
+		return getDouble(session, name, alias, alias, alias, alias);
+	}
+
+	/**
+	 * Returns field definition for a double value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
 	 * @param alias The field alias.
 	 * @return The field definition.
 	 */
@@ -1030,6 +1053,98 @@ public class DomainUtils {
 		field.setHeader(header);
 		field.setLabel(label);
 		field.setTitle(title);
+
+		return field;
+	}
+	
+	/**
+	 * Returns field definition for period field.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getPeriod(Session session, String name) {
+		return getPeriod(session, name, name);
+	}
+	
+	/**
+	 * Returns field definition for period field.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @return The field definition.
+	 */
+	public static Field getPeriod(Session session, String name, String alias) {
+		
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.Integer);
+
+		return field;
+	}
+	
+	/**
+	 * Returns field definition for min-max field.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getMinMax(Session session, String name) {
+		return getMinMax(session, name, name);
+	}
+	
+	/**
+	 * Returns field definition for min-max field.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @return The field definition.
+	 */
+	public static Field getMinMax(Session session, String name, String alias) {
+		
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.String);
+		field.setLength(3);
+
+		return field;
+	}
+	
+	/**
+	 * Returns field definition for name field, a 40 chars string used as name of fields.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getName(Session session, String name) {
+		return getName(session, name, name);
+	}
+	
+	/**
+	 * Returns field definition for name field, a 40 chars string used as name of fields.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @return The field definition.
+	 */
+	public static Field getName(Session session, String name, String alias) {
+		
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.String);
+		field.setLength(40);
 
 		return field;
 	}

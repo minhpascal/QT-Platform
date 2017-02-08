@@ -463,4 +463,69 @@ public abstract class DataList {
 	public String toString() {
 		return getDataInfo().toString();
 	}
+
+	/**
+	 * Returns a boolean indicating whether the value at value index, of the data at data index, is a maximum for the
+	 * argument period.
+	 * 
+	 * @param dataIndex The index of the data element.
+	 * @param valueIndex The index of the value within the data.
+	 * @param period The period, number of data elements to check before and after.
+	 * @return A boolean indicating whether the value is a maximum.
+	 */
+	public boolean isMaximum(int dataIndex, int valueIndex, int period, boolean minimum) {
+		return isMinimumMaximum(dataIndex, valueIndex, period, false);
+	}
+
+	/**
+	 * Returns a boolean indicating whether the value at value index, of the data at data index, is a minimum for the
+	 * argument period.
+	 * 
+	 * @param dataIndex The index of the data element.
+	 * @param valueIndex The index of the value within the data.
+	 * @param period The period, number of data elements to check before and after.
+	 * @return A boolean indicating whether the value is a minimum.
+	 */
+	public boolean isMinimum(int dataIndex, int valueIndex, int period, boolean minimum) {
+		return isMinimumMaximum(dataIndex, valueIndex, period, true);
+	}
+
+	/**
+	 * Returns a boolean indicating whether the value at value index, of the data at data index, is a minimum/maximum
+	 * for the argument period.
+	 * 
+	 * @param dataIndex The index of the data element.
+	 * @param valueIndex The index of the value within the data.
+	 * @param period The period, number of data elements to check before and after.
+	 * @param minimum A boolean that indicates whether to ckeck minimum or maximum.
+	 * @return A boolean indicating whether the value is a minimum/maximum.
+	 */
+	private boolean isMinimumMaximum(int dataIndex, int valueIndex, int period, boolean minimum) {
+		double value = get(dataIndex).getValue(valueIndex);
+		int startBackward = Math.max(0, dataIndex - period);
+		for (int i = dataIndex - 1; i >= startBackward; i--) {
+			if (minimum) {
+				if (get(i).getValue(valueIndex) < value) {
+					return false;
+				}
+			} else {
+				if (get(i).getValue(valueIndex) > value) {
+					return false;
+				}
+			}
+		}
+		int endForward = Math.min(dataIndex + period, size() - 1);
+		for (int i = dataIndex + 1; i <= endForward; i++) {
+			if (minimum) {
+				if (get(i).getValue(valueIndex) < value) {
+					return false;
+				}
+			} else {
+				if (get(i).getValue(valueIndex) > value) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }

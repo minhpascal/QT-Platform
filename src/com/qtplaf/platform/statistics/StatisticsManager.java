@@ -32,6 +32,7 @@ import com.qtplaf.library.util.list.ListUtils;
 public class StatisticsManager {
 	
 	private static final String StateSource_01 = "stsrc_01";
+	private static final String StateRanges_01 = "strng_01";
 
 	/**
 	 * An item is a defined statistics, identified by a code or id and a description.
@@ -154,6 +155,11 @@ public class StatisticsManager {
 		title = "States source (5-21-89-377-1597-6765)";
 		description = "First step in states statistics using a rainbow of averages.";
 		add(id, title, description);
+
+		id = StateRanges_01;
+		title = "States ranges (5-21-89-377-1597-6765)";
+		description = "Ranges (min-max) of percentual values of " + StateSource_01 + " statistics.";
+		add(id, title, description);
 	}
 
 	/**
@@ -202,6 +208,9 @@ public class StatisticsManager {
 		if (id.equals(StateSource_01)) {
 			return getStatesSource(session, server, instrument, period, id);
 		}
+		if (id.equals(StateRanges_01)) {
+			return getStatesRanges(session, server, instrument, period, id);
+		}
 		return null;
 	}
 	
@@ -214,30 +223,64 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static Statistics getStatesSource(
+	private static StatesSource getStatesSource(
 		Session session,
 		Server server,
 		Instrument instrument,
 		Period period,
 		String id) {
 
-		StatesSource ss = new StatesSource(session, server, instrument, period);
+		StatesSource stsrc = new StatesSource(session, server, instrument, period);
 		
 		Reference reference = getReference(id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}
-		ss.setId(reference.getId());
-		ss.setTitle(reference.getTitle());
-		ss.setDescription(reference.getDescription());
+		stsrc.setId(reference.getId());
+		stsrc.setTitle(reference.getTitle());
+		stsrc.setDescription(reference.getDescription());
 
-		ss.addAverage(5, 3, 3);
-		ss.addAverage(21, 5, 5);
-		ss.addAverage(89, 13, 13);
-		ss.addAverage(377, 21, 21);
-		ss.addAverage(1597, 34, 34);
-		ss.addAverage(6765, 55, 55);
+		stsrc.addAverage(5, 3, 3);
+		stsrc.addAverage(21, 5, 5);
+		stsrc.addAverage(89, 13, 13);
+		stsrc.addAverage(377, 21, 21);
+		stsrc.addAverage(1597, 34, 34);
+		stsrc.addAverage(6765, 55, 55);
 
-		return ss;
+		return stsrc;
+	}
+	
+	/**
+	 * Returns the statictics of ranges for the states source: 5, 21, 89, 377, 1597, 6765
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @return The statistics definition.
+	 */
+	private static StatesRanges getStatesRanges(
+		Session session,
+		Server server,
+		Instrument instrument,
+		Period period,
+		String id) {
+		
+		String idSource = null;
+		if (id.equals(StateRanges_01)) {
+			idSource = StateSource_01;
+		}
+
+		StatesRanges strng = new StatesRanges(getStatesSource(session, server, instrument, period, idSource));
+		
+		Reference reference = getReference(id);
+		if (reference == null) {
+			throw new IllegalStateException();
+		}
+		strng.setId(reference.getId());
+		strng.setTitle(reference.getTitle());
+		strng.setDescription(reference.getDescription());
+
+		return strng;
 	}
 }

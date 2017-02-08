@@ -14,56 +14,51 @@
 
 package com.qtplaf.platform.task;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.TaskRunner;
-import com.qtplaf.library.trading.data.Data;
-import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.indicators.StatesSourceIndicator;
+import com.qtplaf.platform.statistics.Average;
+import com.qtplaf.platform.statistics.StatesRanges;
 import com.qtplaf.platform.statistics.StatesSource;
 
 /**
- * The task that calculates the states source statistics.
+ *
  *
  * @author Miquel Sas
  */
-public class TaskStatesSource extends TaskRunner {
+public class TaskStatesRanges extends TaskRunner {
 
-	/** The indicator used to perform calculations. */
+	/** The parent states ranges statistics. */
+	private StatesRanges statesRanges;
+	/** Origin states source statistics. */
+	private StatesSource statesSource;
+	/** The states source indicator used to retrieve indexes of values. */
 	private StatesSourceIndicator indicator;
+	/** The persistor data list to retrieve states source data. */
+	private PersistorDataList sourceList;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param statesSource The states source statistics.
+	 * @param statesRanges The parent states ranges statistics.
 	 */
-	public TaskStatesSource(StatesSource statesSource) {
-		super(statesSource.getSession());
+	public TaskStatesRanges(StatesRanges statesRanges) {
+		super(statesRanges.getSession());
+		this.statesRanges = statesRanges;
+		this.statesSource = statesRanges.getStatesSource();
 		this.indicator = new StatesSourceIndicator(statesSource);
 
-		StringBuilder name = new StringBuilder();
-		name.append(statesSource.getServer().getId());
-		name.append("-");
-		name.append(statesSource.getInstrument().getId());
-		name.append("-");
-		name.append(statesSource.getPeriod().toString());
-		name.append("-");
-		name.append(statesSource.getId());
-		setName(name.toString());
-
-		StringBuilder desc = new StringBuilder();
-		desc.append(statesSource.getServer().getName());
-		desc.append(" - ");
-		desc.append(statesSource.getInstrument().getId());
-		desc.append(" - ");
-		desc.append(statesSource.getPeriod().toString());
-		desc.append(" - ");
-		desc.append(statesSource.getDescription());
-		setDescription(desc.toString());
+		DataInfo info = indicator.getIndicatorInfo();
+		Table table = indicator.getStatesSource().getTable();
+		DataPersistor persistor = new DataPersistor(table.getPersistor());
+		this.sourceList = new PersistorDataList(getSession(), info, persistor);
 	}
 
 	/**
@@ -79,15 +74,26 @@ public class TaskStatesSource extends TaskRunner {
 		// Notify counting.
 		notifyCounting();
 
-		// The source price data list.
-		PersistorDataList price = indicator.getDataListPrice();
-
 		// Number of steps.
-		int count = price.size();
+		int count = sourceList.size();
 
 		// Notify.
 		notifyStepCount(count);
 		return getSteps();
+	}
+
+	/**
+	 * Returtns the list of periods to calculate min-max values.
+	 * 
+	 * @return The list of periods.
+	 */
+	private List<Integer> getPeriods() {
+		List<Integer> periods = new ArrayList<>();
+		List<Average> averages = statesSource.getAverages();
+		for (Average average : averages) {
+			periods.add(average.getPeriod());
+		}
+		return periods;
 	}
 
 	/**
@@ -102,8 +108,8 @@ public class TaskStatesSource extends TaskRunner {
 		countSteps();
 
 		// Result table and persistor.
-		Table table = indicator.getStatesSource().getTable();
-		DataPersistor persistor = new DataPersistor(table.getPersistor());
+		Table table = statesRanges.getTable();
+		Persistor persistor = table.getPersistor();
 
 		// Drop and create the table.
 		if (persistor.getDDL().existsTable(table)) {
@@ -111,20 +117,10 @@ public class TaskStatesSource extends TaskRunner {
 		}
 		persistor.getDDL().buildTable(table);
 
-		// And the result indicator data list.
-		IndicatorDataList indicatorList = indicator.getDataList();
-		// The list of indicator data lists that must be calculated prior as sources.
-		List<IndicatorDataList> sources = indicator.getIndicatorDataListsToCalculate();
-
-		// All lists involved.
-		List<DataList> dataLists = DataList.getDataLists(indicatorList);
-
-		// No need to maintain all data cached in the indicator data lists. Remove when max lookback is achieved.
-		int lookBackward = 0;
-		for (IndicatorDataList source : sources) {
-			lookBackward = Math.max(lookBackward, source.getIndicator().getIndicatorInfo().getLookBackward());
-		}
-		lookBackward = Math.max(lookBackward, indicatorList.getIndicator().getIndicatorInfo().getLookBackward());
+		// Names of fields to calculate ranges.
+		List<String> names = statesSource.getNamesToCalculateRanges();
+		// List of periods for min-max.
+		List<Integer> periods = getPeriods();
 
 		// The current index to calculate.
 		int index = 0;
@@ -148,26 +144,8 @@ public class TaskStatesSource extends TaskRunner {
 			step++;
 			// Notify step start.
 			notifyStepStart(step, getStepMessage(step, steps, null, null));
-
-			// Calculate required sources for the current index.
-			for (IndicatorDataList source : sources) {
-				source.calculate(index);
-			}
-			// Calculate the result indicator and save the data.
-			Data data = indicatorList.calculate(index);
-			persistor.insert(data);
-
-			// Remove when index greater than max look backward.
-			if (index > lookBackward) {
-				int start = index - lookBackward;
-				for (DataList dataList : dataLists) {
-					for (int i = start; i >= 0; i--) {
-						if (dataList.remove(i) == null) {
-							break;
-						}
-					}
-				}
-			}
+			
+			// Do calculate if min-max for each name and period.
 
 			// Skip to next index.
 			index++;
@@ -177,7 +155,6 @@ public class TaskStatesSource extends TaskRunner {
 			// Yield.
 			Thread.yield();
 		}
-
 	}
 
 	/**
