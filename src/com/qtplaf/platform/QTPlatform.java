@@ -206,7 +206,7 @@ public class QTPlatform {
 
 		// Check for the necessary table OfferSides in the system schema.
 		if (!ddl.existsTable(Names.getSchema(), OfferSides.Name)) {
-			ddl.buildTable(TableUtils.getTable_OfferSides(session));
+			ddl.buildTable(TableUtils.getTableOfferSides(session));
 		}
 		synchronizeStandardOfferSides(session, dbEngine);
 
@@ -258,7 +258,7 @@ public class QTPlatform {
 	 */
 	private static void synchronizeStandardOfferSides(Session session, DBEngine dbEngine) throws Exception {
 		OfferSide[] offerSides = OfferSide.values();
-		Table table = TableUtils.getTable_OfferSides(session);
+		Table table = TableUtils.getTableOfferSides(session);
 		for (OfferSide offerSide : offerSides) {
 			Record record = RecordUtils.getRecordOfferSide(table.getDefaultRecord(), offerSide);
 			if (!dbEngine.existsRecord(table, record)) {

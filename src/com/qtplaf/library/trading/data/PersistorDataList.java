@@ -20,6 +20,7 @@ import java.util.Map;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.util.list.ArrayDelist;
 import com.qtplaf.library.util.list.Delist;
@@ -56,6 +57,10 @@ public class PersistorDataList extends DataList {
 	 * The cache size, default 1000.
 	 */
 	private int cacheSize = 1000;
+	/**
+	 * The page size to read chunks.
+	 */
+	private int pageSize = 1000;
 
 	/**
 	 * @param session
@@ -82,6 +87,24 @@ public class PersistorDataList extends DataList {
 	 */
 	public void setCacheSize(int cacheSize) {
 		this.cacheSize = cacheSize;
+	}
+
+	/**
+	 * Retuns the page size used to read chunks.
+	 * 
+	 * @return The page size.
+	 */
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	/**
+	 * Sets the page size to read chunks.
+	 * 
+	 * @param pageSize The page size.
+	 */
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
 	}
 
 	/**
@@ -129,8 +152,13 @@ public class PersistorDataList extends DataList {
 			return data;
 		}
 
-		Record record = persistor.getRecord(Long.valueOf(index));
-		addToCache(index, record);
+		RecordSet recordSet = persistor.getPage(Long.valueOf(index), getPageSize());
+		Record record = recordSet.get(0);
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record rc = recordSet.get(i);
+			int rcIndex = persistor.getDataListIndex(rc).intValue();
+			addToCache(rcIndex, recordSet.get(i));
+		}
 		return persistor.getData(record);
 	}
 
@@ -167,5 +195,19 @@ public class PersistorDataList extends DataList {
 			return persistor.getData(record);
 		}
 		return null;
+	}
+
+	/**
+	 * Removes a data element from the cache.
+	 * 
+	 * @param index The index of the data to remove.
+	 * @return The removed data or null.
+	 */
+	public Data remove(int index) {
+		Record record = map.remove(index);
+		if (record == null) {
+			return null;
+		}
+		return persistor.getData(record);
 	}
 }

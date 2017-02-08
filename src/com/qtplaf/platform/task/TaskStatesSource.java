@@ -20,6 +20,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
@@ -114,6 +115,9 @@ public class TaskStatesSource extends TaskRunner {
 		// The list of indicator data lists that must be calculated prior as sources.
 		List<IndicatorDataList> sources = indicator.getIndicatorDataListsToCalculate();
 		
+		// All lists involved.
+		List<DataList> dataLists = DataList.getDataLists(indicatorList);
+		
 		// No need to maintain all data cached in the indicator data lists. Remove when max lookback is achieved.
 		int lookBackward = 0;
 		for (IndicatorDataList source : sources) {
@@ -155,18 +159,13 @@ public class TaskStatesSource extends TaskRunner {
 			// Remove when index greater than max look backward.
 			if (index > lookBackward) {
 				int start = index - lookBackward;
-				for (IndicatorDataList source : sources) {
+				for (DataList dataList : dataLists) {
 					for (int i = start; i >= 0; i--) {
-						if (source.remove(i) == null) {
+						if (dataList.remove(i) == null) {
 							break;
 						}
 					}
 				}				
-				for (int i = start; i >= 0; i--) {
-					if (indicatorList.remove(i) == null) {
-						break;
-					}
-				}
 			}
 			
 			// Skip to next index.

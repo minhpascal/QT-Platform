@@ -137,7 +137,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorOfferSides(Session session) {
-		return TableUtils.getTable_OfferSides(session).getPersistor();
+		return TableUtils.getTableOfferSides(session).getPersistor();
 	}
 
 	/**

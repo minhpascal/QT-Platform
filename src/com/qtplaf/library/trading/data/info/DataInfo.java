@@ -459,14 +459,16 @@ public abstract class DataInfo {
 	 */
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		b.append(getInstrument());
-		b.append(", ");
 		b.append("[");
-		b.append(getName());
-		b.append(", ");
-		b.append(getDataType());
+		b.append(getInstrument().getId());
 		b.append(", ");
 		b.append(getPeriod());
+		b.append(", ");
+		b.append(getDataType());
+		if (getDataType().equals(DataType.Indicator)) {
+			b.append(", ");
+			b.append(getName());
+		}
 		b.append("]");
 		return b.toString();
 	}

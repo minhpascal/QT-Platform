@@ -225,10 +225,10 @@ public class StatesSource extends Statistics {
 		// Index, time and price fields.
 		table.addField(DomainUtils.getIndex(getSession(), Fields.Index));
 		table.addField(DomainUtils.getTime(getSession(), Fields.Time));
+		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
 		table.addField(DomainUtils.getHigh(getSession(), Fields.High));
 		table.addField(DomainUtils.getLow(getSession(), Fields.Low));
 		table.addField(DomainUtils.getClose(getSession(), Fields.Close));
-		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
 
 		// Percentual range
 		{

@@ -59,7 +59,7 @@ public class TableUtils {
 	 * @param session The working session.
 	 * @return The table definition.
 	 */
-	public static Table getTable_OfferSides(Session session) {
+	public static Table getTableOfferSides(Session session) {
 		return new OfferSides(session);
 	}
 

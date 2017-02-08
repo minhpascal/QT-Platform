@@ -214,4 +214,25 @@ public class ParameterInfo {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		if (field != null) {
+			b.append(field.getName());
+		}
+		if (!values.isEmpty()) {
+			b.append(" ");
+			for (int i = 0; i < values.size(); i++) {
+				if (i > 0) {
+					b.append(", ");
+				}
+				b.append(values.get(i));
+			}
+		}
+		return b.toString();
+	}
+
 }

@@ -81,4 +81,15 @@ public class DelegateDataList extends DataList {
 	public int size() {
 		return dataList.size();
 	}
+
+	/**
+	 * Remove and return the data at the given index.
+	 * 
+	 * @param index The index.
+	 * @return The removed data or null.
+	 */
+	@Override
+	public Data remove(int index) {
+		return dataList.remove(index);
+	}
 }

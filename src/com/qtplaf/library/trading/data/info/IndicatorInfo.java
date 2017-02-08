@@ -214,4 +214,24 @@ public class IndicatorInfo extends DataInfo {
 		this.lookForward = lookForward;
 	}
 
+	/**
+	 * Returns a string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append(super.toString());
+		if (!parameters.isEmpty()) {
+			for (int i = 0; i < parameters.size(); i++) {
+				if (i > 0) {
+					b.append(", ");
+				}
+				b.append("[");
+				b.append(parameters.get(i));
+				b.append("]");
+			}
+		}
+		return b.toString();
+	}
+
 }

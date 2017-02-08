@@ -169,8 +169,19 @@ public class DataPersistor implements Persistor {
 	 * @return The persistor index.
 	 * @throws PersistorException
 	 */
-	public Long getIndex(Long index) {
+	public Long getPersistorIndex(Long index) {
 		return getFirstIndex() + index;
+	}
+
+	/**
+	 * Retyurns the index on a data list given the record.
+	 * 
+	 * @param record The recrod.
+	 * @return The index in the data list.
+	 */
+	public Long getDataListIndex(Record record) {
+		Long index = getIndex(record);
+		return index - getFirstIndex();
 	}
 
 	/**
@@ -202,7 +213,7 @@ public class DataPersistor implements Persistor {
 	 */
 	public Record getRecord(Long index) {
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(getField(0), new Value(getIndex(index))));
+		criteria.add(Condition.fieldEQ(getField(0), new Value(getPersistorIndex(index))));
 		Record record = null;
 		RecordIterator iter = null;
 		try {
@@ -216,6 +227,36 @@ public class DataPersistor implements Persistor {
 			close(iter);
 		}
 		return record;
+	}
+
+	/**
+	 * Reads a page starting at the index.
+	 * 
+	 * @param index The starting index.
+	 * @param pageSize The page size.
+	 * @return The page recordset.
+	 */
+	public RecordSet getPage(Long index, int pageSize) {
+		RecordSet recordSet = new RecordSet(getDefaultRecord().getFieldList());
+		RecordIterator iter = null;
+		try {
+			Criteria criteria = new Criteria();
+			criteria.add(Condition.fieldGE(getField(0), new Value(getPersistorIndex(index))));
+			Order order = new Order();
+			order.add(getField(0));
+			iter = iterator(criteria, order);
+			while (iter.hasNext()) {
+				recordSet.add(iter.next());
+				if (--pageSize == 0) {
+					break;
+				}
+			}
+		} catch (PersistorException exc) {
+			logger.catching(exc);
+		} finally {
+			close(iter);
+		}
+		return recordSet;
 	}
 
 	/**

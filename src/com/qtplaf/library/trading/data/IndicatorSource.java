@@ -133,10 +133,7 @@ public class IndicatorSource {
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		b.append("[");
 		b.append(getDataList().toString());
-		b.append("]");
-		b.append(", ");
 		b.append("[");
 		for (int i = 0; i < indexes.size(); i++) {
 			if (i > 0) {

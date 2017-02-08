@@ -208,12 +208,15 @@ public class IndicatorDataList extends DataList {
 	public String toString() {
 		StringBuilder b = new StringBuilder();
 		b.append(super.toString());
-		if (indicatorSources != null) {
-			for (int i = 0; i < indicatorSources.size(); i++) {
-				b.append("\nSource: ");
-				b.append(indicatorSources.get(i));
-			}
-		}
+//		if (indicatorSources != null && !indicatorSources.isEmpty()) {
+//			b.append(" Sources: ");
+//			for (int i = 0; i < indicatorSources.size(); i++) {
+//				if (i > 0) {
+//					b.append(", ");
+//				}
+//				b.append(indicatorSources.get(i));
+//			}
+//		}
 		return b.toString();
 	}
 }

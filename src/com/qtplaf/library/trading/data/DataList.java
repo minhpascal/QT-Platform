@@ -64,19 +64,19 @@ public abstract class DataList {
 	/**
 	 * Fill the result indicator data list in the appropriate calculation order.
 	 * 
-	 * @param result The result list.
-	 * @param parent The parent list.
+	 * @param results The result lists.
+	 * @param parents The parent lists.
 	 */
-	private static void fillIndicatorDataLists(List<IndicatorDataList> result, List<IndicatorDataList> parent) {
+	private static void fillIndicatorDataLists(List<IndicatorDataList> results, List<IndicatorDataList> parents) {
 		// Process required first.
-		for (IndicatorDataList list : parent) {
-			List<IndicatorDataList> required = getIndicatorDataListsRequired(list);
-			fillIndicatorDataLists(result, required);
+		for (IndicatorDataList parent : parents) {
+			List<IndicatorDataList> required = getIndicatorDataListsRequired(parent);
+			fillIndicatorDataLists(results, required);
 		}
 		// Process current level.
-		for (IndicatorDataList list : parent) {
-			if (!result.contains(list)) {
-				result.add(list);
+		for (IndicatorDataList parent : parents) {
+			if (!results.contains(parent)) {
+				results.add(parent);
 			}
 		}
 	}
@@ -96,6 +96,42 @@ public abstract class DataList {
 				children.add(child);
 			}
 		}
+		return children;
+	}
+
+	/**
+	 * Returns all the unique data lists involved.
+	 * 
+	 * @param parent The top list.
+	 * @return All the unique data lists involved.
+	 */
+	public static List<DataList> getDataLists(DataList parent) {
+		List<DataList> allDataLists = getAllDataLists(parent);
+		List<DataList> dataLists = new ArrayList<>();
+		for (DataList dataList : allDataLists) {
+			if (!dataLists.contains(dataList)) {
+				dataLists.add(dataList);
+			}
+		}
+		return dataLists;
+	}
+
+	/**
+	 * Returns all the data lists, even repeating.
+	 * 
+	 * @param parent The top list.
+	 * @return A list with all lists involved.
+	 */
+	private static List<DataList> getAllDataLists(DataList parent) {
+		List<DataList> children = new ArrayList<>();
+		if (parent instanceof IndicatorDataList) {
+			IndicatorDataList indicator = (IndicatorDataList) parent;
+			List<IndicatorSource> sources = indicator.getIndicatorSources();
+			for (IndicatorSource source : sources) {
+				children.addAll(getAllDataLists(source.getDataList()));
+			}
+		}
+		children.add(parent);
 		return children;
 	}
 
@@ -219,6 +255,14 @@ public abstract class DataList {
 	 * @return The data element at the given index.
 	 */
 	public abstract Data get(int index);
+
+	/**
+	 * Remove and return the data at the given index.
+	 * 
+	 * @param index The index.
+	 * @return The removed data or null.
+	 */
+	public abstract Data remove(int index);
 
 	/**
 	 * Returns the type of plot.

@@ -79,6 +79,9 @@ public class StatesSourceIndicator extends Indicator {
 
 		// Fill indicator info.
 		IndicatorInfo info = getIndicatorInfo();
+		info.setName("STSRC");
+		info.setInstrument(statesSource.getInstrument());
+		info.setPeriod(statesSource.getPeriod());
 
 		// Output informations.
 		List<Field> fields = statesSource.getIndicatorOutputFields();

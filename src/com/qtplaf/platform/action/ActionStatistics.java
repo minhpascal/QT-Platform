@@ -36,12 +36,13 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
-import com.qtplaf.platform.action.ActionTickers.ActionBrowse;
-import com.qtplaf.platform.action.ActionTickers.RunBrowse;
+import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
@@ -258,7 +259,74 @@ public class ActionStatistics extends AbstractAction {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// new Thread(new RunBrowse(this)).start();
+			 new Thread(new RunBrowse(this)).start();
+		}
+	}
+	/**
+	 * Runnable to launch the browse action it in a thread.
+	 */
+	class RunBrowse implements Runnable {
+		ActionBrowse action;
+
+		RunBrowse(ActionBrowse action) {
+			this.action = action;
+		}
+
+		@Override
+		public void run() {
+			try {
+				Session session = ActionUtils.getSession(ActionStatistics.this);
+				Server server = LaunchArgs.getServer(ActionStatistics.this);
+				Record record = action.getSelectedRecord();
+				if (record == null) {
+					return;
+				}
+				String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
+				String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
+				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
+				Period period = Period.parseId(periodId);
+				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				DataPersistor persistor = new DataPersistor(statistics.getTable().getPersistor());
+				persistor.setSensitive(false);
+				
+				Formatters.configureStatesSource(session, persistor, server.getId(), instrId, periodId);
+
+				Record masterRecord = persistor.getDefaultRecord();
+
+				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
+				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
+				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+				Table table = statistics.getTable();
+				for (int i = 0; i < table.getFieldCount(); i++) {
+					tableModelRecord.addColumn(table.getField(i).getAlias());
+				}
+
+				tableModelRecord.setRecordSet(new DataRecordSet(persistor));
+				tableRecord.setModel(tableModelRecord);
+
+				JOptionFrame frame = new JOptionFrame(session);
+
+				StringBuilder title = new StringBuilder();
+				title.append(server.getName());
+				title.append(", ");
+				title.append(instrId);
+				title.append(" ");
+				title.append(Period.parseId(periodId));
+				title.append(" [");
+				title.append(table.getName());
+				title.append("]");
+				frame.setTitle(title.toString());
+
+				frame.setComponent(panelTableRecord);
+
+				frame.addAction(new ActionClose(session));
+				frame.setSize(0.6, 0.8);
+				frame.showFrame();
+
+			} catch (Exception exc) {
+				logger.catching(exc);
+			}
 		}
 	}
 
