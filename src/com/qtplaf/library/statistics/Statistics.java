@@ -17,6 +17,7 @@ package com.qtplaf.library.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
 
@@ -59,7 +60,7 @@ public abstract class Statistics {
 	public void add(Output output) {
 		outputs.add(output);
 	}
-	
+
 	/**
 	 * Clear output values.
 	 */
@@ -154,4 +155,11 @@ public abstract class Statistics {
 	 * @return The results table.
 	 */
 	public abstract Table getTable();
+
+	/**
+	 * Returns the recordset to browse the statistic results.
+	 * 
+	 * @return The recordset to browse the statistic results.
+	 */
+	public abstract RecordSet getRecordSet();
 }

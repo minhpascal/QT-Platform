@@ -20,6 +20,7 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.OHLCVPip;
 import com.qtplaf.platform.database.formatters.OHLCVTimeFmt;
@@ -80,14 +81,9 @@ public class Formatters {
 	public static void configureStatesSource(
 		Session session,
 		Persistor persistor,
-		String serverId,
-		String instrId,
-		String periodId)
-		throws PersistorException {
-
-		// Time based on period.
-		Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
-		Period period = Period.parseId(periodId);
+		Server server,
+		Instrument instrument,
+		Period period) {
 		OHLCVTimeFmt timeFmt = new OHLCVTimeFmt(period.getUnit());
 		persistor.getField(StatesSource.Fields.High).setFormatter(new OHLCVPip(session, instrument));
 		persistor.getField(StatesSource.Fields.Low).setFormatter(new OHLCVPip(session, instrument));

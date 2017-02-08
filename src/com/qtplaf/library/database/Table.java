@@ -709,7 +709,6 @@ public class Table implements Comparable<Object> {
 		view.setOrderBy(orderBy);
 		view.setName(getName());
 		view.setAlias(getAlias());
-		view.setPersistor(getPersistor());
 		return view;
 	}
 

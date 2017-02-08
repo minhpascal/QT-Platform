@@ -473,7 +473,7 @@ public abstract class DataList {
 	 * @param period The period, number of data elements to check before and after.
 	 * @return A boolean indicating whether the value is a maximum.
 	 */
-	public boolean isMaximum(int dataIndex, int valueIndex, int period, boolean minimum) {
+	public boolean isMaximum(int dataIndex, int valueIndex, int period) {
 		return isMinimumMaximum(dataIndex, valueIndex, period, false);
 	}
 
@@ -486,7 +486,7 @@ public abstract class DataList {
 	 * @param period The period, number of data elements to check before and after.
 	 * @return A boolean indicating whether the value is a minimum.
 	 */
-	public boolean isMinimum(int dataIndex, int valueIndex, int period, boolean minimum) {
+	public boolean isMinimum(int dataIndex, int valueIndex, int period) {
 		return isMinimumMaximum(dataIndex, valueIndex, period, true);
 	}
 
@@ -501,6 +501,12 @@ public abstract class DataList {
 	 * @return A boolean indicating whether the value is a minimum/maximum.
 	 */
 	private boolean isMinimumMaximum(int dataIndex, int valueIndex, int period, boolean minimum) {
+		if (dataIndex < period) {
+			return false;
+		}
+		if (dataIndex > size() - 1 - period) {
+			return false;
+		}
 		double value = get(dataIndex).getValue(valueIndex);
 		int startBackward = Math.max(0, dataIndex - period);
 		for (int i = dataIndex - 1; i >= startBackward; i--) {

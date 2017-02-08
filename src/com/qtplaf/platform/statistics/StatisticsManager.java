@@ -280,6 +280,11 @@ public class StatisticsManager {
 		strng.setId(reference.getId());
 		strng.setTitle(reference.getTitle());
 		strng.setDescription(reference.getDescription());
+		
+		// Only consider these periods.
+		strng.addAverage(21);
+		strng.addAverage(89);
+		strng.addAverage(377);
 
 		return strng;
 	}

@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.swing.ActionUtils;
@@ -36,13 +37,10 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
-import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
-import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
@@ -287,22 +285,22 @@ public class ActionStatistics extends AbstractAction {
 				Period period = Period.parseId(periodId);
 				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
 				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
-				DataPersistor persistor = new DataPersistor(statistics.getTable().getPersistor());
-				persistor.setSensitive(false);
+				RecordSet recordSet = statistics.getRecordSet();
+				if (recordSet == null) {
+					MessageBox.warning(session, "No recordset configurated");
+					return;
+				}
 				
-				Formatters.configureStatesSource(session, persistor, server.getId(), instrId, periodId);
+				Record masterRecord = recordSet.getFieldList().getDefaultRecord();
 
-				Record masterRecord = persistor.getDefaultRecord();
-
-				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
+				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				Table table = statistics.getTable();
-				for (int i = 0; i < table.getFieldCount(); i++) {
-					tableModelRecord.addColumn(table.getField(i).getAlias());
+				for (int i = 0; i < recordSet.getFieldCount(); i++) {
+					tableModelRecord.addColumn(recordSet.getField(i).getAlias());
 				}
 
-				tableModelRecord.setRecordSet(new DataRecordSet(persistor));
+				tableModelRecord.setRecordSet(recordSet);
 				tableRecord.setModel(tableModelRecord);
 
 				JOptionFrame frame = new JOptionFrame(session);
@@ -314,7 +312,7 @@ public class ActionStatistics extends AbstractAction {
 				title.append(" ");
 				title.append(Period.parseId(periodId));
 				title.append(" [");
-				title.append(table.getName());
+				title.append(statistics.getTable().getName());
 				title.append("]");
 				frame.setTitle(title.toString());
 

@@ -236,6 +236,7 @@ public class View implements Comparable<Object> {
 	 */
 	public void setMasterTable(Table masterTable) {
 		this.masterTable = masterTable;
+		setPersistor(masterTable.getPersistor());
 	}
 
 	/**
@@ -385,6 +386,15 @@ public class View implements Comparable<Object> {
 	 */
 	public void setOrderBy(Order orderBy) {
 		this.orderBy = orderBy;
+	}
+
+	/**
+	 * Add an order by segment.
+	 *
+	 * @param field The field of the order by segment.
+	 */
+	public void addOrderBy(Field field) {
+		addOrderBy(field, true);
 	}
 
 	/**

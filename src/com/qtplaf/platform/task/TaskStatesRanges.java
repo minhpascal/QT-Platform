@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.DataPersistor;
@@ -59,6 +60,25 @@ public class TaskStatesRanges extends TaskRunner {
 		Table table = indicator.getStatesSource().getTable();
 		DataPersistor persistor = new DataPersistor(table.getPersistor());
 		this.sourceList = new PersistorDataList(getSession(), info, persistor);
+		StringBuilder name = new StringBuilder();
+		name.append(statesRanges.getServer().getId());
+		name.append("-");
+		name.append(statesRanges.getInstrument().getId());
+		name.append("-");
+		name.append(statesRanges.getPeriod().toString());
+		name.append("-");
+		name.append(statesRanges.getId());
+		setName(name.toString());
+
+		StringBuilder desc = new StringBuilder();
+		desc.append(statesRanges.getServer().getName());
+		desc.append(" - ");
+		desc.append(statesRanges.getInstrument().getId());
+		desc.append(" - ");
+		desc.append(statesRanges.getPeriod().toString());
+		desc.append(" - ");
+		desc.append(statesRanges.getDescription());
+		setDescription(desc.toString());
 	}
 
 	/**
@@ -89,11 +109,30 @@ public class TaskStatesRanges extends TaskRunner {
 	 */
 	private List<Integer> getPeriods() {
 		List<Integer> periods = new ArrayList<>();
-		List<Average> averages = statesSource.getAverages();
+		List<Average> averages = statesRanges.getAverages();
 		for (Average average : averages) {
 			periods.add(average.getPeriod());
 		}
 		return periods;
+	}
+
+	/**
+	 * Returns the result record.
+	 * 
+	 * @param persistor The persistor.
+	 * @param name The field name.
+	 * @param period The period.
+	 * @param minimum Minimum/maximum.
+	 * @param value The value.
+	 * @return The record.
+	 */
+	private Record getRecord(Persistor persistor, String name, int period, boolean minimum, double value) {
+		Record record = persistor.getDefaultRecord();
+		record.setValue(StatesRanges.Fields.Name, name);
+		record.setValue(StatesRanges.Fields.Period, period);
+		record.setValue(StatesRanges.Fields.MinMax, (minimum ? "min" : "max"));
+		record.setValue(StatesRanges.Fields.Value, value);
+		return record;
 	}
 
 	/**
@@ -144,8 +183,29 @@ public class TaskStatesRanges extends TaskRunner {
 			step++;
 			// Notify step start.
 			notifyStepStart(step, getStepMessage(step, steps, null, null));
-			
+
 			// Do calculate if min-max for each name and period.
+			for (String name : names) {
+				int valueIndex = indicator.getIndicatorInfo().getOutputIndex(name);
+				double value = sourceList.get(index).getValue(valueIndex);
+				if (value == 0) {
+					continue;
+				}
+				for (int period : periods) {
+					if (value < 0) {
+						if (sourceList.isMinimum(index, valueIndex, period)) {
+							Record record = getRecord(persistor, name, period, true, value);
+							persistor.insert(record);
+						}
+					}
+					if (value > 0) {
+						if (sourceList.isMaximum(index, valueIndex, period)) {
+							Record record = getRecord(persistor, name, period, false, value);
+							persistor.insert(record);
+						}
+					}
+				}
+			}
 
 			// Skip to next index.
 			index++;

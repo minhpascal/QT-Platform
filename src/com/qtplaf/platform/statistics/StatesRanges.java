@@ -14,11 +14,22 @@
 
 package com.qtplaf.platform.statistics;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Index;
+import com.qtplaf.library.database.PersistorException;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.database.Types;
+import com.qtplaf.library.database.View;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.formatters.DataValue;
+import com.qtplaf.platform.task.TaskStatesRanges;
 import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Calculates the ranges min-max of the percentual values calculated in the correspondent <tt>StatesSource</tt>:
@@ -35,6 +46,9 @@ import com.qtplaf.platform.util.DomainUtils;
  */
 public class StatesRanges extends StatesAverages {
 
+	/** Logger instance. */
+	private static final Logger logger = LogManager.getLogger();
+
 	/** Field names. */
 	public static class Fields {
 		public static final String Name = "name";
@@ -42,7 +56,7 @@ public class StatesRanges extends StatesAverages {
 		public static final String Period = "period";
 		public static final String Value = "value";
 	}
-
+	
 	/**
 	 * The parent states source statistics.
 	 */
@@ -84,8 +98,7 @@ public class StatesRanges extends StatesAverages {
 	 */
 	@Override
 	public Task getTask() {
-		// TODO Auto-generated method stub
-		return null;
+		return new TaskStatesRanges(this);
 	}
 
 	/**
@@ -114,6 +127,10 @@ public class StatesRanges extends StatesAverages {
 		table.addField(DomainUtils.getMinMax(getSession(), Fields.MinMax));
 		table.addField(DomainUtils.getPeriod(getSession(), Fields.Period));
 		table.addField(DomainUtils.getDouble(getSession(), Fields.Value));
+		
+		table.getField(Fields.Name).setHeader("Field name");
+		table.getField(Fields.MinMax).setHeader("Min/Max");
+		table.getField(Fields.Period).setHeader("Period");
 
 		// Non unique index on name, minmax, period.
 		Index index = new Index();
@@ -122,8 +139,95 @@ public class StatesRanges extends StatesAverages {
 		index.add(table.getField(Fields.Period));
 		index.setUnique(false);
 		table.addIndex(index);
+		
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
 
 		return table;
 	}
-
+	
+	/**
+	 * Returns the recordset to browse the statistic results.
+	 * 
+	 * @return The recordset to browse the statistic results.
+	 */
+	@Override
+	public RecordSet getRecordSet() {
+		
+		Table table = getTable();
+		
+		View view = new View(getSession());
+		view.setMasterTable(table);
+		view.setName(table.getName());
+		
+		// Group by fields
+		view.addField(table.getField(Fields.Name));
+		view.addField(table.getField(Fields.MinMax));
+//		view.addField(table.getField(Fields.Period));
+		
+		// Aggregate function count.
+		Field count = new Field();
+		count.setName("count");
+		count.setHeader("Count");
+		count.setType(Types.Integer);
+		count.setFunction("count(*)");
+		view.addField(count);
+		
+		// Aggregate function min.
+		Field minimum = new Field();
+		minimum.setName("minimum");
+		minimum.setHeader("Minimum");
+		minimum.setType(Types.Double);
+		minimum.setFunction("min(value)");
+		minimum.setFormatter(new DataValue(getSession(), 15));
+		view.addField(minimum);
+		
+		// Aggregate function max.
+		Field maximum = new Field();
+		maximum.setName("maximum");
+		maximum.setHeader("Maximum");
+		maximum.setType(Types.Double);
+		maximum.setFunction("max(value)");
+		maximum.setFormatter(new DataValue(getSession(), 15));
+		view.addField(maximum);
+		
+		// Aggregate function avg.
+		Field average = new Field();
+		average.setName("average");
+		average.setHeader("Average");
+		average.setType(Types.Double);
+		average.setFunction("avg(value)");
+		average.setFormatter(new DataValue(getSession(), 15));
+		view.addField(average);
+		
+		// Aggregate function stddev.
+		Field stddev = new Field();
+		stddev.setName("stddev");
+		stddev.setHeader("Standard deviation");
+		stddev.setType(Types.Double);
+		stddev.setFunction("stddev(value)");
+		stddev.setFormatter(new DataValue(getSession(), 20));
+		view.addField(stddev);
+		
+		// Group by.
+		view.addGroupBy(view.getField(Fields.Name));
+		view.addGroupBy(view.getField(Fields.MinMax));
+//		view.addGroupBy(view.getField(Fields.Period));
+		
+		// Order by.
+		view.addOrderBy(view.getField(Fields.Name));
+		view.addOrderBy(view.getField(Fields.MinMax));
+//		view.addOrderBy(view.getField(Fields.Period));
+		
+		// Persistor.
+		view.setPersistor(PersistorUtils.getPersistor(view));
+		
+		RecordSet recordSet = null;
+		try {
+			recordSet = view.getPersistor().select(null);
+		} catch (PersistorException exc) {
+			logger.catching(exc);
+		}
+		
+		return recordSet;
+	}
 }

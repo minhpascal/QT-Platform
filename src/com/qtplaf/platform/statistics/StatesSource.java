@@ -20,13 +20,17 @@ import java.util.List;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Index;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.task.Task;
+import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.task.TaskStatesSource;
 import com.qtplaf.platform.util.DomainUtils;
@@ -257,5 +261,17 @@ public class StatesSource extends StatesAverages {
 		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
 
 		return table;
+	}
+
+	/**
+	 * Returns the recordset to browse the statistic results.
+	 * 
+	 * @return The recordset to browse the statistic results.
+	 */
+	@Override
+	public RecordSet getRecordSet() {
+		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
+		Formatters.configureStatesSource(getSession(), persistor, getServer(), getInstrument(), getPeriod());
+		return new DataRecordSet(persistor);
 	}
 }
