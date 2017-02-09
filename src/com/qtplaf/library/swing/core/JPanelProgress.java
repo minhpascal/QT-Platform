@@ -54,6 +54,7 @@ import com.qtplaf.library.task.TaskHandler;
 import com.qtplaf.library.util.FormatUtils;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
+import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.library.util.StringUtils;
 import com.qtplaf.library.util.Timestamp;
 
@@ -569,7 +570,7 @@ public class JPanelProgress extends JPanel {
 	private String errorDescription;
 
 	/** Track last perform percentage to update status info when cancelled or an error has ocurred. */
-	private int lastPerformed = 0;
+	private double lastPerformed = 0;
 
 	/** General purpose lock. */
 	private Object lock = new Object();
@@ -1170,11 +1171,11 @@ public class JPanelProgress extends JPanel {
 		b.append(", ");
 		b.append(getSession().getString("panelProgressStartTime").toLowerCase());
 		b.append(" ");
-		b.append(getTimestampString((long)processStartTime));
+		b.append(getTimestampString((long) processStartTime));
 		b.append(", ");
 		b.append(getSession().getString("panelProgressEndTime").toLowerCase());
 		b.append(" ");
-		b.append(getTimestampString((long)(processStartTime + timeEstimated)));
+		b.append(getTimestampString((long) (processStartTime + timeEstimated)));
 
 		return b.toString();
 	}
@@ -1321,7 +1322,7 @@ public class JPanelProgress extends JPanel {
 			if (task.isIndeterminate()) {
 				getLabelStatus().setText(getSession().getString("panelProgressError"));
 			}
-			
+
 			// Log the exception
 			logger.catching(task.getException());
 		}
@@ -1346,12 +1347,12 @@ public class JPanelProgress extends JPanel {
 	 * 
 	 * @param performed The performed percentage.
 	 */
-	private void updateStatusAndTimeProcessing(int performed) {
+	private void updateStatusAndTimeProcessing(double performed) {
 		StringBuilder b = new StringBuilder();
 		b.append(getSession().getString("panelProgressProcessing"));
 		b.append(" ");
-		b.append(performed);
-		b.append("%");
+		b.append(NumberUtils.round(performed, 1));
+		b.append(" %");
 		getLabelStatus().setText(b.toString());
 		getLabelTime().setText(getProgressTimeInfo(performed));
 	}
@@ -1362,7 +1363,7 @@ public class JPanelProgress extends JPanel {
 	 * @param prefix The prefix word.
 	 * @param performed The performed percentage.
 	 */
-	private void updateStatusProcessed(int performed) {
+	private void updateStatusProcessed(double performed) {
 		StringBuilder b = new StringBuilder();
 		b.append(getSession().getString("panelProgressProcessed"));
 		b.append(" ");
@@ -1397,11 +1398,11 @@ public class JPanelProgress extends JPanel {
 			getProgressBar().setValue(0);
 		}
 		// Percentage performed.
-		int performed = (int) (step * 100 / processSteps);
+		double performed = (Double.valueOf(step) * 100.0 / Double.valueOf(processSteps));
 		// Register last preformed.
 		lastPerformed = performed;
 		// Calculate current progress value. Steps start at 0 and end at stepCout-1.
-		getProgressBar().setValue(performed);
+		getProgressBar().setValue(Double.valueOf(NumberUtils.round(performed, 0)).intValue());
 	}
 
 	/**

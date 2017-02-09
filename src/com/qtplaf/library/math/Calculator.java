@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.qtplaf.library.util.NumberUtils;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * Generic static calculator methods.
@@ -25,6 +26,45 @@ import com.qtplaf.library.util.NumberUtils;
  * @author Miquel Sas
  */
 public class Calculator {
+
+	/**
+	 * Returns the maximum.
+	 * 
+	 * @param values The list of values.
+	 * @return The maximum.
+	 */
+	public static double maximum(double[] values) {
+		double maximum = Double.MIN_VALUE;
+		for (int i = 0; i < values.length; i++) {
+			maximum = Math.max(maximum, values[i]);
+		}
+		return maximum;
+	}
+
+	/**
+	 * Returns the minimum.
+	 * 
+	 * @param values The list of values.
+	 * @return The minimum.
+	 */
+	public static double minimum(double[] values) {
+		double minimum = Double.MAX_VALUE;
+		for (int i = 0; i < values.length; i++) {
+			minimum = Math.min(minimum, values[i]);
+		}
+		return minimum;
+	}
+
+	/**
+	 * Returns the average of a list of values.
+	 * 
+	 * @param values The array of values.
+	 * @return The average.
+	 */
+	public static double average(List<Double> values) {
+		return mean(values);
+	}
+
 	/**
 	 * Returns the mean of a list of values.
 	 * 
@@ -32,7 +72,17 @@ public class Calculator {
 	 * @return The mean.
 	 */
 	public static double mean(List<Double> values) {
-		return mean(toArray(values));
+		return mean(ListUtils.toArray(values));
+	}
+
+	/**
+	 * Returns the average of a list of values.
+	 * 
+	 * @param values The array of values.
+	 * @return The average.
+	 */
+	public static double average(double[] values) {
+		return mean(values);
 	}
 
 	/**
@@ -49,7 +99,7 @@ public class Calculator {
 		for (double value : values) {
 			mean += value;
 		}
-		mean /= size(values);
+		mean /= Double.valueOf(size(values)).doubleValue();
 		return mean;
 	}
 
@@ -69,7 +119,7 @@ public class Calculator {
 			double difference = value - mean;
 			variance += (difference * difference);
 		}
-		variance /= (size(values) - 1);
+		variance /= (Double.valueOf(size(values)).doubleValue() - 1);
 		return Math.sqrt(variance);
 	}
 
@@ -81,7 +131,7 @@ public class Calculator {
 	 * @return The standard deviation.
 	 */
 	public static double stddev(List<Double> values, double mean) {
-		return stddev(toArray(values), mean);
+		return stddev(ListUtils.toArray(values), mean);
 	}
 
 	/**
@@ -125,7 +175,7 @@ public class Calculator {
 	 * @return The total.
 	 */
 	public static double total(List<Double> values) {
-		return total(toArray(values));
+		return total(ListUtils.toArray(values));
 	}
 
 	/**
@@ -208,7 +258,7 @@ public class Calculator {
 	 * @return The list of values normalized
 	 */
 	public static List<Double> normalize(List<Double> values) {
-		return toList(normalize(toArray(values)));
+		return toList(normalize(ListUtils.toArray(values)));
 	}
 
 	/**
@@ -242,7 +292,7 @@ public class Calculator {
 	 * @return The list normalized.
 	 */
 	public static List<Double> normalize(List<Double> values, double mean, double stddev) {
-		return toList(normalize(toArray(values), mean, stddev));
+		return toList(normalize(ListUtils.toArray(values), mean, stddev));
 	}
 
 	/**
@@ -682,20 +732,6 @@ public class Calculator {
 			}
 		}
 		return subtraction;
-	}
-
-	/**
-	 * Returns an array of double's given a list of Double's.
-	 * 
-	 * @param values The list of Double's.
-	 * @return The array of double's.
-	 */
-	public static double[] toArray(List<Double> values) {
-		double[] array = new double[values.size()];
-		for (int i = 0; i < values.size(); i++) {
-			array[i] = values.get(i);
-		}
-		return array;
 	}
 
 	/**
