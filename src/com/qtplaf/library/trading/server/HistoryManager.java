@@ -15,8 +15,8 @@ package com.qtplaf.library.trading.server;
 
 import java.util.List;
 
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Tick;
 
@@ -66,14 +66,14 @@ public interface HistoryManager {
 		throws ServerException;
 
 	/**
-	 * Returns a long indicating the first of OHLCV data available for the given instrument and period.
+	 * Returns a long indicating the first of price data available for the given instrument and period.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @return A long indicating the first of data available for the given instrument and period.
 	 * @throws ServerException
 	 */
-	long getTimeOfFirstOHLCVData(Instrument instrument, Period period) throws ServerException;
+	long getTimeOfFirstData(Instrument instrument, Period period) throws ServerException;
 
 	/**
 	 * Returns a long indicating the time of the first order for the given instrument.
@@ -94,54 +94,54 @@ public interface HistoryManager {
 	long getTimeOfFirstTick(Instrument instrument) throws ServerException;
 	
 	/**
-	 * Returns the last OHLCV data element.
+	 * Returns the last price data element.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
-	 * @return The OHLCV data element.
+	 * @return The price data element.
 	 * @throws ServerException
 	 */
-	OHLCV getLastOHLCV(Instrument instrument, Period period) throws ServerException;
+	Data getLastData(Instrument instrument, Period period) throws ServerException;
 
 	/**
-	 * Returns the OHLCV data element.
+	 * Returns the price data element.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param shift Shift, 0 for current, 1 for previous, and so n.
-	 * @return The OHLCV data element.
+	 * @return The price data element.
 	 * @throws ServerException
 	 */
-	OHLCV getOHLCV(Instrument instrument, Period period, int shift) throws ServerException;
+	Data getData(Instrument instrument, Period period, int shift) throws ServerException;
 
 	/**
-	 * Returns the OHLCV data element.
+	 * Returns the price data element.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param offerSide The offer side.
 	 * @param shift Shift, 0 for current, 1 for previous, and so n.
-	 * @return The OHLCV data element.
+	 * @return The price data element.
 	 * @throws ServerException
 	 */
-	OHLCV getOHLCV(Instrument instrument, Period period, OfferSide offerSide, int shift) throws ServerException;
+	Data getData(Instrument instrument, Period period, OfferSide offerSide, int shift) throws ServerException;
 
 	/**
-	 * Returns the list of OHLCV data.
+	 * Returns the list of price data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The list of OHLCV data.
+	 * @return The list of price data.
 	 * @throws ServerException
 	 */
-	List<OHLCV> getOHLCVData(
+	List<Data> getDataList(
 		Instrument instrument, Period period, Filter filter, long from, long to) throws ServerException;
 
 	/**
-	 * Returns the list of OHLCV data.
+	 * Returns the list of price data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -149,15 +149,15 @@ public interface HistoryManager {
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The list of OHLCV data.
+	 * @return The list of price data.
 	 * @throws ServerException
 	 */
-	List<OHLCV> getOHLCVData(
+	List<Data> getDataList(
 		Instrument instrument, Period period, OfferSide offerSide, Filter filter, long from, long to)
 		throws ServerException;
 
 	/**
-	 * Returns OHLCV data items for the sprecified parameters.
+	 * Returns price data items for the sprecified parameters.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -165,15 +165,15 @@ public interface HistoryManager {
 	 * @param time Reference time.
 	 * @param periodsBefore Number of periods before including the period starting at the reference time.
 	 * @param periodsAfter Number of periods after not including the period starting at the reference time.
-	 * @return The list of OHLCV data items.
+	 * @return The list of price data items.
 	 * @throws ServerException
 	 */
-	List<OHLCV> getOHLCVData(
+	List<Data> getDataList(
 		Instrument instrument, Period period, Filter filter, long time, int periodsBefore, int periodsAfter)
 		throws ServerException;
 
 	/**
-	 * Returns OHLCV data items for the sprecified parameters.
+	 * Returns price data items for the sprecified parameters.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -182,30 +182,30 @@ public interface HistoryManager {
 	 * @param time Reference time.
 	 * @param periodsBefore Number of periods before including the period starting at the reference time.
 	 * @param periodsAfter Number of periods after not including the period starting at the reference time.
-	 * @return The list of OHLCV data items.
+	 * @return The list of price data items.
 	 * @throws ServerException
 	 */
-	List<OHLCV> getOHLCVData(
+	List<Data> getDataList(
 		Instrument instrument, Period period, OfferSide offerSide, Filter filter,
 		long time, int periodsBefore, int periodsAfter) throws ServerException;
 
 	/**
-	 * Returns an OHLCV iterator aimed to download huge amounts of data.
+	 * Returns an price iterator aimed to download huge amounts of data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The OHLCV iterator.
+	 * @return The price iterator.
 	 * @throws ServerException
 	 */
-	OHLCVIterator getOHLCVIterator(
+	DataIterator getDataIterator(
 		Instrument instrument, Period period, Filter filter, long from, long to)
 		throws ServerException;
 
 	/**
-	 * Returns an OHLCV iterator aimed to download huge amounts of data.
+	 * Returns an price iterator aimed to download huge amounts of data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -213,10 +213,10 @@ public interface HistoryManager {
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The OHLCV iterator.
+	 * @return The price iterator.
 	 * @throws ServerException
 	 */
-	OHLCVIterator getOHLCVIterator(
+	DataIterator getDataIterator(
 		Instrument instrument, Period period, OfferSide offerSide, Filter filter, long from, long to)
 		throws ServerException;
 

@@ -16,13 +16,13 @@ package com.qtplaf.library.trading.server.servers.dukascopy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Tick;
+import com.qtplaf.library.trading.server.DataIterator;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.HistoryManager;
-import com.qtplaf.library.trading.server.OHLCVIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Order;
 import com.qtplaf.library.trading.server.ServerException;
@@ -133,14 +133,14 @@ public class DkHistoryManager implements HistoryManager {
 	}
 
 	/**
-	 * Returns a long indicating the first of OHLCV data available for the given instrument and period.
+	 * Returns a long indicating the first of data available for the given instrument and period.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @return A long indicating the first of data available for the given instrument and period.
 	 * @throws ServerException
 	 */
-	public long getTimeOfFirstOHLCVData(Instrument instrument, Period period) throws ServerException {
+	public long getTimeOfFirstData(Instrument instrument, Period period) throws ServerException {
 		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
 		com.dukascopy.api.Period dkPeriod = server.getDkConverter().toDkPeriod(period);
 		server.checkSubscribed(dkInstrument);
@@ -179,41 +179,41 @@ public class DkHistoryManager implements HistoryManager {
 	}
 
 	/**
-	 * Returns the last OHLCV data element.
+	 * Returns the last price data element.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
-	 * @return The OHLCV data element.
+	 * @return The price data element.
 	 * @throws ServerException
 	 */
-	public OHLCV getLastOHLCV(Instrument instrument, Period period) throws ServerException {
-		return getOHLCV(instrument, period, 0);
+	public Data getLastData(Instrument instrument, Period period) throws ServerException {
+		return getData(instrument, period, 0);
 	}
 
 	/**
-	 * Returns the OHLCV data element.
+	 * Returns the price data element.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param shift Shift, 0 for current, 1 for previous, and so n.
-	 * @return The OHLCV data element.
+	 * @return The price data element.
 	 * @throws ServerException
 	 */
-	public OHLCV getOHLCV(Instrument instrument, Period period, int shift) throws ServerException {
-		return getOHLCV(instrument, period, OfferSide.Ask, shift);
+	public Data getData(Instrument instrument, Period period, int shift) throws ServerException {
+		return getData(instrument, period, OfferSide.Ask, shift);
 	}
 
 	/**
-	 * Returns the OHLCV data element.
+	 * Returns the data element.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param offerSide The offer side.
 	 * @param shift Shift, 0 for current, 1 for previous, and so n.
-	 * @return The OHLCV data element.
+	 * @return The price data element.
 	 * @throws ServerException
 	 */
-	public OHLCV getOHLCV(Instrument instrument, Period period, OfferSide offerSide, int shift) throws ServerException {
+	public Data getData(Instrument instrument, Period period, OfferSide offerSide, int shift) throws ServerException {
 		com.dukascopy.api.Instrument dkInstrument = server.getDkConverter().toDkInstrument(instrument);
 		com.dukascopy.api.Period dkPeriod = server.getDkConverter().toDkPeriod(period);
 		com.dukascopy.api.OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(offerSide);
@@ -221,37 +221,37 @@ public class DkHistoryManager implements HistoryManager {
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			com.dukascopy.api.IBar bar = history.getBar(dkInstrument, dkPeriod, dkOfferSide, shift);
-			OHLCV ohlcv = new OHLCV();
-			ohlcv.setOpen(bar.getOpen());
-			ohlcv.setHigh(bar.getHigh());
-			ohlcv.setLow(bar.getLow());
-			ohlcv.setClose(bar.getClose());
-			ohlcv.setVolume(bar.getVolume());
-			ohlcv.setTime(bar.getTime());
-			return ohlcv;
+			Data data = new Data();
+			Data.setOpen(data, bar.getOpen());
+			Data.setHigh(data, bar.getHigh());
+			Data.setLow(data, bar.getLow());
+			Data.setClose(data, bar.getClose());
+			Data.setVolume(data, bar.getVolume());
+			data.setTime(bar.getTime());
+			return data;
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
 	}
 
 	/**
-	 * Returns the list of OHLCV data.
+	 * Returns the list of data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The list of OHLCV data.
+	 * @return The list of data.
 	 * @throws ServerException
 	 */
-	public List<OHLCV> getOHLCVData(Instrument instrument, Period period, Filter filter, long from, long to)
+	public List<Data> getDataList(Instrument instrument, Period period, Filter filter, long from, long to)
 		throws ServerException {
-		return getOHLCVData(instrument, period, OfferSide.Ask, filter, from, to);
+		return getDataList(instrument, period, OfferSide.Ask, filter, from, to);
 	}
 
 	/**
-	 * Returns the list of OHLCV data.
+	 * Returns the list of data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -259,10 +259,10 @@ public class DkHistoryManager implements HistoryManager {
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The list of OHLCV data.
+	 * @return The list of data.
 	 * @throws ServerException
 	 */
-	public List<OHLCV> getOHLCVData(
+	public List<Data> getDataList(
 		Instrument instrument,
 		Period period,
 		OfferSide offerSide,
@@ -279,15 +279,15 @@ public class DkHistoryManager implements HistoryManager {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			List<com.dukascopy.api.IBar> bars =
 				history.getBars(dkInstrument, dkPeriod, dkOfferSide, dkFilter, from, to);
-			List<OHLCV> ohlcvData = new ArrayList<>();
+			List<Data> ohlcvData = new ArrayList<>();
 			for (int i = 0; i < bars.size(); i++) {
 				com.dukascopy.api.IBar bar = bars.get(i);
-				OHLCV ohlcv = new OHLCV();
-				ohlcv.setOpen(bar.getOpen());
-				ohlcv.setHigh(bar.getHigh());
-				ohlcv.setLow(bar.getLow());
-				ohlcv.setClose(bar.getClose());
-				ohlcv.setVolume(bar.getVolume());
+				Data ohlcv = new Data();
+				Data.setOpen(ohlcv, bar.getOpen());
+				Data.setHigh(ohlcv, bar.getHigh());
+				Data.setLow(ohlcv, bar.getLow());
+				Data.setClose(ohlcv, bar.getClose());
+				Data.setVolume(ohlcv, bar.getVolume());
 				ohlcv.setTime(bar.getTime());
 				ohlcvData.add(ohlcv);
 			}
@@ -298,7 +298,7 @@ public class DkHistoryManager implements HistoryManager {
 	}
 
 	/**
-	 * Returns OHLCV data items for the sprecified parameters.
+	 * Returns data items for the sprecified parameters.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -306,21 +306,21 @@ public class DkHistoryManager implements HistoryManager {
 	 * @param time Reference time.
 	 * @param periodsBefore Number of periods before including the period starting at the reference time.
 	 * @param periodsAfter Number of periods after not including the period starting at the reference time.
-	 * @return The list of OHLCV data items.
+	 * @return The list of data items.
 	 * @throws ServerException
 	 */
-	public List<OHLCV> getOHLCVData(
+	public List<Data> getDataList(
 		Instrument instrument,
 		Period period,
 		Filter filter,
 		long time,
 		int periodsBefore,
 		int periodsAfter) throws ServerException {
-		return getOHLCVData(instrument, period, OfferSide.Ask, filter, time, periodsBefore, periodsAfter);
+		return getDataList(instrument, period, OfferSide.Ask, filter, time, periodsBefore, periodsAfter);
 	}
 
 	/**
-	 * Returns OHLCV data items for the sprecified parameters.
+	 * Returns data items for the sprecified parameters.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -329,10 +329,10 @@ public class DkHistoryManager implements HistoryManager {
 	 * @param time Reference time.
 	 * @param periodsBefore Number of periods before including the period starting at the reference time.
 	 * @param periodsAfter Number of periods after not including the period starting at the reference time.
-	 * @return The list of OHLCV data items.
+	 * @return The list of data items.
 	 * @throws ServerException
 	 */
-	public List<OHLCV> getOHLCVData(
+	public List<Data> getDataList(
 		Instrument instrument,
 		Period period,
 		OfferSide offerSide,
@@ -356,17 +356,17 @@ public class DkHistoryManager implements HistoryManager {
 				periodsBefore,
 				time,
 				periodsAfter);
-			List<OHLCV> ohlcvData = new ArrayList<>();
+			List<Data> ohlcvData = new ArrayList<>();
 			for (int i = 0; i < bars.size(); i++) {
 				com.dukascopy.api.IBar bar = bars.get(i);
-				OHLCV ohlcv = new OHLCV();
-				ohlcv.setOpen(bar.getOpen());
-				ohlcv.setHigh(bar.getHigh());
-				ohlcv.setLow(bar.getLow());
-				ohlcv.setClose(bar.getClose());
-				ohlcv.setVolume(bar.getVolume());
-				ohlcv.setTime(bar.getTime());
-				ohlcvData.add(ohlcv);
+				Data data = new Data();
+				Data.setOpen(data, bar.getOpen());
+				Data.setHigh(data, bar.getHigh());
+				Data.setLow(data, bar.getLow());
+				Data.setClose(data, bar.getClose());
+				Data.setVolume(data, bar.getVolume());
+				data.setTime(bar.getTime());
+				ohlcvData.add(data);
 			}
 			return ohlcvData;
 		} catch (Exception cause) {
@@ -375,28 +375,28 @@ public class DkHistoryManager implements HistoryManager {
 	}
 
 	/**
-	 * Returns an OHLCV iterator aimed to download huge amounts of data.
+	 * Returns an iterator aimed to download huge amounts of data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The OHLCV iterator.
+	 * @return The iterator.
 	 * @throws ServerException
 	 */
-	public OHLCVIterator getOHLCVIterator(
+	public DataIterator getDataIterator(
 		Instrument instrument,
 		Period period,
 		Filter filter,
 		long from,
 		long to)
 		throws ServerException {
-		return new DkOHLCVIterator(this, instrument, period, OfferSide.Ask, filter, from, to);
+		return new DkDataIterator(this, instrument, period, OfferSide.Ask, filter, from, to);
 	}
 
 	/**
-	 * Returns an OHLCV iterator aimed to download huge amounts of data.
+	 * Returns an iterator aimed to download huge amounts of data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
@@ -404,10 +404,10 @@ public class DkHistoryManager implements HistoryManager {
 	 * @param filter The filter to apply.
 	 * @param from From time.
 	 * @param to To time.
-	 * @return The OHLCV iterator.
+	 * @return The iterator.
 	 * @throws ServerException
 	 */
-	public OHLCVIterator getOHLCVIterator(
+	public DataIterator getDataIterator(
 		Instrument instrument,
 		Period period,
 		OfferSide offerSide,
@@ -415,7 +415,7 @@ public class DkHistoryManager implements HistoryManager {
 		long from,
 		long to)
 		throws ServerException {
-		return new DkOHLCVIterator(this, instrument, period, offerSide, filter, from, to);
+		return new DkDataIterator(this, instrument, period, offerSide, filter, from, to);
 	}
 
 	/**

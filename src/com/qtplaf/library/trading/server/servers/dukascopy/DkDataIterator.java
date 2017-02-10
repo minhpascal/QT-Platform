@@ -16,18 +16,18 @@ package com.qtplaf.library.trading.server.servers.dukascopy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.DataIterator;
 import com.qtplaf.library.trading.server.Filter;
-import com.qtplaf.library.trading.server.OHLCVIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.ServerException;
 
 /**
  * @author Miquel Sas
  */
-public class DkOHLCVIterator implements OHLCVIterator {
+public class DkDataIterator implements DataIterator {
 
 	/**
 	 * History manager.
@@ -60,7 +60,7 @@ public class DkOHLCVIterator implements OHLCVIterator {
 	/**
 	 * The buffer where temporarily the data is loaded.
 	 */
-	private List<OHLCV> buffer = new ArrayList<>();
+	private List<Data> buffer = new ArrayList<>();
 	/**
 	 * The buffer size.
 	 */
@@ -81,7 +81,7 @@ public class DkOHLCVIterator implements OHLCVIterator {
 	 * @param from From time.
 	 * @param to To time.
 	 */
-	public DkOHLCVIterator(
+	public DkDataIterator(
 		DkHistoryManager historyManager,
 		Instrument instrument,
 		Period period,
@@ -124,7 +124,7 @@ public class DkOHLCVIterator implements OHLCVIterator {
 	 * @return The next element or throws an exception if there are no more elements.
 	 * @throws ServerException
 	 */
-	public OHLCV next() throws ServerException {
+	public Data next() throws ServerException {
 		try {
 			return buffer.remove(0);
 		} catch (Exception cause) {
@@ -163,10 +163,10 @@ public class DkOHLCVIterator implements OHLCVIterator {
 		}
 
 		// Load data.
-		List<OHLCV> ohlcvData = null;
+		List<Data> ohlcvData = null;
 		while (execBufferSize > 0) {
 			try {
-				ohlcvData = historyManager.getOHLCVData(
+				ohlcvData = historyManager.getDataList(
 					instrument,
 					period,
 					offerSide,
@@ -181,7 +181,7 @@ public class DkOHLCVIterator implements OHLCVIterator {
 		}
 
 		// Tranfer loaded data to buffer with the limit of to.
-		for (OHLCV ohlcv : ohlcvData) {
+		for (Data ohlcv : ohlcvData) {
 			long time = ohlcv.getTime();
 
 			// Skipt last loaded uppon buffer loads.

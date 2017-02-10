@@ -22,7 +22,6 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.util.FormatUtils;
 
@@ -426,14 +425,14 @@ public abstract class DataInfo {
 	 */
 	public String getInfoData(Data data) {
 		boolean priceInfo = (this instanceof PriceInfo);
-		boolean addVolumeValue = (priceInfo && data.getValue(OHLCV.Index.Volume.getIndex()) != 0);
+		boolean addVolumeValue = (priceInfo && Data.getVolume(data) != 0);
 		StringBuilder b = new StringBuilder();
 		int count = getOutputCount();
 		for (int i = 0; i < count; i++) {
 			OutputInfo output = getOutput(i);
 			int index = output.getIndex();
 			boolean addValue = true;
-			if (index == OHLCV.Index.Volume.getIndex()) {
+			if (index == Data.IndexVolume) {
 				addValue = addVolumeValue;
 			}
 			if (addValue) {

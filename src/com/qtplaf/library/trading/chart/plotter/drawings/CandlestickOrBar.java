@@ -13,7 +13,7 @@
  */
 package com.qtplaf.library.trading.chart.plotter.drawings;
 
-import com.qtplaf.library.trading.data.OHLCV;
+import com.qtplaf.library.trading.data.Data;
 
 /**
  * Base class of a bar or candlestick drawing.
@@ -27,19 +27,19 @@ public abstract class CandlestickOrBar extends Drawing {
 	 */
 	private int index;
 	/**
-	 * The OHLCV.
+	 * The data.
 	 */
-	private OHLCV ohlcv;
+	private Data data;
 
 	/**
 	 * Constructor assigning the values.
 	 * 
 	 * @param index The data index.
-	 * @param ohlcv The OHLCV.
+	 * @param data The data.
 	 */
-	public CandlestickOrBar(int index, OHLCV ohlcv) {
+	public CandlestickOrBar(int index, Data data) {
 		this.index = index;
-		this.ohlcv = ohlcv;
+		this.data = data;
 	}
 
 	/**
@@ -52,12 +52,12 @@ public abstract class CandlestickOrBar extends Drawing {
 	}
 
 	/**
-	 * Returns the OHLCV.
+	 * Returns the data.
 	 * 
-	 * @return The OHLCV.
+	 * @return The data.
 	 */
-	public OHLCV getOHLCV() {
-		return ohlcv;
+	public Data getData() {
+		return data;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public abstract class CandlestickOrBar extends Drawing {
 	 * @return A boolean indicating if this bar or candlestick is bullish.
 	 */
 	public boolean isBullish() {
-		return ohlcv.isBullish();
+		return Data.isBullish(data);
 	}
 
 	/**
@@ -75,6 +75,6 @@ public abstract class CandlestickOrBar extends Drawing {
 	 * @return A boolean indicating if this bar or candlestick is bearish.
 	 */
 	public boolean isBearish() {
-		return ohlcv.isBearish();
+		return Data.isBearish(data);
 	}
 }

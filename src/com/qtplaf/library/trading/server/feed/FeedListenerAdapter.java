@@ -23,13 +23,13 @@ import java.util.List;
 public class FeedListenerAdapter implements FeedListener {
 
 	/**
-	 * List of current OHLCV subscriptions.
+	 * List of current subscriptions.
 	 */
-	List<OHLCVSubscription> currentOHLCVSubscriptions = new ArrayList<>();
+	List<DataSubscription> currentDataSubscriptions = new ArrayList<>();
 	/**
-	 * List of completed OHLCV subscriptions.
+	 * List of completed subscriptions.
 	 */
-	List<OHLCVSubscription> ohlcvSubscriptions = new ArrayList<>();
+	List<DataSubscription> dataSubscriptions = new ArrayList<>();
 	/**
 	 * List of tick subscriptions.
 	 */
@@ -43,21 +43,21 @@ public class FeedListenerAdapter implements FeedListener {
 	}
 
 	/**
-	 * Adds a subscription to current OHLCV data.
+	 * Adds a subscription to current data.
 	 * 
 	 * @param subscription The subscription.
 	 */
-	public void addCurrentOHLCVSubscription(OHLCVSubscription subscription) {
-		currentOHLCVSubscriptions.add(subscription);
+	public void addCurrentDataSubscription(DataSubscription subscription) {
+		currentDataSubscriptions.add(subscription);
 	}
 
 	/**
-	 * Adds a subscription to current OHLCV data.
+	 * Adds a subscription to current data.
 	 * 
 	 * @param subscription The subscription.
 	 */
-	public void addOHLCVSubscription(OHLCVSubscription subscription) {
-		ohlcvSubscriptions.add(subscription);
+	public void addDataSubscription(DataSubscription subscription) {
+		dataSubscriptions.add(subscription);
 	}
 
 	/**
@@ -70,21 +70,21 @@ public class FeedListenerAdapter implements FeedListener {
 	}
 
 	/**
-	 * Returns the list of current instrument OHLCV data this listener is subscribed on.
+	 * Returns the list of current instrument data this listener is subscribed on.
 	 * 
-	 * @return The list of current OHLCV this listener is subscribed on.
+	 * @return The list of current data this listener is subscribed on.
 	 */
-	public List<OHLCVSubscription> getCurrentOHLCVSubscriptions() {
-		return currentOHLCVSubscriptions;
+	public List<DataSubscription> getCurrentDataSubscriptions() {
+		return currentDataSubscriptions;
 	}
 
 	/**
-	 * Returns the list of instrument OHLCV data this listener is subscribed on.
+	 * Returns the list of instrument data this listener is subscribed on.
 	 * 
-	 * @return The list of OHLCV this listener is subscribed on.
+	 * @return The list of datas this listener is subscribed on.
 	 */
-	public List<OHLCVSubscription> getOHLCVSubscriptions() {
-		return ohlcvSubscriptions;
+	public List<DataSubscription> getDataSubscriptions() {
+		return dataSubscriptions;
 	}
 
 	/**
@@ -97,19 +97,19 @@ public class FeedListenerAdapter implements FeedListener {
 	}
 
 	/**
-	 * Notifies the current forming OHLCV data for the subscribed instruments.
+	 * Notifies the current forming data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The OHLCV data event.
+	 * @param ohlcvEvent The data event.
 	 */
-	public void onCurrentOHLCV(OHLCVEvent ohlcvEvent) {
+	public void onCurrentData(DataEvent ohlcvEvent) {
 	}
 
 	/**
-	 * Notifies the completed OHLCV data for the subscribed instruments.
+	 * Notifies the completed data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The OHLCV data event.
+	 * @param ohlcvEvent The data event.
 	 */
-	public void onOHLCV(OHLCVEvent ohlcvEvent) {
+	public void onData(DataEvent ohlcvEvent) {
 	}
 
 	/**

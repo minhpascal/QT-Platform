@@ -22,10 +22,10 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.formatters.DataValue;
-import com.qtplaf.platform.database.formatters.OHLCVPip;
-import com.qtplaf.platform.database.formatters.OHLCVTimeFmt;
-import com.qtplaf.platform.database.formatters.OHLCVVolume;
-import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.formatters.PipValue;
+import com.qtplaf.platform.database.formatters.TimeFmtValue;
+import com.qtplaf.platform.database.formatters.VolumeValue;
+import com.qtplaf.platform.database.tables.DataPrice;
 import com.qtplaf.platform.statistics.StatesSource;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordUtils;
@@ -37,7 +37,7 @@ import com.qtplaf.platform.util.RecordUtils;
  */
 public class Formatters {
 	/**
-	 * Set formatters to the OHLCV persistor.
+	 * Set formatters to the data price persistor.
 	 *
 	 * @param session Working session.
 	 * @param persistor The persistor.
@@ -46,7 +46,7 @@ public class Formatters {
 	 * @param periodId The period id.
 	 * @throws PersistorException
 	 */
-	public static void configureOHLCV(
+	public static void configureDataPrice(
 		Session session,
 		Persistor persistor,
 		String serverId,
@@ -56,17 +56,17 @@ public class Formatters {
 
 		// Time based on period.
 		Period period = Period.parseId(periodId);
-		OHLCVTimeFmt timeFmt = new OHLCVTimeFmt(period.getUnit());
-		persistor.getField(OHLCVS.Fields.TimeFmt).setFormatter(timeFmt);
-		persistor.getField(OHLCVS.Fields.TimeFmt).setCalculator(timeFmt);
+		TimeFmtValue timeFmt = new TimeFmtValue(period.getUnit());
+		persistor.getField(DataPrice.Fields.TimeFmt).setFormatter(timeFmt);
+		persistor.getField(DataPrice.Fields.TimeFmt).setCalculator(timeFmt);
 
 		Record recordInstr = RecordUtils.getRecordInstrument(session, serverId, instrId);
 		Instrument instrument = InstrumentUtils.getInstrumentFromRecordInstruments(recordInstr);
-		persistor.getField(OHLCVS.Fields.Open).setFormatter(new OHLCVPip(session, instrument));
-		persistor.getField(OHLCVS.Fields.High).setFormatter(new OHLCVPip(session, instrument));
-		persistor.getField(OHLCVS.Fields.Low).setFormatter(new OHLCVPip(session, instrument));
-		persistor.getField(OHLCVS.Fields.Close).setFormatter(new OHLCVPip(session, instrument));
-		persistor.getField(OHLCVS.Fields.Volume).setFormatter(new OHLCVVolume(session, instrument));
+		persistor.getField(DataPrice.Fields.Open).setFormatter(new PipValue(session, instrument));
+		persistor.getField(DataPrice.Fields.High).setFormatter(new PipValue(session, instrument));
+		persistor.getField(DataPrice.Fields.Low).setFormatter(new PipValue(session, instrument));
+		persistor.getField(DataPrice.Fields.Close).setFormatter(new PipValue(session, instrument));
+		persistor.getField(DataPrice.Fields.Volume).setFormatter(new VolumeValue(session, instrument));
 	}
 	/**
 	 * Set formatters to the states source persistor.
@@ -84,15 +84,16 @@ public class Formatters {
 		Server server,
 		Instrument instrument,
 		Period period) {
-		OHLCVTimeFmt timeFmt = new OHLCVTimeFmt(period.getUnit());
-		persistor.getField(StatesSource.Fields.High).setFormatter(new OHLCVPip(session, instrument));
-		persistor.getField(StatesSource.Fields.Low).setFormatter(new OHLCVPip(session, instrument));
-		persistor.getField(StatesSource.Fields.Close).setFormatter(new OHLCVPip(session, instrument));
+		TimeFmtValue timeFmt = new TimeFmtValue(period.getUnit());
+		persistor.getField(StatesSource.Fields.Open).setFormatter(new PipValue(session, instrument));
+		persistor.getField(StatesSource.Fields.High).setFormatter(new PipValue(session, instrument));
+		persistor.getField(StatesSource.Fields.Low).setFormatter(new PipValue(session, instrument));
+		persistor.getField(StatesSource.Fields.Close).setFormatter(new PipValue(session, instrument));
 		persistor.getField(StatesSource.Fields.TimeFmt).setFormatter(timeFmt);
 		persistor.getField(StatesSource.Fields.TimeFmt).setCalculator(timeFmt);
 		
 		Record record = persistor.getDefaultRecord();
-		for (int i = 6; i < record.getFieldCount(); i++) {
+		for (int i = 7; i < record.getFieldCount(); i++) {
 			persistor.getField(i).setFormatter(new DataValue(session,15));
 		}
 	}

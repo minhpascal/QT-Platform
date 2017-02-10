@@ -314,7 +314,7 @@ public class GUIModeChartTypes extends JFrame implements ITesterUserInterface, I
     		comboBoxPeriod = setupComboBox(Period.values(), "Period", Period.TEN_MINS);
     		comboBoxPriceRange = setupComboBox(new PriceRange [] {ONE_PIP, TWO_PIPS, THREE_PIPS, FOUR_PIPS, FIVE_PIPS, SIX_PIPS}, "Price Range", TWO_PIPS);
     		comboBoxReversalAmount = setupComboBox(new ReversalAmount [] {ReversalAmount.ONE, ReversalAmount.TWO, ReversalAmount.THREE}, "Reversal Amount", ReversalAmount.TWO);
-    		comboBoxTickBarSize = setupComboBox(new TickBarSize [] {TWO, THREE, FOUR, FIVE}, "Tick OHLCV Size", THREE);
+    		comboBoxTickBarSize = setupComboBox(new TickBarSize [] {TWO, THREE, FOUR, FIVE}, "Tick data Size", THREE);
     		
     		add(comboBoxDataType);
     		add(comboBoxPeriod);

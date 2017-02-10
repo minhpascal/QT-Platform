@@ -19,7 +19,7 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.DataFilters;
 import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.tables.DataPrice;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
@@ -106,15 +106,15 @@ public class TableUtils {
 	}
 
 	/**
-	 * Returns the OHLCV table for the given server with the given name.
+	 * Returns the price table for the given server with the given name.
 	 * 
 	 * @param session Working session.
 	 * @param server The server.
 	 * @param name The name of the table.
 	 * @return The table definition.
 	 */
-	public static Table getTableOHLCVS(Session session, Server server, String name) {
-		return new OHLCVS(session, server, name);
+	public static Table getTableDataPrice(Session session, Server server, String name) {
+		return new DataPrice(session, server, name);
 	}
 
 }

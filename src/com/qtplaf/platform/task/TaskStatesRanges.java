@@ -124,14 +124,25 @@ public class TaskStatesRanges extends TaskRunner {
 	 * @param period The period.
 	 * @param minimum Minimum/maximum.
 	 * @param value The value.
+	 * @param index Source index.
+	 * @param time Source time.
 	 * @return The record.
 	 */
-	private Record getRecord(Persistor persistor, String name, int period, boolean minimum, double value) {
+	private Record getRecord(
+		Persistor persistor,
+		String name,
+		int period,
+		boolean minimum,
+		double value,
+		int index,
+		long time) {
 		Record record = persistor.getDefaultRecord();
 		record.setValue(StatesRanges.Fields.Name, name);
 		record.setValue(StatesRanges.Fields.Period, period);
 		record.setValue(StatesRanges.Fields.MinMax, (minimum ? "min" : "max"));
 		record.setValue(StatesRanges.Fields.Value, value);
+		record.setValue(StatesRanges.Fields.Index, index);
+		record.setValue(StatesRanges.Fields.Time, time);
 		return record;
 	}
 
@@ -194,13 +205,15 @@ public class TaskStatesRanges extends TaskRunner {
 				for (int period : periods) {
 					if (value < 0) {
 						if (sourceList.isMinimum(index, valueIndex, period)) {
-							Record record = getRecord(persistor, name, period, true, value);
+							long time = sourceList.get(index).getTime();
+							Record record = getRecord(persistor, name, period, true, value, index, time);
 							persistor.insert(record);
 						}
 					}
 					if (value > 0) {
 						if (sourceList.isMaximum(index, valueIndex, period)) {
-							Record record = getRecord(persistor, name, period, false, value);
+							long time = sourceList.get(index).getTime();
+							Record record = getRecord(persistor, name, period, false, value, index, time);
 							persistor.insert(record);
 						}
 					}

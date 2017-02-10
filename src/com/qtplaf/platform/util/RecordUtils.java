@@ -19,15 +19,15 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.DataFilters;
 import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.tables.DataPrice;
 import com.qtplaf.platform.database.tables.OfferSides;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Servers;
@@ -82,19 +82,19 @@ public class RecordUtils {
 	}
 
 	/**
-	 * Returns the OHLCV record.
+	 * Returns the data price record.
 	 * 
-	 * @param record The default OHLCV record.
-	 * @param ohlcv The OHLCV bar.
+	 * @param record The default data price record.
+	 * @param data The price bar.
 	 * @return The filled record.
 	 */
-	public static Record getRecordOHLCV(Record record, OHLCV ohlcv) {
-		record.getValue(OHLCVS.Fields.Time).setLong(ohlcv.getTime());
-		record.getValue(OHLCVS.Fields.Open).setDouble(ohlcv.getOpen());
-		record.getValue(OHLCVS.Fields.High).setDouble(ohlcv.getHigh());
-		record.getValue(OHLCVS.Fields.Low).setDouble(ohlcv.getLow());
-		record.getValue(OHLCVS.Fields.Close).setDouble(ohlcv.getClose());
-		record.getValue(OHLCVS.Fields.Volume).setDouble(ohlcv.getVolume());
+	public static Record getRecordDataPrice(Record record, Data data) {
+		record.getValue(DataPrice.Fields.Time).setLong(data.getTime());
+		record.getValue(DataPrice.Fields.Open).setDouble(Data.getOpen(data));
+		record.getValue(DataPrice.Fields.High).setDouble(Data.getHigh(data));
+		record.getValue(DataPrice.Fields.Low).setDouble(Data.getLow(data));
+		record.getValue(DataPrice.Fields.Close).setDouble(Data.getClose(data));
+		record.getValue(DataPrice.Fields.Volume).setDouble(Data.getVolume(data));
 		return record;
 	}
 

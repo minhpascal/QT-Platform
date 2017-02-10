@@ -13,56 +13,203 @@
  */
 package com.qtplaf.library.trading.data;
 
-import java.util.List;
-
 /**
- * An arbitrary number of double values with the starting time. It can be an OHLCV (open, high, low, close, volume) pack
- * or the list of values of an indicator.
+ * Base class of timed data. An arbitrary number of double values with the starting time. It can be an data (open,
+ * high, low, close, volume) pack or the list of values of an indicator.
  * 
  * @author Miquel Sas
  */
 public class Data {
 
+	/** Open index. */
+	public static final int IndexOpen = 0;
+	/** High index. */
+	public static final int IndexHigh = 1;
+	/** Low index. */
+	public static final int IndexLow = 2;
+	/** Close index. */
+	public static final int IndexClose = 3;
+	/** Volume index. */
+	public static final int IndexVolume = 4;
+	/** Median price: (High + Low) / 2 */
+	public static final int IndexMedianPrice = -1;
+	/** Typical price: (High + Low + Close) / 3 */
+	public static final int IndexTypicalPrice = -2;
+	/** Weighted close price: (High + Low + 2*Close) / 4 */
+	public static final int IndexWeightedClosePrice = -3;
+
 	/**
-	 * Returns a data item that is the union or consolidation of a list of data items.
-	 * <p>
-	 * For OHLCV data items the open is the open of the first, the high is the higher, the low the lower, the close is
-	 * the close of the last, and the volume is the sum.The time is the time of the first item.
-	 * <p>
-	 * For generic data items the last item is returned.
+	 * Returns the median price: (H + L) / 2
 	 * 
-	 * @param fromIndex Start index.
-	 * @param toIndex End index.
-	 * @return The union data item.
+	 * @param data The data element.
+	 * @return The median price.
 	 */
-	public static Data union(List<Data> list) {
-		if (list.isEmpty()) {
-			throw new IllegalStateException("The sub list can not be empty.");
+	public static double getMedianPrice(Data data) {
+		return (getHigh(data) + getLow(data)) / 2;
+	}
+
+	/**
+	 * Returns the typical price: (H + L + C) / 3
+	 * 
+	 * @param data The data element.
+	 * @return The typical price.
+	 */
+	public static double getTypicalPrice(Data data) {
+		return (getHigh(data) + getLow(data) + getClose(data)) / 3;
+	}
+
+	/**
+	 * Returns the weighted close price: (H + L + (2*C)) / 4
+	 * 
+	 * @param data The data element.
+	 * @return The weighted close price.
+	 */
+	public static double getWeightedClosePrice(Data data) {
+		return (getHigh(data) + getLow(data) + (2 * getClose(data))) / 4;
+	}
+
+	/**
+	 * Returns the open value.
+	 * 
+	 * @param data The data element.
+	 * @return The open value.
+	 */
+	public static double getOpen(Data data) {
+		checkSize(data, 4);
+		return data.getValue(IndexOpen);
+	}
+
+	/**
+	 * Set the open value.
+	 * 
+	 * @param data The data.
+	 * @param open The value.
+	 */
+	public static void setOpen(Data data, double open) {
+		checkSize(data, 4);
+		data.setValue(IndexOpen, open);
+	}
+
+	/**
+	 * Returns the high value.
+	 * 
+	 * @param data The data element.
+	 * @return The high value.
+	 */
+	public static double getHigh(Data data) {
+		checkSize(data, 4);
+		return data.getValue(IndexHigh);
+	}
+
+	/**
+	 * Set the high value.
+	 * 
+	 * @param data The data.
+	 * @param high The value.
+	 */
+	public static void setHigh(Data data, double high) {
+		checkSize(data, 4);
+		data.setValue(IndexHigh, high);
+	}
+
+	/**
+	 * Returns the low value.
+	 * 
+	 * @param data The data element.
+	 * @return The low value.
+	 */
+	public static double getLow(Data data) {
+		checkSize(data, 4);
+		return data.getValue(IndexLow);
+	}
+
+	/**
+	 * Set the low value.
+	 * 
+	 * @param data The data.
+	 * @param low The value.
+	 */
+	public static void setLow(Data data, double low) {
+		checkSize(data, 4);
+		data.setValue(IndexLow, low);
+	}
+
+	/**
+	 * Returns the close value.
+	 * 
+	 * @param data The data element.
+	 * @return The close value.
+	 */
+	public static double getClose(Data data) {
+		checkSize(data, 4);
+		return data.getValue(IndexClose);
+	}
+
+	/**
+	 * Set the close value.
+	 * 
+	 * @param data The data.
+	 * @param close The value.
+	 */
+	public static void setClose(Data data, double close) {
+		checkSize(data, 4);
+		data.setValue(IndexClose, close);
+	}
+
+	/**
+	 * Returns the volume.
+	 * 
+	 * @param data The data.
+	 * @return The volume.
+	 */
+	public static double getVolume(Data data) {
+		if (data.size() < 5) {
+			return 0;
 		}
-		Data data = list.get(0);
-		if (!OHLCV.class.isInstance(data)) {
-			return list.get(list.size() - 1);
+		return data.getValue(IndexVolume);
+	}
+
+	/**
+	 * Set the volume.
+	 * 
+	 * @param data The data.
+	 * @param volume The volume.
+	 */
+	public static void setVolume(Data data, double volume) {
+		checkSize(data, 5);
+		data.setValue(IndexVolume, volume);
+	}
+
+	/**
+	 * Check that the data has at least the size.
+	 * 
+	 * @param data The data.
+	 * @param size The size.
+	 */
+	private static void checkSize(Data data, int size) {
+		if (data.size() < size) {
+			throw new IllegalArgumentException();
 		}
-		double open = 0;
-		double high = 0;
-		double low = 0;
-		double close = 0;
-		double volume = 0;
-		long time = 0;
-		for (int i = 0; i < list.size(); i++) {
-			OHLCV ohlcv = new OHLCV(list.get(i));
-			if (i == 0) {
-				open = ohlcv.getOpen();
-				time = ohlcv.getTime();
-			}
-			high = Math.max(high, ohlcv.getHigh());
-			low = Math.min(low, ohlcv.getLow());
-			if (i == list.size() - 1) {
-				close = ohlcv.getClose();
-			}
-			volume += ohlcv.getVolume();
-		}
-		return new OHLCV(time, open, high, low, close, volume);
+	}
+
+	/**
+	 * Returns a boolean indicating if this bar is bullish.
+	 * 
+	 * @param data The data.
+	 * @return A boolean indicating if this bar is bullish.
+	 */
+	public static boolean isBullish(Data data) {
+		return getClose(data) >= getOpen(data);
+	}
+
+	/**
+	 * Returns a boolean indicating if this bar is bearish.
+	 * 
+	 * @param data The data.
+	 * @return A boolean indicating if this bar is bearish.
+	 */
+	public static boolean isBearish(Data data) {
+		return !isBullish(data);
 	}
 
 	/**
@@ -85,6 +232,18 @@ public class Data {
 	 */
 	public Data() {
 		super();
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param time The time.
+	 * @param data The list of values.
+	 */
+	public Data(long time, double... data) {
+		super();
+		setTime(time);
+		setData(data);
 	}
 
 	/**

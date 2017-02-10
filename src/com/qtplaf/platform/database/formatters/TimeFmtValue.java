@@ -24,14 +24,14 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.util.Timestamp;
-import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.tables.DataPrice;
 
 /**
- * A formatter for OHLCV/Bar time that adapts to the period.
+ * A formatter for Bar time that adapts to the period.
  * 
  * @author Miquel Sas
  */
-public class OHLCVTimeFmt extends AbstractFormatter implements FieldCalculator {
+public class TimeFmtValue extends AbstractFormatter implements FieldCalculator {
 	
 	/** Date format. */
 	SimpleDateFormat format;
@@ -41,7 +41,7 @@ public class OHLCVTimeFmt extends AbstractFormatter implements FieldCalculator {
 	 * 
 	 * @param unit The unit.
 	 */
-	public OHLCVTimeFmt(Unit unit) {
+	public TimeFmtValue(Unit unit) {
 		super();
 		
 		// Build a convenient date format using the period.
@@ -92,6 +92,6 @@ public class OHLCVTimeFmt extends AbstractFormatter implements FieldCalculator {
 
 	@Override
 	public Value getValue(Record record) {
-		return record.getValue(OHLCVS.Fields.Time);
+		return record.getValue(DataPrice.Fields.Time);
 	}
 }

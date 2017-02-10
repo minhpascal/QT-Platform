@@ -22,7 +22,7 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 
 /**
- * Base class for data plotters.
+ * Base class for data plotters of timed data.
  * 
  * @author Miquel Sas
  */
@@ -38,7 +38,6 @@ public abstract class DataPlotter extends Plotter {
 	 */
 	public DataPlotter(Session session, PlotData plotData, Dimension chartSize, PlotParameters plotParameters) {
 		super(session, plotData, chartSize, plotParameters);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -51,10 +50,11 @@ public abstract class DataPlotter extends Plotter {
 	public abstract void plotDataIndex(Graphics2D g2, DataList dataList, int index);
 
 	/**
-	 * Termination method to end the plot and clear or close resources.
+	 * Termination method to end the plot and clear or close resources. Overwrite if necessary.
 	 * 
 	 * @param g2 The graphics context.
-	 * @param dataList The data list.
 	 */
-	public abstract void endPlot(Graphics2D g2, DataList dataList);
+	public void endPlot(Graphics2D g2) {
+	}
+
 }

@@ -17,7 +17,7 @@ import com.dukascopy.api.Instrument;
 import com.dukascopy.api.OfferSide;
 import com.dukascopy.api.Period;
 import com.qtplaf.library.trading.server.feed.FeedListenerAdapter;
-import com.qtplaf.library.trading.server.feed.OHLCVSubscription;
+import com.qtplaf.library.trading.server.feed.DataSubscription;
 import com.qtplaf.library.trading.server.feed.TickSubscription;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
 
@@ -48,12 +48,12 @@ public class DkFeedListener extends FeedListenerAdapter {
 	 * @param dkPeriod The Dukascopy period.
 	 * @param dkOfferSide The Dukascopy offer side.
 	 */
-	public void addCurrentOHLCVSubscription(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide) {
+	public void addCurrentDataSubscription(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide) {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
 		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
-		OHLCVSubscription subscription = new OHLCVSubscription(instrument, period, offerSide);
-		addCurrentOHLCVSubscription(subscription);
+		DataSubscription subscription = new DataSubscription(instrument, period, offerSide);
+		addCurrentDataSubscription(subscription);
 	}
 
 	/**
@@ -63,12 +63,12 @@ public class DkFeedListener extends FeedListenerAdapter {
 	 * @param dkPeriod The Dukascopy period.
 	 * @param dkOfferSide The Dukascopy offer side.
 	 */
-	public void addOHLCVSubscription(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide) {
+	public void addDataSubscription(Instrument dkInstrument, Period dkPeriod, OfferSide dkOfferSide) {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
 		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
-		OHLCVSubscription subscription = new OHLCVSubscription(instrument, period, offerSide);
-		addOHLCVSubscription(subscription);
+		DataSubscription subscription = new DataSubscription(instrument, period, offerSide);
+		addDataSubscription(subscription);
 	}
 
 	/**

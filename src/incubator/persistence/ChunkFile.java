@@ -50,11 +50,11 @@ public class ChunkFile {
 	}
 
 	/**
-	 * The byte stored at the end of the chunk for <i>Data</i> and <i>OHLCV</i> data for <i>true</i>.
+	 * The byte stored at the end of the chunk for <i>Data</i> and <i>Data</i> data for <i>true</i>.
 	 */
 	private static final byte byteTrue = 1;
 	/**
-	 * The byte stored at the end of the chunk for <i>Data</i> and <i>OHLCV</i> data for <i>false</i>.
+	 * The byte stored at the end of the chunk for <i>Data</i> and <i>Data</i> data for <i>false</i>.
 	 */
 	private static final byte byteFalse = 0;
 

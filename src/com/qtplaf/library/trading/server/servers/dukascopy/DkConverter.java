@@ -24,8 +24,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.dukascopy.api.IBar;
 import com.dukascopy.api.ITick;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Tick;
 import com.qtplaf.library.trading.data.Unit;
@@ -422,19 +422,19 @@ public class DkConverter {
 	}
 
 	/**
-	 * Returns this system OHLCV data item given the Dukascopy bar.
+	 * Returns this system data item given the Dukascopy bar.
 	 * 
 	 * @param dkBar The Dukascopy bar.
-	 * @return This system OHLCV data item.
+	 * @return This system price data item.
 	 */
-	public OHLCV fromDkBar(IBar dkBar) {
-		OHLCV ohlcv = new OHLCV();
-		ohlcv.setOpen(dkBar.getOpen());
-		ohlcv.setHigh(dkBar.getHigh());
-		ohlcv.setLow(dkBar.getLow());
-		ohlcv.setClose(dkBar.getClose());
-		ohlcv.setVolume(dkBar.getVolume());
-		ohlcv.setTime(dkBar.getTime());
-		return ohlcv;
+	public Data fromDkBar(IBar dkBar) {
+		Data data = new Data();
+		Data.setOpen(data, dkBar.getOpen());
+		Data.setHigh(data, dkBar.getHigh());
+		Data.setLow(data, dkBar.getLow());
+		Data.setClose(data, dkBar.getClose());
+		Data.setVolume(data, dkBar.getVolume());
+		data.setTime(dkBar.getTime());
+		return data;
 	}
 }

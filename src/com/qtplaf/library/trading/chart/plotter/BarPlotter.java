@@ -23,7 +23,6 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.PlotParameters;
 import com.qtplaf.library.trading.chart.plotter.drawings.Bar;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotProperties;
 
@@ -54,7 +53,7 @@ public class BarPlotter extends DataPlotter {
 	 * @return The bar drawing.
 	 */
 	public Bar getBar(DataList dataList, int index) {
-		return new Bar(index, new OHLCV(dataList.get(index)));
+		return new Bar(index, dataList.get(index));
 	}
 
 	/**
@@ -115,14 +114,5 @@ public class BarPlotter extends DataPlotter {
 		// Restore color and stroke.
 		g2.setColor(saveColor);
 		g2.setStroke(saveStroke);
-	}
-
-	/**
-	 * Termination method to end the plot and clear or close resources.
-	 * 
-	 * @param g2 The graphics context.
-	 * @param dataList The data list.
-	 */
-	public void endPlot(Graphics2D g2, DataList dataList) {
 	}
 }

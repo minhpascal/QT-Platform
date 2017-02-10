@@ -16,15 +16,15 @@ package com.qtplaf.library.trading.server.feed;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Tick;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.ServerException;
 
 /**
- * A feed event dispatcher that runs in a separated thread and is aimed to dispatch feed events, like OHLCV or tick
+ * A feed event dispatcher that runs in a separated thread and is aimed to dispatch feed events, like Data or tick
  * data, without blocking the input from the server, because listener implementation may delay significantly when
  * processing event.
  * 
@@ -33,21 +33,21 @@ import com.qtplaf.library.trading.server.ServerException;
 public class FeedDispatcher implements Runnable {
 
 	/**
-	 * Input buffer for current OHLCV data events.
+	 * Input buffer for current Data data events.
 	 */
-	private List<OHLCVEvent> inputCurrentOHLCVEvents = new ArrayList<>();
+	private List<DataEvent> inputCurrentDataEvents = new ArrayList<>();
 	/**
-	 * Input lock for current OHLCV data events.
+	 * Input lock for current Data data events.
 	 */
-	private Object inputCurrentOHLCVLock = new Object();
+	private Object inputCurrentDataLock = new Object();
 	/**
-	 * Input buffer for completed OHLCV data events.
+	 * Input buffer for completed Data data events.
 	 */
-	private List<OHLCVEvent> inputOHLCVEvents = new ArrayList<>();
+	private List<DataEvent> inputDataEvents = new ArrayList<>();
 	/**
-	 * Input lock for completed OHLCV data events.
+	 * Input lock for completed price data events.
 	 */
-	private Object inputOHLCVLock = new Object();
+	private Object inputDataLock = new Object();
 	/**
 	 * Input buffer for tick data events.
 	 */
@@ -57,13 +57,13 @@ public class FeedDispatcher implements Runnable {
 	 */
 	private Object inputTickLock = new Object();
 	/**
-	 * Output buffer for current OHLCV data events.
+	 * Output buffer for current price data events.
 	 */
-	private List<OHLCVEvent> outputCurrentOHLCVEvents = new ArrayList<>();
+	private List<DataEvent> outputCurrentDataEvents = new ArrayList<>();
 	/**
-	 * Output buffer for completed OHLCV data events.
+	 * Output buffer for completed price data events.
 	 */
-	private List<OHLCVEvent> outputOHLCVEvents = new ArrayList<>();
+	private List<DataEvent> outputDataEvents = new ArrayList<>();
 	/**
 	 * Output buffer for tick data events.
 	 */
@@ -101,10 +101,10 @@ public class FeedDispatcher implements Runnable {
 	 */
 	public void addFeedListener(FeedListener listener) {
 		boolean subscriptions = false;
-		if (!listener.getCurrentOHLCVSubscriptions().isEmpty()) {
+		if (!listener.getCurrentDataSubscriptions().isEmpty()) {
 			subscriptions = true;
 		}
-		if (!listener.getOHLCVSubscriptions().isEmpty()) {
+		if (!listener.getDataSubscriptions().isEmpty()) {
 			subscriptions = true;
 		}
 		if (!listener.getTickSubscriptions().isEmpty()) {
@@ -127,30 +127,30 @@ public class FeedDispatcher implements Runnable {
 	}
 
 	/**
-	 * Adds a current OHLCV data event to the input queue.
+	 * Adds a current price data event to the input queue.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param offerSide Offer side.
-	 * @param ohlcv The OHLCV data.
+	 * @param data The price data.
 	 */
-	public void addCurrentOHLCV(Instrument instrument, Period period, OfferSide offerSide, OHLCV ohlcv) {
-		synchronized (inputCurrentOHLCVLock) {
-			inputCurrentOHLCVEvents.add(new OHLCVEvent(this, instrument, period, offerSide, ohlcv));
+	public void addCurrentData(Instrument instrument, Period period, OfferSide offerSide, Data data) {
+		synchronized (inputCurrentDataLock) {
+			inputCurrentDataEvents.add(new DataEvent(this, instrument, period, offerSide, data));
 		}
 	}
 
 	/**
-	 * Adds a completed OHLCV data event to the input queue.
+	 * Adds a completed data event to the input queue.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param offerSide Offer side.
-	 * @param ohlcv The OHLCV data.
+	 * @param data The price data.
 	 */
-	public void addOHLCV(Instrument instrument, Period period, OfferSide offerSide, OHLCV ohlcv) {
-		synchronized (inputOHLCVLock) {
-			inputOHLCVEvents.add(new OHLCVEvent(this, instrument, period, offerSide, ohlcv));
+	public void addData(Instrument instrument, Period period, OfferSide offerSide, Data data) {
+		synchronized (inputDataLock) {
+			inputDataEvents.add(new DataEvent(this, instrument, period, offerSide, data));
 		}
 	}
 
@@ -178,17 +178,17 @@ public class FeedDispatcher implements Runnable {
 			}
 		}
 
-		// Move current OHLCV data from input to output.
-		synchronized (inputCurrentOHLCVLock) {
-			while (!inputCurrentOHLCVEvents.isEmpty()) {
-				outputCurrentOHLCVEvents.add(inputCurrentOHLCVEvents.remove(0));
+		// Move current data from input to output.
+		synchronized (inputCurrentDataLock) {
+			while (!inputCurrentDataEvents.isEmpty()) {
+				outputCurrentDataEvents.add(inputCurrentDataEvents.remove(0));
 			}
 		}
 
-		// Move completed OHLCV data from input to output.
-		synchronized (inputOHLCVLock) {
-			while (!inputOHLCVEvents.isEmpty()) {
-				outputOHLCVEvents.add(inputOHLCVEvents.remove(0));
+		// Move completed data from input to output.
+		synchronized (inputDataLock) {
+			while (!inputDataEvents.isEmpty()) {
+				outputDataEvents.add(inputDataEvents.remove(0));
 			}
 		}
 
@@ -206,33 +206,33 @@ public class FeedDispatcher implements Runnable {
 			}
 		}
 
-		// Notify current OHLCV data and clear the buffer.
-		while (!outputCurrentOHLCVEvents.isEmpty()) {
-			OHLCVEvent event = outputCurrentOHLCVEvents.remove(0);
+		// Notify current data and clear the buffer.
+		while (!outputCurrentDataEvents.isEmpty()) {
+			DataEvent event = outputCurrentDataEvents.remove(0);
 			for (FeedListener listener : listeners) {
-				List<OHLCVSubscription> subscriptions = listener.getCurrentOHLCVSubscriptions();
-				for (OHLCVSubscription subscription : subscriptions) {
+				List<DataSubscription> subscriptions = listener.getCurrentDataSubscriptions();
+				for (DataSubscription subscription : subscriptions) {
 					Instrument instrument = event.getInstrument();
 					Period period = event.getPeriod();
 					OfferSide offerSide = event.getOfferSide();
-					if (subscription.acceptsOHLCV(instrument, period, offerSide)) {
-						listener.onCurrentOHLCV(event);
+					if (subscription.acceptsData(instrument, period, offerSide)) {
+						listener.onCurrentData(event);
 					}
 				}
 			}
 		}
 
-		// Notify completed OHLCV data and clear the buffer.
-		while (!outputOHLCVEvents.isEmpty()) {
-			OHLCVEvent event = outputOHLCVEvents.remove(0);
+		// Notify completed data and clear the buffer.
+		while (!outputDataEvents.isEmpty()) {
+			DataEvent event = outputDataEvents.remove(0);
 			for (FeedListener listener : listeners) {
-				List<OHLCVSubscription> subscriptions = listener.getOHLCVSubscriptions();
-				for (OHLCVSubscription subscription : subscriptions) {
+				List<DataSubscription> subscriptions = listener.getDataSubscriptions();
+				for (DataSubscription subscription : subscriptions) {
 					Instrument instrument = event.getInstrument();
 					Period period = event.getPeriod();
 					OfferSide offerSide = event.getOfferSide();
-					if (subscription.acceptsOHLCV(instrument, period, offerSide)) {
-						listener.onOHLCV(event);
+					if (subscription.acceptsData(instrument, period, offerSide)) {
+						listener.onData(event);
 					}
 				}
 			}

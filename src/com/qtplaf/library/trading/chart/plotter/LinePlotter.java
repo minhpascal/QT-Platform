@@ -24,9 +24,9 @@ import java.util.List;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.PlotParameters;
 import com.qtplaf.library.trading.chart.plotter.drawings.Line;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataType;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.OutputInfo;
@@ -255,44 +255,44 @@ public class LinePlotter extends DataPlotter {
 	 * @return The values to plot.
 	 */
 	private double[] getValues(DataList dataList, int index) {
+		Data data = dataList.get(index);
 		DataType dataType = dataList.getDataInfo().getDataType();
 		double[] values;
 		switch (dataType) {
 		case Price:
-			OHLCV ohlcv = new OHLCV(dataList.get(index));
-			OHLCV.Index plotValue = dataList.getIndexOHLCV();
-			switch (plotValue) {
-			case Open:
-				values = new double[] { ohlcv.getOpen() };
+			int plotIndex = dataList.getIndexPrice();
+			switch (plotIndex) {
+			case Data.IndexOpen:
+				values = new double[] { Data.getOpen(data) };
 				break;
-			case High:
-				values = new double[] { ohlcv.getHigh() };
+			case Data.IndexHigh:
+				values = new double[] { Data.getHigh(data) };
 				break;
-			case Low:
-				values = new double[] { ohlcv.getLow() };
+			case Data.IndexLow:
+				values = new double[] { Data.getLow(data) };
 				break;
-			case Close:
-				values = new double[] { ohlcv.getClose() };
+			case Data.IndexClose:
+				values = new double[] { Data.getClose(data) };
 				break;
-			case MedianPrice:
-				values = new double[] { ohlcv.getMedianPrice() };
+			case Data.IndexMedianPrice:
+				values = new double[] { Data.getMedianPrice(data) };
 				break;
-			case TypicalPrice:
-				values = new double[] { ohlcv.getTypicalPrice() };
+			case Data.IndexTypicalPrice:
+				values = new double[] { Data.getTypicalPrice(data) };
 				break;
-			case WeightedClosePrice:
-				values = new double[] { ohlcv.getWeightedClosePrice() };
+			case Data.IndexWeightedClosePrice:
+				values = new double[] { Data.getWeightedClosePrice(data) };
 				break;
 			default:
-				values = new double[] { ohlcv.getClose() };
+				values = new double[] { Data.getClose(data) };
 				break;
 			}
 			break;
 		case Indicator:
-			values = dataList.get(index).getData();
+			values = data.getData();
 			break;
 		case Volume:
-			values = new double[] { dataList.get(index).getData()[OHLCV.Index.Volume.getIndex()] };
+			values = new double[] { Data.getVolume(data) };
 			break;
 		default:
 			values = dataList.get(index).getData();
@@ -365,9 +365,9 @@ public class LinePlotter extends DataPlotter {
 	 * Plot the remaining lines in line buffer and clear them.
 	 * 
 	 * @param g2 The graphics context.
-	 * @param dataList The data list.
 	 */
-	public void endPlot(Graphics2D g2, DataList dataList) {
+	@Override
+	public void endPlot(Graphics2D g2) {
 		if (lineBuffers == null) {
 			return;
 		}

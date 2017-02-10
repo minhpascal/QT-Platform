@@ -74,7 +74,7 @@ public class StatesRanges extends StatesAverages {
 			double maximum = record.getValue(Fields.Maximum).getDouble();
 			double average = record.getValue(Fields.Average).getDouble();
 			double stddev = record.getValue(Fields.StdDev).getDouble();
-			double ndev = (stddev != 0 ? (maximum - average) / stddev : Double.MAX_VALUE);
+			double ndev = (stddev != 0 ? (maximum - average) / stddev : 0);
 			return new Value(ndev);
 		}
 
@@ -106,6 +106,8 @@ public class StatesRanges extends StatesAverages {
 		public static final String MinMax = "min_max";
 		public static final String Period = "period";
 		public static final String Value = "value";
+		public static final String Index = "index";
+		public static final String Time = "time";
 
 		public static final String Count = "count";
 		public static final String Minimum = "minimum";
@@ -187,6 +189,8 @@ public class StatesRanges extends StatesAverages {
 		table.addField(DomainUtils.getMinMax(getSession(), Fields.MinMax));
 		table.addField(DomainUtils.getPeriod(getSession(), Fields.Period));
 		table.addField(DomainUtils.getDouble(getSession(), Fields.Value));
+		table.addField(DomainUtils.getIndex(getSession(), Fields.Index));
+		table.addField(DomainUtils.getTime(getSession(), Fields.Time));
 
 		table.getField(Fields.Name).setHeader("Field name");
 		table.getField(Fields.MinMax).setHeader("Min/Max");
@@ -286,7 +290,7 @@ public class StatesRanges extends StatesAverages {
 		bestAvg.setPersistent(false);
 		bestAvg.setFormatter(new DataValue(getSession(), 20));
 		bestAvg.setCalculator(new BestAverage());
-		view.addField(bestAvg);
+//		view.addField(bestAvg);
 
 		// Group by.
 		view.addGroupBy(view.getField(Fields.Name));

@@ -25,7 +25,7 @@ import com.dukascopy.api.Period;
 import com.dukascopy.api.feed.IBarFeedListener;
 import com.qtplaf.library.trading.server.FeedManager;
 import com.qtplaf.library.trading.server.feed.FeedListener;
-import com.qtplaf.library.trading.server.feed.OHLCVSubscription;
+import com.qtplaf.library.trading.server.feed.DataSubscription;
 import com.qtplaf.library.trading.server.feed.TickSubscription;
 import com.qtplaf.library.trading.server.servers.dukascopy.listeners.DkBarFeedListener;
 
@@ -99,8 +99,8 @@ public class DkFeedManager implements FeedManager {
 	 */
 	private void subscribeToCompletedBars(FeedListener listener) {
 		IContext context = server.getStrategyListener().getContext();
-		List<OHLCVSubscription> ohlcvSubscriptions = listener.getOHLCVSubscriptions();
-		for (OHLCVSubscription subscription : ohlcvSubscriptions) {
+		List<DataSubscription> ohlcvSubscriptions = listener.getDataSubscriptions();
+		for (DataSubscription subscription : ohlcvSubscriptions) {
 			Instrument dkInstrument = server.getDkConverter().toDkInstrument(subscription.getInstrument());
 			Period dkPeriod = server.getDkConverter().toDkPeriod(subscription.getPeriod());
 			OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(subscription.getOfferSide());
@@ -118,8 +118,8 @@ public class DkFeedManager implements FeedManager {
 	 */
 	private void unsubscribeToCompletedBars(FeedListener listener) {
 		IContext context = server.getStrategyListener().getContext();
-		List<OHLCVSubscription> ohlcvSubscriptions = listener.getOHLCVSubscriptions();
-		for (OHLCVSubscription subscription : ohlcvSubscriptions) {
+		List<DataSubscription> ohlcvSubscriptions = listener.getDataSubscriptions();
+		for (DataSubscription subscription : ohlcvSubscriptions) {
 			DkBarFeedListener dkListener = (DkBarFeedListener) subscription.getObject();
 			if (dkListener != null) {
 				context.unsubscribeFromBarsFeed(dkListener);
@@ -141,14 +141,14 @@ public class DkFeedManager implements FeedManager {
 				instruments.add(subscription.getInstrument());
 			}
 		}
-		List<OHLCVSubscription> currentSubscriptions = listener.getCurrentOHLCVSubscriptions();
-		for (OHLCVSubscription subscription : currentSubscriptions) {
+		List<DataSubscription> currentSubscriptions = listener.getCurrentDataSubscriptions();
+		for (DataSubscription subscription : currentSubscriptions) {
 			if (!instruments.contains(subscription.getInstrument())) {
 				instruments.add(subscription.getInstrument());
 			}
 		}
-		List<OHLCVSubscription> ohlcvSubscriptions = listener.getOHLCVSubscriptions();
-		for (OHLCVSubscription subscription : ohlcvSubscriptions) {
+		List<DataSubscription> ohlcvSubscriptions = listener.getDataSubscriptions();
+		for (DataSubscription subscription : ohlcvSubscriptions) {
 			if (!instruments.contains(subscription.getInstrument())) {
 				instruments.add(subscription.getInstrument());
 			}

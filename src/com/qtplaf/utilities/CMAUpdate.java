@@ -77,7 +77,7 @@ public class CMAUpdate {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Session session = ActionUtils.getSession(this);
-			String message = "Close and stop any executing task?";
+			String message = "Exit CMA Update?";
 			if (MessageBox.question(session, message, MessageBox.yesNo, MessageBox.no) == MessageBox.yes) {
 				System.exit(0);
 			}

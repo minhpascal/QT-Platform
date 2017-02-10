@@ -49,6 +49,7 @@ public class ProgressManager {
 		public ActionClose(Session session) {
 			super();
 			ActionUtils.configureClose(session, this);
+			ActionUtils.setDefaultCloseAction(this, true);
 		}
 
 		/**
@@ -60,7 +61,7 @@ public class ProgressManager {
 				List<Task> tasks = progress.getTasks();
 				
 				for (Task task : tasks) {
-					if (!task.isTerminated()) {
+					if (task.isProcessing()) {
 						MessageBox.warning(getSession(), "Task " + task.getName() + " is not terminated");
 						return;
 					}

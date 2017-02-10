@@ -24,8 +24,8 @@ import java.awt.geom.Point2D;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.PlotParameters;
 import com.qtplaf.library.trading.chart.plotter.drawings.Candlestick;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotProperties;
 import com.qtplaf.library.util.ColorUtils;
@@ -57,7 +57,7 @@ public class CandlestickPlotter extends DataPlotter {
 	 * @return The candlestick drawing.
 	 */
 	private Candlestick getCandlestick(DataList dataList, int index) {
-		return new Candlestick(index, new OHLCV(dataList.get(index)));
+		return new Candlestick(index, dataList.get(index));
 	}
 
 	/**
@@ -115,9 +115,9 @@ public class CandlestickPlotter extends DataPlotter {
 		if (plotProperties.isPaintBorder()) {
 			if (plotProperties.isColorRaised()) {
 				// Create a raised color.
-				OHLCV ohlcv = candlestick.getOHLCV();
-				double open = ohlcv.getOpen();
-				double close = ohlcv.getClose();
+				Data data = candlestick.getData();
+				double open = Data.getOpen(data);
+				double close = Data.getClose(data);
 				int candlestickWidth = getCandlestickOrBarWidth();
 				int x = getCoordinateX(index);
 				int yOpen = getCoordinateY(open);
@@ -153,14 +153,5 @@ public class CandlestickPlotter extends DataPlotter {
 		// Restore color and stroke.
 		g2.setColor(saveColor);
 		g2.setStroke(saveStroke);
-	}
-
-	/**
-	 * Termination method to end the plot and clear or close resources.
-	 * 
-	 * @param g2 The graphics context.
-	 * @param dataList The data list.
-	 */
-	public void endPlot(Graphics2D g2, DataList dataList) {
 	}
 }

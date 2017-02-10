@@ -21,12 +21,12 @@ package com.qtplaf.library.trading.data.info;
 public class OutputInfo {
 
 	/**
-	 * The output name, for instance <b>Close</b> for the close value of an <b>OHLCV</b> instance.
+	 * The output name, for instance <b>Close</b> for the close value of an <b>Data</b> instance.
 	 */
 	private String name;
 	/**
 	 * A short name to build a short information string, like for instance <b>C</b> for the close value of an
-	 * <b>OHLCV</b> instance.
+	 * <b>Data</b> instance.
 	 */
 	private String shortName;
 	/**

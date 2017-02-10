@@ -32,7 +32,6 @@ import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.IndicatorSource;
 import com.qtplaf.library.trading.data.IndicatorUtils;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
@@ -110,11 +109,7 @@ public class StatesSourceIndicator extends Indicator {
 			List<IndicatorSource> sources = new ArrayList<>();
 
 			// Price (High, Low, Close).
-			sources.add(new IndicatorSource(
-				getDataListPrice(),
-				OHLCV.Index.High.getIndex(),
-				OHLCV.Index.Low.getIndex(),
-				OHLCV.Index.Close.getIndex()));
+			sources.add(new IndicatorSource(getDataListPrice(), Data.IndexHigh, Data.IndexLow, Data.IndexClose));
 
 			// Averages.
 			List<Average> averages = statesSource.getAverages();
@@ -139,7 +134,7 @@ public class StatesSourceIndicator extends Indicator {
 		if (dataList == null) {
 			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 				getDataListPrice(),
-				OHLCV.Index.Close.getIndex(),
+				Data.IndexClose,
 				average.getPeriod(),
 				average.getSmooths());
 			mapDataLists.put(Average.getAverageName(average), dataList);
@@ -165,7 +160,7 @@ public class StatesSourceIndicator extends Indicator {
 				Record record = RecordUtils.getRecordTicker(getSession(), server, instrument, period);
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
 				DataInfo infoPrice = new PriceInfo(getSession(), instrument, period);
-				Persistor persistor = PersistorUtils.getPersistorOHLCV(getSession(), server, tableName);
+				Persistor persistor = PersistorUtils.getPersistorDataPrice(getSession(), server, tableName);
 				PersistorDataList priceTmp = new PersistorDataList(getSession(), infoPrice, persistor);
 				priceTmp.setCacheSize(-1);
 
@@ -238,9 +233,11 @@ public class StatesSourceIndicator extends Indicator {
 
 		// Price values.
 		Data price = getInputDataPrice(index);
-		double high = price.getValue(OHLCV.Index.High.getIndex());
-		double low = price.getValue(OHLCV.Index.Low.getIndex());
-		double close = price.getValue(OHLCV.Index.Close.getIndex());
+		double open = Data.getOpen(price);
+		double high = Data.getHigh(price);
+		double low = Data.getLow(price);
+		double close = Data.getClose(price);
+		values[info.getOutputIndex(StatesSource.Fields.Open)] = open;
 		values[info.getOutputIndex(StatesSource.Fields.High)] = high;
 		values[info.getOutputIndex(StatesSource.Fields.Low)] = low;
 		values[info.getOutputIndex(StatesSource.Fields.Close)] = close;

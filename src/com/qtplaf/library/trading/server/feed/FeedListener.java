@@ -23,18 +23,18 @@ import java.util.List;
 public interface FeedListener {
 
 	/**
-	 * Returns the list of current instrument OHLCV data this listener is subscribed on.
+	 * Returns the list of current instrument data this listener is subscribed on.
 	 * 
-	 * @return The list of current OHLCV this listener is subscribed on.
+	 * @return The list of current this listener is subscribed on.
 	 */
-	List<OHLCVSubscription> getCurrentOHLCVSubscriptions();
+	List<DataSubscription> getCurrentDataSubscriptions();
 
 	/**
-	 * Returns the list of instrument OHLCV data this listener is subscribed on.
+	 * Returns the list of instrument data this listener is subscribed on.
 	 * 
-	 * @return The list of OHLCV this listener is subscribed on.
+	 * @return The list of this listener is subscribed on.
 	 */
-	List<OHLCVSubscription> getOHLCVSubscriptions();
+	List<DataSubscription> getDataSubscriptions();
 
 	/**
 	 * Returns the list instrument ticks this listener is subscribed on.
@@ -44,18 +44,18 @@ public interface FeedListener {
 	List<TickSubscription> getTickSubscriptions();
 
 	/**
-	 * Notifies the current forming OHLCV data for the subscribed instruments.
+	 * Notifies the current forming data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The OHLCV data event.
+	 * @param ohlcvEvent The data event.
 	 */
-	void onCurrentOHLCV(OHLCVEvent ohlcvEvent);
+	void onCurrentData(DataEvent ohlcvEvent);
 
 	/**
-	 * Notifies the completed OHLCV data for the subscribed instruments.
+	 * Notifies the completed data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The OHLCV data event.
+	 * @param ohlcvEvent The data event.
 	 */
-	void onOHLCV(OHLCVEvent ohlcvEvent);
+	void onData(DataEvent ohlcvEvent);
 
 	/**
 	 * Notifies every tick data event for the subscribed instruments.

@@ -27,7 +27,7 @@ import com.dukascopy.api.JFException;
 import com.dukascopy.api.OfferSide;
 import com.dukascopy.api.Period;
 import com.qtplaf.library.trading.server.feed.FeedListener;
-import com.qtplaf.library.trading.server.feed.OHLCVSubscription;
+import com.qtplaf.library.trading.server.feed.DataSubscription;
 import com.qtplaf.library.trading.server.feed.TickSubscription;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkFeedDispatcher;
 import com.qtplaf.library.trading.server.servers.dukascopy.DkServer;
@@ -129,8 +129,8 @@ public class DkStrategyListener implements IStrategy {
 	private void forwardCurrentBars(Instrument dkInstrument) throws JFException {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		for (FeedListener listener : listeners) {
-			List<OHLCVSubscription> currentSubscriptions = listener.getCurrentOHLCVSubscriptions();
-			for (OHLCVSubscription subscription : currentSubscriptions) {
+			List<DataSubscription> currentSubscriptions = listener.getCurrentDataSubscriptions();
+			for (DataSubscription subscription : currentSubscriptions) {
 				if (!subscription.getInstrument().equals(instrument)) {
 					continue;
 				}

@@ -38,12 +38,12 @@ import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.chart.JFrameChart;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.IndicatorUtils;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
@@ -56,7 +56,7 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
-import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.tables.DataPrice;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.task.TaskDownloadTicker;
@@ -118,7 +118,7 @@ public class ActionTickers extends AbstractAction {
 				persistor.insert(record);
 				// Create the table.
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
-				Table table = TableUtils.getTableOHLCVS(session, server, tableName);
+				Table table = TableUtils.getTableDataPrice(session, server, tableName);
 				PersistorUtils.getDDL().buildTable(table);
 				getTableModel().insertRecord(record, persistor.getView().getOrderBy());
 				getTableRecord().setSelectedRecord(record);
@@ -168,7 +168,7 @@ public class ActionTickers extends AbstractAction {
 				for (Record record : records) {
 					PersistorUtils.getPersistorTickers(session).delete(record);
 					String tableName = record.getValue(Tickers.Fields.TableName).getString();
-					Table table = TableUtils.getTableOHLCVS(session, server, tableName);
+					Table table = TableUtils.getTableDataPrice(session, server, tableName);
 					PersistorUtils.getDDL().dropTable(table);
 					getTableModel().deleteRecord(record);
 				}
@@ -217,7 +217,7 @@ public class ActionTickers extends AbstractAction {
 				// Delete record and table.
 				for (Record record : records) {
 					String tableName = record.getValue(Tickers.Fields.TableName).getString();
-					Table table = TableUtils.getTableOHLCVS(session, server, tableName);
+					Table table = TableUtils.getTableDataPrice(session, server, tableName);
 					PersistorUtils.getDDL().dropTable(table);
 					PersistorUtils.getDDL().buildTable(table);
 				}
@@ -372,27 +372,27 @@ public class ActionTickers extends AbstractAction {
 					return;
 				}
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
-				DataPersistor persistor = new DataPersistor(PersistorUtils.getPersistorOHLCV(session, server, tableName));
+				DataPersistor persistor = new DataPersistor(PersistorUtils.getPersistorDataPrice(session, server, tableName));
 				persistor.setSensitive(false);
 
 				String serverId = record.getValue(Tickers.Fields.ServerId).getString();
 				String instrId = record.getValue(Tickers.Fields.InstrumentId).getString();
 				String periodId = record.getValue(Tickers.Fields.PeriodId).getString();
-				Formatters.configureOHLCV(session, persistor, serverId, instrId, periodId);
+				Formatters.configureDataPrice(session, persistor, serverId, instrId, periodId);
 
 				Record masterRecord = persistor.getDefaultRecord();
 
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(OHLCVS.Fields.Index);
-				tableModelRecord.addColumn(OHLCVS.Fields.Time);
-				tableModelRecord.addColumn(OHLCVS.Fields.TimeFmt);
-				tableModelRecord.addColumn(OHLCVS.Fields.Open);
-				tableModelRecord.addColumn(OHLCVS.Fields.High);
-				tableModelRecord.addColumn(OHLCVS.Fields.Low);
-				tableModelRecord.addColumn(OHLCVS.Fields.Close);
-				tableModelRecord.addColumn(OHLCVS.Fields.Volume);
+				tableModelRecord.addColumn(DataPrice.Fields.Index);
+				tableModelRecord.addColumn(DataPrice.Fields.Time);
+				tableModelRecord.addColumn(DataPrice.Fields.TimeFmt);
+				tableModelRecord.addColumn(DataPrice.Fields.Open);
+				tableModelRecord.addColumn(DataPrice.Fields.High);
+				tableModelRecord.addColumn(DataPrice.Fields.Low);
+				tableModelRecord.addColumn(DataPrice.Fields.Close);
+				tableModelRecord.addColumn(DataPrice.Fields.Volume);
 
 				tableModelRecord.setRecordSet(new DataRecordSet(persistor));
 				tableRecord.setModel(tableModelRecord);
@@ -442,7 +442,7 @@ public class ActionTickers extends AbstractAction {
 					return;
 				}
 				String tableName = record.getValue(Tickers.Fields.TableName).getString();
-				Persistor persistor = PersistorUtils.getPersistorOHLCV(session, server, tableName);
+				Persistor persistor = PersistorUtils.getPersistorDataPrice(session, server, tableName);
 
 				Period period = PeriodUtils.getPeriodFromRecordTickers(record);
 				Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
@@ -458,31 +458,31 @@ public class ActionTickers extends AbstractAction {
 
 				// By default in this view add two SMA of 50 and 200 periods.
 				IndicatorDataList sma50 =
-					IndicatorUtils.getSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 50);
+					IndicatorUtils.getSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 50);
 				IndicatorDataList sma200 =
-					IndicatorUtils.getSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.BLACK, 200);
+					IndicatorUtils.getSimpleMovingAverage(price, Data.IndexClose, Color.BLACK, 200);
 
 				 plotData.add(sma50);
 				 plotData.add(sma200);
 
 //				IndicatorDataList sma5 =
 //					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 5, 3, 3);
+//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 5, 3, 3);
 //				IndicatorDataList sma21 =
 //					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 21, 5, 5);
+//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 21, 5, 5);
 //				IndicatorDataList sma89 =
 //					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 89, 13, 13);
+//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 89, 13, 13);
 //				IndicatorDataList sma377 =
 //					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 377, 21, 21);
+//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 377, 21, 21);
 //				IndicatorDataList sma1597 =
 //					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 1597, 34, 34);
+//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 1597, 34, 34);
 //				IndicatorDataList sma6765 =
 //					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, OHLCV.Index.Close.getIndex(), Color.GRAY, 6765, 55, 55);
+//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 6765, 55, 55);
 
 //				plotData.add(sma5);
 //				plotData.add(sma21);

@@ -39,10 +39,10 @@ public class PriceInfo extends DataInfo {
 		setName(instrument.getId());
 		setDescription(instrument.getDescription());
 		setPeriod(period);
-		addOutput("Open", "O", 0, "Open OHLCV value");
-		addOutput("High", "H", 1, "High OHLCV value");
-		addOutput("Low", "L", 2, "Low OHLCV value");
-		addOutput("Close", "C", 3, "Close OHLCV value");
-		addOutput("Volume", "V", 4, "Volume OHLCV value");
+		addOutput("Open", "O", 0, "Open data value");
+		addOutput("High", "H", 1, "High data value");
+		addOutput("Low", "L", 2, "Low data value");
+		addOutput("Close", "C", 3, "Close data value");
+		addOutput("Volume", "V", 4, "Volume data value");
 	}
 }

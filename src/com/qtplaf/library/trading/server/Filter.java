@@ -14,7 +14,7 @@
 package com.qtplaf.library.trading.server;
 
 /**
- * Enumerates the filters applicable to OHLCV data.
+ * Enumerates the filters applicable to price data.
  * 
  * @author Miquel Sas
  */

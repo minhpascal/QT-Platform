@@ -356,7 +356,7 @@ public class MainHandleStrategyOpenChart extends JFrame {
 					ReversalAmount.THREE }, "Reversal Amount", feedDescriptor.getReversalAmount());
 			comboBoxTickBarSize = setupComboBox(
 					new TickBarSize[] { TWO, THREE, FOUR, FIVE },
-						"Tick OHLCV Size",
+						"Tick data Size",
 						feedDescriptor.getTickBarSize());
 			comboBoxDataRepresentationType = new JComboBox(feedDescriptor.getDataType().getSupportedPresentationTypes()
 					.toArray());

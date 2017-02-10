@@ -71,13 +71,13 @@ public class PersistorUtils {
 	}
 
 	/**
-	 * Returns the OHLCV persistor.
+	 * Returns the data price persistor.
 	 * 
 	 * @param session Working session.
 	 * @return The persistor.
 	 */
-	public static Persistor getPersistorOHLCV(Session session, Server server, String name) {
-		return TableUtils.getTableOHLCVS(session, server, name).getPersistor();
+	public static Persistor getPersistorDataPrice(Session session, Server server, String name) {
+		return TableUtils.getTableDataPrice(session, server, name).getPersistor();
 	}
 
 	/**

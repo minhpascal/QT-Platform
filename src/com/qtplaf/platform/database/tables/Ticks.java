@@ -53,7 +53,7 @@ public class Ticks extends Table {
 	 * @param values The list of values.
 	 * @return The tick data element
 	 */
-	public static Tick getOHLCV(List<Value> values) {
+	public static Tick getData(List<Value> values) {
 		if (values.size() != 5) {
 			throw new IllegalArgumentException("Invalid list of values: size must be 5");
 		}

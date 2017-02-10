@@ -23,11 +23,11 @@ import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * OHLCVS table definition.
+ * Price table definition.
  * 
  * @author Miquel Sas
  */
-public class OHLCVS extends Table {
+public class DataPrice extends Table {
 
 	/** Field names. */
 	public interface Fields {
@@ -48,7 +48,7 @@ public class OHLCVS extends Table {
 	 * @param server The server.
 	 * @param name The table name.
 	 */
-	public OHLCVS(Session session, Server server, String name) {
+	public DataPrice(Session session, Server server, String name) {
 		super(session);
 
 		setName(name);

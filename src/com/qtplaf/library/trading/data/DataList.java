@@ -144,9 +144,9 @@ public abstract class DataList {
 	 */
 	private PlotType plotType = PlotType.Line;
 	/**
-	 * The OHLCV index case of price and line plot.
+	 * The price index case of price and line plot.
 	 */
-	private OHLCV.Index indexOHLCV = OHLCV.Index.Close;
+	private int indexPrice = Data.IndexClose;
 	/**
 	 * A list of plot properties, one to plot prices, either lines, bars or candles, one for volumes, and one for each
 	 * data value in indicators.
@@ -192,7 +192,7 @@ public abstract class DataList {
 			if (!getPlotType().equals(dataList.getPlotType())) {
 				return false;
 			}
-			if (!getIndexOHLCV().equals(dataList.getIndexOHLCV())) {
+			if (getIndexPrice() != dataList.getIndexPrice()) {
 				return false;
 			}
 			int count = getPlotPropertiesCount();
@@ -283,21 +283,21 @@ public abstract class DataList {
 	}
 
 	/**
-	 * Returns the OHLCV index, in case of price chart and line plot.
+	 * Returns the price index, in case of price chart and line plot.
 	 * 
-	 * @return The OHLCV index.
+	 * @return The price index.
 	 */
-	public OHLCV.Index getIndexOHLCV() {
-		return indexOHLCV;
+	public int getIndexPrice() {
+		return indexPrice;
 	}
 
 	/**
-	 * Sets the OHLCV index, in case of price chart and line plot.
+	 * Sets the price index to plot, in case of price chart and line plot.
 	 * 
-	 * @param indexOHLCV The OHLCV index.
+	 * @param indexPrice The price index.
 	 */
-	public void setIndexOHLCV(OHLCV.Index plotValue) {
-		this.indexOHLCV = plotValue;
+	public void setIndexPrice(int indexPrice) {
+		this.indexPrice = indexPrice;
 	}
 
 	/**

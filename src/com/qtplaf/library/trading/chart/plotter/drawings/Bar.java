@@ -17,7 +17,7 @@ import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 
 import com.qtplaf.library.trading.chart.plotter.Plotter;
-import com.qtplaf.library.trading.data.OHLCV;
+import com.qtplaf.library.trading.data.Data;
 
 /**
  * A bar drawing.
@@ -30,10 +30,10 @@ public class Bar extends CandlestickOrBar {
 	 * Constructor assigning the values.
 	 * 
 	 * @param index The data index.
-	 * @param ohlcv The OHLCV.
+	 * @param data The data.
 	 */
-	public Bar(int index, OHLCV ohlcv) {
-		super(index, ohlcv);
+	public Bar(int index, Data data) {
+		super(index, data);
 	}
 
 	/**
@@ -44,11 +44,11 @@ public class Bar extends CandlestickOrBar {
 	 */
 	public Shape getShape(Plotter plotter) {
 		// The values to plot.
-		OHLCV ohlcv = getOHLCV();
-		double open = ohlcv.getOpen();
-		double high = ohlcv.getHigh();
-		double low = ohlcv.getLow();
-		double close = ohlcv.getClose();
+		Data data = getData();
+		double open = Data.getOpen(data);
+		double high = Data.getHigh(data);
+		double low = Data.getLow(data);
+		double close = Data.getClose(data);
 
 		// The X coordinate to start painting.
 		int x = plotter.getCoordinateX(getIndex());

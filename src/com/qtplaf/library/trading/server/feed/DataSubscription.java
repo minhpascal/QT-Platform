@@ -13,19 +13,16 @@
  */
 package com.qtplaf.library.trading.server.feed;
 
-import java.util.EventObject;
-
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.OfferSide;
 
 /**
- * OHLCV feed event.
+ * Defines a subscription to an instrument price data.
  * 
  * @author Miquel Sas
  */
-public class OHLCVEvent extends EventObject {
+public class DataSubscription {
 
 	/**
 	 * Instrument.
@@ -40,25 +37,22 @@ public class OHLCVEvent extends EventObject {
 	 */
 	private OfferSide offerSide;
 	/**
-	 * The OHLCV data.
+	 * A user object.
 	 */
-	private OHLCV ohlcv;
+	private Object object;
 
 	/**
-	 * Constructor assigning fields.
+	 * Constructor.
 	 * 
-	 * @param source
 	 * @param instrument The instrument.
 	 * @param period The period.
-	 * @param offerSide Offer side.
-	 * @param ohlcv OHlcv data.
+	 * @param offerSide The offer side.
 	 */
-	public OHLCVEvent(Object source, Instrument instrument, Period period, OfferSide offerSide, OHLCV ohlcv) {
-		super(source);
+	public DataSubscription(Instrument instrument, Period period, OfferSide offerSide) {
+		super();
 		this.instrument = instrument;
 		this.period = period;
 		this.offerSide = offerSide;
-		this.ohlcv = ohlcv;
 	}
 
 	/**
@@ -89,31 +83,32 @@ public class OHLCVEvent extends EventObject {
 	}
 
 	/**
-	 * Returns the OHLCV data.
+	 * Returns the user object.
 	 * 
-	 * @return The OHLCV data.
+	 * @return The user object.
 	 */
-	public OHLCV getOHLCV() {
-		return ohlcv;
+	public Object getObject() {
+		return object;
 	}
 
 	/**
-	 * Returns a string representation of this event.
+	 * Sets the user object.
 	 * 
-	 * @return A string representation.
+	 * @param object The user object.
 	 */
-	public String toString() {
-		StringBuilder b = new StringBuilder();
-		b.append(getSource().getClass().getSimpleName());
-		b.append(", ");
-		b.append(getInstrument().getDescription());
-		b.append(", ");
-		b.append(getPeriod());
-		b.append(", ");
-		b.append(getOfferSide());
-		b.append(", ");
-		b.append(getOHLCV());
-		return b.toString();
+	public void setObject(Object object) {
+		this.object = object;
 	}
 
+	/**
+	 * Check if this subscription should accept the argument data.
+	 * 
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @param offerSide The offer side.
+	 * @return A boolean indicating if this subscription should accept the argument data.
+	 */
+	public boolean acceptsData(Instrument instrument, Period period, OfferSide offerSide) {
+		return this.instrument.equals(instrument) && this.period.equals(period) && this.offerSide.equals(offerSide);
+	}
 }

@@ -792,9 +792,9 @@ public class DomainUtils {
 		field.setName(name);
 		field.setAlias(alias);
 		field.setType(Types.Long);
-		field.setHeader(session.getString("fieldOHLCVTimeLabel"));
-		field.setLabel(session.getString("fieldOHLCVTimeLabel"));
-		field.setTitle(session.getString("fieldOHLCVTimeHeader"));
+		field.setHeader(session.getString("fieldDataTimeLabel"));
+		field.setLabel(session.getString("fieldDataTimeLabel"));
+		field.setTitle(session.getString("fieldDataTimeHeader"));
 		return field;
 	}
 
@@ -823,9 +823,9 @@ public class DomainUtils {
 		field.setName(name);
 		field.setAlias(alias);
 		field.setType(Types.Long);
-		field.setHeader(session.getString("fieldOHLCVTimeFmtLabel"));
-		field.setLabel(session.getString("fieldOHLCVTimeFmtLabel"));
-		field.setTitle(session.getString("fieldOHLCVTimeFmtHeader"));
+		field.setHeader(session.getString("fieldDataTimeFmtLabel"));
+		field.setLabel(session.getString("fieldDataTimeFmtLabel"));
+		field.setTitle(session.getString("fieldDataTimeFmtHeader"));
 		field.setPersistent(false);
 		return field;
 	}
@@ -854,9 +854,9 @@ public class DomainUtils {
 			session,
 			name,
 			alias,
-			session.getString("fieldOHLCVOpenHeader"),
-			session.getString("fieldOHLCVOpenLabel"),
-			session.getString("fieldOHLCVOpenLabel"));
+			session.getString("fieldDataOpenHeader"),
+			session.getString("fieldDataOpenLabel"),
+			session.getString("fieldDataOpenLabel"));
 	}
 
 	/**
@@ -883,9 +883,9 @@ public class DomainUtils {
 			session,
 			name,
 			alias,
-			session.getString("fieldOHLCVHighHeader"),
-			session.getString("fieldOHLCVHighLabel"),
-			session.getString("fieldOHLCVHighLabel"));
+			session.getString("fieldDataHighHeader"),
+			session.getString("fieldDataHighLabel"),
+			session.getString("fieldDataHighLabel"));
 	}
 
 	/**
@@ -912,9 +912,9 @@ public class DomainUtils {
 			session,
 			name,
 			alias,
-			session.getString("fieldOHLCVLowHeader"),
-			session.getString("fieldOHLCVLowLabel"),
-			session.getString("fieldOHLCVLowLabel"));
+			session.getString("fieldDataLowHeader"),
+			session.getString("fieldDataLowLabel"),
+			session.getString("fieldDataLowLabel"));
 	}
 
 	/**
@@ -941,9 +941,9 @@ public class DomainUtils {
 			session,
 			name,
 			alias,
-			session.getString("fieldOHLCVCloseHeader"),
-			session.getString("fieldOHLCVCloseLabel"),
-			session.getString("fieldOHLCVCloseLabel"));
+			session.getString("fieldDataCloseHeader"),
+			session.getString("fieldDataCloseLabel"),
+			session.getString("fieldDataCloseLabel"));
 	}
 
 	/**
@@ -970,9 +970,9 @@ public class DomainUtils {
 			session,
 			name,
 			alias,
-			session.getString("fieldOHLCVVolumeHeader"),
-			session.getString("fieldOHLCVVolumeLabel"),
-			session.getString("fieldOHLCVVolumeLabel"));
+			session.getString("fieldDataVolumeHeader"),
+			session.getString("fieldDataVolumeLabel"),
+			session.getString("fieldDataVolumeLabel"));
 	}
 
 	/**
@@ -1000,9 +1000,9 @@ public class DomainUtils {
 		field.setName(name);
 		field.setAlias(alias);
 		field.setType(Types.Long);
-		field.setHeader(session.getString("fieldOHLCVIndexLabel"));
-		field.setLabel(session.getString("fieldOHLCVIndexLabel"));
-		field.setTitle(session.getString("fieldOHLCVIndexHeader"));
+		field.setHeader(session.getString("fieldDataIndexLabel"));
+		field.setLabel(session.getString("fieldDataIndexLabel"));
+		field.setTitle(session.getString("fieldDataIndexHeader"));
 		return field;
 	}
 

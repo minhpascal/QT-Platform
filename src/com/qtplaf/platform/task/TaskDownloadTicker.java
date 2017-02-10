@@ -26,17 +26,17 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.task.TaskRunner;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.server.DataIterator;
 import com.qtplaf.library.trading.server.Filter;
-import com.qtplaf.library.trading.server.OHLCVIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.tables.OHLCVS;
+import com.qtplaf.platform.database.tables.DataPrice;
 import com.qtplaf.platform.util.RecordUtils;
 import com.qtplaf.platform.util.TableUtils;
 
@@ -124,8 +124,8 @@ public class TaskDownloadTicker extends TaskRunner {
 		deleteFromTimeFrom();
 
 		// Iterate receiving bars.
-		OHLCVIterator iter =
-			getServer().getHistoryManager().getOHLCVIterator(
+		DataIterator iter =
+			getServer().getHistoryManager().getDataIterator(
 				instrument,
 				period,
 				offerSide,
@@ -150,7 +150,7 @@ public class TaskDownloadTicker extends TaskRunner {
 			}
 
 			// Next bar.
-			OHLCV ohlcv = iter.next();
+			Data ohlcv = iter.next();
 
 			// Get the step from the bar time and notify.
 			long time = ohlcv.getTime();
@@ -159,7 +159,7 @@ public class TaskDownloadTicker extends TaskRunner {
 			notifyStepStart(step, getStepMessage(step, steps));
 
 			// Get the data record.
-			Record record = RecordUtils.getRecordOHLCV(getPersistor().getDefaultRecord(), ohlcv);
+			Record record = RecordUtils.getRecordDataPrice(getPersistor().getDefaultRecord(), ohlcv);
 
 			// Insert the record.
 			getPersistor().insert(record);
@@ -219,7 +219,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private Table getTable() {
 		String tableName = Names.getName(instrument, period);
-		return TableUtils.getTableOHLCVS(getSession(), server, tableName);
+		return TableUtils.getTableDataPrice(getSession(), server, tableName);
 	}
 
 	/**
@@ -255,8 +255,8 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private long getTimeTo() throws Exception {
 		if (timeTo == null) {
-			OHLCV ohlcv = getServer().getHistoryManager().getLastOHLCV(instrument, period);
-			timeTo = ohlcv.getTime();
+			Data data = getServer().getHistoryManager().getLastData(instrument, period);
+			timeTo = data.getTime();
 		}
 		return timeTo;
 	}
@@ -271,7 +271,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		if (timeFrom == null) {
 			long time = getTimeOfLastDowloaded();
 			if (time == -1) {
-				time = getServer().getHistoryManager().getTimeOfFirstOHLCVData(instrument, period);
+				time = getServer().getHistoryManager().getTimeOfFirstData(instrument, period);
 			}
 			timeFrom = time;
 		}
@@ -279,14 +279,14 @@ public class TaskDownloadTicker extends TaskRunner {
 	}
 
 	/**
-	 * Returns the last time of downloaded OHLCV data.
+	 * Returns the last time of downloaded price data.
 	 * 
 	 * @return The last time.
 	 * @throws PersistorException
 	 */
 	private long getTimeOfLastDowloaded() throws PersistorException {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(OHLCVS.Fields.Time);
+		Field fTIME = persistor.getField(DataPrice.Fields.Time);
 		Order order = new Order();
 		order.add(fTIME, false);
 		Record record = null;
@@ -296,7 +296,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		}
 		iter.close();
 		if (record != null) {
-			return record.getValue(OHLCVS.Fields.Time).getLong();
+			return record.getValue(DataPrice.Fields.Time).getLong();
 		}
 		return -1;
 	}
@@ -329,7 +329,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private void deleteFromTimeFrom() throws Exception {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(OHLCVS.Fields.Time);
+		Field fTIME = persistor.getField(DataPrice.Fields.Time);
 		Value vTIME = new Value(getTimeFrom());
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldGT(fTIME, vTIME));

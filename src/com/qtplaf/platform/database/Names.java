@@ -45,23 +45,23 @@ public class Names {
 	}
 	
 	/**
-	 * Returns the name for a table of OHLCV data.
+	 * Returns the name for a table of price data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
-	 * @return The name for a table of OHLCV data.
+	 * @return The name for a table of price data.
 	 */
 	public static String getName(Instrument instrument, Period period) {
 		return getName(instrument.getId(), period.getId());
 	}
 	
 	/**
-	 * Returns the name for a table of OHLCV data.
+	 * Returns the name for a table of price data.
 	 * 
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 * @param suffix The suffix.
-	 * @return The name for a table of OHLCV data.
+	 * @return The name for a table of price data.
 	 */
 	public static String getName(Instrument instrument, Period period, String suffix) {
 		return getName(instrument.getId(), period.getId(), suffix);
@@ -73,7 +73,7 @@ public class Names {
 	 * @param instrument The instrument id.
 	 * @param period The period id.
 	 * @param suffix The suffix.
-	 * @return The name for a table of OHLCV data.
+	 * @return The name for a table of price data.
 	 */
 	public static String getName(String instrument, String period) {
 		return getName(instrument, period, null);
@@ -85,7 +85,7 @@ public class Names {
 	 * @param instrument The instrument id.
 	 * @param period The period id.
 	 * @param suffix The suffix.
-	 * @return The name for a table of OHLCV data.
+	 * @return The name for a table of price data.
 	 */
 	public static String getName(String instrument, String period, String suffix) {
 		StringBuilder b = new StringBuilder();
@@ -100,7 +100,7 @@ public class Names {
 	}
 
 	/**
-	 * Returns the period id given an OHLCV tablle name.
+	 * Returns the period id given an price table name.
 	 * 
 	 * @param tableName The table name.
 	 * @return The period id.

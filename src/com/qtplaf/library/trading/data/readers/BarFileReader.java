@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.util.Locale;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.data.MapDataList;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.OHLCV;
+import com.qtplaf.library.trading.data.MapDataList;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.util.Calendar;
@@ -87,7 +87,7 @@ public class BarFileReader {
 			double close = Double.parseDouble(sclose);
 			double volume = Double.parseDouble(svolume);
 
-			OHLCV candle = new OHLCV(time, open, high, low, close, volume);
+			Data candle = new Data(time, open, high, low, close, volume);
 			dataList.add(candle);
 		}
 		br.close();

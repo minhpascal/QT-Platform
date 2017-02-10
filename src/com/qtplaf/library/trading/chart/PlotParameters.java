@@ -370,7 +370,7 @@ public class PlotParameters {
 	 */
 	public void setChartBarWidthFactor(double barWidthFactor) {
 		if (barWidthFactor <= 0 || barWidthFactor > 1) {
-			throw new IllegalArgumentException("OHLCV width factor must be between 0 and 1.");
+			throw new IllegalArgumentException("Data width factor must be between 0 and 1.");
 		}
 		this.chartBarWidthFactor = barWidthFactor;
 		chart.repaint();

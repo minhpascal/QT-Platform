@@ -18,7 +18,7 @@ import com.dukascopy.api.ITick;
 import com.dukascopy.api.Instrument;
 import com.dukascopy.api.OfferSide;
 import com.dukascopy.api.Period;
-import com.qtplaf.library.trading.data.OHLCV;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.Tick;
 import com.qtplaf.library.trading.server.feed.FeedDispatcher;
 
@@ -45,7 +45,7 @@ public class DkFeedDispatcher extends FeedDispatcher {
 	}
 
 	/**
-	 * Adds a current OHLCV data event to the input queue, from Dukascopy data.
+	 * Adds a current data event to the input queue, from Dukascopy data.
 	 * 
 	 * @param dkInstrument The Dukascopy instrument.
 	 * @param dkPeriod The Dukascopy period.
@@ -56,12 +56,12 @@ public class DkFeedDispatcher extends FeedDispatcher {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
 		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
-		OHLCV ohlcv = server.getDkConverter().fromDkBar(dkBar);
-		addCurrentOHLCV(instrument, period, offerSide, ohlcv);
+		Data ohlcv = server.getDkConverter().fromDkBar(dkBar);
+		addCurrentData(instrument, period, offerSide, ohlcv);
 	}
 
 	/**
-	 * Adds a comppleted OHLCV data event to the input queue, from Dukascopy data.
+	 * Adds a comppleted data event to the input queue, from Dukascopy data.
 	 * 
 	 * @param dkInstrument The Dukascopy instrument.
 	 * @param dkPeriod The Dukascopy period.
@@ -72,8 +72,8 @@ public class DkFeedDispatcher extends FeedDispatcher {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
 		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
-		OHLCV ohlcv = server.getDkConverter().fromDkBar(dkBar);
-		addOHLCV(instrument, period, offerSide, ohlcv);
+		Data ohlcv = server.getDkConverter().fromDkBar(dkBar);
+		addData(instrument, period, offerSide, ohlcv);
 	}
 
 	/**

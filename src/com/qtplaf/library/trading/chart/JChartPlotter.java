@@ -251,7 +251,7 @@ public class JChartPlotter extends JPanel {
 		// Terminate plots.
 		for (int i = 0; i < plotData.size(); i++) {
 			DataList dataList = plotData.get(i);
-			dataList.getDataPlotter().endPlot(g2, dataList);
+			dataList.getDataPlotter().endPlot(g2);
 		}
 	}
 

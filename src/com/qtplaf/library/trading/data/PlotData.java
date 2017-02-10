@@ -483,26 +483,26 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 				if (data == null || !data.isValid()) {
 					continue;
 				}
-				double[] values = data.getData();
 				if (dataType.equals(DataType.Price)) {
 					// Price: check high and low.
-					double high = values[OHLCV.Index.High.getIndex()];
+					double high = Data.getHigh(data);
 					if (high > maxValue) {
 						maxValue = high;
 					}
-					double low = values[OHLCV.Index.Low.getIndex()];
+					double low = Data.getLow(data);
 					if (low < minValue) {
 						minValue = low;
 					}
 				} else if (dataType.equals(DataType.Volume)) {
 					// Volume: min == 0, max = volume.
-					double volume = values[OHLCV.Index.Volume.getIndex()];
+					double volume = Data.getVolume(data);
 					if (volume > maxValue) {
 						maxValue = volume;
 					}
 					minValue = 0;
 				} else {
 					// Check max and min of the list of values.
+					double[] values = data.getData();
 					for (double value : values) {
 						if (value > maxValue) {
 							maxValue = value;

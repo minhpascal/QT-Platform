@@ -24,11 +24,11 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.util.NumberUtils;
 
 /**
- * A formatter for OHLCV/Bar volume value that adapts to the volume scale.
+ * A formatter for Bar volume value that adapts to the volume scale.
  * 
  * @author Miquel Sas
  */
-public class OHLCVVolume extends AbstractFormatter {
+public class VolumeValue extends AbstractFormatter {
 	
 	/** Session. */
 	private Session session;
@@ -41,7 +41,7 @@ public class OHLCVVolume extends AbstractFormatter {
 	 * @param session Working session.
 	 * @param period The period.
 	 */
-	public OHLCVVolume(Session session, Instrument instrument) {
+	public VolumeValue(Session session, Instrument instrument) {
 		super();
 		this.session = session;
 		this.volumeScale = instrument.getVolumeScale();

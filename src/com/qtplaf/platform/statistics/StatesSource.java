@@ -50,6 +50,7 @@ public class StatesSource extends StatesAverages {
 		public static final String Index = "index";
 		public static final String Time = "time";
 		public static final String TimeFmt = "time_fmt";
+		public static final String Open = "open";
 		public static final String High = "high";
 		public static final String Low = "low";
 		public static final String Close = "close";
@@ -183,6 +184,7 @@ public class StatesSource extends StatesAverages {
 		table.addField(DomainUtils.getIndex(getSession(), Fields.Index));
 		table.addField(DomainUtils.getTime(getSession(), Fields.Time));
 		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
+		table.addField(DomainUtils.getOpen(getSession(), Fields.Open));
 		table.addField(DomainUtils.getHigh(getSession(), Fields.High));
 		table.addField(DomainUtils.getLow(getSession(), Fields.Low));
 		table.addField(DomainUtils.getClose(getSession(), Fields.Close));

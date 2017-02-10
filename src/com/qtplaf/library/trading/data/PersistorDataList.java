@@ -34,7 +34,7 @@ import com.qtplaf.library.util.list.Delist;
  * <li>The second field is a long, the time of the timed data.</li>
  * <li>All subsequent <b>persistent</b> fields are of type double and are considered data.</li>
  * </ul>
- * With this structure, the <tt>PersistorDataList</tt> can handle not only <tt>OHLCV</tt> data, but any timed
+ * With this structure, the <tt>PersistorDataList</tt> can handle not only <tt>Data</tt> data, but any timed
  * <tt>Data</tt>.
  * 
  * @author Miquel Sas

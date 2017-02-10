@@ -329,7 +329,7 @@ public class MainOpenChart extends JFrame {
 					"Price Range", feedDescriptor.getPriceRange());
 			cmbReversalAmount = setupComboBox(new ReversalAmount[] { ReversalAmount.ONE, ReversalAmount.TWO, ReversalAmount.THREE },
 					"Reversal Amount", feedDescriptor.getReversalAmount());
-			cmbTickBarSize = setupComboBox(new TickBarSize[] { TWO, THREE, FOUR, FIVE }, "Tick OHLCV Size",
+			cmbTickBarSize = setupComboBox(new TickBarSize[] { TWO, THREE, FOUR, FIVE }, "Tick data Size",
 					feedDescriptor.getTickBarSize());
 			cmbDataRepresentationType = new JComboBox(feedDescriptor.getDataType().getSupportedPresentationTypes().toArray());
 			cmbDataRepresentationType.addActionListener(new ActionListener() {

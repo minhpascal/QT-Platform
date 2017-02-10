@@ -24,11 +24,11 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.util.NumberUtils;
 
 /**
- * A formatter for OHLCV pip value that adapts to the pip scale.
+ * A formatter for data pip value that adapts to the pip scale.
  * 
  * @author Miquel Sas
  */
-public class OHLCVPip extends AbstractFormatter {
+public class PipValue extends AbstractFormatter {
 	
 	/** Session. */
 	private Session session;
@@ -41,7 +41,7 @@ public class OHLCVPip extends AbstractFormatter {
 	 * @param session Working session.
 	 * @param period The period.
 	 */
-	public OHLCVPip(Session session, Instrument instrument) {
+	public PipValue(Session session, Instrument instrument) {
 		super();
 		this.session = session;
 		this.pipScale = instrument.getPipScale();
