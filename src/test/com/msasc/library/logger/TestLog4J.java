@@ -7,6 +7,7 @@ import org.apache.logging.log4j.core.appender.RollingFileAppender;
 
 public class TestLog4J {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws InterruptedException {
 		System.setProperty("log4j.configurationFile", "Logger.xml");
 		

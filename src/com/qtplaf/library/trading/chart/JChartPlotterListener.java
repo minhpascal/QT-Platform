@@ -23,6 +23,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import com.qtplaf.library.swing.event.Mask;
+import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.ColorUtils;
 
@@ -289,9 +290,10 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 
 		JChartContainer chartContainer = chartPlotter.getChartContainer();
 		JChart chart = chartContainer.getChart();
+		InformationPlotParameters plotParameters = chart.getInfoPlotParameters();
 
-		Color colorFocusGained = chart.getPlotParameters().getInfoBackgroundColor();
-		double brightnessFactor = chart.getPlotParameters().getInfoBackgroundBrightnessFactor();
+		Color colorFocusGained = plotParameters.getInfoBackgroundColor();
+		double brightnessFactor = plotParameters.getInfoBackgroundBrightnessFactor();
 		Color colorFocusLost = ColorUtils.brighter(colorFocusGained, brightnessFactor);
 
 		chartContainer.getChartInfo().setPanelInfoBackgorund(colorFocusGained);

@@ -22,8 +22,8 @@ import java.awt.Stroke;
 import java.awt.geom.Point2D;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
 import com.qtplaf.library.trading.chart.plotter.drawings.Candlestick;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;

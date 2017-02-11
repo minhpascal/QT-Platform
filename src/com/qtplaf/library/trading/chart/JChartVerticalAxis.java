@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.plotter.VerticalAxisPlotter;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.FormatUtils;
 

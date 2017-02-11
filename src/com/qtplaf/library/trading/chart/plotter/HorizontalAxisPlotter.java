@@ -22,7 +22,7 @@ import java.awt.Insets;
 import java.awt.Stroke;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Calendar;
@@ -92,7 +92,7 @@ public class HorizontalAxisPlotter extends Plotter {
 		Session session,
 		PlotData plotData,
 		Dimension chartSize,
-		PlotParameters plotParameters,
+		HorizontalAxisPlotParameters plotParameters,
 		Dimension horizontalAxisSize) {
 		super(session, plotData, chartSize, plotParameters);
 		this.horizontalAxisSize = horizontalAxisSize;
@@ -196,6 +196,15 @@ public class HorizontalAxisPlotter extends Plotter {
 	}
 
 	/**
+	 * Returns this plotter specific parameters.
+	 * 
+	 * @return This plotter specific parameters.
+	 */
+	public HorizontalAxisPlotParameters getHorizontalAxisPlotParameters() {
+		return (HorizontalAxisPlotParameters) getPlotParameters();
+	}
+
+	/**
 	 * Plot the horizontal axis.
 	 * 
 	 * @param g2 The graphics context.
@@ -235,10 +244,10 @@ public class HorizontalAxisPlotter extends Plotter {
 		Stroke saveStroke = g2.getStroke();
 
 		// The text insets, font, color and stroke.
-		Insets insets = getPlotParameters().getHorizontalAxisTextInsets();
-		Font font = getPlotParameters().getHorizontalAxisTextFont();
-		Color color = getPlotParameters().getHorizontalAxisColor();
-		Stroke stroke = getPlotParameters().getHorizontalAxisLineStroke();
+		Insets insets = getHorizontalAxisPlotParameters().getHorizontalAxisTextInsets();
+		Font font = getHorizontalAxisPlotParameters().getHorizontalAxisTextFont();
+		Color color = getHorizontalAxisPlotParameters().getHorizontalAxisColor();
+		Stroke stroke = getHorizontalAxisPlotParameters().getHorizontalAxisLineStroke();
 
 		// The font metrics.
 		FontMetrics fm = g2.getFontMetrics(font);
@@ -427,12 +436,9 @@ public class HorizontalAxisPlotter extends Plotter {
 	 */
 	private TimePeriod getTimePeriodThatFits(Graphics2D g2, long timeElapsed, int availableWidth) {
 
-		// Plot parametters.
-		PlotParameters plotParameters = getPlotParameters();
-
 		// The font metrics to calculate text widths and the text insets.
-		FontMetrics fm = g2.getFontMetrics(plotParameters.getVerticalAxisTextFont());
-		Insets insets = plotParameters.getHorizontalAxisTextInsets();
+		FontMetrics fm = g2.getFontMetrics(getHorizontalAxisPlotParameters().getVerticalAxisTextFont());
+		Insets insets = getHorizontalAxisPlotParameters().getHorizontalAxisTextInsets();
 
 		// Iterate time periods.
 		TimePeriod[] timePeriods = TimePeriod.values();

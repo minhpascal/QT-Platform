@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
 import com.qtplaf.library.util.Icons;
 
 /**
@@ -70,8 +71,8 @@ public class JChartInfo extends JPanel {
 
 			Graphics2D g2 = (Graphics2D) g;
 
-			// Plot parameters.
-			PlotParameters plotParameters = chartContainer.getChart().getPlotParameters();
+			// Info plot params.
+			InformationPlotParameters plotParameters = chartContainer.getChart().getInfoPlotParameters();
 
 			// Save the current color and font.
 			Color saveColor = g2.getColor();
@@ -107,8 +108,8 @@ public class JChartInfo extends JPanel {
 
 				// If necessary paint the separator.
 				if (separator) {
-					g2.setColor(chartContainer.getChart().getPlotParameters().getInfoSeparatorColor());
-					String separatorStrings = chartContainer.getChart().getPlotParameters().getInfoSeparatorString();
+					g2.setColor(plotParameters.getInfoSeparatorColor());
+					String separatorStrings = plotParameters.getInfoSeparatorString();
 					g2.drawString(separatorStrings, x, y);
 					x += fm.stringWidth(separatorStrings);
 				}
@@ -410,9 +411,12 @@ public class JChartInfo extends JPanel {
 	public JChartInfo(JChartContainer chartContainer) {
 		super();
 		this.chartContainer = chartContainer;
+		
+		// Info plot params.
+		InformationPlotParameters parameters = chartContainer.getChart().getInfoPlotParameters();
 
 		// Set the backgroud color.
-		setBackground(chartContainer.getChart().getPlotParameters().getInfoBackgroundColor());
+		setBackground(parameters.getInfoBackgroundColor());
 
 		// Layout
 		setLayout(new GridBagLayout());
@@ -438,17 +442,19 @@ public class JChartInfo extends JPanel {
 		constraintsPanelInfo.gridx = 0;
 		constraintsPanelInfo.gridy = 0;
 		constraintsPanelInfo.insets = new Insets(0, 0, 0, 0);
+		
+		// Info plot params.
+		InformationPlotParameters plotParameters = chartContainer.getChart().getInfoPlotParameters();
 
 		// Calculate the size based on the desired font and insets. The graphics context needs to be that of the upper
 		// level chart, because it is the only one displayed at this time.
 		Graphics g = getChartContainer().getChart().getGraphics();
-		PlotParameters plotParameters = chartContainer.getChart().getPlotParameters();
 		FontMetrics fm = g.getFontMetrics(plotParameters.getInfoTextFont());
 		int size =
-			chartContainer.getChart().getPlotParameters().getInfoTextInsets().top +
+			plotParameters.getInfoTextInsets().top +
 				fm.getMaxAscent() +
 				fm.getMaxDescent() +
-				chartContainer.getChart().getPlotParameters().getInfoTextInsets().bottom;
+				plotParameters.getInfoTextInsets().bottom;
 
 		// Define and add the info panel.
 		panelInfo = new JPanelInfo();

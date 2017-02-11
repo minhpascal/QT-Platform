@@ -3,7 +3,6 @@ package test.com.msasc.library.ai.nnet;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Random;
 
 import com.qtplaf.library.util.SystemUtils;

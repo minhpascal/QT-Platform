@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
 import com.qtplaf.library.trading.chart.plotter.drawings.Line;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataType;

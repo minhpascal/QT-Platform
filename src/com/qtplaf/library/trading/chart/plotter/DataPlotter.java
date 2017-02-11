@@ -17,7 +17,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 

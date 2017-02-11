@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart;
+package com.qtplaf.library.trading.chart.plotter.parameters;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -20,6 +20,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Stroke;
+
+import com.qtplaf.library.trading.chart.CursorType;
+import com.qtplaf.library.trading.chart.JChart;
 
 /**
  * Encapsulates in a single class all plot parameters involved in plotting objects like lines, bars and candles, and
@@ -54,7 +57,12 @@ public class PlotParameters {
 	 * Chart plotter: cross cursor stroke.
 	 */
 	private Stroke chartCrossCursorStroke = new BasicStroke(
-		0.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 3.0f, new float[] { 3.0f }, 0.0f);
+		0.0f,
+		BasicStroke.CAP_ROUND,
+		BasicStroke.JOIN_MITER,
+		3.0f,
+		new float[] { 3.0f },
+		0.0f);
 	/**
 	 * ChartCross cursor circle radius.
 	 */
@@ -72,30 +80,6 @@ public class PlotParameters {
 	 * bar.
 	 */
 	private double chartBarWidthFactor = 0.75;
-	/**
-	 * Chart info: the infomation separator color.
-	 */
-	private Color infoSeparatorColor = Color.BLACK;
-	/**
-	 * Chart info: the information separator string.
-	 */
-	private String infoSeparatorString = " - ";
-	/**
-	 * Chart info: the information text insets.
-	 */
-	private Insets infoTextInsets = new Insets(1, 2, 1, 0);
-	/**
-	 * Chart info: the information text font.
-	 */
-	private Font infoTextFont = new Font(Font.DIALOG, Font.PLAIN, 12);
-	/**
-	 * The background color when the info panel gains focus.
-	 */
-	private Color infoBackgroundColor = new Color(208, 208, 208);
-	/**
-	 * The brightness factor to apply to the background color for non selected chart.
-	 */
-	private double infoBackgroundBrightnessFactor = 0.7;
 	/**
 	 * Vertical axis: the vertical text font.
 	 */
@@ -125,23 +109,6 @@ public class PlotParameters {
 	 */
 	private Color verticalAxisSurroundFillColor = new Color(224, 224, 224);
 	/**
-	 * Horizontal axis font.
-	 */
-	private Font horizontalAxisTextFont = new Font(Font.DIALOG, Font.PLAIN, 12);
-	/**
-	 * Horizontal axis: insets of the text.
-	 */
-	private Insets horizontalAxisTextInsets = new Insets(3, 2, 3, 2);
-	/**
-	 * Horizontal axis: the line and text color.
-	 */
-	private Color horizontalAxisColor = Color.GRAY;
-	/**
-	 * Horizontal axis: the stroke for the surround rectangle.
-	 */
-	private Stroke horizontalAxisLineStroke = new BasicStroke();
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param chart The parent chart.
@@ -149,6 +116,15 @@ public class PlotParameters {
 	public PlotParameters(JChart chart) {
 		super();
 		this.chart = chart;
+	}
+
+	/**
+	 * Returns the source chart.
+	 * 
+	 * @return The chart.
+	 */
+	public JChart getChart() {
+		return chart;
 	}
 
 	/**
@@ -377,120 +353,6 @@ public class PlotParameters {
 	}
 
 	/**
-	 * Returns the chart info separator color.
-	 * 
-	 * @return The chart info separator color.
-	 */
-	public Color getInfoSeparatorColor() {
-		return infoSeparatorColor;
-	}
-
-	/**
-	 * Sets the chart info separator color.
-	 * 
-	 * @param infoSeparatorColor The color for the chart info separator string.
-	 */
-	public void setInfoSeparatorColor(Color infoSeparatorColor) {
-		this.infoSeparatorColor = infoSeparatorColor;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the chart info separator string.
-	 * 
-	 * @return The chart info separator string.
-	 */
-	public String getInfoSeparatorString() {
-		return infoSeparatorString;
-	}
-
-	/**
-	 * Sets the chsrt info separator string.
-	 * 
-	 * @param infoSeparatorString The string that separates info items in the info chart.
-	 */
-	public void setInfoSeparatorString(String infoSeparatorString) {
-		this.infoSeparatorString = infoSeparatorString;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the chart info text insets.
-	 * 
-	 * @return The chart info text insets.
-	 */
-	public Insets getInfoTextInsets() {
-		return infoTextInsets;
-	}
-
-	/**
-	 * Sets the info text insets.
-	 * 
-	 * @param top The top inset.
-	 * @param left The left inset.
-	 * @param bottom The bottom inset.
-	 */
-	public void setInfoTextInsets(Insets infoTextInsets) {
-		this.infoTextInsets = infoTextInsets;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the info text font.
-	 * 
-	 * @return The info text font.
-	 */
-	public Font getInfoTextFont() {
-		return infoTextFont;
-	}
-
-	/**
-	 * Sets the info text font.
-	 * 
-	 * @param infoTextFont The font to set.
-	 */
-	public void setInfoTextFont(Font infoTextFont) {
-		this.infoTextFont = infoTextFont;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the panel info background color when focus is gained, when the focus is lost the color is brigthner.
-	 * 
-	 * @return the infoBackgroundColor The panel info background.
-	 */
-	public Color getInfoBackgroundColor() {
-		return infoBackgroundColor;
-	}
-
-	/**
-	 * Set the panel info background
-	 * 
-	 * @param infoBackgroundColor The panel info background
-	 */
-	public void setInfoBackgroundColor(Color infoBackgroundColor) {
-		this.infoBackgroundColor = infoBackgroundColor;
-	}
-
-	/**
-	 * Returns the panel info background color brightness factor.
-	 * 
-	 * @return The panel info background color brightness factor.
-	 */
-	public double getInfoBackgroundBrightnessFactor() {
-		return infoBackgroundBrightnessFactor;
-	}
-
-	/**
-	 * Sets the panel info background color brightness factor.
-	 * 
-	 * @param infoBackgroundBrightnessFactor The panel info background color brightness factor.
-	 */
-	public void setInfoBackgroundBrightnessFactor(double infoBackgroundBrightnessFactor) {
-		this.infoBackgroundBrightnessFactor = infoBackgroundBrightnessFactor;
-	}
-
-	/**
 	 * Returns the vertical axis text font.
 	 * 
 	 * @return The vertical axis text font.
@@ -622,82 +484,6 @@ public class PlotParameters {
 	 */
 	public void setVerticalAxisSurroundFillColor(Color verticalAxisSurroundFillColor) {
 		this.verticalAxisSurroundFillColor = verticalAxisSurroundFillColor;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the horizontal axis text font.
-	 * 
-	 * @return The horizontal axis text font.
-	 */
-	public Font getHorizontalAxisTextFont() {
-		return horizontalAxisTextFont;
-	}
-
-	/**
-	 * Sets the horizontal axis text font.
-	 * 
-	 * @param horizontalAxisTextFont The horizontal axis text font.
-	 */
-	public void setHorizontalAxisTextFont(Font horizontalAxisTextFont) {
-		this.horizontalAxisTextFont = horizontalAxisTextFont;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the horizontal axis text insets.
-	 * 
-	 * @return The horizontal axis text insets.
-	 */
-	public Insets getHorizontalAxisTextInsets() {
-		return horizontalAxisTextInsets;
-	}
-
-	/**
-	 * Sets the horizontal axis text insets.
-	 * 
-	 * @param horizontalAxisTextInsets The horizontal axis text insets.
-	 */
-	public void setHorizontalAxisTextInsets(Insets horizontalAxisTextInsets) {
-		this.horizontalAxisTextInsets = horizontalAxisTextInsets;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the horizontal axis color for text and lines.
-	 * 
-	 * @return The horizontal axis color for text and lines.
-	 */
-	public Color getHorizontalAxisColor() {
-		return horizontalAxisColor;
-	}
-
-	/**
-	 * Sets the horizontal axis color for text and lines.
-	 * 
-	 * @param horizontalAxisColor The horizontal axis color for text and lines.
-	 */
-	public void setHorizontalAxisColor(Color horizontalAxisColor) {
-		this.horizontalAxisColor = horizontalAxisColor;
-		chart.repaint();
-	}
-
-	/**
-	 * Returns the horizontal axis line stroke.
-	 * 
-	 * @return The horizontal axis line stroke.
-	 */
-	public Stroke getHorizontalAxisLineStroke() {
-		return horizontalAxisLineStroke;
-	}
-
-	/**
-	 * Sets the horizontal axis line stroke.
-	 * 
-	 * @param horizontalAxisLineStroke The horizontal axis line stroke.
-	 */
-	public void setHorizontalAxisLineStroke(Stroke horizontalAxisLineStroke) {
-		this.horizontalAxisLineStroke = horizontalAxisLineStroke;
 		chart.repaint();
 	}
 }

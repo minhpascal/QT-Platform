@@ -146,9 +146,7 @@ public class DataPersistor implements Persistor {
 				values.add(record.getValue(i).getDouble());
 			}
 		}
-		Data data = new Data();
-		data.setTime(time);
-		data.setValues(ListUtils.toArray(values));
+		Data data = new Data(time, ListUtils.toArray(values));
 		return data;
 	}
 

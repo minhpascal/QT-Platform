@@ -428,7 +428,7 @@ public class DkConverter {
 	 * @return This system price data item.
 	 */
 	public Data fromDkBar(IBar dkBar) {
-		Data data = new Data();
+		Data data = new Data(Data.DataPriceSize);
 		Data.setOpen(data, dkBar.getOpen());
 		Data.setHigh(data, dkBar.getHigh());
 		Data.setLow(data, dkBar.getLow());

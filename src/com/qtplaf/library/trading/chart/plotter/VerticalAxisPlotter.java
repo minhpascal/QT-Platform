@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotScale;
 import com.qtplaf.library.util.ColorUtils;

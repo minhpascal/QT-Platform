@@ -18,7 +18,8 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.info.DataInfo;
 
 /**
- * A delegate data list, used when a copy of the datalist with a different data info is required.
+ * A delegate data list, used when a copy of the datalist with a different data info is required. Can access a part of
+ * the data indexes.
  * 
  * @author Miquel Sas
  */
@@ -28,7 +29,7 @@ public class DelegateDataList extends DataList {
 	 * Source list.
 	 */
 	private DataList dataList;
-	
+
 	/**
 	 * Constructor assigning the data type..
 	 * 

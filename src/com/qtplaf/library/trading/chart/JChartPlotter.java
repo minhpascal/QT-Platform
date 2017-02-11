@@ -34,6 +34,7 @@ import com.qtplaf.library.trading.chart.plotter.DataPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 

@@ -20,8 +20,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 
 /**

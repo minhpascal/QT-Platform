@@ -29,6 +29,9 @@ import javax.swing.JSplitPane;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.PlotData;
 
@@ -69,6 +72,14 @@ public class JChart extends JPanel {
 	 * The split panel divider size.
 	 */
 	private int splitPaneDividerSize = 2;
+	/**
+	 * Horizontal axis plot parameters.
+	 */
+	private HorizontalAxisPlotParameters horizontalAxisPlotParameters = new HorizontalAxisPlotParameters(this);
+	/**
+	 * Information plot parameters.
+	 */
+	private InformationPlotParameters infoPlotParameters = new InformationPlotParameters(this);
 	/**
 	 * Plot parameters.
 	 */
@@ -165,6 +176,24 @@ public class JChart extends JPanel {
 	 */
 	public PlotParameters getPlotParameters() {
 		return plotParameters;
+	}
+
+	/**
+	 * Returns the horizontal axis plot parameters.
+	 * 
+	 * @return The horizontal axis plot parameters.
+	 */
+	public HorizontalAxisPlotParameters getHorizontalAxisPlotParameters() {
+		return horizontalAxisPlotParameters;
+	}
+
+	/**
+	 * Returns the information plot parameters.
+	 * 
+	 * @return The information plot parameters.
+	 */
+	public InformationPlotParameters getInfoPlotParameters() {
+		return infoPlotParameters;
 	}
 
 	/**

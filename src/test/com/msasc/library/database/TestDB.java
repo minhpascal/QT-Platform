@@ -8,6 +8,7 @@ import com.qtplaf.library.util.SystemUtils;
 
 public class TestDB {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		try {
 			String driver = "org.apache.derby.jdbc.EmbeddedDriver";

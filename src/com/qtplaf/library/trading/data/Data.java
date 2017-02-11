@@ -37,7 +37,10 @@ public class Data {
 	public static final int IndexTypicalPrice = -2;
 	/** Weighted close price: (High + Low + 2*Close) / 4 */
 	public static final int IndexWeightedClosePrice = -3;
-
+	
+	/** Data price (OHLCV) size. */
+	public static final int DataPriceSize = 5;
+	
 	/**
 	 * Returns the median price: (H + L) / 2
 	 * 

@@ -221,7 +221,7 @@ public class DkHistoryManager implements HistoryManager {
 		try {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			com.dukascopy.api.IBar bar = history.getBar(dkInstrument, dkPeriod, dkOfferSide, shift);
-			Data data = new Data();
+			Data data = new Data(Data.DataPriceSize);
 			Data.setOpen(data, bar.getOpen());
 			Data.setHigh(data, bar.getHigh());
 			Data.setLow(data, bar.getLow());
@@ -282,7 +282,7 @@ public class DkHistoryManager implements HistoryManager {
 			List<Data> ohlcvData = new ArrayList<>();
 			for (int i = 0; i < bars.size(); i++) {
 				com.dukascopy.api.IBar bar = bars.get(i);
-				Data ohlcv = new Data();
+				Data ohlcv = new Data(Data.DataPriceSize);
 				Data.setOpen(ohlcv, bar.getOpen());
 				Data.setHigh(ohlcv, bar.getHigh());
 				Data.setLow(ohlcv, bar.getLow());
@@ -359,7 +359,7 @@ public class DkHistoryManager implements HistoryManager {
 			List<Data> ohlcvData = new ArrayList<>();
 			for (int i = 0; i < bars.size(); i++) {
 				com.dukascopy.api.IBar bar = bars.get(i);
-				Data data = new Data();
+				Data data = new Data(Data.DataPriceSize);
 				Data.setOpen(data, bar.getOpen());
 				Data.setHigh(data, bar.getHigh());
 				Data.setLow(data, bar.getLow());

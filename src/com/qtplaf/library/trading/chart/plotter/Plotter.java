@@ -19,7 +19,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.PlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotScale;
 import com.qtplaf.library.util.NumberUtils;
@@ -167,10 +167,10 @@ public class Plotter {
 	 * 
 	 * @return The plot parameters.
 	 */
-	public PlotParameters getPlotParameters() {
+	protected PlotParameters getPlotParameters() {
 		return plotParameters;
 	}
-
+	
 	/**
 	 * Returns the chart plotter available width, once apllied the insets.
 	 * 
