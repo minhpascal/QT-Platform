@@ -18,14 +18,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 
-import com.qtplaf.library.trading.chart.JChart;
-
 /**
  * Parameters to plot information in the chart.
  *
  * @author Miquel Sas
  */
-public class InformationPlotParameters extends PlotParameters {
+public class InformationPlotParameters {
 
 	/**
 	 * The brightness factor to apply to the background color for non selected chart.
@@ -54,11 +52,9 @@ public class InformationPlotParameters extends PlotParameters {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param chart The parent chart.
 	 */
-	public InformationPlotParameters(JChart chart) {
-		super(chart);
+	public InformationPlotParameters() {
+		super();
 	}
 
 	/**
@@ -140,7 +136,6 @@ public class InformationPlotParameters extends PlotParameters {
 	 */
 	public void setInfoSeparatorColor(Color infoSeparatorColor) {
 		this.infoSeparatorColor = infoSeparatorColor;
-		getChart().repaint();
 	}
 
 	/**
@@ -150,7 +145,6 @@ public class InformationPlotParameters extends PlotParameters {
 	 */
 	public void setInfoSeparatorString(String infoSeparatorString) {
 		this.infoSeparatorString = infoSeparatorString;
-		getChart().repaint();
 	}
 
 	/**
@@ -160,7 +154,6 @@ public class InformationPlotParameters extends PlotParameters {
 	 */
 	public void setInfoTextFont(Font infoTextFont) {
 		this.infoTextFont = infoTextFont;
-		getChart().repaint();
 	}
 
 	/**
@@ -172,7 +165,6 @@ public class InformationPlotParameters extends PlotParameters {
 	 */
 	public void setInfoTextInsets(Insets infoTextInsets) {
 		this.infoTextInsets = infoTextInsets;
-		getChart().repaint();
 	}
 
 }

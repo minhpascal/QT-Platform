@@ -24,7 +24,7 @@ import com.qtplaf.library.trading.data.Data;
  * 
  * @author Miquel Sas
  */
-public class Candlestick extends CandlestickOrBar {
+public class Candlestick extends DataDrawing {
 
 	/**
 	 * Constructor assigning the values.
@@ -60,7 +60,7 @@ public class Candlestick extends CandlestickOrBar {
 		int closeY = plotter.getCoordinateY(close);
 
 		// The X coordinate of the vertical line, either the candle.
-		int candlestickWidth = plotter.getCandlestickOrBarWidth();
+		int candlestickWidth = plotter.getDataItemWidth();
 		int verticalLineX = plotter.getDrawingCenterCoordinateX(x);
 
 		// The bar candle is bullish/bearish.

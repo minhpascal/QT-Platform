@@ -21,7 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Stroke;
 
-import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
@@ -82,19 +82,17 @@ public class HorizontalAxisPlotter extends Plotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart.
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 * @param horizontalAxisSize The dimension of the horizontal axis.
 	 */
 	public HorizontalAxisPlotter(
-		Session session,
+		JChart chart,
 		PlotData plotData,
 		Dimension chartSize,
-		HorizontalAxisPlotParameters plotParameters,
 		Dimension horizontalAxisSize) {
-		super(session, plotData, chartSize, plotParameters);
+		super(chart, plotData, chartSize);
 		this.horizontalAxisSize = horizontalAxisSize;
 	}
 
@@ -129,16 +127,7 @@ public class HorizontalAxisPlotter extends Plotter {
 			day = false;
 			hour = true;
 			minute = true;
-			return FormatUtils.unformattedFromTimestamp(
-				new Timestamp(time),
-				year,
-				month,
-				day,
-				hour,
-				minute,
-				second,
-				millis,
-				separators);
+			return getStringToPlot(time, year, month, day, hour, minute, second, millis, separators);
 		case day:
 		case week:
 			year = true;
@@ -146,16 +135,7 @@ public class HorizontalAxisPlotter extends Plotter {
 			day = true;
 			hour = false;
 			minute = false;
-			return FormatUtils.unformattedFromTimestamp(
-				new Timestamp(time),
-				year,
-				month,
-				day,
-				hour,
-				minute,
-				second,
-				millis,
-				separators);
+			return getStringToPlot(time, year, month, day, hour, minute, second, millis, separators);
 		case month:
 		case quarter:
 			year = true;
@@ -163,16 +143,7 @@ public class HorizontalAxisPlotter extends Plotter {
 			day = false;
 			hour = false;
 			minute = false;
-			return FormatUtils.unformattedFromTimestamp(
-				new Timestamp(time),
-				year,
-				month,
-				day,
-				hour,
-				minute,
-				second,
-				millis,
-				separators);
+			return getStringToPlot(time, year, month, day, hour, minute, second, millis, separators);
 		case year:
 		case quinquennium:
 		case decade:
@@ -182,26 +153,44 @@ public class HorizontalAxisPlotter extends Plotter {
 			day = false;
 			hour = false;
 			minute = false;
-			return FormatUtils.unformattedFromTimestamp(
-				new Timestamp(time),
-				year,
-				month,
-				day,
-				hour,
-				minute,
-				second,
-				millis,
-				separators);
+			return getStringToPlot(time, year, month, day, hour, minute, second, millis, separators);
 		}
 	}
 
 	/**
-	 * Returns this plotter specific parameters.
+	 * Returns the string to plot.
 	 * 
-	 * @return This plotter specific parameters.
+	 * @param time The time.
+	 * @param year Year flag
+	 * @param month Month flag.
+	 * @param day Day flag.
+	 * @param hour Hour flag.
+	 * @param minute Minute flag.
+	 * @param second Second flag.
+	 * @param millis Millis flag.
+	 * @param separators Separators flag.
+	 * @return The string to ploit.
 	 */
-	public HorizontalAxisPlotParameters getHorizontalAxisPlotParameters() {
-		return (HorizontalAxisPlotParameters) getPlotParameters();
+	private static String getStringToPlot(
+		long time,
+		boolean year,
+		boolean month,
+		boolean day,
+		boolean hour,
+		boolean minute,
+		boolean second,
+		boolean millis,
+		boolean separators) {
+		return FormatUtils.unformattedFromTimestamp(
+			new Timestamp(time),
+			year,
+			month,
+			day,
+			hour,
+			minute,
+			second,
+			millis,
+			separators);
 	}
 
 	/**
@@ -242,12 +231,15 @@ public class HorizontalAxisPlotter extends Plotter {
 		Font saveFont = g2.getFont();
 		Color saveColor = g2.getColor();
 		Stroke saveStroke = g2.getStroke();
+		
+		// Parameters.
+		HorizontalAxisPlotParameters parameters = getChart().getHorizontalAxisPlotParameters();
 
 		// The text insets, font, color and stroke.
-		Insets insets = getHorizontalAxisPlotParameters().getHorizontalAxisTextInsets();
-		Font font = getHorizontalAxisPlotParameters().getHorizontalAxisTextFont();
-		Color color = getHorizontalAxisPlotParameters().getHorizontalAxisColor();
-		Stroke stroke = getHorizontalAxisPlotParameters().getHorizontalAxisLineStroke();
+		Insets insets = parameters.getHorizontalAxisTextInsets();
+		Font font = parameters.getHorizontalAxisTextFont();
+		Color color = parameters.getHorizontalAxisColor();
+		Stroke stroke = parameters.getHorizontalAxisLineStroke();
 
 		// The font metrics.
 		FontMetrics fm = g2.getFontMetrics(font);
@@ -435,10 +427,13 @@ public class HorizontalAxisPlotter extends Plotter {
 	 * @return The time period that fits.
 	 */
 	private TimePeriod getTimePeriodThatFits(Graphics2D g2, long timeElapsed, int availableWidth) {
+		
+		// Parameters.
+		HorizontalAxisPlotParameters parameters = getChart().getHorizontalAxisPlotParameters();
 
 		// The font metrics to calculate text widths and the text insets.
-		FontMetrics fm = g2.getFontMetrics(getHorizontalAxisPlotParameters().getVerticalAxisTextFont());
-		Insets insets = getHorizontalAxisPlotParameters().getHorizontalAxisTextInsets();
+		FontMetrics fm = g2.getFontMetrics(parameters.getHorizontalAxisTextFont());
+		Insets insets = parameters.getHorizontalAxisTextInsets();
 
 		// Iterate time periods.
 		TimePeriod[] timePeriods = TimePeriod.values();

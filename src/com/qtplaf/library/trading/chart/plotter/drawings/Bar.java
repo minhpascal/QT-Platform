@@ -24,7 +24,7 @@ import com.qtplaf.library.trading.data.Data;
  * 
  * @author Miquel Sas
  */
-public class Bar extends CandlestickOrBar {
+public class Bar extends DataDrawing {
 
 	/**
 	 * Constructor assigning the values.
@@ -60,7 +60,7 @@ public class Bar extends CandlestickOrBar {
 		int closeY = plotter.getCoordinateY(close);
 
 		// The X coordinate of the vertical line, either the candle.
-		int barWidth = plotter.getCandlestickOrBarWidth();
+		int barWidth = plotter.getDataItemWidth();
 		int verticalLineX = plotter.getDrawingCenterCoordinateX(x);
 
 		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);

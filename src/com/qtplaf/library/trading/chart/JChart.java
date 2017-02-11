@@ -29,9 +29,11 @@ import javax.swing.JSplitPane;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.trading.chart.plotter.parameters.ChartPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.PlotData;
 
@@ -73,17 +75,30 @@ public class JChart extends JPanel {
 	 */
 	private int splitPaneDividerSize = 2;
 	/**
+	 * Cursor plot parameters.
+	 */
+	private CursorPlotParameters cursorPlotParameters = new CursorPlotParameters();
+	/**
 	 * Horizontal axis plot parameters.
 	 */
-	private HorizontalAxisPlotParameters horizontalAxisPlotParameters = new HorizontalAxisPlotParameters(this);
+	private HorizontalAxisPlotParameters horizontalAxisPlotParameters = new HorizontalAxisPlotParameters();
+	/**
+	 * Vertical axis plot parameters.
+	 */
+	private VerticalAxisPlotParameters verticalAxisPlotParameters = new VerticalAxisPlotParameters();
 	/**
 	 * Information plot parameters.
 	 */
-	private InformationPlotParameters infoPlotParameters = new InformationPlotParameters(this);
+	private InformationPlotParameters infoPlotParameters = new InformationPlotParameters();
 	/**
-	 * Plot parameters.
+	 * Chart plot parameters.
 	 */
-	private PlotParameters plotParameters = new PlotParameters(this);
+	private ChartPlotParameters chartPlotParameters = new ChartPlotParameters();
+	/**
+	 * The data item (bar) width factor that is used to calculate the width of a bar or candle depending on the available
+	 * width per data (bar).
+	 */
+	private double dataItemWidthFactor = 0.75;
 	/**
 	 * The working session.
 	 */
@@ -170,12 +185,12 @@ public class JChart extends JPanel {
 	}
 
 	/**
-	 * Returns the plot parameters.
+	 * Returns the cursor plot parameters.
 	 * 
-	 * @return The plot parameters.
+	 * @return The cursor plot parameters.
 	 */
-	public PlotParameters getPlotParameters() {
-		return plotParameters;
+	public CursorPlotParameters getCursorPlotParameters() {
+		return cursorPlotParameters;
 	}
 
 	/**
@@ -188,12 +203,54 @@ public class JChart extends JPanel {
 	}
 
 	/**
+	 * Returns the vertical axis plot parameters.
+	 * 
+	 * @return The varticle axis plot parameters.
+	 */
+	public VerticalAxisPlotParameters getVerticalAxisPlotParameters() {
+		return verticalAxisPlotParameters;
+	}
+
+	/**
 	 * Returns the information plot parameters.
 	 * 
 	 * @return The information plot parameters.
 	 */
 	public InformationPlotParameters getInfoPlotParameters() {
 		return infoPlotParameters;
+	}
+
+	/**
+	 * Returns the chart plot parameters.
+	 * 
+	 * @return The chart plot parameters.
+	 */
+	public ChartPlotParameters getChartPlotParameters() {
+		return chartPlotParameters;
+	}
+
+	/**
+	 * Returns the factor to calculate the width of a bar. As a general rule, it can be 75% of the available width per
+	 * bar, as an odd number, and if the result is less than 2, plot just a vertical line of 1 pixel width. Default is
+	 * 0.75.
+	 * 
+	 * @return The factor to calculate the width of a bar.
+	 */
+	public double getDataItemWidthFactor() {
+		return dataItemWidthFactor;
+	}
+
+	/**
+	 * Sets the factor to calculate the width of a bar. As a general rule, it can be 75% of the available width per bar,
+	 * as an odd number, and if the result is less than 2, plot just a vertical line of 1 pixel width. Default is 0.75.
+	 * 
+	 * @param dataWidthFactor The factor to calculate the width of a bar.
+	 */
+	public void setDataItemWidthFactor(double dataWidthFactor) {
+		if (dataWidthFactor <= 0 || dataWidthFactor > 1) {
+			throw new IllegalArgumentException("Data width factor must be between 0 and 1.");
+		}
+		this.dataItemWidthFactor = dataWidthFactor;
 	}
 
 	/**

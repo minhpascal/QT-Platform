@@ -24,8 +24,8 @@ import java.awt.Stroke;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
+import com.qtplaf.library.trading.chart.JChart;
+import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotScale;
 import com.qtplaf.library.util.ColorUtils;
@@ -42,13 +42,12 @@ public class VerticalAxisPlotter extends Plotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart.
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 */
-	public VerticalAxisPlotter(Session session, PlotData plotData, Dimension chartSize, PlotParameters plotParameters) {
-		super(session, plotData, chartSize, plotParameters);
+	public VerticalAxisPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
+		super(chart, plotData, chartSize);
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class VerticalAxisPlotter extends Plotter {
 	public void plotCursorValue(Graphics2D g2, int y) {
 		double value = getDataValue(y);
 		int scale = getPlotData().getTickScale();
-		plotValue(g2, y, value, scale, getPlotParameters().getVerticalAxisSurroundFillColor());
+		plotValue(g2, y, value, scale, getChart().getVerticalAxisPlotParameters().getVerticalAxisSurroundFillColor());
 	}
 
 	/**
@@ -114,7 +113,7 @@ public class VerticalAxisPlotter extends Plotter {
 	private void plotValue(Graphics2D g2, int y, double value, int scale, Color surroundColor) {
 
 		// Plot parameters.
-		PlotParameters plotParameters = getPlotParameters();
+		VerticalAxisPlotParameters plotParameters = getChart().getVerticalAxisPlotParameters();
 
 		// Save color, stroke, font.
 		Color saveColor = g2.getColor();
@@ -178,9 +177,12 @@ public class VerticalAxisPlotter extends Plotter {
 	 * @return The increase value.
 	 */
 	private BigDecimal getIncreaseValue(Graphics2D g2, double value) {
+		
+		// Plot parameters.
+		VerticalAxisPlotParameters plotParameters = getChart().getVerticalAxisPlotParameters();
 
 		// Calculate the minimum line height to not overlap text adding some padding.
-		FontMetrics fm = g2.getFontMetrics(getPlotParameters().getVerticalAxisTextFont());
+		FontMetrics fm = g2.getFontMetrics(plotParameters.getVerticalAxisTextFont());
 		int minimumHeight = (int) (fm.getHeight() * 1.5);
 
 		// The maximum value and its y coordinate.

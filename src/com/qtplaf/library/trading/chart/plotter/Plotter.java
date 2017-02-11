@@ -19,7 +19,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotScale;
 import com.qtplaf.library.util.NumberUtils;
@@ -44,10 +44,6 @@ public class Plotter {
 	 */
 	private Dimension chartSize;
 	/**
-	 * Plot parameters.
-	 */
-	private PlotParameters plotParameters;
-	/**
 	 * Calculated chart insets.
 	 */
 	private Insets chartInsets;
@@ -64,41 +60,35 @@ public class Plotter {
 	 */
 	private int availablewidthPerDataItem;
 	/**
-	 * The calculated candlestick or bar width.
+	 * The calculated data item (candlestick or bar) width.
 	 */
-	private int candlestickOrBarWidth;
+	private int dataItemWidth;
 	/**
 	 * Default candlestick border and bar stroke, not configurable.
 	 */
 	private BasicStroke borderAndBarStroke = new BasicStroke();
 	/**
-	 * The working session.
+	 * The parent chart.
 	 */
-	private Session session;
+	private JChart chart;
 
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart.
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 */
-	public Plotter(
-		Session session,
-		PlotData plotData,
-		Dimension chartSize,
-		PlotParameters plotParameters) {
+	public Plotter(JChart chart, PlotData plotData, Dimension chartSize) {
 		super();
 
 		// Assign members.
-		this.session = session;
+		this.chart = chart;
 		this.plotData = plotData;
 		this.chartSize = chartSize;
-		this.plotParameters = plotParameters;
 
 		// Calculate chart insets, width and height.
-		chartInsets = plotParameters.getChartPlotInsets(chartSize);
+		chartInsets = chart.getChartPlotParameters().getChartPlotInsets(chartSize);
 		chartWidth = chartSize.width - chartInsets.left - chartInsets.right;
 		chartHeight = chartSize.height - chartInsets.top - chartInsets.bottom;
 
@@ -114,14 +104,14 @@ public class Plotter {
 		// Calculate the plot width of a bar. As a general rule, it can be 75% of the available width per bar, as anodd
 		// number, and if the result is less than 2, plot just a vertical line of 1 pixel width.
 		int widthPerItem = getAvailablewidthPerDataItem();
-		candlestickOrBarWidth = 1;
+		dataItemWidth = 1;
 		if (widthPerItem > 1 && widthPerItem <= 3) {
-			candlestickOrBarWidth = 3;
+			dataItemWidth = 3;
 		} else {
-			candlestickOrBarWidth =
-				(int) NumberUtils.round(((double) widthPerItem) * plotParameters.getChartBarWidthFactor(), 0);
-			if (NumberUtils.isLeap(candlestickOrBarWidth)) {
-				candlestickOrBarWidth -= 1;
+			dataItemWidth =
+				(int) NumberUtils.round(((double) widthPerItem) * getChart().getDataItemWidthFactor(), 0);
+			if (NumberUtils.isLeap(dataItemWidth)) {
+				dataItemWidth -= 1;
 			}
 		}
 	}
@@ -132,7 +122,16 @@ public class Plotter {
 	 * @return The working session.
 	 */
 	public Session getSession() {
-		return session;
+		return getChart().getSession();
+	}
+
+	/**
+	 * Returns the parent chart.
+	 * 
+	 * @return The parent chart.
+	 */
+	public JChart getChart() {
+		return chart;
 	}
 
 	/**
@@ -162,15 +161,6 @@ public class Plotter {
 		return chartSize;
 	}
 
-	/**
-	 * Returns the plot parameters.
-	 * 
-	 * @return The plot parameters.
-	 */
-	protected PlotParameters getPlotParameters() {
-		return plotParameters;
-	}
-	
 	/**
 	 * Returns the chart plotter available width, once apllied the insets.
 	 * 
@@ -203,8 +193,8 @@ public class Plotter {
 	 * 
 	 * @return The candlestick or bar width.
 	 */
-	public int getCandlestickOrBarWidth() {
-		return candlestickOrBarWidth;
+	public int getDataItemWidth() {
+		return dataItemWidth;
 	}
 
 	/**
@@ -357,8 +347,8 @@ public class Plotter {
 	 */
 	public int getDrawingCenterCoordinateX(int x) {
 		int verticalLineWidth = 1;
-		if (candlestickOrBarWidth > 1) {
-			x += ((candlestickOrBarWidth - verticalLineWidth) / 2);
+		if (dataItemWidth > 1) {
+			x += ((dataItemWidth - verticalLineWidth) / 2);
 		}
 		return x;
 	}

@@ -20,14 +20,12 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Stroke;
 
-import com.qtplaf.library.trading.chart.JChart;
-
 /**
  * Horizontal axis plot parameters.
  *
  * @author Miquel Sas
  */
-public class HorizontalAxisPlotParameters extends PlotParameters {
+public class HorizontalAxisPlotParameters {
 
 	/**
 	 * Horizontal axis font.
@@ -48,11 +46,9 @@ public class HorizontalAxisPlotParameters extends PlotParameters {
 
 	/**
 	 * Constructor assigning ther parent chart.
-	 * 
-	 * @param chart The parent chart.l
 	 */
-	public HorizontalAxisPlotParameters(JChart chart) {
-		super(chart);
+	public HorizontalAxisPlotParameters() {
+		super();
 	}
 
 	/**
@@ -71,7 +67,6 @@ public class HorizontalAxisPlotParameters extends PlotParameters {
 	 */
 	public void setHorizontalAxisTextFont(Font horizontalAxisTextFont) {
 		this.horizontalAxisTextFont = horizontalAxisTextFont;
-		getChart().repaint();
 	}
 
 	/**
@@ -108,7 +103,6 @@ public class HorizontalAxisPlotParameters extends PlotParameters {
 	 */
 	public void setHorizontalAxisColor(Color horizontalAxisColor) {
 		this.horizontalAxisColor = horizontalAxisColor;
-		getChart().repaint();
 	}
 
 	/**
@@ -118,7 +112,6 @@ public class HorizontalAxisPlotParameters extends PlotParameters {
 	 */
 	public void setHorizontalAxisLineStroke(Stroke horizontalAxisLineStroke) {
 		this.horizontalAxisLineStroke = horizontalAxisLineStroke;
-		getChart().repaint();
 	}
 
 	/**
@@ -128,7 +121,6 @@ public class HorizontalAxisPlotParameters extends PlotParameters {
 	 */
 	public void setHorizontalAxisTextInsets(Insets horizontalAxisTextInsets) {
 		this.horizontalAxisTextInsets = horizontalAxisTextInsets;
-		getChart().repaint();
 	}
 
 }

@@ -19,9 +19,8 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 
-import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 
 /**
@@ -34,13 +33,12 @@ public class CrossCursorPlotter extends Plotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart..
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 */
-	public CrossCursorPlotter(Session session, PlotData plotData, Dimension chartSize, PlotParameters plotParameters) {
-		super(session, plotData, chartSize, plotParameters);
+	public CrossCursorPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
+		super(chart, plotData, chartSize);
 	}
 
 	/**

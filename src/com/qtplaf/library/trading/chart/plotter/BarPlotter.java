@@ -19,9 +19,8 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 
-import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.Bar;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotProperties;
@@ -36,13 +35,12 @@ public class BarPlotter extends DataPlotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart.
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 */
-	public BarPlotter(Session session, PlotData plotData, Dimension chartSize, PlotParameters plotParameters) {
-		super(session, plotData, chartSize, plotParameters);
+	public BarPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
+		super(chart, plotData, chartSize);
 	}
 
 	/**

@@ -21,9 +21,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
 
-import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.Candlestick;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
@@ -40,13 +39,12 @@ public class CandlestickPlotter extends DataPlotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart.
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 */
-	public CandlestickPlotter(Session session, PlotData plotData, Dimension chartSize, PlotParameters plotParameters) {
-		super(session, plotData, chartSize, plotParameters);
+	public CandlestickPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
+		super(chart, plotData, chartSize);
 	}
 
 	/**
@@ -118,7 +116,7 @@ public class CandlestickPlotter extends DataPlotter {
 				Data data = candlestick.getData();
 				double open = Data.getOpen(data);
 				double close = Data.getClose(data);
-				int candlestickWidth = getCandlestickOrBarWidth();
+				int candlestickWidth = getDataItemWidth();
 				int x = getCoordinateX(index);
 				int yOpen = getCoordinateY(open);
 				int yClose = getCoordinateY(close);

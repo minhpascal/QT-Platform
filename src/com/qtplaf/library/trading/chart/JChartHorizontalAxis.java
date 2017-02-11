@@ -112,7 +112,6 @@ public class JChartHorizontalAxis extends JPanel {
 	private HorizontalAxisPlotter getHorizontalAxisPlotter() {
 		Dimension chartSize = chart.getChartContainer(0).getChartPlotter().getSize();
 		PlotData plotData = chart.getChartContainer(0).getPlotData();
-		HorizontalAxisPlotParameters parameters = chart.getHorizontalAxisPlotParameters();
-		return new HorizontalAxisPlotter(getSession(), plotData, chartSize, parameters, getSize());
+		return new HorizontalAxisPlotter(chart, plotData, chartSize, getSize());
 	}
 }

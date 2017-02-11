@@ -16,8 +16,7 @@ package com.qtplaf.library.trading.chart.plotter;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 
-import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 
@@ -31,13 +30,12 @@ public abstract class DataPlotter extends Plotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param session The working session.
+	 * @param chart The parent chart.
 	 * @param plotData The plot data.
 	 * @param chartSize The chart plotter size.
-	 * @param plotParameters The plot parameters
 	 */
-	public DataPlotter(Session session, PlotData plotData, Dimension chartSize, PlotParameters plotParameters) {
-		super(session, plotData, chartSize, plotParameters);
+	public DataPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
+		super(chart, plotData, chartSize);
 	}
 
 	/**

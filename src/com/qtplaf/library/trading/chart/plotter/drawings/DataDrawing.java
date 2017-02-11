@@ -20,7 +20,7 @@ import com.qtplaf.library.trading.data.Data;
  * 
  * @author Miquel Sas
  */
-public abstract class CandlestickOrBar extends Drawing {
+public abstract class DataDrawing extends Drawing {
 
 	/**
 	 * The data index.
@@ -37,7 +37,7 @@ public abstract class CandlestickOrBar extends Drawing {
 	 * @param index The data index.
 	 * @param data The data.
 	 */
-	public CandlestickOrBar(int index, Data data) {
+	public DataDrawing(int index, Data data) {
 		this.index = index;
 		this.data = data;
 	}

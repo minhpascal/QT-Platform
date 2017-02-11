@@ -34,7 +34,7 @@ import com.qtplaf.library.trading.chart.plotter.DataPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
-import com.qtplaf.library.trading.chart.plotter.parameters.PlotParameters;
+import com.qtplaf.library.trading.chart.plotter.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 
@@ -82,7 +82,7 @@ public class JChartPlotter extends JPanel {
 		addMouseWheelListener(listener);
 
 		// Set the cursor type from default plot parameters.
-		setCursorType(chartContainer.getChart().getPlotParameters().getChartCursorType());
+		setCursorType(chartContainer.getChart().getCursorPlotParameters().getChartCursorType());
 	}
 
 	/**
@@ -220,12 +220,12 @@ public class JChartPlotter extends JPanel {
 		if (endIndexCheck < endIndex - margin) {
 			endIndexClip = endIndexCheck + margin;
 		}
-		
+
 		// Plot first non indicator data lists.
 		List<DataList> nonIndicator = plotData.getDataListsNonIndicator();
 		List<DataList> fromClip = plotData.getDataListsIndicatorToPlotClip();
 		List<DataList> fromScratch = plotData.getDataListsIndicatorToPlotFromScratch();
-		
+
 		// Do plot.
 		if (!nonIndicator.isEmpty()) {
 			for (int index = startIndexClip; index < endIndexClip; index++) {
@@ -287,26 +287,25 @@ public class JChartPlotter extends JPanel {
 	private void setDataPlotters() {
 		Dimension chartSize = getSize();
 		PlotData plotData = chartContainer.getPlotData();
-		PlotParameters plotParameters = chartContainer.getChart().getPlotParameters();
 		for (int i = 0; i < plotData.size(); i++) {
 			DataList dataList = plotData.get(i);
 			DataPlotter dataPlotter;
 			switch (dataList.getPlotType()) {
 			case Bar:
-				dataPlotter = new BarPlotter(getSession(), plotData, chartSize, plotParameters);
+				dataPlotter = new BarPlotter(chartContainer.getChart(), plotData, chartSize);
 				break;
 			case Candlestick:
-				dataPlotter = new CandlestickPlotter(getSession(), plotData, chartSize, plotParameters);
+				dataPlotter = new CandlestickPlotter(chartContainer.getChart(), plotData, chartSize);
 				break;
 			case Histogram:
 				// TODO: implement histogram plotter.
-				dataPlotter = new LinePlotter(getSession(), plotData, chartSize, plotParameters);
+				dataPlotter = new LinePlotter(chartContainer.getChart(), plotData, chartSize);
 				break;
 			case Line:
-				dataPlotter = new LinePlotter(getSession(), plotData, chartSize, plotParameters);
+				dataPlotter = new LinePlotter(chartContainer.getChart(), plotData, chartSize);
 				break;
 			default:
-				dataPlotter = new LinePlotter(getSession(), plotData, chartSize, plotParameters);
+				dataPlotter = new LinePlotter(chartContainer.getChart(), plotData, chartSize);
 				break;
 			}
 			dataList.setDataPlotter(dataPlotter);
@@ -321,8 +320,7 @@ public class JChartPlotter extends JPanel {
 	private CrossCursorPlotter getCrossCursorPlotter() {
 		Dimension chartSize = getSize();
 		PlotData plotData = chartContainer.getPlotData();
-		PlotParameters plotParameters = chartContainer.getChart().getPlotParameters();
-		return new CrossCursorPlotter(getSession(), plotData, chartSize, plotParameters);
+		return new CrossCursorPlotter(chartContainer.getChart(), plotData, chartSize);
 	}
 
 	/**
@@ -332,7 +330,7 @@ public class JChartPlotter extends JPanel {
 	 * @return The cross cursor.
 	 */
 	protected CrossCursor getCrossCursor(Point point) {
-		PlotParameters plotParameters = chartContainer.getChart().getPlotParameters();
+		CursorPlotParameters plotParameters = chartContainer.getChart().getCursorPlotParameters();
 		CrossCursor cursor = new CrossCursor(point);
 		cursor.setWidth(plotParameters.getChartCrossCursorWidth());
 		cursor.setHeight(plotParameters.getChartCrossCursorHeight());
@@ -376,10 +374,10 @@ public class JChartPlotter extends JPanel {
 	 * Sets the appropriate cursor.
 	 */
 	void setCursor() {
+		CursorPlotParameters plotParameters = getChartContainer().getChart().getCursorPlotParameters();
 		switch (cursorType) {
 		case Predefined:
-			setCursor(Cursor.getPredefinedCursor(
-				getChartContainer().getChart().getPlotParameters().getChartCursorTypePredefined()));
+			setCursor(Cursor.getPredefinedCursor(plotParameters.getChartCursorTypePredefined()));
 			break;
 		case Custom:
 			setCursor(getCustomCursor());
@@ -387,12 +385,10 @@ public class JChartPlotter extends JPanel {
 		case ChartCross:
 			// Set the transparent cursor.
 			// setCursor(getTransparentCursor());
-			setCursor(Cursor.getPredefinedCursor(
-				getChartContainer().getChart().getPlotParameters().getChartCursorTypePredefined()));
+			setCursor(Cursor.getPredefinedCursor(plotParameters.getChartCursorTypePredefined()));
 			break;
 		default:
-			setCursor(Cursor.getPredefinedCursor(
-				getChartContainer().getChart().getPlotParameters().getChartCursorTypePredefined()));
+			setCursor(Cursor.getPredefinedCursor(plotParameters.getChartCursorTypePredefined()));
 			break;
 		}
 	}

@@ -505,10 +505,10 @@ public class ActionTickers extends AbstractAction {
 				// The chart frame.
 				JFrameChart frame = new JFrameChart(session);
 				frame.setTitle(title.toString());
-				frame.getChart().getPlotParameters().setChartCrossCursorWidth(-1);
-				frame.getChart().getPlotParameters().setChartCrossCursorHeight(-1);
-				frame.getChart().getPlotParameters().setChartCrossCursorCircleRadius(-1);
-				frame.getChart().getPlotParameters().setChartCrossCursorStroke(new BasicStroke());
+				frame.getChart().getCursorPlotParameters().setChartCrossCursorWidth(-1);
+				frame.getChart().getCursorPlotParameters().setChartCrossCursorHeight(-1);
+				frame.getChart().getCursorPlotParameters().setChartCrossCursorCircleRadius(-1);
+				frame.getChart().getCursorPlotParameters().setChartCrossCursorStroke(new BasicStroke());
 				frame.getChart().addPlotData(plotData);
 
 			} catch (Exception exc) {

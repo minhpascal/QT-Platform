@@ -374,7 +374,7 @@ public class JChartContainer extends JPanel {
 	 * @return The base plotter.
 	 */
 	public Plotter getPlotter() {
-		return new Plotter(getSession(), getPlotData(), getChartPlotter().getSize(), getChart().getPlotParameters());
+		return new Plotter(getChart(), getPlotData(), getChartPlotter().getSize());
 	}
 
 }

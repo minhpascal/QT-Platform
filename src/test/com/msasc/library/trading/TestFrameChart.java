@@ -59,11 +59,11 @@ public class TestFrameChart {
 //		plotDataIndicator.add(getSMA(dataList, 200, Color.BLACK, Data.IndexClose));
 //		plotDataIndicator.setPlotScale(plotDataPrice.getPlotScale());
 
-		frame.getChart().getPlotParameters().setChartCrossCursorWidth(-1);
-		frame.getChart().getPlotParameters().setChartCrossCursorHeight(-1);
-		frame.getChart().getPlotParameters().setChartCrossCursorCircleRadius(-1);
-		frame.getChart().getPlotParameters().setChartCrossCursorStroke(new BasicStroke());
-//		frame.getChart().getPlotParameters().setChartCursorType(CursorType.ChartCross);
+		frame.getChart().getCursorPlotParameters().setChartCrossCursorWidth(-1);
+		frame.getChart().getCursorPlotParameters().setChartCrossCursorHeight(-1);
+		frame.getChart().getCursorPlotParameters().setChartCrossCursorCircleRadius(-1);
+		frame.getChart().getCursorPlotParameters().setChartCrossCursorStroke(new BasicStroke());
+//		frame.getChart().getCursorPlotParameters().setChartCursorType(CursorType.ChartCross);
 
 		frame.getChart().addPlotData(plotDataPrice);
 //		frame.getChart().addPlotData(plotDataIndicator);
