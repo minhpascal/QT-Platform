@@ -15,6 +15,7 @@ package com.qtplaf.library.trading.chart.plotter;
 
 import java.awt.Graphics2D;
 
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 
 /**
@@ -42,6 +43,22 @@ public abstract class DataPlotter extends Plotter {
 	 * @return The indexes within the data element used by the plotter.
 	 */
 	public int[] getIndexes() {
+		return indexes;
+	}
+
+	/**
+	 * Returns the indexes to apply to the data item. By default, all data values.
+	 * 
+	 * @param data The data item.
+	 * @return The indexes.
+	 */
+	public int[] getIndexes(Data data) {
+		if (indexes == null) {
+			indexes = new int[data.size()];
+			for (int i = 0; i < data.size(); i++) {
+				indexes[i] = i;
+			}
+		}
 		return indexes;
 	}
 

@@ -247,47 +247,10 @@ public class LinePlotter extends DataPlotter {
 	 */
 	private double[] getValues(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		DataType dataType = dataList.getDataInfo().getDataType();
-		double[] values;
-		switch (dataType) {
-		case Price:
-			int plotIndex = dataList.getIndexPrice();
-			switch (plotIndex) {
-			case Data.IndexOpen:
-				values = new double[] { Data.getOpen(data) };
-				break;
-			case Data.IndexHigh:
-				values = new double[] { Data.getHigh(data) };
-				break;
-			case Data.IndexLow:
-				values = new double[] { Data.getLow(data) };
-				break;
-			case Data.IndexClose:
-				values = new double[] { Data.getClose(data) };
-				break;
-			case Data.IndexMedianPrice:
-				values = new double[] { Data.getMedianPrice(data) };
-				break;
-			case Data.IndexTypicalPrice:
-				values = new double[] { Data.getTypicalPrice(data) };
-				break;
-			case Data.IndexWeightedClosePrice:
-				values = new double[] { Data.getWeightedClosePrice(data) };
-				break;
-			default:
-				values = new double[] { Data.getClose(data) };
-				break;
-			}
-			break;
-		case Indicator:
-			values = data.getData();
-			break;
-		case Volume:
-			values = new double[] { Data.getVolume(data) };
-			break;
-		default:
-			values = dataList.get(index).getData();
-			break;
+		int[] indexes = getIndexes(data);
+		double[] values = new double[indexes.length];
+		for (int i = 0; i < indexes.length; i++) {
+			values[i] = data.getValue(indexes[i]);
 		}
 		return values;
 	}

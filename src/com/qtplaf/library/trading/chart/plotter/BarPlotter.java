@@ -20,6 +20,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 
 import com.qtplaf.library.trading.chart.plotter.drawings.Bar;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotProperties;
 
@@ -68,7 +69,8 @@ public class BarPlotter extends DataPlotter {
 	 * @return The bar drawing.
 	 */
 	public Bar getBar(DataList dataList, int index) {
-		return new Bar(index, dataList.get(index));
+		Data data = dataList.get(index);
+		return new Bar(index, data, getIndexes(data));
 	}
 
 	/**

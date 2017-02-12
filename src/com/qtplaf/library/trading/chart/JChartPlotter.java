@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.plotter.CrossCursorPlotter;
+import com.qtplaf.library.trading.chart.plotter.DataPlotter;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
@@ -199,7 +200,7 @@ public class JChartPlotter extends JPanel {
 	private void plotChartData(Graphics2D g2, PlotData plotData) {
 
 		// Retrieve a plotter to calculate start and end indexes depending on the clip bounds.
-		Plotter plotter = plotData.get(0).getDataPlotter();
+		Plotter plotter = plotData.get(0).getDataPlotters().get(0);
 		int x1 = g2.getClipBounds().x;
 		int x2 = x1 + g2.getClipBounds().width;
 		int startIndexCheck = plotter.getContext().getDataIndex(x1);
@@ -251,7 +252,10 @@ public class JChartPlotter extends JPanel {
 		// Terminate plots.
 		for (int i = 0; i < plotData.size(); i++) {
 			DataList dataList = plotData.get(i);
-			dataList.getDataPlotter().endPlot(g2);
+			List<DataPlotter> dataPlotters = dataList.getDataPlotters();
+			for (DataPlotter dataPlotter : dataPlotters) {
+				dataPlotter.endPlot(g2);
+			}
 		}
 	}
 
@@ -277,7 +281,10 @@ public class JChartPlotter extends JPanel {
 		}
 
 		// Do plot.
-		dataList.getDataPlotter().plotDataIndex(g2, dataList, index);
+		List<DataPlotter> dataPlotters = dataList.getDataPlotters();
+		for (DataPlotter dataPlotter : dataPlotters) {
+			dataPlotter.plotDataIndex(g2, dataList, index);
+		}
 	}
 
 	/**

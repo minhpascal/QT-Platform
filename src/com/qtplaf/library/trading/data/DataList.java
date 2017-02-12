@@ -163,9 +163,9 @@ public abstract class DataList {
 	 */
 	private List<DataListListener> listeners = new ArrayList<>();
 	/**
-	 * The data plotter used to plot this data list, set by the chart container prior to plot tha data.
+	 * List of data plotters.
 	 */
-	private transient DataPlotter dataPlotter;
+	private List<DataPlotter> dataPlotters = new ArrayList<>();
 	/**
 	 * The working session.
 	 */
@@ -181,6 +181,15 @@ public abstract class DataList {
 		super();
 		this.session = session;
 		this.dataInfo = dataInfo;
+	}
+
+	/**
+	 * Add a user data plotter for the list.
+	 * 
+	 * @param dataPlotter The data plotter.
+	 */
+	public void addDataPlotter(DataPlotter dataPlotter) {
+		dataPlotters.add(dataPlotter);
 	}
 
 	/**
@@ -425,21 +434,12 @@ public abstract class DataList {
 	}
 
 	/**
-	 * Returns this data list suitable data plotter.
+	 * Returns the list of data plotters.
 	 * 
-	 * @return This data list suitable data plotter.
+	 * @return The list of data plotters.
 	 */
-	public DataPlotter getDataPlotter() {
-		return dataPlotter;
-	}
-
-	/**
-	 * Sets this data list suitable data plotter.
-	 * 
-	 * @param dataPlotter This data list suitable data plotter.
-	 */
-	public void setDataPlotter(DataPlotter dataPlotter) {
-		this.dataPlotter = dataPlotter;
+	public List<DataPlotter> getDataPlotters() {
+		return dataPlotters;
 	}
 
 	/**
@@ -448,27 +448,31 @@ public abstract class DataList {
 	 * @param context The plotter context.
 	 */
 	public void setPlotterContext(PlotterContext context) {
-		DataPlotter dataPlotter;
-		switch (getPlotType()) {
-		case Bar:
-			dataPlotter = new BarPlotter();
-			break;
-		case Candlestick:
-			dataPlotter = new CandlestickPlotter();
-			break;
-		case Histogram:
-			// TODO: implement histogram plotter.
-			dataPlotter = new LinePlotter();
-			break;
-		case Line:
-			dataPlotter = new LinePlotter();
-			break;
-		default:
-			dataPlotter = new LinePlotter();
-			break;
+		if (dataPlotters.isEmpty()) {
+			DataPlotter dataPlotter;
+			switch (getPlotType()) {
+			case Bar:
+				dataPlotter = new BarPlotter();
+				break;
+			case Candlestick:
+				dataPlotter = new CandlestickPlotter();
+				break;
+			case Histogram:
+				// TODO: implement histogram plotter.
+				dataPlotter = new LinePlotter();
+				break;
+			case Line:
+				dataPlotter = new LinePlotter();
+				break;
+			default:
+				dataPlotter = new LinePlotter();
+				break;
+			}
+			dataPlotters.add(dataPlotter);
 		}
-		dataPlotter.setContext(context);
-		setDataPlotter(dataPlotter);
+		for (DataPlotter dataPlotter : dataPlotters) {
+			dataPlotter.setContext(context);
+		}
 	}
 
 	/**

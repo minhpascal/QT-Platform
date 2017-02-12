@@ -25,15 +25,20 @@ import com.qtplaf.library.trading.data.Data;
  * @author Miquel Sas
  */
 public class Candlestick extends DataDrawing {
+	
+	/** Indexes to retrieve data. */
+	private int[] indexes;
 
 	/**
 	 * Constructor assigning the values.
 	 * 
 	 * @param index The data index.
 	 * @param data The data.
+	 * @param indexes The indexes to retrieve values.
 	 */
-	public Candlestick(int index, Data data) {
+	public Candlestick(int index, Data data, int[] indexes) {
 		super(index, data);
+		this.indexes = indexes;
 	}
 
 	/**
@@ -45,10 +50,10 @@ public class Candlestick extends DataDrawing {
 	public Shape getShape(PlotterContext context) {
 		// The values to plot.
 		Data data = getData();
-		double open = Data.getOpen(data);
-		double high = Data.getHigh(data);
-		double low = Data.getLow(data);
-		double close = Data.getClose(data);
+		double open = data.getValue(indexes[0]);
+		double high = data.getValue(indexes[1]);
+		double low = data.getValue(indexes[2]);
+		double close = data.getValue(indexes[3]);
 
 		// The X coordinate to start painting.
 		int x = context.getCoordinateX(getIndex());

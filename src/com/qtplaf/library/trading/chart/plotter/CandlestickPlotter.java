@@ -70,7 +70,8 @@ public class CandlestickPlotter extends DataPlotter {
 	 * @return The candlestick drawing.
 	 */
 	private Candlestick getCandlestick(DataList dataList, int index) {
-		return new Candlestick(index, dataList.get(index));
+		Data data = dataList.get(index);
+		return new Candlestick(index, data, getIndexes(data));
 	}
 
 	/**
