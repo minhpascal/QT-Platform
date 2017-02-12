@@ -25,10 +25,18 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.task.Task;
+import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
+import com.qtplaf.library.trading.chart.plotter.LinePlotter;
+import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
+import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Names;
@@ -148,7 +156,7 @@ public class StatesSource extends StatesAverages {
 		names.add(Average.getSpreadName(Fields.Low, fastAvg));
 		// Close spread.
 		names.add(Average.getSpreadName(Fields.Close, fastAvg));
-		
+
 		// Spreads between averages.
 		for (int i = 0; i < getAverages().size(); i++) {
 			Average averageFast = getAverages().get(i);
@@ -163,7 +171,7 @@ public class StatesSource extends StatesAverages {
 			Average average = getAverages().get(i);
 			names.add(Average.getSpeedName(average));
 		}
-		
+
 		return names;
 	}
 
@@ -275,5 +283,64 @@ public class StatesSource extends StatesAverages {
 		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
 		Formatters.configureStatesSource(getSession(), persistor, getServer(), getInstrument(), getPeriod());
 		return new DataRecordSet(persistor);
+	}
+
+	/**
+	 * Returns the list of plot datas to configure a chart and show the statistics results.
+	 * 
+	 * @return The list of plot datas.
+	 */
+	@Override
+	public List<PlotData> getPlotDataList() {
+
+		// First data list: price and indicators.
+		DataInfo info = new DataInfo(getSession());
+		info.setDataType(DataType.Indicator);
+		info.setInstrument(getInstrument());
+		info.setName(getInstrument().getId());
+		info.setDescription(getInstrument().getDescription());
+		info.setPeriod(getPeriod());
+
+		// The data list.
+		DataList dataList = new PersistorDataList(getSession(), info, getTable().getPersistor());
+
+		// Candlestick on price: info
+		info.addOutput("Open", "O", 0, "Open data value");
+		info.addOutput("High", "H", 1, "High data value");
+		info.addOutput("Low", "L", 2, "Low data value");
+		info.addOutput("Close", "C", 3, "Close data value");
+
+		// Candlestick on price: plotter.
+		CandlestickPlotter plotterCandle = new CandlestickPlotter();
+		plotterCandle.setIndexes(new int[] { 0, 1, 2, 3 });
+		dataList.addDataPlotter(plotterCandle);
+
+		// Line plotter for each average. Skip the rane percentage.
+		int index = 5;
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average average = getAverages().get(i);
+			int period = average.getPeriod();
+			
+			// Output info.
+			info.addOutput("Average " + period, "Avg-" + period, index, average.toString());
+			
+			// Plotter.
+			LinePlotter plotterAvg = new LinePlotter();
+			plotterAvg.setIndexes(new int[]{ index });
+			dataList.addDataPlotter(plotterAvg);
+			
+			// Increase index.
+			index++;
+		}
+
+		dataList.initializePlotProperties();
+
+		PlotData plotData = new PlotData();
+		plotData.add(dataList);
+
+		List<PlotData> plotDataList = new ArrayList<>();
+		plotDataList.add(plotData);
+
+		return plotDataList;
 	}
 }

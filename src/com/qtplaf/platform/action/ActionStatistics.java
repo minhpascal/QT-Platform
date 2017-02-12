@@ -37,8 +37,10 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
@@ -257,25 +259,10 @@ public class ActionStatistics extends AbstractAction {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			 new Thread(new RunBrowse(this)).start();
-		}
-	}
-	/**
-	 * Runnable to launch the browse action it in a thread.
-	 */
-	class RunBrowse implements Runnable {
-		ActionBrowse action;
-
-		RunBrowse(ActionBrowse action) {
-			this.action = action;
-		}
-
-		@Override
-		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionStatistics.this);
 				Server server = LaunchArgs.getServer(ActionStatistics.this);
-				Record record = action.getSelectedRecord();
+				Record record = getSelectedRecord();
 				if (record == null) {
 					return;
 				}
@@ -290,7 +277,7 @@ public class ActionStatistics extends AbstractAction {
 					MessageBox.warning(session, "No recordset configurated");
 					return;
 				}
-				
+
 				Record masterRecord = recordSet.getFieldList().getDefaultRecord();
 
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -329,55 +316,61 @@ public class ActionStatistics extends AbstractAction {
 	}
 
 	/**
-	 * Runnable to launch it in a thread.
+	 * Action to show the current ticker chart.
 	 */
-	class RunStatistics implements Runnable {
+	class ActionChart extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionChart(Session session) {
+			super();
+			ActionUtils.configureChart(session, this);
+		}
+
+		/**
+		 * Perform the action.
+		 */
 		@Override
-		public void run() {
-
+		public void actionPerformed(ActionEvent e) {
 			try {
-
 				Session session = ActionUtils.getSession(ActionStatistics.this);
 				Server server = LaunchArgs.getServer(ActionStatistics.this);
-				Persistor persistor = PersistorUtils.getPersistorStatistics(session);
-				Record masterRecord = persistor.getDefaultRecord();
+				Record record = getSelectedRecord();
+				if (record == null) {
+					return;
+				}
+				String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
+				String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
+				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
+				Period period = Period.parseId(periodId);
+				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				List<PlotData> plotDataList = statistics.getPlotDataList();
+				if (plotDataList == null || plotDataList.isEmpty()) {
+					MessageBox.warning(session, "No plot data defined for the current statistics");
+					return;
+				}
+				
+				// Chart title.
+				StringBuilder title = new StringBuilder();
+				title.append(server.getName());
+				title.append(", ");
+				title.append(instrument.getId());
+				title.append(" ");
+				title.append(period);
+				title.append(" [");
+				title.append(statistics.getTable().getName());
+				title.append("]");
 
-				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
-				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
-				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(StatisticsDefs.Fields.InstrumentId);
-				tableModelRecord.addColumn(Periods.Fields.PeriodName);
-				tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticsId);
-				tableModelRecord.addColumn(StatisticsDefs.Fields.TableName);
-
-				tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(session, server));
-				tableRecord.setModel(tableModelRecord);
-
-				JOptionFrame frame = new JOptionFrame(session);
-				frame.setTitle(
-					server.getName() + " " + session.getString("qtMenuServersTickersStatistics").toLowerCase());
-				frame.setComponent(panelTableRecord);
-
-				ActionCreate actionCreate = new ActionCreate(session);
-				ActionUtils.setSortIndex(actionCreate, 0);
-				frame.addAction(actionCreate);
-
-				ActionDelete actionDelete = new ActionDelete(session);
-				ActionUtils.setSortIndex(actionDelete, 1);
-				frame.addAction(actionDelete);
-
-				ActionBrowse actionBrowse = new ActionBrowse(session);
-				ActionUtils.setSortIndex(actionBrowse, 2);
-				frame.addAction(actionBrowse);
-
-				ActionCalculate actionCalculate = new ActionCalculate(session);
-				ActionUtils.setSortIndex(actionCalculate, 3);
-				frame.addAction(actionCalculate);
-
-				frame.addAction(new ActionClose(session));
-				frame.setSize(0.6, 0.8);
-				frame.showFrame();
-
+				// The chart frame.
+				JFrameChart frame = new JFrameChart(session);
+				frame.setTitle(title.toString());
+				for (PlotData plotData : plotDataList) {
+					frame.getChart().addPlotData(plotData);
+				}
+			
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}
@@ -396,7 +389,56 @@ public class ActionStatistics extends AbstractAction {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new Thread(new RunStatistics()).start();
+		try {
+
+			Session session = ActionUtils.getSession(ActionStatistics.this);
+			Server server = LaunchArgs.getServer(ActionStatistics.this);
+			Persistor persistor = PersistorUtils.getPersistorStatistics(session);
+			Record masterRecord = persistor.getDefaultRecord();
+
+			JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
+			JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
+			TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+			tableModelRecord.addColumn(StatisticsDefs.Fields.InstrumentId);
+			tableModelRecord.addColumn(Periods.Fields.PeriodName);
+			tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticsId);
+			tableModelRecord.addColumn(StatisticsDefs.Fields.TableName);
+
+			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(session, server));
+			tableRecord.setModel(tableModelRecord);
+
+			JOptionFrame frame = new JOptionFrame(session);
+			frame.setTitle(
+				server.getName() + " " + session.getString("qtMenuServersTickersStatistics").toLowerCase());
+			frame.setComponent(panelTableRecord);
+
+			ActionCreate actionCreate = new ActionCreate(session);
+			ActionUtils.setSortIndex(actionCreate, 0);
+			frame.addAction(actionCreate);
+
+			ActionDelete actionDelete = new ActionDelete(session);
+			ActionUtils.setSortIndex(actionDelete, 1);
+			frame.addAction(actionDelete);
+
+			ActionBrowse actionBrowse = new ActionBrowse(session);
+			ActionUtils.setSortIndex(actionBrowse, 2);
+			frame.addAction(actionBrowse);
+			
+			ActionChart actionChart = new ActionChart(session);
+			ActionUtils.setSortIndex(actionChart, 3);
+			frame.addAction(actionChart);
+
+			ActionCalculate actionCalculate = new ActionCalculate(session);
+			ActionUtils.setSortIndex(actionCalculate, 4);
+			frame.addAction(actionCalculate);
+
+			frame.addAction(new ActionClose(session));
+			frame.setSize(0.6, 0.8);
+			frame.showFrame();
+
+		} catch (Exception exc) {
+			logger.catching(exc);
+		}
 	}
 
 }

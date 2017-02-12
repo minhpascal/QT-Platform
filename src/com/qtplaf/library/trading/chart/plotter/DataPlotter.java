@@ -63,6 +63,21 @@ public abstract class DataPlotter extends Plotter {
 	}
 
 	/**
+	 * Returns the list of values given the data element.
+	 * 
+	 * @param data The data item.
+	 * @return The list of values.
+	 */
+	public double[] getValues(Data data) {
+		int[] indexes = getIndexes(data);
+		double[] values = new double[indexes.length];
+		for (int i = 0; i < indexes.length; i++) {
+			values[i] = data.getValue(indexes[i]);
+		}
+		return values;
+	}
+
+	/**
 	 * Set the indexes within the data element used by the plotter.
 	 * 
 	 * @param indexes The indexes within the data element used by the plotter.

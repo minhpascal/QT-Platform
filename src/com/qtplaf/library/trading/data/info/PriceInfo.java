@@ -14,6 +14,7 @@
 package com.qtplaf.library.trading.data.info;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
@@ -39,10 +40,10 @@ public class PriceInfo extends DataInfo {
 		setName(instrument.getId());
 		setDescription(instrument.getDescription());
 		setPeriod(period);
-		addOutput("Open", "O", 0, "Open data value");
-		addOutput("High", "H", 1, "High data value");
-		addOutput("Low", "L", 2, "Low data value");
-		addOutput("Close", "C", 3, "Close data value");
-		addOutput("Volume", "V", 4, "Volume data value");
+		addOutput("Open", "O", Data.IndexOpen, "Open data value");
+		addOutput("High", "H", Data.IndexHigh, "High data value");
+		addOutput("Low", "L", Data.IndexLow, "Low data value");
+		addOutput("Close", "C", Data.IndexClose, "Close data value");
+		addOutput("Volume", "V", Data.IndexVolume, "Volume data value");
 	}
 }

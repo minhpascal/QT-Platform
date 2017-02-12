@@ -439,15 +439,6 @@ public abstract class DataList {
 	 * @return The list of data plotters.
 	 */
 	public List<DataPlotter> getDataPlotters() {
-		return dataPlotters;
-	}
-
-	/**
-	 * Set the plotter context to data plotters.
-	 * 
-	 * @param context The plotter context.
-	 */
-	public void setPlotterContext(PlotterContext context) {
 		if (dataPlotters.isEmpty()) {
 			DataPlotter dataPlotter;
 			switch (getPlotType()) {
@@ -470,6 +461,16 @@ public abstract class DataList {
 			}
 			dataPlotters.add(dataPlotter);
 		}
+		return dataPlotters;
+	}
+
+	/**
+	 * Set the plotter context to data plotters.
+	 * 
+	 * @param context The plotter context.
+	 */
+	public void setPlotterContext(PlotterContext context) {
+		List<DataPlotter> dataPlotters = getDataPlotters();
 		for (DataPlotter dataPlotter : dataPlotters) {
 			dataPlotter.setContext(context);
 		}

@@ -36,6 +36,7 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.math.Distribution;
 import com.qtplaf.library.task.Task;
+import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.task.TaskStatesRanges;
@@ -290,7 +291,7 @@ public class StatesRanges extends StatesAverages {
 		bestAvg.setPersistent(false);
 		bestAvg.setFormatter(new DataValue(getSession(), 20));
 		bestAvg.setCalculator(new BestAverage());
-//		view.addField(bestAvg);
+		// view.addField(bestAvg);
 
 		// Group by.
 		view.addGroupBy(view.getField(Fields.Name));
@@ -351,5 +352,15 @@ public class StatesRanges extends StatesAverages {
 		iter.close();
 
 		record.setProperty(Values, values);
+	}
+
+	/**
+	 * Returns the list of plot datas to configure a chart and show the statistics results.
+	 * 
+	 * @return The list of plot datas.
+	 */
+	@Override
+	public List<PlotData> getPlotDataList() {
+		return null;
 	}
 }

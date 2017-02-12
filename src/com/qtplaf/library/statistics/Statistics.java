@@ -20,6 +20,7 @@ import java.util.List;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
+import com.qtplaf.library.trading.data.PlotData;
 
 /**
  * Statistics descriptor.
@@ -162,4 +163,11 @@ public abstract class Statistics {
 	 * @return The recordset to browse the statistic results.
 	 */
 	public abstract RecordSet getRecordSet();
+
+	/**
+	 * Returns the list of plot datas to configure a chart and show the statistics results.
+	 * 
+	 * @return The list of plot datas.
+	 */
+	public abstract List<PlotData> getPlotDataList();
 }

@@ -63,6 +63,8 @@ public class PersistorDataList extends DataList {
 	private int pageSize = 100;
 
 	/**
+	 * Constructor.
+	 * 
 	 * @param session
 	 * @param dataInfo
 	 */

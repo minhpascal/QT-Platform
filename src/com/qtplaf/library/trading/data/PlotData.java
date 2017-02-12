@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.qtplaf.library.trading.chart.plotter.DataPlotter;
+
 /**
  * A container for the data to plot in a <i>JChartContainer</i>.
  * 
@@ -475,31 +477,13 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 				continue;
 			}
 			for (DataList dataList : dataLists) {
-				DataType dataType = dataList.getDataInfo().getDataType();
 				Data data = dataList.get(i);
 				if (data == null || !data.isValid()) {
 					continue;
 				}
-				if (dataType.equals(DataType.Price)) {
-					// Price: check high and low.
-					double high = Data.getHigh(data);
-					if (high > maxValue) {
-						maxValue = high;
-					}
-					double low = Data.getLow(data);
-					if (low < minValue) {
-						minValue = low;
-					}
-				} else if (dataType.equals(DataType.Volume)) {
-					// Volume: min == 0, max = volume.
-					double volume = Data.getVolume(data);
-					if (volume > maxValue) {
-						maxValue = volume;
-					}
-					minValue = 0;
-				} else {
-					// Check max and min of the list of values.
-					double[] values = data.getData();
+				List<DataPlotter> dataPlotters = dataList.getDataPlotters();
+				for (DataPlotter dataPlotter : dataPlotters) {
+					double[] values = dataPlotter.getValues(data);
 					for (double value : values) {
 						if (value > maxValue) {
 							maxValue = value;

@@ -14,7 +14,6 @@
 
 package com.qtplaf.platform.action;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -325,49 +324,10 @@ public class ActionTickers extends AbstractAction {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new Thread(new RunBrowse(this)).start();
-		}
-	}
-
-	/**
-	 * Action to show the current ticker chart.
-	 */
-	class ActionChart extends ActionTableOption {
-		/**
-		 * Constructor.
-		 * 
-		 * @param session The working session.
-		 */
-		public ActionChart(Session session) {
-			super();
-			ActionUtils.configureChart(session, this);
-		}
-
-		/**
-		 * Perform the action.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			new Thread(new RunChart(this)).start();
-		}
-	}
-
-	/**
-	 * Runnable to launch the browse action it in a thread.
-	 */
-	class RunBrowse implements Runnable {
-		ActionBrowse action;
-
-		RunBrowse(ActionBrowse action) {
-			this.action = action;
-		}
-
-		@Override
-		public void run() {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = LaunchArgs.getServer(ActionTickers.this);
-				Record record = action.getSelectedRecord();
+				Record record = getSelectedRecord();
 				if (record == null) {
 					return;
 				}
@@ -423,21 +383,28 @@ public class ActionTickers extends AbstractAction {
 	}
 
 	/**
-	 * Runnable to launch the chart action it in a thread.
+	 * Action to show the current ticker chart.
 	 */
-	class RunChart implements Runnable {
-		ActionChart action;
-
-		RunChart(ActionChart action) {
-			this.action = action;
+	class ActionChart extends ActionTableOption {
+		/**
+		 * Constructor.
+		 * 
+		 * @param session The working session.
+		 */
+		public ActionChart(Session session) {
+			super();
+			ActionUtils.configureChart(session, this);
 		}
 
+		/**
+		 * Perform the action.
+		 */
 		@Override
-		public void run() {
+		public void actionPerformed(ActionEvent e) {
 			try {
 				Session session = ActionUtils.getSession(ActionTickers.this);
 				Server server = LaunchArgs.getServer(ActionTickers.this);
-				Record record = action.getSelectedRecord();
+				Record record = getSelectedRecord();
 				if (record == null) {
 					return;
 				}
@@ -465,32 +432,6 @@ public class ActionTickers extends AbstractAction {
 				 plotData.add(sma50);
 				 plotData.add(sma200);
 
-//				IndicatorDataList sma5 =
-//					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 5, 3, 3);
-//				IndicatorDataList sma21 =
-//					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 21, 5, 5);
-//				IndicatorDataList sma89 =
-//					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 89, 13, 13);
-//				IndicatorDataList sma377 =
-//					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 377, 21, 21);
-//				IndicatorDataList sma1597 =
-//					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 1597, 34, 34);
-//				IndicatorDataList sma6765 =
-//					IndicatorUtils
-//						.getSmoothedSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 6765, 55, 55);
-
-//				plotData.add(sma5);
-//				plotData.add(sma21);
-//				plotData.add(sma89);
-//				plotData.add(sma377);
-//				plotData.add(sma1597);
-//				plotData.add(sma6765);
-
 				// Chart title.
 				StringBuilder title = new StringBuilder();
 				title.append(server.getName());
@@ -505,68 +446,7 @@ public class ActionTickers extends AbstractAction {
 				// The chart frame.
 				JFrameChart frame = new JFrameChart(session);
 				frame.setTitle(title.toString());
-				frame.getChart().getCursorPlotParameters().setChartCrossCursorWidth(-1);
-				frame.getChart().getCursorPlotParameters().setChartCrossCursorHeight(-1);
-				frame.getChart().getCursorPlotParameters().setChartCrossCursorCircleRadius(-1);
-				frame.getChart().getCursorPlotParameters().setChartCrossCursorStroke(new BasicStroke());
 				frame.getChart().addPlotData(plotData);
-
-			} catch (Exception exc) {
-				logger.catching(exc);
-			}
-		}
-	}
-
-	/**
-	 * Runnable to launch it in a thread.
-	 */
-	class RunTickers implements Runnable {
-		@Override
-		public void run() {
-			try {
-				Session session = ActionUtils.getSession(ActionTickers.this);
-				Server server = LaunchArgs.getServer(ActionTickers.this);
-				Persistor persistor = PersistorUtils.getPersistorTickers(session);
-				Record masterRecord = persistor.getDefaultRecord();
-
-				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
-				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(Tickers.Fields.InstrumentId);
-				tableModelRecord.addColumn(Periods.Fields.PeriodName);
-				tableModelRecord.addColumn(Tickers.Fields.OfferSide);
-				tableModelRecord.addColumn(Tickers.Fields.DataFilter);
-				tableModelRecord.addColumn(Tickers.Fields.TableName);
-
-				tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetTickers(session, server));
-				tableRecord.setModel(tableModelRecord);
-
-				JOptionFrame frame = new JOptionFrame(session);
-				frame.setTitle(server.getName() + " " + session.getString("qtMenuServersTickers").toLowerCase());
-				frame.setComponent(panelTableRecord);
-
-				ActionCreate actionCreate = new ActionCreate(session);
-				ActionUtils.setSortIndex(actionCreate, 0);
-				frame.addAction(actionCreate);
-
-				ActionDelete actionDelete = new ActionDelete(session);
-				ActionUtils.setSortIndex(actionDelete, 1);
-				frame.addAction(actionDelete);
-
-				ActionBrowse actionBrowse = new ActionBrowse(session);
-				ActionUtils.setSortIndex(actionBrowse, 2);
-				frame.addAction(actionBrowse);
-
-				ActionChart actionChart = new ActionChart(session);
-				ActionUtils.setSortIndex(actionChart, 3);
-				frame.addAction(actionChart);
-
-				frame.addAction(new ActionPurge(session));
-				frame.addAction(new ActionDownload(session));
-
-				frame.addAction(new ActionClose(session));
-				frame.setSize(0.6, 0.8);
-				frame.showFrame();
 
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -586,6 +466,53 @@ public class ActionTickers extends AbstractAction {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new Thread(new RunTickers()).start();
+		try {
+			Session session = ActionUtils.getSession(ActionTickers.this);
+			Server server = LaunchArgs.getServer(ActionTickers.this);
+			Persistor persistor = PersistorUtils.getPersistorTickers(session);
+			Record masterRecord = persistor.getDefaultRecord();
+
+			JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
+			TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+			tableModelRecord.addColumn(Tickers.Fields.InstrumentId);
+			tableModelRecord.addColumn(Periods.Fields.PeriodName);
+			tableModelRecord.addColumn(Tickers.Fields.OfferSide);
+			tableModelRecord.addColumn(Tickers.Fields.DataFilter);
+			tableModelRecord.addColumn(Tickers.Fields.TableName);
+
+			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetTickers(session, server));
+			tableRecord.setModel(tableModelRecord);
+
+			JOptionFrame frame = new JOptionFrame(session);
+			frame.setTitle(server.getName() + " " + session.getString("qtMenuServersTickers").toLowerCase());
+			frame.setComponent(panelTableRecord);
+
+			ActionCreate actionCreate = new ActionCreate(session);
+			ActionUtils.setSortIndex(actionCreate, 0);
+			frame.addAction(actionCreate);
+
+			ActionDelete actionDelete = new ActionDelete(session);
+			ActionUtils.setSortIndex(actionDelete, 1);
+			frame.addAction(actionDelete);
+
+			ActionBrowse actionBrowse = new ActionBrowse(session);
+			ActionUtils.setSortIndex(actionBrowse, 2);
+			frame.addAction(actionBrowse);
+
+			ActionChart actionChart = new ActionChart(session);
+			ActionUtils.setSortIndex(actionChart, 3);
+			frame.addAction(actionChart);
+
+			frame.addAction(new ActionPurge(session));
+			frame.addAction(new ActionDownload(session));
+
+			frame.addAction(new ActionClose(session));
+			frame.setSize(0.6, 0.8);
+			frame.showFrame();
+
+		} catch (Exception exc) {
+			logger.catching(exc);
+		}
 	}
 }

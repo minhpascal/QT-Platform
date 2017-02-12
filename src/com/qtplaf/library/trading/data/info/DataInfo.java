@@ -30,7 +30,7 @@ import com.qtplaf.library.util.FormatUtils;
  * 
  * @author Miquel Sas
  */
-public abstract class DataInfo {
+public class DataInfo {
 
 	/**
 	 * Name, like for instance <b>SMA<b>. Once an indicator with a gien identifier is regisrated in the visual
@@ -351,7 +351,7 @@ public abstract class DataInfo {
 	 * 
 	 * @param dataType The data type.
 	 */
-	protected void setDataType(DataType dataType) {
+	public void setDataType(DataType dataType) {
 		this.dataType = dataType;
 	}
 
