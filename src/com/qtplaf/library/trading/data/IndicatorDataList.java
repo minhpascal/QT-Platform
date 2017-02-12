@@ -60,8 +60,6 @@ public class IndicatorDataList extends DataList {
 		this.indicator.start(indicatorSources);
 
 		this.indicatorData = new MapDataList(session, dataInfo);
-
-		initializePlotProperties();
 	}
 
 	/**

@@ -13,6 +13,7 @@
  */
 package com.qtplaf.library.trading.chart.plotter;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
@@ -21,11 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.trading.chart.plotter.drawings.Line;
-import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.DataType;
-import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.library.trading.data.info.OutputInfo;
 
 /**
  * Line plotter for data list items.
@@ -35,81 +32,68 @@ import com.qtplaf.library.trading.data.info.OutputInfo;
 public class LinePlotter extends DataPlotter {
 
 	/**
-	 * An array of lists to buffer lines of each data element value, width the same color and stroke. Even though a
-	 * plotter has a reference to a full plot data, a suitable plotter is assigned to each data list, so a line plotter
-	 * instance will plot only values of a given data list.
+	 * The line buffer.
 	 */
-	private List<List<Line>> lineBuffers;
+	private List<Line> lineBuffer = new ArrayList<>();
+	/**
+	 * The stroke that applies to lines, bars and candlesticks and histograms borders.
+	 */
+	private Stroke stroke = new BasicStroke();
 
 	/**
 	 * Constructor.
 	 */
 	public LinePlotter() {
 		super();
+		setColorBearishEven(Color.BLACK);
+		setColorBearishOdd(Color.BLACK);
+		setColorBullishEven(Color.BLACK);
+		setColorBullishOdd(Color.BLACK);
 	}
 
 	/**
-	 * Initializes the line buffers.
+	 * Set the indexes within the data element used by the plotter. For a line plotter, only one index is accepted.
 	 * 
-	 * @param dataList The data list.
+	 * @param indexes The indexes within the data element used by the plotter.
 	 */
-	private void initializeLineBuffers(DataList dataList) {
-		if (lineBuffers != null) {
-			return;
+	@Override
+	public void setIndexes(int[] indexes) {
+		if (indexes.length != 1) {
+			throw new IllegalArgumentException();
 		}
-		if (dataList.isEmpty()) {
-			return;
-		}
-
-		// The size of the array of buffers.
-		int size = -1;
-		DataType dataType = dataList.getDataInfo().getDataType();
-		switch (dataType) {
-		case Price:
-			size = 1;
-			break;
-		case Indicator:
-			size = dataList.get(0).size();
-			break;
-		case Volume:
-			size = 1;
-			break;
-		default:
-			size = dataList.get(0).size();
-			break;
-		}
-
-		// Initialize.
-		lineBuffers = new ArrayList<List<Line>>();
-		for (int i = 0; i < size; i++) {
-			lineBuffers.add(new ArrayList<Line>());
-		}
+		super.setIndexes(indexes);
 	}
 
 	/**
-	 * Returns the line buffer at the given index.
+	 * Set the index.
 	 * 
-	 * @param index The index.
-	 * @return The line Buffer.
+	 * @param index The index to get the value within the data.
 	 */
-	private List<Line> getLineBuffer(int index) {
-		return lineBuffers.get(index);
+	public void setIndex(int index) {
+		setIndexes(new int[] { index });
+	}
+
+	/**
+	 * Returns the index within the data.
+	 * 
+	 * @return The index within the data.
+	 */
+	public int getIndex() {
+		return getIndexes()[0];
 	}
 
 	/**
 	 * Check if a given line can be buffered in agiven buffer, because the stroke and the color are the same.
 	 * 
-	 * @param index The index of the buffer.
 	 * @param line The line.
 	 * @return A boolean that indicates if a given line can be buffered in agiven buffer, because the stroke and the
 	 *         color are the same.
 	 */
-	private boolean canBuffer(int index, Line line) {
-		List<Line> buffer = getLineBuffer(index);
-		if (buffer.isEmpty()) {
+	private boolean canBuffer(Line line) {
+		if (lineBuffer.isEmpty()) {
 			return true;
 		}
-		Line check = buffer.get(0);
+		Line check = lineBuffer.get(0);
 		if (check.getStroke().equals(line.getStroke()) && check.getColor().equals(line.getColor())) {
 			return true;
 		}
@@ -119,36 +103,33 @@ public class LinePlotter extends DataPlotter {
 	/**
 	 * Add a line to a buffer.
 	 * 
-	 * @param index The buffer index.
 	 * @param line The line.
 	 */
-	private void bufferLine(int index, Line line) {
-		getLineBuffer(index).add(line);
+	private void bufferLine(Line line) {
+		lineBuffer.add(line);
 	}
 
 	/**
 	 * Plots the given buffer and clears it.
 	 * 
-	 * @param index The buffer index.
 	 * @param g2 The graphics context.
 	 */
-	private void plotBuffer(int index, Graphics2D g2) {
+	private void plotBuffer(Graphics2D g2) {
 
 		// If nothing to plot...
-		List<Line> buffer = getLineBuffer(index);
-		if (buffer.isEmpty()) {
+		if (lineBuffer.isEmpty()) {
 			return;
 		}
 
 		// Build a path appending the line shapes.
-		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, buffer.size());
-		for (Line line : buffer) {
+		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, lineBuffer.size());
+		for (Line line : lineBuffer) {
 			shape.append(line.getShape(getContext()), true);
 		}
 
 		// Check intersection with clip bounds.
 		if (!getIntersectionBounds(shape.getBounds()).intersects(g2.getClipBounds())) {
-			buffer.clear();
+			lineBuffer.clear();
 			return;
 		}
 
@@ -157,8 +138,8 @@ public class LinePlotter extends DataPlotter {
 		Stroke saveStroke = g2.getStroke();
 
 		// Set color and stroke.
-		g2.setColor(buffer.get(0).getColor());
-		g2.setStroke(buffer.get(0).getStroke());
+		g2.setColor(lineBuffer.get(0).getColor());
+		g2.setStroke(lineBuffer.get(0).getStroke());
 
 		// Do plot.
 		g2.draw(shape);
@@ -168,19 +149,17 @@ public class LinePlotter extends DataPlotter {
 		g2.setStroke(saveStroke);
 
 		// Clear the buffer.
-		buffer.clear();
+		lineBuffer.clear();
 	}
 
 	/**
-	 * Returns an array of lines for the given data list and index. For prices and volumes an array of one element is
-	 * returned, while for indicators an array with as much elements as the data size is returned. Note that the index
-	 * must be greater than 0 because the current and previous indexes are used.
+	 * Returns the line for the given data list and index.
 	 * 
 	 * @param dataList The data list to plot.
 	 * @param index The index to plot.
 	 * @return An array of lines for the given data list and index.
 	 */
-	public Line[] getLines(DataList dataList, int index) {
+	private Line getLine(DataList dataList, int index) {
 
 		// Current and previous indexes. The previous index must the first previous valid. If no one found, skip
 		// plotting.
@@ -199,60 +178,33 @@ public class LinePlotter extends DataPlotter {
 
 		// Odd/even period.
 		boolean odd = dataList.isOdd(index);
+		
+		// Color bullish or bearish depending on odds.
+		Color colorBullish;
+		Color colorBearish;
+		if (odd) {
+			colorBullish = getColorBullishOdd();
+			colorBearish = getColorBearishOdd();
+		} else {
+			colorBullish = getColorBullishEven();
+			colorBearish = getColorBearishEven();
+		}
 
 		// Current and previous values to plot, depending on the data type of the list.
-		double[] dataCurrent = getValues(dataList, indexCurrent);
-		double[] dataPrevious = getValues(dataList, indexPrevious);
+		double valueCurrent = dataList.get(indexCurrent).getValue(getIndex());
+		double valuePrevious = dataList.get(indexPrevious).getValue(getIndex());
+		
+		// Bullish/bearish.
+		boolean bullish = (valueCurrent >= valuePrevious);
+		Color color = (bullish ? colorBullish : colorBearish);
+		
+		// Stroke.
+		Stroke stroke = getStroke();
 
-		// The array of lines.
-		int countLines = dataCurrent.length;
-		Line[] lines = new Line[countLines];
-		for (int i = 0; i < countLines; i++) {
+		// The line.
+		Line line = new Line(indexPrevious, indexCurrent, valuePrevious, valueCurrent, stroke, color);
 
-			// Current and previous value.
-			double valueCurrent = dataCurrent[i];
-			double valuePrevious = dataPrevious[i];
-
-			// Color bullish or bearish depending on odds.
-			Color colorBullish;
-			Color colorBearish;
-			if (odd) {
-				colorBullish = dataList.getPlotProperties(i).getColorBullishOdd();
-				colorBearish = dataList.getPlotProperties(i).getColorBearishOdd();
-			} else {
-				colorBullish = dataList.getPlotProperties(i).getColorBullishEven();
-				colorBearish = dataList.getPlotProperties(i).getColorBearishEven();
-			}
-
-			// Bullish/bearish.
-			boolean bullish = (valueCurrent >= valuePrevious);
-			Color color = (bullish ? colorBullish : colorBearish);
-
-			// Stroke.
-			Stroke stroke = dataList.getPlotProperties(i).getStroke();
-
-			// The line.
-			lines[i] = new Line(indexPrevious, indexCurrent, valuePrevious, valueCurrent, stroke, color);
-		}
-
-		return lines;
-	}
-
-	/**
-	 * Returns the list of values to plot for the index, depending on the data type (Price, Indicator, Volume).
-	 * 
-	 * @param dataList The data list.
-	 * @param index The index.
-	 * @return The values to plot.
-	 */
-	private double[] getValues(DataList dataList, int index) {
-		Data data = dataList.get(index);
-		int[] indexes = getIndexes(data);
-		double[] values = new double[indexes.length];
-		for (int i = 0; i < indexes.length; i++) {
-			values[i] = data.getValue(indexes[i]);
-		}
-		return values;
+		return line;
 	}
 
 	/**
@@ -275,42 +227,14 @@ public class LinePlotter extends DataPlotter {
 			return;
 		}
 
-		// Initialize line buffers if necessary.
-		initializeLineBuffers(dataList);
-
-		// The lines.
-		Line[] lines = getLines(dataList, index);
-
-		// Data info.
-		DataInfo dataInfo = dataList.getDataInfo();
-
-		// A boolean that indicates if what is plotted is an indicator.
-		boolean indicator = dataInfo.getDataType().equals(DataType.Indicator);
-
-		// Plot.
-		int size = lines.length;
-		for (int i = 0; i < size; i++) {
-
-			// Check if the line has to be plotted.
-			if (indicator) {
-				OutputInfo outputInfo = dataInfo.getOutput(i);
-				if (outputInfo != null) {
-					if (!outputInfo.isPlot()) {
-						continue;
-					}
-				}
-			}
-
-			// The line.
-			Line line = lines[i];
-
-			// Do plot or buffer.
-			if (!canBuffer(i, line)) {
-				plotBuffer(i, g2);
-			}
-			bufferLine(i, line);
+		// The line.
+		Line line = getLine(dataList, index);
+		
+		// Do plot or buffer.
+		if (!canBuffer(line)) {
+			plotBuffer(g2);
 		}
-
+		bufferLine(line);
 	}
 
 	/**
@@ -322,11 +246,24 @@ public class LinePlotter extends DataPlotter {
 	 */
 	@Override
 	public void endPlot(Graphics2D g2) {
-		if (lineBuffers == null) {
-			return;
-		}
-		for (int i = 0; i < lineBuffers.size(); i++) {
-			plotBuffer(i, g2);
-		}
+		plotBuffer(g2);
+	}
+
+	/**
+	 * Returns the stroke that applies to lines, bars and candlesticks and histograms borders.
+	 * 
+	 * @return The stroke that applies to lines, bars and candlesticks and histograms borders.
+	 */
+	public Stroke getStroke() {
+		return stroke;
+	}
+
+	/**
+	 * Sets the stroke that applies to lines, bars and candlesticks and histograms borders.
+	 * 
+	 * @param stroke The stroke that applies to lines, bars and candlesticks and histograms borders.
+	 */
+	public void setStroke(Stroke stroke) {
+		this.stroke = stroke;
 	}
 }

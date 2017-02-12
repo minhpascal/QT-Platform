@@ -150,18 +150,6 @@ public class DataInfo {
 	}
 
 	/**
-	 * Adds an output data information to the list of outputs.
-	 * 
-	 * @param name The output name.
-	 * @param shortName The output short name.
-	 * @param index The index in the data.
-	 * @param plot A boolean indicating if this output has to be plotted.
-	 */
-	public void addOutput(String name, String shortName, int index, boolean plot) {
-		addOutput(new OutputInfo(name, shortName, index, plot));
-	}
-
-	/**
 	 * Add the output and map the index to the name.
 	 * 
 	 * @param output The output.
@@ -195,19 +183,6 @@ public class DataInfo {
 	 */
 	public void addOutput(String name, String shortName, int index, String description) {
 		outputs.add(new OutputInfo(name, shortName, index, description));
-	}
-
-	/**
-	 * Adds an output to the list of outputs.
-	 * 
-	 * @param name The output name.
-	 * @param shortName The output short name.
-	 * @param index The index in the data.
-	 * @param description The output description.
-	 * @param plot A boolean indicating if this output has to be plotted.
-	 */
-	public void addOutput(String name, String shortName, int index, String description, boolean plot) {
-		outputs.add(new OutputInfo(name, shortName, index, description, plot));
 	}
 
 	/**

@@ -27,7 +27,6 @@ import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
-import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
@@ -326,14 +325,12 @@ public class StatesSource extends StatesAverages {
 			
 			// Plotter.
 			LinePlotter plotterAvg = new LinePlotter();
-			plotterAvg.setIndexes(new int[]{ index });
+			plotterAvg.setIndex(index);
 			dataList.addDataPlotter(plotterAvg);
 			
 			// Increase index.
 			index++;
 		}
-
-		dataList.initializePlotProperties();
 
 		PlotData plotData = new PlotData();
 		plotData.add(dataList);

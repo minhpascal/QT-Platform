@@ -51,7 +51,6 @@ public abstract class Indicator {
 			Data data = indicator.calculate(index, indicatorSources, indicatorData);
 			indicatorData.add(data);
 		}
-		indicatorData.initializePlotProperties();
 		return indicatorData;
 	}
 

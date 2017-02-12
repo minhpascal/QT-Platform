@@ -38,11 +38,6 @@ public class OutputInfo {
 	 */
 	private int index;
 	/**
-	 * A boolean that indicates if this output has to be plotted, applies only to indicators.
-	 */
-	private boolean plot = true;
-
-	/**
 	 * Default constructor.
 	 */
 	public OutputInfo() {
@@ -64,22 +59,6 @@ public class OutputInfo {
 	}
 
 	/**
-	 * Constructor assigning the name and the short name.
-	 * 
-	 * @param name The name.
-	 * @param shortName The short name.
-	 * @param index The data index.
-	 * @param plot A boolean indicating if this output has to be plotted.
-	 */
-	public OutputInfo(String name, String shortName, int index, boolean plot) {
-		super();
-		this.name = name;
-		this.shortName = shortName;
-		this.index = index;
-		this.plot = plot;
-	}
-
-	/**
 	 * Constructor assigning the name, short name and description..
 	 * 
 	 * @param name The name.
@@ -96,24 +75,6 @@ public class OutputInfo {
 	}
 
 	/**
-	 * Constructor assigning the name, short name and description..
-	 * 
-	 * @param name The name.
-	 * @param shortName The short name.
-	 * @param index The data index.
-	 * @param description The description.
-	 * @param plot A boolean indicating if this output has to be plotted.
-	 */
-	public OutputInfo(String name, String shortName, int index, String description, boolean plot) {
-		super();
-		this.name = name;
-		this.shortName = shortName;
-		this.index = index;
-		this.description = description;
-		this.plot = plot;
-	}
-
-	/**
 	 * Check whether this output info is equal to the argument object.
 	 * 
 	 * @return A boolean.
@@ -126,9 +87,6 @@ public class OutputInfo {
 				return false;
 			}
 			if (getIndex() != out.getIndex()) {
-				return false;
-			}
-			if (isPlot() != out.isPlot()) {
 				return false;
 			}
 			return true;
@@ -215,24 +173,6 @@ public class OutputInfo {
 	}
 
 	/**
-	 * Returns a boolean indicating if this output has to be plotted.
-	 * 
-	 * @return A boolean indicating if this output has to be plotted.
-	 */
-	public boolean isPlot() {
-		return plot;
-	}
-
-	/**
-	 * Sets a boolean indicating if this output has to be plotted.
-	 * 
-	 * @param plot A boolean indicating if this output has to be plotted.
-	 */
-	public void setPlot(boolean plot) {
-		this.plot = plot;
-	}
-
-	/**
 	 * Returns a string representation of this output info.
 	 * 
 	 * @return A string representation.
@@ -244,8 +184,6 @@ public class OutputInfo {
 		b.append(getName());
 		b.append(", ");
 		b.append(getIndex());
-		b.append(", ");
-		b.append(isPlot() ? "plotted" : "hidden");
 		b.append("]");
 		return b.toString();
 	}

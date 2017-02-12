@@ -24,7 +24,6 @@ import java.awt.geom.Point2D;
 import com.qtplaf.library.trading.chart.plotter.drawings.Candlestick;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.PlotProperties;
 import com.qtplaf.library.util.ColorUtils;
 
 /**
@@ -37,7 +36,24 @@ public class CandlestickPlotter extends DataPlotter {
 	/**
 	 * Default candlestick border stroke.
 	 */
-	private BasicStroke borderStroke = new BasicStroke();
+	private BasicStroke stroke = new BasicStroke();
+	/**
+	 * The border color applies only to candlesticks and histograms.
+	 */
+	private Color colorBorder = Color.BLACK;
+	/**
+	 * A boolean that indicates if the border with the specified border color, that applies only to candlesticks and
+	 * histograms, should be painted. Explicitly set although it could be deduced if the border color is null.
+	 */
+	private boolean paintBorder = true;
+	/**
+	 * A boolean that indicates if the color in candlesticks and histograms should be raised.
+	 */
+	private boolean colorRaised = false;
+	/**
+	 * The brightness factor to apply for raised colors.
+	 */
+	private double brightnessFactor = 0.95;
 
 	/**
 	 * Constructor.
@@ -52,15 +68,15 @@ public class CandlestickPlotter extends DataPlotter {
 	 * 
 	 * @return The border stroke.
 	 */
-	public BasicStroke getBorderStroke() {
-		return borderStroke;
+	public BasicStroke getStroke() {
+		return stroke;
 	}
 
 	/**
 	 * @param borderStroke the borderStroke to set
 	 */
-	public void setBorderStroke(BasicStroke borderStroke) {
-		this.borderStroke = borderStroke;
+	public void setStroke(BasicStroke borderStroke) {
+		this.stroke = borderStroke;
 	}
 
 	/**
@@ -99,36 +115,33 @@ public class CandlestickPlotter extends DataPlotter {
 		// Odd/even period.
 		boolean odd = dataList.isOdd(index);
 
-		// Plot properties.
-		PlotProperties plotProperties = dataList.getPlotProperties(0);
-
 		// Save color and stroke.
 		Color saveColor = g2.getColor();
 		Stroke saveStroke = g2.getStroke();
 
 		// Set the stroke.
-		g2.setStroke(getBorderStroke());
+		g2.setStroke(getStroke());
 
 		// The color to apply.
 		Color color;
 		if (odd) {
 			if (bullish) {
-				color = plotProperties.getColorBullishOdd();
+				color = getColorBullishOdd();
 			} else {
-				color = plotProperties.getColorBearishOdd();
+				color = getColorBearishOdd();
 			}
 		} else {
 			if (bullish) {
-				color = plotProperties.getColorBullishEven();
+				color = getColorBullishEven();
 			} else {
-				color = plotProperties.getColorBearishEven();
+				color = getColorBearishEven();
 			}
 		}
 
 		// Once defined the path the paint strategy will depend on whether the border if painted or not, and whether
 		// the color is raised or not.
-		if (plotProperties.isPaintBorder()) {
-			if (plotProperties.isColorRaised()) {
+		if (isPaintBorder()) {
+			if (isColorRaised()) {
 				// Create a raised color.
 				Data data = candlestick.getData();
 				double open = Data.getOpen(data);
@@ -137,7 +150,7 @@ public class CandlestickPlotter extends DataPlotter {
 				int x = getContext().getCoordinateX(index);
 				int yOpen = getContext().getCoordinateY(open);
 				int yClose = getContext().getCoordinateY(close);
-				Color colorRaised = ColorUtils.brighter(color, plotProperties.getBrightnessFactor());
+				Color colorRaised = ColorUtils.brighter(color, getBrightnessFactor());
 				Point2D pt1;
 				Point2D pt2;
 				if (bullish) {
@@ -156,7 +169,7 @@ public class CandlestickPlotter extends DataPlotter {
 				g2.fill(shape);
 			}
 			// Set the border color and draw the path.
-			g2.setColor(plotProperties.getColorBorder());
+			g2.setColor(getColorBorder());
 			g2.draw(shape);
 		} else {
 			// Set the fill color and do fill.
@@ -168,5 +181,82 @@ public class CandlestickPlotter extends DataPlotter {
 		// Restore color and stroke.
 		g2.setColor(saveColor);
 		g2.setStroke(saveStroke);
+	}
+
+	/**
+	 * Returns the border color that applies only to candlesticks and histograms.
+	 * 
+	 * @return the colorBorder The border color.
+	 */
+	public Color getColorBorder() {
+		return colorBorder;
+	}
+
+	/**
+	 * Sets the border color that applies only to candlesticks and histograms.
+	 * 
+	 * @param colorBorder The border color.
+	 */
+	public void setColorBorder(Color colorBorder) {
+		this.colorBorder = colorBorder;
+	}
+
+	/**
+	 * Returns a boolean indicating if the border with the specified border color, should be painted. Applies only to
+	 * candlesticks and histograms and is explicitly set although it could be deduced setting the border color to null.
+	 * 
+	 * @return A boolean that indicates if the border color should be painted.
+	 */
+	public boolean isPaintBorder() {
+		return paintBorder;
+	}
+
+	/**
+	 * Set a boolean indicating if the border with the specified border color, should be painted. Applies only to
+	 * candlesticks and histograms and is explicitly set although it could be deduced setting the border color to null.
+	 * 
+	 * @param paintBorder A boolean that indicates if the border color should be painted.
+	 */
+	public void setPaintBorder(boolean paintBorder) {
+		this.paintBorder = paintBorder;
+	}
+
+	/**
+	 * Sets a boolean indicating if the color should be raised in candlesticks and histograms.
+	 * 
+	 * @return A boolean indicating if the color should be raised in candlesticks and histograms.
+	 */
+	public boolean isColorRaised() {
+		return colorRaised;
+	}
+
+	/**
+	 * Sets a boolean indicating if the color should be raised in candlesticks and histograms.
+	 * 
+	 * @param colorRaised A boolean indicating if the color should be raised in candlesticks and histograms.
+	 */
+	public void setColorRaised(boolean colorRaised) {
+		this.colorRaised = colorRaised;
+	}
+
+	/**
+	 * Returns the brightness factor.
+	 * 
+	 * @return The brightness factor.
+	 */
+	public double getBrightnessFactor() {
+		return brightnessFactor;
+	}
+
+	/**
+	 * Sets the brightness factor.
+	 * 
+	 * @param brightnessFactor The brightness factor.
+	 */
+	public void setBrightnessFactor(double brightnessFactor) {
+		if (brightnessFactor <= 0 || brightnessFactor >= 1) {
+			throw new IllegalArgumentException("Brightness factor must be > 0 and < 1");
+		}
+		this.brightnessFactor = brightnessFactor;
 	}
 }

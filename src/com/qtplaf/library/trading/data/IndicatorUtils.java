@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.MeanSquaredTranslation;
 import com.qtplaf.library.trading.data.indicators.PeriodIndicator;
@@ -53,10 +54,12 @@ public class IndicatorUtils {
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList =
 			new IndicatorDataList(session, ema, ema.getIndicatorInfo(), ListUtils.asList(source));
-		avgList.getPlotProperties(0).setColorBullishEven(color);
-		avgList.getPlotProperties(0).setColorBearishEven(color);
-		avgList.getPlotProperties(0).setColorBullishOdd(color);
-		avgList.getPlotProperties(0).setColorBearishOdd(color);
+		LinePlotter plotter = new LinePlotter();
+		plotter.setColorBullishEven(color);
+		plotter.setColorBearishEven(color);
+		plotter.setColorBullishOdd(color);
+		plotter.setColorBearishOdd(color);
+		avgList.addDataPlotter(plotter);
 		return avgList;
 	}
 
@@ -81,10 +84,12 @@ public class IndicatorUtils {
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList =
 			new IndicatorDataList(session, sma, sma.getIndicatorInfo(), ListUtils.asList(source));
-		avgList.getPlotProperties(0).setColorBullishEven(color);
-		avgList.getPlotProperties(0).setColorBearishEven(color);
-		avgList.getPlotProperties(0).setColorBullishOdd(color);
-		avgList.getPlotProperties(0).setColorBearishOdd(color);
+		LinePlotter plotter = new LinePlotter();
+		plotter.setColorBullishEven(color);
+		plotter.setColorBearishEven(color);
+		plotter.setColorBullishOdd(color);
+		plotter.setColorBearishOdd(color);
+		avgList.addDataPlotter(plotter);
 		return avgList;
 	}
 
@@ -109,10 +114,12 @@ public class IndicatorUtils {
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList =
 			new IndicatorDataList(session, sma, sma.getIndicatorInfo(), ListUtils.asList(source));
-		avgList.getPlotProperties(0).setColorBullishEven(color);
-		avgList.getPlotProperties(0).setColorBearishEven(color);
-		avgList.getPlotProperties(0).setColorBullishOdd(color);
-		avgList.getPlotProperties(0).setColorBearishOdd(color);
+		LinePlotter plotter = new LinePlotter();
+		plotter.setColorBullishEven(color);
+		plotter.setColorBearishEven(color);
+		plotter.setColorBullishOdd(color);
+		plotter.setColorBearishOdd(color);
+		avgList.addDataPlotter(plotter);
 		return avgList;
 	}
 
@@ -156,10 +163,12 @@ public class IndicatorUtils {
 		inf.getParameter(indexPeriod).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList lst = new IndicatorDataList(session, sma, inf, ListUtils.asList(source));
-		lst.getPlotProperties(0).setColorBullishEven(color);
-		lst.getPlotProperties(0).setColorBearishEven(color);
-		lst.getPlotProperties(0).setColorBullishOdd(color);
-		lst.getPlotProperties(0).setColorBearishOdd(color);
+		LinePlotter plotter = new LinePlotter();
+		plotter.setColorBullishEven(color);
+		plotter.setColorBearishEven(color);
+		plotter.setColorBullishOdd(color);
+		plotter.setColorBearishOdd(color);
+		lst.addDataPlotter(plotter);
 		
 		int indexSma = 0;
 		for (int smooth : smoothingPeriods) {
@@ -168,10 +177,12 @@ public class IndicatorUtils {
 			inf.getParameter(indexPeriod).getValue().setInteger(smooth);
 			source = new IndicatorSource(lst, indexSma);
 			lst = new IndicatorDataList(session, smoothedSma, inf, ListUtils.asList(source));
-			lst.getPlotProperties(0).setColorBullishEven(color);
-			lst.getPlotProperties(0).setColorBearishEven(color);
-			lst.getPlotProperties(0).setColorBullishOdd(color);
-			lst.getPlotProperties(0).setColorBearishOdd(color);
+			plotter = new LinePlotter();
+			plotter.setColorBullishEven(color);
+			plotter.setColorBearishEven(color);
+			plotter.setColorBullishOdd(color);
+			plotter.setColorBearishOdd(color);
+			lst.addDataPlotter(plotter);
 			sma = smoothedSma;
 		}
 
@@ -204,10 +215,12 @@ public class IndicatorUtils {
 		IndicatorSource inputSource = new IndicatorSource(inputList, inputIndex);
 		List<IndicatorSource> sources = ListUtils.asList(outputSource, inputSource);
 		IndicatorDataList msList = new IndicatorDataList(session, ms, ms.getIndicatorInfo(), sources);
-		msList.getPlotProperties(0).setColorBullishEven(color);
-		msList.getPlotProperties(0).setColorBearishEven(color);
-		msList.getPlotProperties(0).setColorBullishOdd(color);
-		msList.getPlotProperties(0).setColorBearishOdd(color);
+		LinePlotter plotter = new LinePlotter();
+		plotter.setColorBullishEven(color);
+		plotter.setColorBearishEven(color);
+		plotter.setColorBullishOdd(color);
+		plotter.setColorBearishOdd(color);
+		msList.addDataPlotter(plotter);
 		return msList;
 	}
 }

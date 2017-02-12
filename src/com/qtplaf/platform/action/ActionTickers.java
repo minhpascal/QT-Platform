@@ -419,7 +419,6 @@ public class ActionTickers extends AbstractAction {
 				PersistorDataList price = new PersistorDataList(session, infoPrice, persistor);
 				price.setCacheSize(-1);
 				price.setPlotType(PlotType.Candlestick);
-				price.initializePlotProperties();
 				PlotData plotData = new PlotData();
 				plotData.add(price);
 

@@ -22,7 +22,6 @@ import java.awt.Stroke;
 import com.qtplaf.library.trading.chart.plotter.drawings.Bar;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.PlotProperties;
 
 /**
  * PlotterOld of bars.
@@ -34,7 +33,7 @@ public class BarPlotter extends DataPlotter {
 	/**
 	 * Default bar stroke.
 	 */
-	private BasicStroke barStroke = new BasicStroke();
+	private BasicStroke stroke = new BasicStroke();
 
 	/**
 	 * Constructor.
@@ -49,8 +48,8 @@ public class BarPlotter extends DataPlotter {
 	 * 
 	 * @return The bar stroke.
 	 */
-	public BasicStroke getBarStroke() {
-		return barStroke;
+	public BasicStroke getStroke() {
+		return stroke;
 	}
 
 	/**
@@ -58,8 +57,8 @@ public class BarPlotter extends DataPlotter {
 	 * 
 	 * @param barStroke The bar stroke.
 	 */
-	public void setBarStroke(BasicStroke barStroke) {
-		this.barStroke = barStroke;
+	public void setStroke(BasicStroke barStroke) {
+		this.stroke = barStroke;
 	}
 
 	/**
@@ -99,29 +98,26 @@ public class BarPlotter extends DataPlotter {
 		// Odd/even period.
 		boolean odd = dataList.isOdd(index);
 
-		// Plot properties.
-		PlotProperties plotProperties = dataList.getPlotProperties(0);
-
 		// Save color and stroke.
 		Color saveColor = g2.getColor();
 		Stroke saveStroke = g2.getStroke();
 
 		// Set the stroke.
-		g2.setStroke(getBarStroke());
+		g2.setStroke(getStroke());
 
 		// The color to apply.
 		Color color;
 		if (odd) {
 			if (bullish) {
-				color = plotProperties.getColorBullishOdd();
+				color = getColorBullishOdd();
 			} else {
-				color = plotProperties.getColorBearishOdd();
+				color = getColorBearishOdd();
 			}
 		} else {
 			if (bullish) {
-				color = plotProperties.getColorBullishEven();
+				color = getColorBullishEven();
 			} else {
-				color = plotProperties.getColorBearishEven();
+				color = getColorBearishEven();
 			}
 		}
 

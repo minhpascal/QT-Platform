@@ -154,11 +154,6 @@ public abstract class DataList {
 	 */
 	private int indexPrice = Data.IndexClose;
 	/**
-	 * A list of plot properties, one to plot prices, either lines, bars or candles, one for volumes, and one for each
-	 * data value in indicators.
-	 */
-	private List<PlotProperties> plotPropertiesList = new ArrayList<>();
-	/**
 	 * A list of data list listeners.
 	 */
 	private List<DataListListener> listeners = new ArrayList<>();
@@ -209,15 +204,6 @@ public abstract class DataList {
 			}
 			if (getIndexPrice() != dataList.getIndexPrice()) {
 				return false;
-			}
-			int count = getPlotPropertiesCount();
-			if (count != dataList.getPlotPropertiesCount()) {
-				return false;
-			}
-			for (int i = 0; i < count; i++) {
-				if (!getPlotProperties(i).equals(dataList.getPlotProperties(i))) {
-					return false;
-				}
 			}
 			return true;
 		}
@@ -316,70 +302,6 @@ public abstract class DataList {
 	}
 
 	/**
-	 * Returns the number of plot properties.
-	 * 
-	 * @return The number of plot properties.
-	 */
-	public int getPlotPropertiesCount() {
-		return plotPropertiesList.size();
-	}
-
-	/**
-	 * Returns the list of plot properties.
-	 * 
-	 * @return The list of plot properties.
-	 */
-	List<PlotProperties> getPlotPropertiesList() {
-		return plotPropertiesList;
-	}
-
-	/**
-	 * Sets the list of plot properties.
-	 * 
-	 * @param plotPropertiesList The list of plot properties.
-	 */
-	void setPlotPropertiesList(List<PlotProperties> plotPropertiesList) {
-		this.plotPropertiesList = plotPropertiesList;
-	}
-
-	/**
-	 * Returns the plot properties at the givenindex.
-	 * 
-	 * @param index The index.
-	 * @return The plot properties.
-	 */
-	public PlotProperties getPlotProperties(int index) {
-		return plotPropertiesList.get(index);
-	}
-
-	/**
-	 * Initializes the plot properties depending on the data type.
-	 */
-	public void initializePlotProperties() {
-		if (isEmpty()) {
-			return;
-		}
-		plotPropertiesList.clear();
-		switch (getDataInfo().getDataType()) {
-		case Price:
-			plotPropertiesList.add(new PlotProperties());
-			break;
-		case Volume:
-			plotPropertiesList.add(new PlotProperties());
-			break;
-		case Indicator:
-			int count = getDataInfo().getOutputCount();
-			for (int i = 0; i < count; i++) {
-				plotPropertiesList.add(new PlotProperties());
-			}
-			break;
-		default:
-			plotPropertiesList.add(new PlotProperties());
-			break;
-		}
-	}
-
-	/**
 	 * Add a data list listener.
 	 * 
 	 * @param listener The listener.
@@ -429,7 +351,6 @@ public abstract class DataList {
 			new VolumeInfo(getSession(), getDataInfo().getInstrument(), getDataInfo().getPeriod());
 		DataList volumeDataList = new DelegateDataList(getSession(), volumeDataInfo, this);
 		volumeDataList.setPlotType(PlotType.Histogram);
-		volumeDataList.initializePlotProperties();
 		return volumeDataList;
 	}
 
@@ -483,12 +404,13 @@ public abstract class DataList {
 	 * @return A boolean that indicates if the data list has to be plotte from scratch.
 	 */
 	public boolean isPlotFromScratch() {
-		int count = getPlotPropertiesCount();
-		for (int i = 0; i < count; i++) {
-			PlotProperties plotProperties = getPlotProperties(i);
-			BasicStroke stroke = (BasicStroke) plotProperties.getStroke();
-			if (stroke.getDashArray() != null) {
-				return true;
+		for (DataPlotter dataPlotter : dataPlotters) {
+			if (dataPlotter instanceof LinePlotter) {
+				LinePlotter linePlotter = (LinePlotter) dataPlotter;
+				BasicStroke stroke = (BasicStroke) linePlotter.getStroke();
+				if (stroke.getDashArray() != null) {
+					return true;
+				}
 			}
 		}
 		return false;
