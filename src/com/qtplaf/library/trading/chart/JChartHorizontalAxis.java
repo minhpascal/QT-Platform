@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.trading.chart.plotter.HorizontalAxisPlotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 
@@ -110,8 +111,7 @@ public class JChartHorizontalAxis extends JPanel {
 	 * @return The horizontal axis plotter.
 	 */
 	private HorizontalAxisPlotter getHorizontalAxisPlotter() {
-		Dimension chartSize = chart.getChartContainer(0).getChartPlotter().getSize();
 		PlotData plotData = chart.getChartContainer(0).getPlotData();
-		return new HorizontalAxisPlotter(chart, plotData, chartSize, getSize());
+		return new HorizontalAxisPlotter(new PlotterContext(chart, plotData, getSize()));
 	}
 }

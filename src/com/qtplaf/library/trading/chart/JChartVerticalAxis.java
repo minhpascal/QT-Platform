@@ -22,6 +22,7 @@ import java.awt.Point;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.VerticalAxisPlotter;
 import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
@@ -165,9 +166,10 @@ public class JChartVerticalAxis extends JPanel {
 	 * @return The vertical axis plotter.
 	 */
 	private VerticalAxisPlotter getVerticalAxisPlotter() {
+		JChart chart = chartContainer.getChart();
 		Dimension chartSize = chartContainer.getChartPlotter().getSize();
 		PlotData plotData = chartContainer.getPlotData();
-		return new VerticalAxisPlotter(chartContainer.getChart(), plotData, chartSize);
+		return new VerticalAxisPlotter(new PlotterContext(chart, plotData, chartSize));
 	}
 
 }

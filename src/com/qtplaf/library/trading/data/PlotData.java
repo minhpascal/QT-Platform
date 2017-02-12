@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.qtplaf.library.util.Calendar;
-import com.qtplaf.library.util.NumberUtils;
-
 /**
  * A container for the data to plot in a <i>JChartContainer</i>.
  * 
@@ -749,83 +746,5 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * @param e The data list event.
 	 */
 	public void dataListChanged(DataListEvent e) {
-	}
-
-	/**
-	 * Check if a given period is odd.
-	 * 
-	 * @param index The index of the period.
-	 * @return A boolean that indicates if the period is odd.
-	 */
-	public boolean isOdd(int index) {
-		if (isEmpty()) {
-			return false;
-		}
-		if (get(0).isEmpty()) {
-			return false;
-		}
-		if (get(0).size() <= index) {
-			return false;
-		}
-		return (getOddCode(get(0).get(index)) == 1);
-	}
-
-	/**
-	 * Check if a given period is Even.
-	 * 
-	 * @param index The index of the period.
-	 * @return A boolean that indicates if the period is Even.
-	 */
-	public boolean isEven(int index) {
-		if (isEmpty()) {
-			return false;
-		}
-		if (get(0).isEmpty()) {
-			return false;
-		}
-		if (get(0).size() <= index) {
-			return false;
-		}
-		return (getOddCode(get(0).get(index)) == 2);
-	}
-
-	/**
-	 * Returns the odd code, 1 odd, 2 even, 0 none.
-	 * 
-	 * @param data The data item.
-	 * @return The odd code.
-	 */
-	public int getOddCode(Data data) {
-		if (data == null) {
-			return 0;
-		}
-		Calendar calendar = Calendar.getGTMCalendar(data.getTime());
-		switch (getPeriod().getUnit()) {
-		case Millisecond:
-		case Second:
-		case Minute:
-		case Hour:
-			if (NumberUtils.isOdd(calendar.getDay())) {
-				return 1;
-			}
-			return 2;
-		case Day:
-			if (NumberUtils.isOdd(calendar.getWeek())) {
-				return 1;
-			}
-			return 2;
-		case Week:
-			if (NumberUtils.isOdd(calendar.getMonth())) {
-				return 1;
-			}
-			return 2;
-		case Month:
-			if (NumberUtils.isOdd(calendar.getYear())) {
-				return 1;
-			}
-			return 2;
-		default:
-			return 0;
-		}
 	}
 }

@@ -15,7 +15,7 @@ package com.qtplaf.library.trading.chart.plotter.drawings;
 
 import java.awt.Shape;
 
-import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
  * Base class of all drawings. As a general rule a drawing should store the variables that define it, like indexes and
@@ -34,8 +34,8 @@ public abstract class Drawing {
 	/**
 	 * Returns this drawing shape.
 	 * 
-	 * @param plotter The plotter.
+	 * @param context The plotter context.
 	 * @return The shape.
 	 */
-	public abstract Shape getShape(Plotter plotter);
+	public abstract Shape getShape(PlotterContext context);
 }

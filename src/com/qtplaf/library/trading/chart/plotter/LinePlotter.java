@@ -14,19 +14,16 @@
 package com.qtplaf.library.trading.chart.plotter;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.Line;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataType;
-import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.OutputInfo;
 
@@ -45,15 +42,10 @@ public class LinePlotter extends DataPlotter {
 	private List<List<Line>> lineBuffers;
 
 	/**
-	 * Constructor assinging the necessary values.
-	 * 
-	 * @param chart The parent chart.
-	 * @author mique chart The parent chart.
-	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
+	 * Constructor.
 	 */
-	public LinePlotter(JChart chart, PlotData plotData, Dimension chartSize) {
-		super(chart, plotData, chartSize);
+	public LinePlotter() {
+		super();
 	}
 
 	/**
@@ -151,7 +143,7 @@ public class LinePlotter extends DataPlotter {
 		// Build a path appending the line shapes.
 		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, buffer.size());
 		for (Line line : buffer) {
-			shape.append(line.getShape(this), true);
+			shape.append(line.getShape(getContext()), true);
 		}
 
 		// Check intersection with clip bounds.
@@ -206,9 +198,9 @@ public class LinePlotter extends DataPlotter {
 		}
 
 		// Odd/even period.
-		boolean odd = getPlotData().isOdd(index);
+		boolean odd = dataList.isOdd(index);
 
-		// Current and previous values to plot, depending on the data typeof the list.
+		// Current and previous values to plot, depending on the data type of the list.
 		double[] dataCurrent = getValues(dataList, indexCurrent);
 		double[] dataPrevious = getValues(dataList, indexPrevious);
 
@@ -315,7 +307,7 @@ public class LinePlotter extends DataPlotter {
 			return;
 		}
 		// The same for the start index.
-		int startIndex = getPlotData().getStartIndex();
+		int startIndex = getContext().getPlotData().getStartIndex();
 		if (index < startIndex + 1) {
 			return;
 		}

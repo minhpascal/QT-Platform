@@ -27,12 +27,9 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.BarPlotter;
-import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.CrossCursorPlotter;
-import com.qtplaf.library.trading.chart.plotter.DataPlotter;
-import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
 import com.qtplaf.library.trading.chart.plotter.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.data.DataList;
@@ -136,11 +133,12 @@ public class JChartPlotter extends JPanel {
 		// The need to repaint is only applicable if the cursor type is the chart cross cursor.
 		if (cursorType.equals(CursorType.ChartCross)) {
 			if (repaint) {
-				Rectangle currentBounds = getCrossCursor(mousePoint).getShape(getCrossCursorPlotter()).getBounds();
+				Rectangle currentBounds =
+					getCrossCursor(mousePoint).getShape(getCrossCursorPlotter().getContext()).getBounds();
 				currentBounds = Plotter.getIntersectionBounds(currentBounds);
 				if (previousMousePoint != null) {
 					Rectangle previousBounds =
-						getCrossCursor(previousMousePoint).getShape(getCrossCursorPlotter()).getBounds();
+						getCrossCursor(previousMousePoint).getShape(getCrossCursorPlotter().getContext()).getBounds();
 					previousBounds = Plotter.getIntersectionBounds(previousBounds);
 					currentBounds = currentBounds.union(previousBounds);
 				}
@@ -159,7 +157,8 @@ public class JChartPlotter extends JPanel {
 		// The need to repaint is only applicable if the cursor type is the chart cross cursor.
 		if (cursorType.equals(CursorType.ChartCross)) {
 			if (repaint) {
-				Rectangle bounds = getCrossCursor(currentMousePoint).getShape(getCrossCursorPlotter()).getBounds();
+				Rectangle bounds =
+					getCrossCursor(currentMousePoint).getShape(getCrossCursorPlotter().getContext()).getBounds();
 				repaint(bounds);
 			}
 		}
@@ -178,7 +177,7 @@ public class JChartPlotter extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 
 		// Set plotters.
-		setDataPlotters();
+		setPlotterContext();
 
 		// Plot chart data.
 		plotChartData(g2, chartContainer.getPlotData());
@@ -203,8 +202,8 @@ public class JChartPlotter extends JPanel {
 		Plotter plotter = plotData.get(0).getDataPlotter();
 		int x1 = g2.getClipBounds().x;
 		int x2 = x1 + g2.getClipBounds().width;
-		int startIndexCheck = plotter.getDataIndex(x1);
-		int endIndexCheck = plotter.getDataIndex(x2);
+		int startIndexCheck = plotter.getContext().getDataIndex(x1);
+		int endIndexCheck = plotter.getContext().getDataIndex(x2);
 
 		// Start and end indexes from plot data.
 		int startIndex = plotData.getStartIndex();
@@ -282,33 +281,15 @@ public class JChartPlotter extends JPanel {
 	}
 
 	/**
-	 * Sets a suitable plotter to each data list in the plot data.
+	 * Sets the plotter context to all lists.
 	 */
-	private void setDataPlotters() {
+	private void setPlotterContext() {
+		JChart chart = chartContainer.getChart();
 		Dimension chartSize = getSize();
 		PlotData plotData = chartContainer.getPlotData();
+		PlotterContext context = new PlotterContext(chart, plotData, chartSize);
 		for (int i = 0; i < plotData.size(); i++) {
-			DataList dataList = plotData.get(i);
-			DataPlotter dataPlotter;
-			switch (dataList.getPlotType()) {
-			case Bar:
-				dataPlotter = new BarPlotter(chartContainer.getChart(), plotData, chartSize);
-				break;
-			case Candlestick:
-				dataPlotter = new CandlestickPlotter(chartContainer.getChart(), plotData, chartSize);
-				break;
-			case Histogram:
-				// TODO: implement histogram plotter.
-				dataPlotter = new LinePlotter(chartContainer.getChart(), plotData, chartSize);
-				break;
-			case Line:
-				dataPlotter = new LinePlotter(chartContainer.getChart(), plotData, chartSize);
-				break;
-			default:
-				dataPlotter = new LinePlotter(chartContainer.getChart(), plotData, chartSize);
-				break;
-			}
-			dataList.setDataPlotter(dataPlotter);
+			plotData.get(i).setPlotterContext(context);
 		}
 	}
 
@@ -318,9 +299,10 @@ public class JChartPlotter extends JPanel {
 	 * @return The cross cursor plotter.
 	 */
 	private CrossCursorPlotter getCrossCursorPlotter() {
-		Dimension chartSize = getSize();
+		JChart chart = chartContainer.getChart();
 		PlotData plotData = chartContainer.getPlotData();
-		return new CrossCursorPlotter(chartContainer.getChart(), plotData, chartSize);
+		Dimension chartSize = getSize();
+		return new CrossCursorPlotter(new PlotterContext(chart, plotData, chartSize));
 	}
 
 	/**

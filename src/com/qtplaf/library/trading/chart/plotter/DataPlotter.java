@@ -13,12 +13,9 @@
  */
 package com.qtplaf.library.trading.chart.plotter;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 
-import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.PlotData;
 
 /**
  * Base class for data plotters of timed data.
@@ -28,14 +25,33 @@ import com.qtplaf.library.trading.data.PlotData;
 public abstract class DataPlotter extends Plotter {
 
 	/**
-	 * Constructor assinging the necessary values.
-	 * 
-	 * @param chart The parent chart.
-	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
+	 * Indexes within the data element used by the plotter.
 	 */
-	public DataPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
-		super(chart, plotData, chartSize);
+	private int[] indexes;
+
+	/**
+	 * Constructor.
+	 */
+	public DataPlotter() {
+		super();
+	}
+
+	/**
+	 * Returns the indexes within the data element used by the plotter.
+	 * 
+	 * @return The indexes within the data element used by the plotter.
+	 */
+	public int[] getIndexes() {
+		return indexes;
+	}
+
+	/**
+	 * Set the indexes within the data element used by the plotter.
+	 * 
+	 * @param indexes The indexes within the data element used by the plotter.
+	 */
+	public void setIndexes(int[] indexes) {
+		this.indexes = indexes;
 	}
 
 	/**

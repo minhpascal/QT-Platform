@@ -14,14 +14,11 @@
 package com.qtplaf.library.trading.chart.plotter;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 
-import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
-import com.qtplaf.library.trading.data.PlotData;
 
 /**
  * A cursor plotter.
@@ -33,12 +30,11 @@ public class CrossCursorPlotter extends Plotter {
 	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param chart The parent chart..
-	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
+	 * @param context The plotter context.
 	 */
-	public CrossCursorPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
-		super(chart, plotData, chartSize);
+	public CrossCursorPlotter(PlotterContext context) {
+		super();
+		setContext(context);
 	}
 
 	/**
@@ -50,7 +46,7 @@ public class CrossCursorPlotter extends Plotter {
 	public void plot(Graphics2D g2, CrossCursor crossCursor) {
 
 		// The shape.
-		Shape shape = crossCursor.getShape(this);
+		Shape shape = crossCursor.getShape(getContext());
 
 		// Check intersection with clip bounds.
 		if (!getIntersectionBounds(shape.getBounds()).intersects(g2.getClipBounds())) {

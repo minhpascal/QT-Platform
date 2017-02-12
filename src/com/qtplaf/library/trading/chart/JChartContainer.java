@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
-import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
@@ -207,7 +207,7 @@ public class JChartContainer extends JPanel {
 		}
 
 		// The data index.
-		int index = getPlotter().getDataIndex(x);
+		int index = getPlotterContext().getDataIndex(x);
 
 		// Time info.
 		chartInfo.setInfo("Time", getInfoTime(index), Color.BLACK, false);
@@ -362,19 +362,18 @@ public class JChartContainer extends JPanel {
 		}
 		// Scale to apply to value.
 		int tickScale = plotData.getTickScale();
-		double value = getPlotter().getDataValue(y);
+		double value = getPlotterContext().getDataValue(y);
 		b.append("P: ");
 		b.append(FormatUtils.formattedFromDouble(value, tickScale, getSession().getLocale()));
 		return b.toString();
 	}
 
 	/**
-	 * Returns the base plotter.
+	 * Returns a suitable plotter context.
 	 * 
-	 * @return The base plotter.
+	 * @return A plotter context.
 	 */
-	public Plotter getPlotter() {
-		return new Plotter(getChart(), getPlotData(), getChartPlotter().getSize());
+	private PlotterContext getPlotterContext() {
+		return new PlotterContext(getChart(), getPlotData(), getChartPlotter().getSize());
 	}
-
 }

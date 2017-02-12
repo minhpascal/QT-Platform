@@ -14,14 +14,12 @@
 package com.qtplaf.library.trading.chart.plotter;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Stroke;
 
-import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
@@ -75,25 +73,13 @@ public class HorizontalAxisPlotter extends Plotter {
 	}
 
 	/**
-	 * The dimension of the horizontal axis.
-	 */
-	private Dimension horizontalAxisSize;
-
-	/**
 	 * Constructor assinging the necessary values.
 	 * 
-	 * @param chart The parent chart.
-	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
-	 * @param horizontalAxisSize The dimension of the horizontal axis.
+	 * @param context The plotter context.
 	 */
-	public HorizontalAxisPlotter(
-		JChart chart,
-		PlotData plotData,
-		Dimension chartSize,
-		Dimension horizontalAxisSize) {
-		super(chart, plotData, chartSize);
-		this.horizontalAxisSize = horizontalAxisSize;
+	public HorizontalAxisPlotter(PlotterContext context) {
+		super();
+		setContext(context);
 	}
 
 	/**
@@ -201,7 +187,7 @@ public class HorizontalAxisPlotter extends Plotter {
 	public void plotAxis(Graphics2D g2) {
 
 		// The first data list of the plot data is enough to get the lis of times.
-		PlotData plotData = getPlotData();
+		PlotData plotData = getContext().getPlotData();
 		DataList dataList = plotData.get(0);
 
 		// Set start and end time indexes.
@@ -215,8 +201,8 @@ public class HorizontalAxisPlotter extends Plotter {
 		}
 
 		// Calculate the avilable width to plot.
-		int startX = getCoordinateX(startTimeIndex);
-		int endX = getCoordinateX(endTimeIndex);
+		int startX = getContext().getCoordinateX(startTimeIndex);
+		int endX = getContext().getCoordinateX(endTimeIndex);
 		int availableWidth = endX - startX + 1;
 
 		// Start and end time.
@@ -231,15 +217,15 @@ public class HorizontalAxisPlotter extends Plotter {
 		Font saveFont = g2.getFont();
 		Color saveColor = g2.getColor();
 		Stroke saveStroke = g2.getStroke();
-		
+
 		// Parameters.
-		HorizontalAxisPlotParameters parameters = getChart().getHorizontalAxisPlotParameters();
+		HorizontalAxisPlotParameters plotParameters = getPlotParameters();
 
 		// The text insets, font, color and stroke.
-		Insets insets = parameters.getHorizontalAxisTextInsets();
-		Font font = parameters.getHorizontalAxisTextFont();
-		Color color = parameters.getHorizontalAxisColor();
-		Stroke stroke = parameters.getHorizontalAxisLineStroke();
+		Insets insets = plotParameters.getHorizontalAxisTextInsets();
+		Font font = plotParameters.getHorizontalAxisTextFont();
+		Color color = plotParameters.getHorizontalAxisColor();
+		Stroke stroke = plotParameters.getHorizontalAxisLineStroke();
 
 		// The font metrics.
 		FontMetrics fm = g2.getFontMetrics(font);
@@ -268,7 +254,7 @@ public class HorizontalAxisPlotter extends Plotter {
 
 			// Get the string and plot it.
 			String stringToPlot = getStringToPlot(timeCurrent, timePeriod);
-			int lineX = getCoordinateX(index);
+			int lineX = getContext().getCoordinateX(index);
 			int x = lineX + insets.left;
 
 			// Check overlap.
@@ -278,7 +264,6 @@ public class HorizontalAxisPlotter extends Plotter {
 			lastX = x;
 
 			// Draw the vertical line.
-			g2.drawLine(lineX, 0, lineX, horizontalAxisSize.height);
 
 			// Draw the string.
 			int y = insets.top + fm.getAscent();
@@ -419,6 +404,15 @@ public class HorizontalAxisPlotter extends Plotter {
 	}
 
 	/**
+	 * Returns the horizontal axis plot parameters.
+	 * 
+	 * @return The horizontal axis plot parameters.
+	 */
+	private HorizontalAxisPlotParameters getPlotParameters() {
+		return getContext().getChart().getHorizontalAxisPlotParameters();
+	}
+
+	/**
 	 * Returns the time period to plot that fits in the available width.
 	 * 
 	 * @param g2 The graphics context.
@@ -427,13 +421,10 @@ public class HorizontalAxisPlotter extends Plotter {
 	 * @return The time period that fits.
 	 */
 	private TimePeriod getTimePeriodThatFits(Graphics2D g2, long timeElapsed, int availableWidth) {
-		
-		// Parameters.
-		HorizontalAxisPlotParameters parameters = getChart().getHorizontalAxisPlotParameters();
 
 		// The font metrics to calculate text widths and the text insets.
-		FontMetrics fm = g2.getFontMetrics(parameters.getHorizontalAxisTextFont());
-		Insets insets = parameters.getHorizontalAxisTextInsets();
+		FontMetrics fm = g2.getFontMetrics(getPlotParameters().getHorizontalAxisTextFont());
+		Insets insets = getPlotParameters().getHorizontalAxisTextInsets();
 
 		// Iterate time periods.
 		TimePeriod[] timePeriods = TimePeriod.values();

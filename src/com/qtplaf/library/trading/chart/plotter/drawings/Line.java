@@ -18,7 +18,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 
-import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
  * A line drawing.
@@ -143,16 +143,16 @@ public class Line extends Drawing {
 	/**
 	 * Returns the line shape.
 	 * 
-	 * @param plotter The plotter.
+	 * @param context The plotter context.
 	 * @return The line shape.
 	 */
-	public Shape getShape(Plotter plotter) {
-
+	public Shape getShape(PlotterContext context) {
+		
 		// Coordinates.
-		int coordinateXCurrent = plotter.getDrawingCenterCoordinateX(plotter.getCoordinateX(index2));
-		int coordinateXPrevious = plotter.getDrawingCenterCoordinateX(plotter.getCoordinateX(index1));
-		int coordinateYCurrent = plotter.getCoordinateY(v2);
-		int coordinateYPrevious = plotter.getCoordinateY(v1);
+		int coordinateXCurrent = context.getDrawingCenterCoordinateX(context.getCoordinateX(index2));
+		int coordinateXPrevious = context.getDrawingCenterCoordinateX(context.getCoordinateX(index1));
+		int coordinateYCurrent = context.getCoordinateY(v2);
+		int coordinateYPrevious = context.getCoordinateY(v1);
 
 		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 1);
 		shape.moveTo(coordinateXPrevious, coordinateYPrevious);

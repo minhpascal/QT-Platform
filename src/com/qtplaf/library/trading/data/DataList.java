@@ -18,9 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.trading.chart.plotter.BarPlotter;
+import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.DataPlotter;
+import com.qtplaf.library.trading.chart.plotter.LinePlotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.VolumeInfo;
+import com.qtplaf.library.util.Calendar;
+import com.qtplaf.library.util.NumberUtils;
 
 /**
  * A list of data objects.
@@ -437,6 +443,35 @@ public abstract class DataList {
 	}
 
 	/**
+	 * Set the plotter context to data plotters.
+	 * 
+	 * @param context The plotter context.
+	 */
+	public void setPlotterContext(PlotterContext context) {
+		DataPlotter dataPlotter;
+		switch (getPlotType()) {
+		case Bar:
+			dataPlotter = new BarPlotter();
+			break;
+		case Candlestick:
+			dataPlotter = new CandlestickPlotter();
+			break;
+		case Histogram:
+			// TODO: implement histogram plotter.
+			dataPlotter = new LinePlotter();
+			break;
+		case Line:
+			dataPlotter = new LinePlotter();
+			break;
+		default:
+			dataPlotter = new LinePlotter();
+			break;
+		}
+		dataPlotter.setContext(context);
+		setDataPlotter(dataPlotter);
+	}
+
+	/**
 	 * Check if a data list has to be plotted from scratch, mainly because it plots lines with dashes.
 	 * 
 	 * @param dataList The data list.
@@ -533,5 +568,83 @@ public abstract class DataList {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Check if a given period is odd.
+	 * 
+	 * @param index The index of the period.
+	 * @return A boolean that indicates if the period is odd.
+	 */
+	public boolean isOdd(int index) {
+		if (isEmpty()) {
+			return false;
+		}
+		if (isEmpty()) {
+			return false;
+		}
+		if (get(0).size() <= index) {
+			return false;
+		}
+		return (getOddCode(get(index)) == 1);
+	}
+
+	/**
+	 * Check if a given period is Even.
+	 * 
+	 * @param index The index of the period.
+	 * @return A boolean that indicates if the period is Even.
+	 */
+	public boolean isEven(int index) {
+		if (isEmpty()) {
+			return false;
+		}
+		if (isEmpty()) {
+			return false;
+		}
+		if (get(0).size() <= index) {
+			return false;
+		}
+		return (getOddCode(get(index)) == 2);
+	}
+
+	/**
+	 * Returns the odd code, 1 odd, 2 even, 0 none.
+	 * 
+	 * @param data The data item.
+	 * @return The odd code.
+	 */
+	public int getOddCode(Data data) {
+		if (data == null) {
+			return 0;
+		}
+		Calendar calendar = Calendar.getGTMCalendar(data.getTime());
+		switch (getDataInfo().getPeriod().getUnit()) {
+		case Millisecond:
+		case Second:
+		case Minute:
+		case Hour:
+			if (NumberUtils.isOdd(calendar.getDay())) {
+				return 1;
+			}
+			return 2;
+		case Day:
+			if (NumberUtils.isOdd(calendar.getWeek())) {
+				return 1;
+			}
+			return 2;
+		case Week:
+			if (NumberUtils.isOdd(calendar.getMonth())) {
+				return 1;
+			}
+			return 2;
+		case Month:
+			if (NumberUtils.isOdd(calendar.getYear())) {
+				return 1;
+			}
+			return 2;
+		default:
+			return 0;
+		}
 	}
 }

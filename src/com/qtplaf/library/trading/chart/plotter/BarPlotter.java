@@ -13,16 +13,14 @@
  */
 package com.qtplaf.library.trading.chart.plotter;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 
-import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.Bar;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotProperties;
 
 /**
@@ -33,14 +31,33 @@ import com.qtplaf.library.trading.data.PlotProperties;
 public class BarPlotter extends DataPlotter {
 
 	/**
-	 * Constructor assinging the necessary values.
-	 * 
-	 * @param chart The parent chart.
-	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
+	 * Default bar stroke.
 	 */
-	public BarPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
-		super(chart, plotData, chartSize);
+	private BasicStroke barStroke = new BasicStroke();
+
+	/**
+	 * Constructor.
+	 */
+	public BarPlotter() {
+		super();
+	}
+
+	/**
+	 * Returns the bar stroke.
+	 * 
+	 * @return The bar stroke.
+	 */
+	public BasicStroke getBarStroke() {
+		return barStroke;
+	}
+
+	/**
+	 * Setrs the bar stroke.
+	 * 
+	 * @param barStroke The bar stroke.
+	 */
+	public void setBarStroke(BasicStroke barStroke) {
+		this.barStroke = barStroke;
 	}
 
 	/**
@@ -66,7 +83,7 @@ public class BarPlotter extends DataPlotter {
 
 		// The bar.
 		Bar bar = getBar(dataList, index);
-		Shape shape = bar.getShape(this);
+		Shape shape = bar.getShape(getContext());
 
 		// Check intersection with clip bounds.
 		if (!getIntersectionBounds(shape.getBounds()).intersects(g2.getClipBounds())) {
@@ -77,7 +94,7 @@ public class BarPlotter extends DataPlotter {
 		boolean bullish = bar.isBullish();
 
 		// Odd/even period.
-		boolean odd = getPlotData().isOdd(index);
+		boolean odd = dataList.isOdd(index);
 
 		// Plot properties.
 		PlotProperties plotProperties = dataList.getPlotProperties(0);
@@ -87,7 +104,7 @@ public class BarPlotter extends DataPlotter {
 		Stroke saveStroke = g2.getStroke();
 
 		// Set the stroke.
-		g2.setStroke(getBorderAndBarStroke());
+		g2.setStroke(getBarStroke());
 
 		// The color to apply.
 		Color color;

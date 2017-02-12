@@ -13,19 +13,17 @@
  */
 package com.qtplaf.library.trading.chart.plotter;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
 
-import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.plotter.drawings.Candlestick;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotProperties;
 import com.qtplaf.library.util.ColorUtils;
 
@@ -37,14 +35,31 @@ import com.qtplaf.library.util.ColorUtils;
 public class CandlestickPlotter extends DataPlotter {
 
 	/**
-	 * Constructor assinging the necessary values.
-	 * 
-	 * @param chart The parent chart.
-	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
+	 * Default candlestick border stroke.
 	 */
-	public CandlestickPlotter(JChart chart, PlotData plotData, Dimension chartSize) {
-		super(chart, plotData, chartSize);
+	private BasicStroke borderStroke = new BasicStroke();
+
+	/**
+	 * Constructor.
+	 */
+	public CandlestickPlotter() {
+		super();
+	}
+
+	/**
+	 * Returns the border stroke
+	 * 
+	 * @return The border stroke.
+	 */
+	public BasicStroke getBorderStroke() {
+		return borderStroke;
+	}
+
+	/**
+	 * @param borderStroke the borderStroke to set
+	 */
+	public void setBorderStroke(BasicStroke borderStroke) {
+		this.borderStroke = borderStroke;
 	}
 
 	/**
@@ -69,7 +84,7 @@ public class CandlestickPlotter extends DataPlotter {
 
 		// The candlestick.
 		Candlestick candlestick = getCandlestick(dataList, index);
-		Shape shape = candlestick.getShape(this);
+		Shape shape = candlestick.getShape(getContext());
 
 		// Check intersection with clip bounds.
 		if (!getIntersectionBounds(shape.getBounds()).intersects(g2.getClipBounds())) {
@@ -80,7 +95,7 @@ public class CandlestickPlotter extends DataPlotter {
 		boolean bullish = candlestick.isBullish();
 
 		// Odd/even period.
-		boolean odd = getPlotData().isOdd(index);
+		boolean odd = dataList.isOdd(index);
 
 		// Plot properties.
 		PlotProperties plotProperties = dataList.getPlotProperties(0);
@@ -90,7 +105,7 @@ public class CandlestickPlotter extends DataPlotter {
 		Stroke saveStroke = g2.getStroke();
 
 		// Set the stroke.
-		g2.setStroke(getBorderAndBarStroke());
+		g2.setStroke(getBorderStroke());
 
 		// The color to apply.
 		Color color;
@@ -116,10 +131,10 @@ public class CandlestickPlotter extends DataPlotter {
 				Data data = candlestick.getData();
 				double open = Data.getOpen(data);
 				double close = Data.getClose(data);
-				int candlestickWidth = getDataItemWidth();
-				int x = getCoordinateX(index);
-				int yOpen = getCoordinateY(open);
-				int yClose = getCoordinateY(close);
+				int candlestickWidth = getContext().getDataItemWidth();
+				int x = getContext().getCoordinateX(index);
+				int yOpen = getContext().getCoordinateY(open);
+				int yClose = getContext().getCoordinateY(close);
 				Color colorRaised = ColorUtils.brighter(color, plotProperties.getBrightnessFactor());
 				Point2D pt1;
 				Point2D pt2;

@@ -21,7 +21,7 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
-import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
  * A cross cursor drawing, used to plot the cross cursor.
@@ -176,15 +176,15 @@ public class CrossCursor extends Drawing {
 	/**
 	 * Returns this drawing shape.
 	 * 
-	 * @param plotter The plotter.
+	 * @param context The plotter context.
 	 * @return The shape.
 	 */
-	public Shape getShape(Plotter plotter) {
+	public Shape getShape(PlotterContext context) {
 
 		int x = point.x;
 		int y = point.y;
-		int width = (this.width < 0 ? plotter.getChartSize().width : this.width);
-		int height = (this.height < 0 ? plotter.getChartSize().height : this.height);
+		int width = (this.width < 0 ? context.getChartSize().width : this.width);
+		int height = (this.height < 0 ? context.getChartSize().height : this.height);
 
 		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 2);
 		boolean horizontalLine = false;

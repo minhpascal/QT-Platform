@@ -16,7 +16,7 @@ package com.qtplaf.library.trading.chart.plotter.drawings;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 
-import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.Data;
 
 /**
@@ -39,10 +39,10 @@ public class Bar extends DataDrawing {
 	/**
 	 * Returns the bar shape.
 	 * 
-	 * @param plotter The plotter.
+	 * @param context The plotter context.
 	 * @return The bar shape.
 	 */
-	public Shape getShape(Plotter plotter) {
+	public Shape getShape(PlotterContext context) {
 		// The values to plot.
 		Data data = getData();
 		double open = Data.getOpen(data);
@@ -51,17 +51,17 @@ public class Bar extends DataDrawing {
 		double close = Data.getClose(data);
 
 		// The X coordinate to start painting.
-		int x = plotter.getCoordinateX(getIndex());
+		int x = context.getCoordinateX(getIndex());
 
 		// And the Y coordinate for each value.
-		int openY = plotter.getCoordinateY(open);
-		int highY = plotter.getCoordinateY(high);
-		int lowY = plotter.getCoordinateY(low);
-		int closeY = plotter.getCoordinateY(close);
+		int openY = context.getCoordinateY(open);
+		int highY = context.getCoordinateY(high);
+		int lowY = context.getCoordinateY(low);
+		int closeY = context.getCoordinateY(close);
 
 		// The X coordinate of the vertical line, either the candle.
-		int barWidth = plotter.getDataItemWidth();
-		int verticalLineX = plotter.getDrawingCenterCoordinateX(x);
+		int barWidth = context.getDataItemWidth();
+		int verticalLineX = context.getDrawingCenterCoordinateX(x);
 
 		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
 		// The vertical bar line.
