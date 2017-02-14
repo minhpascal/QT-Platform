@@ -44,7 +44,7 @@ public class PersistorDataList extends DataList {
 	/**
 	 * The underlying persistor.
 	 */
-	private DataPersistor persistor;
+	private DataPersistor dataPersistor;
 	/**
 	 * A map to cache retrieved records by relative index.
 	 */
@@ -70,7 +70,46 @@ public class PersistorDataList extends DataList {
 	 */
 	public PersistorDataList(Session session, DataInfo dataInfo, Persistor persistor) {
 		super(session, dataInfo);
-		this.persistor = new DataPersistor(persistor);
+		this.dataPersistor = new DataPersistor(persistor);
+	}
+
+	/**
+	 * Returns the data persistor.
+	 * 
+	 * @return The data persistor.
+	 */
+	public DataPersistor getDataPersistor() {
+		return dataPersistor;
+	}
+
+	/**
+	 * Returns the index in the data item given the index in the record.
+	 * 
+	 * @param recordIndex The index in the record.
+	 * @return The index in the data.
+	 */
+	public int getDataIndex(int recordIndex) {
+		return dataPersistor.getDataIndex(recordIndex);
+	}
+
+	/**
+	 * Returns the data index given the field alias.
+	 * 
+	 * @param alias The field alias.
+	 * @return The index in the data.
+	 */
+	public int getDataIndex(String alias) {
+		return dataPersistor.getDataIndex(alias);
+	}
+
+	/**
+	 * Returns the index in the record given the index in the data item.
+	 * 
+	 * @param dataIndex The index in the data item.
+	 * @return The index in the record.
+	 */
+	public int getRecordIndex(int dataIndex) {
+		return dataPersistor.getRecordIndex(dataIndex);
 	}
 
 	/**
@@ -116,7 +155,7 @@ public class PersistorDataList extends DataList {
 	 */
 	@Override
 	public int size() {
-		return persistor.size().intValue();
+		return dataPersistor.size().intValue();
 	}
 
 	/**
@@ -126,7 +165,7 @@ public class PersistorDataList extends DataList {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return persistor.isEmpty();
+		return dataPersistor.isEmpty();
 	}
 
 	/**
@@ -154,14 +193,14 @@ public class PersistorDataList extends DataList {
 			return data;
 		}
 
-		RecordSet recordSet = persistor.getPage(Long.valueOf(index), getPageSize());
+		RecordSet recordSet = dataPersistor.getPage(Long.valueOf(index), getPageSize());
 		Record record = recordSet.get(0);
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record rc = recordSet.get(i);
-			int rcIndex = persistor.getIndex(rc).intValue();
+			int rcIndex = dataPersistor.getIndex(rc).intValue();
 			addToCache(rcIndex, recordSet.get(i));
 		}
-		return persistor.getData(record);
+		return dataPersistor.getData(record);
 	}
 
 	/**
@@ -192,7 +231,7 @@ public class PersistorDataList extends DataList {
 	private Data getFromCache(int index) {
 		Record record = map.get(index);
 		if (record != null) {
-			return persistor.getData(record);
+			return dataPersistor.getData(record);
 		}
 		return null;
 	}
@@ -208,6 +247,6 @@ public class PersistorDataList extends DataList {
 		if (record == null) {
 			return null;
 		}
-		return persistor.getData(record);
+		return dataPersistor.getData(record);
 	}
 }

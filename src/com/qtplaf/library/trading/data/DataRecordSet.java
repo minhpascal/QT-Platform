@@ -86,4 +86,14 @@ public class DataRecordSet extends RecordSet {
 	public void sort(Comparator<Record> comparator) {
 		throw new UnsupportedOperationException();
 	}
+
+	/**
+	 * Check if the recordset can be sorted. Default is true, overwrite this method if the recorset implementation can
+	 * not be sorted.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isSortable() {
+		return false;
+	}
 }

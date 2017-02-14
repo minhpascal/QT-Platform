@@ -645,6 +645,9 @@ public class JTableRecord extends JTable {
 	 * @param controlMask A boolean that indicates if the control mask applies.
 	 */
 	private void sort(int column, boolean controlMask) {
+		if (!getTableModelRecord().getRecordSet().isSortable()) {
+			return;
+		}
 		Field field = getTableModelRecord().getField(getColumnModel().getColumn(column).getModelIndex());
 		Order order = getTableModelRecord().getOrder();
 

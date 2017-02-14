@@ -160,6 +160,17 @@ public class DBPersistor implements Persistor {
 	}
 
 	/**
+	 * Returns the index of the field with the given alias or -1.
+	 * 
+	 * @param alias The field alias.
+	 * @return The index of the field with the given alias or -1.
+	 */
+	@Override
+	public int getFieldIndex(String alias) {
+		return view.getFieldIndex(alias);
+	}
+
+	/**
 	 * Returns a field by alias.
 	 * 
 	 * @param alias The field alias.

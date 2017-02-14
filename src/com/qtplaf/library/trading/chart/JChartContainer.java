@@ -200,11 +200,9 @@ public class JChartContainer extends JPanel {
 		// The chart info panel.
 		JChartInfo chartInfo = getChartInfo();
 
-		// If plot data is price, indicate the instrument and the period.
-		if (plotData.isPrice()) {
-			chartInfo.setInfo("Instrument", getInfoInstrument(), Color.BLACK, false);
-			chartInfo.setInfo("Period", getInfoPeriod(), Color.BLUE, false);
-		}
+		// Indicate the instrument and the period.
+		chartInfo.setInfo("Instrument", getInfoInstrument(), Color.BLACK, false);
+		chartInfo.setInfo("Period", getInfoPeriod(), Color.BLUE, false);
 
 		// The data index.
 		int index = getPlotterContext().getDataIndex(x);

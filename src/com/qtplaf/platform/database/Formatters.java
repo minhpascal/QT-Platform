@@ -14,18 +14,21 @@
 
 package com.qtplaf.platform.database;
 
+import java.util.List;
+
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.database.formatters.VolumeValue;
 import com.qtplaf.platform.database.tables.DataPrice;
+import com.qtplaf.platform.statistics.Average;
+import com.qtplaf.platform.statistics.StatesNormalize;
 import com.qtplaf.platform.statistics.StatesSource;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordUtils;
@@ -73,15 +76,13 @@ public class Formatters {
 	 *
 	 * @param session Working session.
 	 * @param persistor The persistor.
-	 * @param serverId The server id.
-	 * @param instrId The instrument id.
-	 * @param periodId The period id.
+	 * @param instrument The instrument.
+	 * @param period The period.
 	 * @throws PersistorException
 	 */
 	public static void configureStatesSource(
 		Session session,
 		Persistor persistor,
-		Server server,
 		Instrument instrument,
 		Period period) {
 		TimeFmtValue timeFmt = new TimeFmtValue(period.getUnit());
@@ -95,6 +96,35 @@ public class Formatters {
 		Record record = persistor.getDefaultRecord();
 		for (int i = 7; i < record.getFieldCount(); i++) {
 			persistor.getField(i).setFormatter(new DataValue(session,15));
+		}
+	}
+	
+	public static void configureStatesNormalize(Persistor persistor, StatesNormalize stats) {
+		Session session = stats.getSession();
+		Instrument instrument = stats.getInstrument();
+		Period period = stats.getPeriod();
+		
+		persistor.getField(StatesNormalize.Fields.Open).setFormatter(new PipValue(session, instrument));
+		persistor.getField(StatesNormalize.Fields.High).setFormatter(new PipValue(session, instrument));
+		persistor.getField(StatesNormalize.Fields.Low).setFormatter(new PipValue(session, instrument));
+		persistor.getField(StatesNormalize.Fields.Close).setFormatter(new PipValue(session, instrument));
+		
+		TimeFmtValue timeFmt = new TimeFmtValue(period.getUnit());
+		persistor.getField(StatesNormalize.Fields.TimeFmt).setFormatter(timeFmt);
+		persistor.getField(StatesNormalize.Fields.TimeFmt).setCalculator(timeFmt);
+		
+		// Averages. (Skip range)
+		List<Average> averages = stats.getAverages();
+		for (Average average : averages) {
+			String name = Average.getAverageName(average);
+			persistor.getField(name).setFormatter(new DataValue(session,10));
+		}
+		
+		// Ranges.
+		int scale = stats.getScale();
+		List<String> ranges = stats.getStatesSource().getNamesToCalculateRanges();
+		for (String range : ranges) {
+			persistor.getField(range).setFormatter(new DataValue(session,scale));
 		}
 	}
 }

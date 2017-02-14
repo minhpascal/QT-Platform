@@ -40,7 +40,7 @@ public class NumberUtils extends org.apache.commons.lang3.math.NumberUtils {
 	public static boolean isEven(long l) {
 		return (l % 2 == 0);
 	}
-	
+
 	/**
 	 * Check if the number is odd.
 	 * 
@@ -96,12 +96,12 @@ public class NumberUtils extends org.apache.commons.lang3.math.NumberUtils {
 	 * @return The rounded value.
 	 */
 	public static double round(double value, int decimals) {
-		double p = java.lang.Math.pow(10,decimals);
+		double p = java.lang.Math.pow(10, decimals);
 		double v = value * p;
-		long   l = java.lang.Math.round(v);
+		long l = java.lang.Math.round(v);
 		double r = l / p;
 		// Ensure exact decimals because sometimes floating point operations yield numbers like 0.49999999999 for 0.5
-		return new BigDecimal(r).setScale(decimals,BigDecimal.ROUND_HALF_UP).doubleValue();
+		return new BigDecimal(r).setScale(decimals, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 
 	/**
@@ -245,5 +245,23 @@ public class NumberUtils extends org.apache.commons.lang3.math.NumberUtils {
 		double floor = Math.floor(pow);
 		double value = floor / Math.pow(10, decimals);
 		return value;
+	}
+
+	/**
+	 * Returns a string key by concatenating the list of values, applying the scale and sign (1 for positive, 0 for
+	 * negative).
+	 * 
+	 * @param values The list of values.
+	 * @param scale The scale.
+	 * @return The string key.
+	 */
+	public static String getStringKey(double[] values, int scale) {
+		StringBuilder b = new StringBuilder();
+		for (double value : values) {
+			String sign = (value >= 0 ? "1" : "0");
+			b.append(sign);
+			b.append(StringUtils.remove(getBigDecimal(Math.abs(value), scale).toPlainString(), '.'));
+		}
+		return b.toString();
 	}
 }

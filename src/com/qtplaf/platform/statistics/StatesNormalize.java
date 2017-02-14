@@ -17,39 +17,34 @@ package com.qtplaf.platform.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Types;
-import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
+import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.DataType;
-import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.task.TaskStatesSource;
+import com.qtplaf.platform.task.TaskStatesNormalize;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Retrieves the source values for the series of analisys to build the wave descriptor states and transitions. Contains
- * the source candle values, the series of rainbow averages smoothed, their relative spreads and their speed (tangent),
- * and finally the spreads of high, low and close over the fastest average. First add the averages and then call setup.
+ *
  *
  * @author Miquel Sas
  */
-public class StatesSource extends StatesAverages {
+public class StatesNormalize extends StatesAverages {
 
 	/** Field names. */
 	public static class Fields {
@@ -61,7 +56,13 @@ public class StatesSource extends StatesAverages {
 		public static final String Low = "low";
 		public static final String Close = "close";
 		public static final String Range = "range";
+		public static final String Key = "state_key";
 	}
+
+	/** States ranges related statistics. */
+	private StatesRanges statesRanges;
+	/** The scale for normalization. */
+	private int scale = 1;
 
 	/**
 	 * Constructor.
@@ -71,89 +72,66 @@ public class StatesSource extends StatesAverages {
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 */
-	public StatesSource(Session session, Server server, Instrument instrument, Period period) {
-		super(session, server, instrument, period);
+	public StatesNormalize(StatesRanges statesRanges) {
+		super(
+			statesRanges.getSession(),
+			statesRanges.getServer(),
+			statesRanges.getInstrument(),
+			statesRanges.getPeriod());
+		this.statesRanges = statesRanges;
+		setScale(4);
+	}
+
+	/**
+	 * Returns the normalize scale.
+	 * 
+	 * @return The normalize scale.
+	 */
+	public int getScale() {
+		return scale;
+	}
+
+	/**
+	 * Set the normalize scale.
+	 * 
+	 * @param scale The normalize scale.
+	 */
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	/**
+	 * Returns the states ranges related statistics.
+	 * 
+	 * @return The states ranges related statistics.
+	 */
+	public StatesRanges getStatesRanges() {
+		return statesRanges;
+	}
+
+	/**
+	 * Returns the states source related statistics.
+	 * 
+	 * @return The states source related statistics.
+	 */
+	public StatesSource getStatesSource() {
+		return statesRanges.getStatesSource();
 	}
 
 	/**
 	 * Setup after adding the averages.
 	 */
+	@Override
 	protected void setup() {
-		if (getAverages().isEmpty()) {
-			throw new IllegalStateException();
-		}
-		clear();
-		Table table = getTable();
-		for (int i = 0; i < table.getFieldCount(); i++) {
-			Field field = table.getField(i);
-			String name = field.getName();
-			String description = field.getDisplayDescription();
-			add(new Output(name, description, Types.Double));
-		}
-
 	}
 
 	/**
-	 * Returns the task that calculates the statistic.
-	 * 
-	 * @return The calculator task.
-	 */
-	public Task getTask() {
-		return new TaskStatesSource(this);
-	}
-
-	/**
-	 * Returns the table name.
-	 * 
-	 * @return The table name.
-	 */
-	public String getTableName() {
-		return Names.getName(getInstrument(), getPeriod(), getId().toLowerCase());
-	}
-
-	/**
-	 * Returns the list of fields that should be included in a <tt>Data</tt> of the corresponding indicator. It excludes
-	 * index, time and formatted time.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getIndicatorOutputFields() {
-		List<Field> fields = new ArrayList<>();
-		Table table = getTable();
-		for (int i = 0; i < table.getFieldCount(); i++) {
-			if (table.getField(i).getName().equals(Fields.Index)) {
-				continue;
-			}
-			if (table.getField(i).getName().equals(Fields.Time)) {
-				continue;
-			}
-			if (table.getField(i).getName().equals(Fields.TimeFmt)) {
-				continue;
-			}
-			fields.add(table.getField(i));
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of field names to calculate ranges (min-max).
+	 * Returns the list of field names to calculate the status key.
 	 * 
 	 * @return The list of fieldd names.
 	 */
-	public List<String> getNamesToCalculateRanges() {
+	public List<String> getNamesStateKey() {
 		List<String> names = new ArrayList<>();
-
-		// Percentual range
-		names.add(Fields.Range);
-
-		// Price spreads.
-		Average fastAvg = getAverages().get(0);
-		// High spread.
-		names.add(Average.getSpreadName(Fields.High, fastAvg));
-		// Low spread.
-		names.add(Average.getSpreadName(Fields.Low, fastAvg));
-		// Close spread.
-		names.add(Average.getSpreadName(Fields.Close, fastAvg));
 
 		// Spreads between averages.
 		for (int i = 0; i < getAverages().size(); i++) {
@@ -174,11 +152,31 @@ public class StatesSource extends StatesAverages {
 	}
 
 	/**
+	 * Returns the task that calculates the statistic.
+	 * 
+	 * @return The calculator task.
+	 */
+	@Override
+	public Task getTask() {
+		return new TaskStatesNormalize(this);
+	}
+
+	/**
+	 * Returns the table name.
+	 * 
+	 * @return The table name.
+	 */
+	public String getTableName() {
+		return Names.getName(getInstrument(), getPeriod(), getId().toLowerCase());
+	}
+
+	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
 	 * @return The results table.
 	 */
+	@Override
 	public Table getTable() {
 
 		Table table = new Table();
@@ -217,6 +215,15 @@ public class StatesSource extends StatesAverages {
 		// Speed (tangent) of averages.
 		table.addFields(getSpeedFields());
 
+		// State key field.
+		Field stkey = new Field();
+		stkey.setName(Fields.Key);
+		stkey.setType(Types.String);
+		stkey.setLength(100);
+		stkey.setHeader("Key");
+		stkey.setLabel("State key");
+		table.addField(stkey);
+
 		// Primary key on Time.
 		table.getField(Fields.Time).setPrimaryKey(true);
 
@@ -239,7 +246,7 @@ public class StatesSource extends StatesAverages {
 	@Override
 	public RecordSet getRecordSet() {
 		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
-		Formatters.configureStatesSource(getSession(), persistor, getInstrument(), getPeriod());
+		Formatters.configureStatesNormalize(persistor, this);
 		return new DataRecordSet(persistor);
 	}
 
@@ -270,10 +277,10 @@ public class StatesSource extends StatesAverages {
 
 		// Candlestick on price: plotter.
 		CandlestickPlotter plotterCandle = new CandlestickPlotter();
-		plotterCandle.setIndexes(new int[] { 
-			dataList.getDataIndex(Fields.Open), 
-			dataList.getDataIndex(Fields.High), 
-			dataList.getDataIndex(Fields.Low), 
+		plotterCandle.setIndexes(new int[] {
+			dataList.getDataIndex(Fields.Open),
+			dataList.getDataIndex(Fields.High),
+			dataList.getDataIndex(Fields.Low),
 			dataList.getDataIndex(Fields.Close) });
 		dataList.addDataPlotter(plotterCandle);
 
@@ -284,10 +291,10 @@ public class StatesSource extends StatesAverages {
 			String label = Average.getAverageLabel(average);
 			String header = Average.getAverageHeader(average);
 			int index = dataList.getDataIndex(name);
-			
+
 			// Output info.
-			info.addOutput(label, header, index, average.toString());
-			
+			info.addOutput(label, header, index, label);
+
 			// Plotter.
 			LinePlotter plotterAvg = new LinePlotter();
 			plotterAvg.setIndex(index);
@@ -297,8 +304,41 @@ public class StatesSource extends StatesAverages {
 		PlotData plotData = new PlotData();
 		plotData.add(dataList);
 
+		// Data list for spreads
+		DataInfo infoSpread = new DataInfo(getSession());
+		DataList dataSpread = new DelegateDataList(getSession(), infoSpread, dataList);
+
+		infoSpread.setDataType(DataType.Indicator);
+		infoSpread.setInstrument(getInstrument());
+		infoSpread.setName(getInstrument().getId());
+		infoSpread.setDescription(getInstrument().getDescription());
+		infoSpread.setPeriod(getPeriod());
+		// Spreads between averages.
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average averageFast = getAverages().get(i);
+			for (int j = i + 1; j < getAverages().size(); j++) {
+				Average averageSlow = getAverages().get(j);
+				String name = Average.getSpreadName(averageFast, averageSlow);
+				String header = Average.getSpreadHeader(averageFast, averageSlow);
+				String label = Average.getSpreadLabel(averageFast, averageSlow);
+				int index = dataList.getDataIndex(name);
+
+				// Output info.
+				info.addOutput(label, header, index, label);
+
+				// Plotter.
+				LinePlotter plotterSpread = new LinePlotter();
+				plotterSpread.setIndex(index);
+				dataSpread.addDataPlotter(plotterSpread);
+			}
+		}
+
+		PlotData plotSpread = new PlotData();
+		plotSpread.add(dataSpread);
+
 		List<PlotData> plotDataList = new ArrayList<>();
 		plotDataList.add(plotData);
+		plotDataList.add(plotSpread);
 
 		return plotDataList;
 	}

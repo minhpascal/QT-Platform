@@ -14,12 +14,74 @@
 
 package com.qtplaf.platform.statistics;
 
+import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Field;
+import com.qtplaf.platform.util.DomainUtils;
+
 /**
  * Defines a smoothed average used as a movement descriptor.
  * 
  * @author Miquel Sas
  */
 public class Average implements Comparable<Average> {
+
+	/**
+	 * Returns the speed field for the average.
+	 * 
+	 * @param session Working session.
+	 * @param average The average.
+	 * @return The field.
+	 */
+	public static Field getSpeedField(Session session, Average average) {
+		String name = Average.getSpeedName(average);
+		String header = Average.getSpeedHeader(average);
+		String label = Average.getSpeedLabel(average);
+		return DomainUtils.getDouble(session, name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the spread field between two averages.
+	 * 
+	 * @param session Working session
+	 * @param averageFast Fast average.
+	 * @param averageSlow Slow average.
+	 * @return The field.
+	 */
+	public static Field getSpreadField(Session session, Average averageFast, Average averageSlow) {
+		String name = Average.getSpreadName(averageFast, averageSlow);
+		String header = Average.getSpreadHeader(averageFast, averageSlow);
+		String label = Average.getSpreadLabel(averageFast, averageSlow);
+		return DomainUtils.getDouble(session, name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the spread field for a field name and an average.
+	 * 
+	 * @param session Working session.
+	 * @param fieldName The field name.
+	 * @param average The average.
+	 * @return The field.
+	 */
+	public static Field getSpreadField(Session session, String fieldName, Average average) {
+		String name = Average.getSpreadName(fieldName, average);
+		String header = Average.getSpreadHeader(fieldName, average);
+		String label = Average.getSpreadLabel(fieldName, average);
+		return DomainUtils.getDouble(session, name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the field for the average.
+	 * 
+	 * @param session Working session.
+	 * @param average The average.
+	 * @return The field.
+	 */
+	public static Field getAverageField(Session session, Average average) {
+		String name = Average.getAverageName(average);
+		String header = Average.getAverageHeader(average);
+		String label = Average.getAverageLabel(average);
+		return DomainUtils.getDouble(session, name, name, header, label, label);
+	}
 
 	/**
 	 * Returns the name of the average.
@@ -165,7 +227,7 @@ public class Average implements Comparable<Average> {
 	 * @param period Average period.
 	 * @param averages Smoothing periods.
 	 */
-	public Average(int period, int[] smooths) {
+	public Average(int period, int... smooths) {
 		super();
 		this.period = period;
 		this.smooths = smooths;

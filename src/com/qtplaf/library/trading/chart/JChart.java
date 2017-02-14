@@ -73,7 +73,7 @@ public class JChart extends JPanel {
 	/**
 	 * The split panel divider size.
 	 */
-	private int splitPaneDividerSize = 2;
+	private int splitPaneDividerSize = 8;
 	/**
 	 * Cursor plot parameters.
 	 */

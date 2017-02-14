@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Field;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
@@ -73,14 +74,23 @@ public abstract class StatesAverages extends Statistics {
 	 * Add a smoothed simple moving average
 	 * 
 	 * @param period
-	 * @param averages
+	 * @param smooths Smoothing periods.
 	 */
 	public void addAverage(int period, int... smooths) {
-		averages.add(new Average(period, smooths));
+		addAverage(new Average(period, smooths));
+	}
+
+	/**
+	 * Add an average
+	 * 
+	 * @param average The average.
+	 */
+	public void addAverage(Average average) {
+		averages.add(average);
 		ListUtils.sort(averages);
 		setup();
 	}
-	
+
 	/**
 	 * Setup after adding the averages.
 	 */
@@ -131,4 +141,44 @@ public abstract class StatesAverages extends Statistics {
 		return period;
 	}
 
+	/**
+	 * Returns the list of average fields.
+	 * 
+	 * @return The list of average fields.
+	 */
+	protected List<Field> getAverageFields() {
+		List<Field> fields = new ArrayList<>();
+		for (int i = 0; i < getAverages().size(); i++) {
+			fields.add(Average.getAverageField(getSession(), getAverages().get(i)));
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of spread fields.
+	 * 
+	 * @return The list of spread fields.
+	 */
+	protected List<Field> getSpreadFields() {
+		List<Field> fields = new ArrayList<>();
+		for (int i = 1; i < getAverages().size(); i++) {
+			Average averageFast = getAverages().get(i+1);
+			Average averageSlow = getAverages().get(i);
+			fields.add(Average.getSpreadField(getSession(), averageFast, averageSlow));
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of speed fields.
+	 * 
+	 * @return The list of speed fields.
+	 */
+	protected List<Field> getSpeedFields() {
+		List<Field> fields = new ArrayList<>();
+		for (int i = 0; i < getAverages().size(); i++) {
+			fields.add(Average.getSpeedField(getSession(), getAverages().get(i)));
+		}
+		return fields;
+	}
 }

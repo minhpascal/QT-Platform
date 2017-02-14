@@ -94,6 +94,14 @@ public interface Persistor {
 	Field getField(String alias);
 
 	/**
+	 * Returns the index of the field with the given alias or -1.
+	 * 
+	 * @param alias The field alias.
+	 * @return The index of the field with the given alias or -1.
+	 */
+	int getFieldIndex(String alias);
+
+	/**
 	 * Count the number of records that agree with the criteria.
 	 * 
 	 * @param criteria The filter criteria.

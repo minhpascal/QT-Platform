@@ -152,7 +152,7 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 		if (segments <= 1) {
 			return NumberUtils.round(Calculator.normalize(value, maximum, minimum), getScale());
 		}
-		return getValueFromSegments(value);
+		return getValueFromSegments(Calculator.normalize(value, maximum, minimum));
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 		if (positives == null) {
 			int size = segments + 1;
 			positives = new double[size];
-			double step = maximum / Double.valueOf(segments);
+			double step = 1.0 / Double.valueOf(segments);
 			double value = 0;
 			for (int i = 0; i < size; i++) {
 				positives[i] = NumberUtils.round(value, getScale());
@@ -276,7 +276,7 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 		if (negatives == null) {
 			int size = segments + 1;
 			negatives = new double[size];
-			double step = minimum / Double.valueOf(segments);
+			double step = (-1.0) / Double.valueOf(segments);
 			double value = 0;
 			for (int i = 0; i < size; i++) {
 				negatives[i] = NumberUtils.round(value, getScale());

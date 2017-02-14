@@ -229,6 +229,10 @@ public class ActionStatistics extends AbstractAction {
 				Period period = Period.parseId(periodId);
 				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
 				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				if (statistics.getTask() == null) {
+					MessageBox.warning(session, "No calculation task defined.");
+					return;
+				}
 				ProgressManager progress = new ProgressManager(session);
 				progress.setSize(0.4, 0.4);
 				progress.addTask(statistics.getTask());

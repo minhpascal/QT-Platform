@@ -346,6 +346,16 @@ public class RecordSet implements Iterable<Record> {
 	}
 
 	/**
+	 * Check if the recordset can be sorted. Default is true, overwrite this method if the recorset implementation can
+	 * not be sorted.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isSortable() {
+		return true;
+	}
+
+	/**
 	 * Returns a string representation with the number of records listed limited to 500.
 	 * 
 	 * @return A string representation.

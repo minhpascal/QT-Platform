@@ -30,9 +30,14 @@ import com.qtplaf.library.util.list.ListUtils;
  * @author Miquel Sas
  */
 public class StatisticsManager {
-	
+
 	private static final String StateSource_01 = "stsrc_01";
 	private static final String StateRanges_01 = "strng_01";
+	private static final String StateNormalize_01 = "stnrm_01";
+
+	private static final String StateSource_02 = "stsrc_02";
+	private static final String StateRanges_02 = "strng_02";
+	private static final String StateNormalize_02 = "stnrm_02";
 
 	/**
 	 * An item is a defined statistics, identified by a code or id and a description.
@@ -46,6 +51,7 @@ public class StatisticsManager {
 		private String id;
 		private String title;
 		private String description;
+		private AveragesConfiguration configuration;
 
 		/**
 		 * Constructor.
@@ -72,6 +78,24 @@ public class StatisticsManager {
 			this.id = id;
 			this.title = title;
 			this.description = description;
+		}
+
+		/**
+		 * Returns the averages configuration.
+		 * 
+		 * @return The averages configuration.
+		 */
+		public AveragesConfiguration getConfiguration() {
+			return configuration;
+		}
+
+		/**
+		 * Set the averages configuration.
+		 * 
+		 * @param configuration The averages configuration.
+		 */
+		public void setConfiguration(AveragesConfiguration configuration) {
+			this.configuration = configuration;
 		}
 
 		/**
@@ -132,34 +156,71 @@ public class StatisticsManager {
 	private static List<Reference> references = new ArrayList<Reference>();
 
 	/**
-	 * Add a statistics reference.
-	 * 
-	 * @param id The id.
-	 * @param title The title.
-	 * @param description The description.
-	 */
-	private static void add(String id, String title, String description) {
-		references.add(new Reference(id, title, description));
-	}
-	
-	/**
 	 * Initialize the statistics references.
 	 */
 	private static void initializeReferences() {
 		if (!references.isEmpty()) {
 			return;
 		}
-		String id, title, description;
+		String id, title;
+		Reference reference;
+		AveragesConfiguration configuration;
+
+		// 5-21-89-377-1597-6765
+		configuration = new AveragesConfiguration();
+		configuration.getAverages().add(new Average(5, 3, 3));
+		configuration.getAverages().add(new Average(21, 5, 5));
+		configuration.getAverages().add(new Average(89, 13, 13));
+		configuration.getAverages().add(new Average(377, 21, 21));
+		configuration.getAverages().add(new Average(1597, 34, 34));
+		configuration.getAverages().add(new Average(6765, 55, 55));
+		configuration.getRanges().add(new Average(89));
+		configuration.getRanges().add(new Average(377));
 
 		id = StateSource_01;
-		title = "States source (5-21-89-377-1597-6765)";
-		description = "First step in states statistics using a rainbow of averages.";
-		add(id, title, description);
+		title = "States source (" + configuration.toStringAverages() + ")";
+		reference = new Reference(id, title);
+		reference.setConfiguration(configuration);
+		references.add(reference);
 
 		id = StateRanges_01;
-		title = "States ranges (5-21-89-377-1597-6765)";
-		description = "Ranges (min-max) of percentual values of " + StateSource_01 + " statistics.";
-		add(id, title, description);
+		title = "States ranges (" + configuration.toStringAverages() + ") (" + configuration.toStringRanges() + ")";
+		reference = new Reference(id, title);
+		reference.setConfiguration(configuration);
+		references.add(reference);
+
+		id = StateNormalize_01;
+		title = "States normalized (" + configuration.toStringAverages() + ")";
+		reference = new Reference(id, title);
+		reference.setConfiguration(configuration);
+		references.add(reference);
+		
+		// 5-21-89-377-1597
+		configuration = new AveragesConfiguration();
+		configuration.getAverages().add(new Average(5, 3, 3));
+		configuration.getAverages().add(new Average(21, 5, 5));
+		configuration.getAverages().add(new Average(89, 13, 13));
+		configuration.getAverages().add(new Average(377, 21, 21));
+		configuration.getRanges().add(new Average(89));
+		configuration.getRanges().add(new Average(377));
+		
+		id = StateSource_02;
+		title = "States source (" + configuration.toStringAverages() + ")";
+		reference = new Reference(id, title);
+		reference.setConfiguration(configuration);
+		references.add(reference);
+
+		id = StateRanges_02;
+		title = "States ranges (" + configuration.toStringAverages() + ") (" + configuration.toStringRanges() + ")";
+		reference = new Reference(id, title);
+		reference.setConfiguration(configuration);
+		references.add(reference);
+
+		id = StateNormalize_02;
+		title = "States normalized (" + configuration.toStringAverages() + ")";
+		reference = new Reference(id, title);
+		reference.setConfiguration(configuration);
+		references.add(reference);
 	}
 
 	/**
@@ -189,7 +250,7 @@ public class StatisticsManager {
 		List<Reference> references = new ArrayList<Reference>(StatisticsManager.references);
 		return references;
 	}
-	
+
 	/**
 	 * Returns the statictics.
 	 * 
@@ -205,15 +266,18 @@ public class StatisticsManager {
 		Instrument instrument,
 		Period period,
 		String id) {
-		if (id.equals(StateSource_01)) {
+		if (id.equals(StateSource_01) || id.equals(StateSource_02)) {
 			return getStatesSource(session, server, instrument, period, id);
 		}
-		if (id.equals(StateRanges_01)) {
+		if (id.equals(StateRanges_01) || id.equals(StateRanges_02)) {
 			return getStatesRanges(session, server, instrument, period, id);
+		}
+		if (id.equals(StateNormalize_01) || id.equals(StateNormalize_02)) {
+			return getStatesNormalize(session, server, instrument, period, id);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the statictics of smoothed averages: 5, 21, 89, 377, 1597, 6765
 	 * 
@@ -231,7 +295,7 @@ public class StatisticsManager {
 		String id) {
 
 		StatesSource stsrc = new StatesSource(session, server, instrument, period);
-		
+
 		Reference reference = getReference(id);
 		if (reference == null) {
 			throw new IllegalStateException();
@@ -239,17 +303,53 @@ public class StatisticsManager {
 		stsrc.setId(reference.getId());
 		stsrc.setTitle(reference.getTitle());
 		stsrc.setDescription(reference.getDescription());
-
-		stsrc.addAverage(5, 3, 3);
-		stsrc.addAverage(21, 5, 5);
-		stsrc.addAverage(89, 13, 13);
-		stsrc.addAverage(377, 21, 21);
-		stsrc.addAverage(1597, 34, 34);
-		stsrc.addAverage(6765, 55, 55);
+		for (Average average : reference.getConfiguration().getAverages()) {
+			stsrc.addAverage(average);
+		}
 
 		return stsrc;
 	}
-	
+
+	/**
+	 * Returns the statictics of smoothed averages normalized: 5, 21, 89, 377, 1597, 6765
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @return The statistics definition.
+	 */
+	private static StatesNormalize getStatesNormalize(
+		Session session,
+		Server server,
+		Instrument instrument,
+		Period period,
+		String id) {
+
+		String idRanges = null;
+		if (id.equals(StateNormalize_01)) {
+			idRanges = StateRanges_01;
+		}
+		if (id.equals(StateNormalize_02)) {
+			idRanges = StateRanges_02;
+		}
+
+		StatesNormalize stnrm = new StatesNormalize(getStatesRanges(session, server, instrument, period, idRanges));
+
+		Reference reference = getReference(id);
+		if (reference == null) {
+			throw new IllegalStateException();
+		}
+		stnrm.setId(reference.getId());
+		stnrm.setTitle(reference.getTitle());
+		stnrm.setDescription(reference.getDescription());
+		for (Average average : reference.getConfiguration().getAverages()) {
+			stnrm.addAverage(average);
+		}
+
+		return stnrm;
+	}
+
 	/**
 	 * Returns the statictics of ranges for the states source: 5, 21, 89, 377, 1597, 6765
 	 * 
@@ -265,14 +365,17 @@ public class StatisticsManager {
 		Instrument instrument,
 		Period period,
 		String id) {
-		
+
 		String idSource = null;
 		if (id.equals(StateRanges_01)) {
 			idSource = StateSource_01;
 		}
+		if (id.equals(StateRanges_02)) {
+			idSource = StateSource_02;
+		}
 
 		StatesRanges strng = new StatesRanges(getStatesSource(session, server, instrument, period, idSource));
-		
+
 		Reference reference = getReference(id);
 		if (reference == null) {
 			throw new IllegalStateException();
@@ -280,9 +383,10 @@ public class StatisticsManager {
 		strng.setId(reference.getId());
 		strng.setTitle(reference.getTitle());
 		strng.setDescription(reference.getDescription());
-		
-		// Only consider these periods.
-		strng.addAverage(377);
+
+		for (Average range : reference.getConfiguration().getRanges()) {
+			strng.addAverage(range);
+		}
 
 		return strng;
 	}

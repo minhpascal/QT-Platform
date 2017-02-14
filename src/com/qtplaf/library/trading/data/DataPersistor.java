@@ -14,8 +14,9 @@
 
 package com.qtplaf.library.trading.data;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +35,6 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.ValueMap;
 import com.qtplaf.library.database.View;
-import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A persistor for elements of timed <tt>Data</tt>. The general contract for a persistor of timed <tt>Data</tt> is that
@@ -43,7 +43,7 @@ import com.qtplaf.library.util.list.ListUtils;
  * <li>The first field is always the index, that starts at 0, indexed and unique. This field value at insert time is
  * managed by this persistor.</li>
  * <li>The second field is a long, the time of the timed data.</li>
- * <li>All subsequent <b>persistent</b> fields are of type double and are considered data.</li>
+ * <li>All subsequent <b>persistent</b> fields of type double and are considered data.</li>
  * </ul>
  * Note that data in a data persistor can not be inserted from different threads, and in most cases it has no sense.
  * 
@@ -70,6 +70,14 @@ public class DataPersistor implements Persistor {
 	 * A boolean that indicates if the persistor is sensitive to new records added by another <tt>DataPersistor</tt>.
 	 */
 	private boolean sensitive = false;
+	/**
+	 * Map record field indexes to data indexes. Key is the data index and value is the field index.
+	 */
+	private Map<Integer, Integer> mapDataIndexes;
+	/**
+	 * Map record data indexes to record field indexes. Key is the field index and value is the data index.
+	 */
+	private Map<Integer, Integer> mapRecordIndexes;
 
 	/**
 	 * Constructor.
@@ -103,6 +111,46 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
+	 * returns the data indexes map properly filled.
+	 * 
+	 * @return The data indexes map.
+	 */
+	private Map<Integer, Integer> getDataIndexesMap() {
+		checkIndexesMaps();
+		return mapDataIndexes;
+	}
+
+	/**
+	 * returns the record indexes map properly filled.
+	 * 
+	 * @return The record indexes map.
+	 */
+	private Map<Integer, Integer> getRecordIndexesMap() {
+		checkIndexesMaps();
+		return mapRecordIndexes;
+	}
+
+	/**
+	 * Check that the indexes maps are filled.
+	 */
+	private void checkIndexesMaps() {
+		if (mapDataIndexes == null || mapRecordIndexes == null) {
+			mapDataIndexes = new HashMap<>();
+			mapRecordIndexes = new HashMap<>();
+			Record record = getDefaultRecord();
+			int dataIndex = 0;
+			for (int recordIndex = 2; recordIndex < record.getFieldCount(); recordIndex++) {
+				Field field = record.getField(recordIndex);
+				if (field.isDouble() && field.isPersistent()) {
+					mapDataIndexes.put(dataIndex, recordIndex);
+					mapRecordIndexes.put(recordIndex, dataIndex);
+					dataIndex++;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Validates that the argument persistor conforms to the general contract of <tt>Data</tt> persistors.
 	 * 
 	 * @param persistor The persistor to validate.
@@ -119,14 +167,46 @@ public class DataPersistor implements Persistor {
 			throw new IllegalArgumentException();
 		}
 
-		// Any othe persisten field must be of type <tt>Double</tt>.
-		for (int i = 2; i < persistor.getFieldCount(); i++) {
-			if (persistor.getField(i).isPersistent()) {
-				if (!persistor.getField(i).isDouble()) {
-					throw new IllegalArgumentException();
-				}
-			}
-		}
+	}
+
+	/**
+	 * Returns the index in the data item given the index in the record.
+	 * 
+	 * @param recordIndex The index in the record.
+	 * @return The index in the data.
+	 */
+	public int getDataIndex(int recordIndex) {
+		return getRecordIndexesMap().get(recordIndex);
+	}
+
+	/**
+	 * Returns the data index given the field alias.
+	 * 
+	 * @param alias The field alias.
+	 * @return The index in the data.
+	 */
+	public int getDataIndex(String alias) {
+		return getDataIndex(persistor.getFieldIndex(alias));
+	}
+
+	/**
+	 * Returns the size of a data item.
+	 * 
+	 * @return The size of a data item.
+	 */
+	public int getDataSize() {
+		checkIndexesMaps();
+		return getDataIndexesMap().size();
+	}
+
+	/**
+	 * Returns the index in the record given the index in the data item.
+	 * 
+	 * @param dataIndex The index in the data item.
+	 * @return The index in the record.
+	 */
+	public int getRecordIndex(int dataIndex) {
+		return getDataIndexesMap().get(dataIndex);
 	}
 
 	/**
@@ -139,14 +219,15 @@ public class DataPersistor implements Persistor {
 		if (record == null) {
 			return null;
 		}
-		long time = record.getValue(1).getLong();
-		List<Double> values = new ArrayList<>();
+		Data data = new Data(getDataSize());
+		data.setTime(record.getValue(1).getLong());
 		for (int i = 2; i < record.getFieldCount(); i++) {
-			if (record.getField(i).isPersistent()) {
-				values.add(record.getValue(i).getDouble());
+			Field field = record.getField(i);
+			if (field.isDouble() && field.isPersistent()) {
+				int dataIndex = getRecordIndexesMap().get(i);
+				data.setValue(dataIndex, record.getValue(i).getDouble());
 			}
 		}
-		Data data = new Data(time, ListUtils.toArray(values));
 		return data;
 	}
 
@@ -407,6 +488,17 @@ public class DataPersistor implements Persistor {
 	 */
 	public Field getField(String alias) {
 		return persistor.getField(alias);
+	}
+
+	/**
+	 * Returns the index of the field with the given alias or -1.
+	 * 
+	 * @param alias The field alias.
+	 * @return The index of the field with the given alias or -1.
+	 */
+	@Override
+	public int getFieldIndex(String alias) {
+		return persistor.getFieldIndex(alias);
 	}
 
 	/**

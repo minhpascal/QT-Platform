@@ -34,7 +34,6 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
-import com.qtplaf.library.math.Distribution;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.platform.database.Names;
@@ -63,40 +62,43 @@ public class StatesRanges extends StatesAverages {
 
 	/** Record property values. */
 	private static final String Values = "values";
-	/** Record property distribution. */
-	private static final String ValuesDistribution = "distr";
 
 	/**
-	 * Field calculator to view the number of stddev's to add to the average to achieve the maximum.
+	 * Field calculator to view the normal distribution index.
 	 */
-	public static class NumStdDev implements FieldCalculator {
-		@Override
-		public Value getValue(Record record) {
-			double maximum = record.getValue(Fields.Maximum).getDouble();
-			double average = record.getValue(Fields.Average).getDouble();
-			double stddev = record.getValue(Fields.StdDev).getDouble();
-			double ndev = (stddev != 0 ? (maximum - average) / stddev : 0);
-			return new Value(ndev);
+	class NormalIndex implements FieldCalculator {
+		
+		/** Stddev times. */
+		private double stddevs;
+		
+		NormalIndex(double stddevs) {
+			this.stddevs = stddevs;
 		}
-
-	}
-
-	/**
-	 * Field calculator to view the best average.
-	 */
-	public static class BestAverage implements FieldCalculator {
+		
 		@SuppressWarnings("unchecked")
 		@Override
 		public Value getValue(Record record) {
 			List<Double> values = (List<Double>) record.getProperty(Values);
-			Distribution distribution = (Distribution) record.getProperty(ValuesDistribution);
-			if (distribution == null) {
-				distribution = new Distribution(10);
-				distribution.distribute(values);
-				record.setProperty(ValuesDistribution, distribution);
+			Value normalIndex = (Value) record.getProperty(stddevs);
+			if (normalIndex == null) {
+				double average = record.getValue(Fields.Average).getDouble();
+				double stddev = record.getValue(Fields.StdDev).getDouble();
+				double min = average - (stddev * stddevs);
+				double max = average + (stddev * stddevs);
+				int count = 0;
+				for (Double value : values) {
+					if (value >= min && value <= max) {
+						count++;
+					}
+				}
+				double index = 0;
+				if (!values.isEmpty()) {
+					index = 100.0 * Double.valueOf(count) / Double.valueOf(values.size());
+				}
+				normalIndex = new Value(index);
+				record.setProperty(stddevs, normalIndex);
 			}
-			double value = distribution.getSegmentOptimum().getAverage();
-			return new Value(value);
+			return normalIndex;
 		}
 
 	}
@@ -115,9 +117,8 @@ public class StatesRanges extends StatesAverages {
 		public static final String Maximum = "maximum";
 		public static final String Average = "average";
 		public static final String StdDev = "stddev";
-		public static final String NumStdDev = "numstddev";
-		public static final String BestAvg = "best_avg";
-		public static final String BestStdDev = "best_stddev";
+		public static final String AvgStd_1 = "avgstd_1";
+		public static final String AvgStd_2 = "avgstd_2";
 	}
 
 	/**
@@ -217,6 +218,16 @@ public class StatesRanges extends StatesAverages {
 	 */
 	@Override
 	public RecordSet getRecordSet() {
+		return getRecordSet(true);
+	}
+
+	/**
+	 * Returns the recordset to browse the statistic results.
+	 * 
+	 * @param includePeriod A boolean that indicates whether the period should be included.
+	 * @return The recordset to browse the statistic results.
+	 */
+	public RecordSet getRecordSet(boolean includePeriod) {
 
 		Table table = getTable();
 
@@ -227,7 +238,9 @@ public class StatesRanges extends StatesAverages {
 		// Group by fields
 		view.addField(table.getField(Fields.Name));
 		view.addField(table.getField(Fields.MinMax));
-		view.addField(table.getField(Fields.Period));
+		if (includePeriod) {
+			view.addField(table.getField(Fields.Period));
+		}
 
 		// Aggregate function count.
 		Field count = new Field();
@@ -273,35 +286,38 @@ public class StatesRanges extends StatesAverages {
 		stddev.setFormatter(new DataValue(getSession(), 20));
 		view.addField(stddev);
 
-		// StdDev times to max.
-		Field numdev = new Field();
-		numdev.setName(Fields.NumStdDev);
-		numdev.setHeader("Num Std Dev");
-		numdev.setType(Types.Double);
-		numdev.setPersistent(false);
-		numdev.setFormatter(new DataValue(getSession(), 10));
-		numdev.setCalculator(new NumStdDev());
-		view.addField(numdev);
+		// Index +- n * stddev
+		Field norm1 = new Field();
+		norm1.setName(Fields.AvgStd_1);
+		norm1.setHeader("AvgStd_1");
+		norm1.setType(Types.Double);
+		norm1.setPersistent(false);
+		norm1.setFormatter(new DataValue(getSession(), 2));
+		norm1.setCalculator(new NormalIndex(1));
+		view.addField(norm1);
 
-		// Best average (distribution with maximum number of values)
-		Field bestAvg = new Field();
-		bestAvg.setName(Fields.BestAvg);
-		bestAvg.setHeader("Best average");
-		bestAvg.setType(Types.Double);
-		bestAvg.setPersistent(false);
-		bestAvg.setFormatter(new DataValue(getSession(), 20));
-		bestAvg.setCalculator(new BestAverage());
-		// view.addField(bestAvg);
+		Field norm2 = new Field();
+		norm2.setName(Fields.AvgStd_2);
+		norm2.setHeader("AvgStd_2");
+		norm2.setType(Types.Double);
+		norm2.setPersistent(false);
+		norm2.setFormatter(new DataValue(getSession(), 2));
+		norm2.setCalculator(new NormalIndex(2));
+		view.addField(norm2);
 
 		// Group by.
 		view.addGroupBy(view.getField(Fields.Name));
 		view.addGroupBy(view.getField(Fields.MinMax));
-		view.addGroupBy(view.getField(Fields.Period));
+		if (includePeriod) {
+			view.addGroupBy(view.getField(Fields.Period));
+		}
 
 		// Order by.
 		view.addOrderBy(view.getField(Fields.Name));
 		view.addOrderBy(view.getField(Fields.MinMax));
-		view.addOrderBy(view.getField(Fields.Period));
+		if (includePeriod) {
+			view.addOrderBy(view.getField(Fields.Period));
+		}
 
 		// Persistor.
 		view.setPersistor(PersistorUtils.getPersistor(view));
@@ -311,7 +327,7 @@ public class StatesRanges extends StatesAverages {
 			recordSet = view.getPersistor().select(null);
 			Persistor persistor = PersistorUtils.getPersistor(view.getMasterTable().getSimpleView());
 			for (int i = 0; i < recordSet.size(); i++) {
-				setValues(persistor, recordSet.get(i));
+				setValues(persistor, recordSet.get(i), includePeriod);
 			}
 		} catch (PersistorException exc) {
 			logger.catching(exc);
@@ -325,9 +341,10 @@ public class StatesRanges extends StatesAverages {
 	 * 
 	 * @param persistor The persistor.
 	 * @param record The record.
+	 * @param includePeriod A boolean that indicates whether the period should be included.
 	 * @throws PersistorException
 	 */
-	private void setValues(Persistor persistor, Record record) throws PersistorException {
+	private void setValues(Persistor persistor, Record record, boolean includePeriod) throws PersistorException {
 
 		Field fName = persistor.getField(Fields.Name);
 		Field fMinMax = persistor.getField(Fields.MinMax);
@@ -340,7 +357,9 @@ public class StatesRanges extends StatesAverages {
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fName, vName));
 		criteria.add(Condition.fieldEQ(fMinMax, vMinMax));
-		criteria.add(Condition.fieldEQ(fPeriod, vPeriod));
+		if (includePeriod) {
+			criteria.add(Condition.fieldEQ(fPeriod, vPeriod));
+		}
 
 		List<Double> values = new ArrayList<>();
 		RecordIterator iter = persistor.iterator(criteria);
