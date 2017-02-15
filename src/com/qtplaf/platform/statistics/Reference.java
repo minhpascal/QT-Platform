@@ -25,7 +25,6 @@ public class Reference implements Comparable<Reference> {
 
 	private String id;
 	private String title;
-	private String description;
 	private Configuration configuration;
 
 	/**
@@ -38,21 +37,6 @@ public class Reference implements Comparable<Reference> {
 		super();
 		this.id = id;
 		this.title = title;
-		this.description = title;
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param id The id or code.
-	 * @param title The title or short description.
-	 * @param description The description.
-	 */
-	public Reference(String id, String title, String description) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.description = description;
 	}
 
 	/**
@@ -89,15 +73,6 @@ public class Reference implements Comparable<Reference> {
 	 */
 	public String getTitle() {
 		return title;
-	}
-
-	/**
-	 * Returns the statistics description.
-	 * 
-	 * @return The description.
-	 */
-	public String getDescription() {
-		return description;
 	}
 
 	@Override

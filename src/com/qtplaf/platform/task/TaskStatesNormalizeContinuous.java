@@ -54,26 +54,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 	public TaskStatesNormalizeContinuous(StatesNormalizeContinuous statesNormalize) {
 		super(statesNormalize.getSession());
 		this.statesNormalize = statesNormalize;
-
-		StringBuilder name = new StringBuilder();
-		name.append(statesNormalize.getServer().getId());
-		name.append("-");
-		name.append(statesNormalize.getInstrument().getId());
-		name.append("-");
-		name.append(statesNormalize.getPeriod().toString());
-		name.append("-");
-		name.append(statesNormalize.getId());
-		setName(name.toString());
-
-		StringBuilder desc = new StringBuilder();
-		desc.append(statesNormalize.getServer().getName());
-		desc.append(" - ");
-		desc.append(statesNormalize.getInstrument().getId());
-		desc.append(" - ");
-		desc.append(statesNormalize.getPeriod().toString());
-		desc.append(" - ");
-		desc.append(statesNormalize.getDescription());
-		setDescription(desc.toString());
+		setNameAndDescription(statesNormalize);
 	}
 
 	/**

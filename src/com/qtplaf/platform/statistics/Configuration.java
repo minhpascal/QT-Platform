@@ -26,6 +26,8 @@ public class Configuration {
 
 	/** An id that identifies the configuration root. */
 	private String id;
+	/** A sort description. */
+	private String title;
 	/** List of averages for source and normalize calculations. */
 	private List<Average> averages = new ArrayList<>();
 	/** List of averages for range calculations. */
@@ -35,10 +37,12 @@ public class Configuration {
 	 * Constructor.
 	 * 
 	 * @param id The id.
+	 * @param title The title or short description.
 	 */
-	public Configuration(String id) {
+	public Configuration(String id, String title) {
 		super();
 		this.id = id;
+		this.title = title;
 	}
 
 	/**
@@ -48,6 +52,15 @@ public class Configuration {
 	 */
 	public String getId() {
 		return id;
+	}
+
+	/**
+	 * Returns the short description.
+	 * 
+	 * @return The short description.
+	 */
+	public String getTitle() {
+		return title;
 	}
 
 	/**

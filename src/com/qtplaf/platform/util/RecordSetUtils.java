@@ -124,7 +124,7 @@ public class RecordSetUtils {
 			Record rc = fields.getDefaultRecord();
 			rc.setValue(Reference.Id, item.getId());
 			rc.setValue(Reference.Title, item.getTitle());
-			rc.setValue(Reference.Description, item.getDescription());
+			rc.setValue(Reference.Description, item.getTitle());
 			rs.add(rc);
 		}
 

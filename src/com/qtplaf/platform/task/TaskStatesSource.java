@@ -43,26 +43,7 @@ public class TaskStatesSource extends TaskStatesAverages {
 	public TaskStatesSource(StatesSource statesSource) {
 		super(statesSource.getSession());
 		this.indicator = new StatesSourceIndicator(statesSource);
-
-		StringBuilder name = new StringBuilder();
-		name.append(statesSource.getServer().getId());
-		name.append("-");
-		name.append(statesSource.getInstrument().getId());
-		name.append("-");
-		name.append(statesSource.getPeriod().toString());
-		name.append("-");
-		name.append(statesSource.getId());
-		setName(name.toString());
-
-		StringBuilder desc = new StringBuilder();
-		desc.append(statesSource.getServer().getName());
-		desc.append(" - ");
-		desc.append(statesSource.getInstrument().getId());
-		desc.append(" - ");
-		desc.append(statesSource.getPeriod().toString());
-		desc.append(" - ");
-		desc.append(statesSource.getDescription());
-		setDescription(desc.toString());
+		setNameAndDescription(statesSource);
 	}
 
 	/**

@@ -16,6 +16,7 @@ package com.qtplaf.platform.task;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.task.TaskRunner;
+import com.qtplaf.platform.statistics.StatesAverages;
 
 /**
  * Root class for states statistics tasks.
@@ -33,6 +34,33 @@ public abstract class TaskStatesAverages extends TaskRunner {
 		super(session);
 	}
 
+	/**
+	 * Set the name and the description given the averages statistics.
+	 * 
+	 * @param stats The averages statistics.
+	 */
+	protected void setNameAndDescription(StatesAverages stats) {
+
+		StringBuilder name = new StringBuilder();
+		name.append(stats.getServer().getId());
+		name.append("-");
+		name.append(stats.getInstrument().getId());
+		name.append("-");
+		name.append(stats.getPeriod().toString());
+		name.append("-");
+		name.append(stats.getId());
+		setName(name.toString());
+
+		StringBuilder desc = new StringBuilder();
+		desc.append(stats.getServer().getName());
+		desc.append(" - ");
+		desc.append(stats.getInstrument().getId());
+		desc.append(" - ");
+		desc.append(stats.getPeriod().toString());
+		desc.append(" - ");
+		desc.append(stats.getDescription());
+		setDescription(desc.toString());
+	}
 
 	/**
 	 * Returns a boolean indicating whether the task will support cancel requests. This task supports cancel.

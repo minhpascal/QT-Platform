@@ -238,7 +238,7 @@ public class StatesRanges extends StatesAverages {
 		minimum.setHeader("Minimum");
 		minimum.setType(Types.Double);
 		minimum.setFunction("min(value)");
-		minimum.setFormatter(new DataValue(getSession(), 15));
+		minimum.setFormatter(new DataValue(getSession(), 10));
 		view.addField(minimum);
 
 		// Aggregate function max.
@@ -247,7 +247,7 @@ public class StatesRanges extends StatesAverages {
 		maximum.setHeader("Maximum");
 		maximum.setType(Types.Double);
 		maximum.setFunction("max(value)");
-		maximum.setFormatter(new DataValue(getSession(), 15));
+		maximum.setFormatter(new DataValue(getSession(), 10));
 		view.addField(maximum);
 
 		// Aggregate function avg.
@@ -256,16 +256,16 @@ public class StatesRanges extends StatesAverages {
 		average.setHeader("Average");
 		average.setType(Types.Double);
 		average.setFunction("avg(value)");
-		average.setFormatter(new DataValue(getSession(), 15));
+		average.setFormatter(new DataValue(getSession(), 10));
 		view.addField(average);
 
 		// Aggregate function stddev.
 		Field stddev = new Field();
 		stddev.setName(Fields.StdDev);
-		stddev.setHeader("Standard deviation");
+		stddev.setHeader("Std Dev");
 		stddev.setType(Types.Double);
 		stddev.setFunction("stddev(value)");
-		stddev.setFormatter(new DataValue(getSession(), 20));
+		stddev.setFormatter(new DataValue(getSession(), 10));
 		view.addField(stddev);
 
 		// Index +- n * stddev

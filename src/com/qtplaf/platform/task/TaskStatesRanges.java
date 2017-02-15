@@ -61,25 +61,7 @@ public class TaskStatesRanges extends TaskStatesAverages {
 		DataPersistor persistor = new DataPersistor(table.getPersistor());
 		this.sourceList = new PersistorDataList(getSession(), info, persistor);
 		
-		StringBuilder name = new StringBuilder();
-		name.append(statesRanges.getServer().getId());
-		name.append("-");
-		name.append(statesRanges.getInstrument().getId());
-		name.append("-");
-		name.append(statesRanges.getPeriod().toString());
-		name.append("-");
-		name.append(statesRanges.getId());
-		setName(name.toString());
-
-		StringBuilder desc = new StringBuilder();
-		desc.append(statesRanges.getServer().getName());
-		desc.append(" - ");
-		desc.append(statesRanges.getInstrument().getId());
-		desc.append(" - ");
-		desc.append(statesRanges.getPeriod().toString());
-		desc.append(" - ");
-		desc.append(statesRanges.getDescription());
-		setDescription(desc.toString());
+		setNameAndDescription(statesRanges);
 	}
 
 	/**
