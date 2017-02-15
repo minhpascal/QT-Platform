@@ -40,8 +40,8 @@ import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.statistics.Average;
+import com.qtplaf.platform.statistics.StatesAverages.Fields;
 import com.qtplaf.platform.statistics.StatesSource;
-import com.qtplaf.platform.statistics.StatesSource.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -242,10 +242,6 @@ public class StatesSourceIndicator extends Indicator {
 		values[info.getOutputIndex(StatesSource.Fields.Low)] = low;
 		values[info.getOutputIndex(StatesSource.Fields.Close)] = close;
 
-		// Percentual range.
-		double range = (high - low) / low;
-		values[info.getOutputIndex(StatesSource.Fields.Range)] = range;
-
 		// Averages.
 		List<Average> averages = statesSource.getAverages();
 		for (Average average : averages) {
@@ -276,17 +272,15 @@ public class StatesSourceIndicator extends Indicator {
 		}
 
 		// Spreads between averages.
-		for (int i = 0; i < averages.size(); i++) {
-			Average averageFast = averages.get(i);
+		for (int i = 1; i < averages.size(); i++) {
+			Average averageFast = averages.get(i - 1);
+			Average averageSlow = averages.get(i);
 			Data dataFast = getInputDataAverage(index, averageFast);
 			double valueFast = dataFast.getValue(0);
-			for (int j = i + 1; j < averages.size(); j++) {
-				Average averageSlow = averages.get(j);
-				Data dataSlow = getInputDataAverage(index, averageSlow);
-				double valueSlow = dataSlow.getValue(0);
-				double spread = (valueFast / valueSlow) - 1;
-				values[info.getOutputIndex(Average.getSpreadName(averageFast, averageSlow))] = spread;
-			}
+			Data dataSlow = getInputDataAverage(index, averageSlow);
+			double valueSlow = dataSlow.getValue(0);
+			double spread = (valueFast / valueSlow) - 1;
+			values[info.getOutputIndex(Average.getSpreadName(averageFast, averageSlow))] = spread;
 		}
 
 		// Speed (tangent) percentual of averages.

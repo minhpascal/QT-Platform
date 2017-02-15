@@ -103,24 +103,6 @@ public class StatesRanges extends StatesAverages {
 
 	}
 
-	/** Field names. */
-	public static class Fields {
-		public static final String Name = "name";
-		public static final String MinMax = "min_max";
-		public static final String Period = "period";
-		public static final String Value = "value";
-		public static final String Index = "index";
-		public static final String Time = "time";
-
-		public static final String Count = "count";
-		public static final String Minimum = "minimum";
-		public static final String Maximum = "maximum";
-		public static final String Average = "average";
-		public static final String StdDev = "stddev";
-		public static final String AvgStd_1 = "avgstd_1";
-		public static final String AvgStd_2 = "avgstd_2";
-	}
-
 	/**
 	 * The parent states source statistics.
 	 */

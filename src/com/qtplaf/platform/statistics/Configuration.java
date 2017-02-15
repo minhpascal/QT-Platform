@@ -22,8 +22,10 @@ import java.util.List;
  *
  * @author Miquel Sas
  */
-public class AveragesConfiguration {
+public class Configuration {
 
+	/** An id that identifies the configuration root. */
+	private String id;
 	/** List of averages for source and normalize calculations. */
 	private List<Average> averages = new ArrayList<>();
 	/** List of averages for range calculations. */
@@ -31,9 +33,21 @@ public class AveragesConfiguration {
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param id The id.
 	 */
-	public AveragesConfiguration() {
+	public Configuration(String id) {
 		super();
+		this.id = id;
+	}
+
+	/**
+	 * Returns the id that identifies the configuration.
+	 * 
+	 * @return The id.
+	 */
+	public String getId() {
+		return id;
 	}
 
 	/**

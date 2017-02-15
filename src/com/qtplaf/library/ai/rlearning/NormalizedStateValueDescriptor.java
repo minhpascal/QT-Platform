@@ -149,10 +149,14 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 	 */
 	@Override
 	public double getValue(double value) {
+		double normalized = Calculator.normalize(value, maximum, minimum);
 		if (segments <= 1) {
-			return NumberUtils.round(Calculator.normalize(value, maximum, minimum), getScale());
+			if (getScale() < 0) {
+				return normalized;
+			}
+			return NumberUtils.round(normalized, getScale());
 		}
-		return getValueFromSegments(Calculator.normalize(value, maximum, minimum));
+		return getValueFromSegments(normalized);
 	}
 
 	/**

@@ -29,8 +29,8 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.statistics.Reference;
 import com.qtplaf.platform.statistics.StatisticsManager;
-import com.qtplaf.platform.statistics.StatisticsManager.Reference;
 
 /**
  * Centralizes recordset operations.

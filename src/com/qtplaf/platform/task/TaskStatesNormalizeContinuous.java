@@ -26,24 +26,22 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.statistics.Average;
-import com.qtplaf.platform.statistics.StatesNormalize;
+import com.qtplaf.platform.statistics.StatesAverages.Fields;
+import com.qtplaf.platform.statistics.StatesNormalizeContinuous;
 import com.qtplaf.platform.statistics.StatesRanges;
 import com.qtplaf.platform.statistics.StatesSource;
-import com.qtplaf.platform.statistics.StatesNormalize.Fields;
 
 /**
  * Task to calculate the normalized states values.
  *
  * @author Miquel Sas
  */
-public class TaskStatesNormalize extends TaskRunner {
+public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 
 	/** The parent states normalize statistics. */
-	private StatesNormalize statesNormalize;
+	private StatesNormalizeContinuous statesNormalize;
 
 	/** A map with normailzed state value descriptors by field name. */
 	private Map<String, NormalizedStateValueDescriptor> descriptorsMap = new HashMap<>();
@@ -53,7 +51,7 @@ public class TaskStatesNormalize extends TaskRunner {
 	 * 
 	 * @param statesNormalize The parent states normalize statistics.
 	 */
-	public TaskStatesNormalize(StatesNormalize statesNormalize) {
+	public TaskStatesNormalizeContinuous(StatesNormalizeContinuous statesNormalize) {
 		super(statesNormalize.getSession());
 		this.statesNormalize = statesNormalize;
 
@@ -127,8 +125,6 @@ public class TaskStatesNormalize extends TaskRunner {
 				descriptor = new NormalizedStateValueDescriptor();
 				descriptor.setMaximum(0);
 				descriptor.setMinimum(0);
-				descriptor.setScale(statesNormalize.getScale());
-//				descriptor.setSegments(4);
 				descriptorsMap.put(fieldName, descriptor);
 			}
 			if (minMax.equals("min")) {
@@ -179,9 +175,6 @@ public class TaskStatesNormalize extends TaskRunner {
 			// Names to calculate ranges.
 			List<String> ranges = statesNormalize.getStatesSource().getNamesToCalculateRanges();
 			
-			// Name to build the states key.
-			List<String> keyNames = statesNormalize.getNamesStateKey();
-
 			// Step and steps.
 			long step = 0;
 			long steps = getSteps();
@@ -207,18 +200,18 @@ public class TaskStatesNormalize extends TaskRunner {
 					break;
 				}
 				Record sourceRecord = iterator.next();
-				Value time = sourceRecord.getValue(StatesSource.Fields.Time);
-				Value open = sourceRecord.getValue(StatesSource.Fields.Open);
-				Value high = sourceRecord.getValue(StatesSource.Fields.High);
-				Value low = sourceRecord.getValue(StatesSource.Fields.Low);
-				Value close = sourceRecord.getValue(StatesSource.Fields.Close);
+				Value time = sourceRecord.getValue(Fields.Time);
+				Value open = sourceRecord.getValue(Fields.Open);
+				Value high = sourceRecord.getValue(Fields.High);
+				Value low = sourceRecord.getValue(Fields.Low);
+				Value close = sourceRecord.getValue(Fields.Close);
 				
 				Record normalizeRecord = normalizePersistor.getDefaultRecord();
-				normalizeRecord.setValue(StatesNormalize.Fields.Time, time);
-				normalizeRecord.setValue(StatesNormalize.Fields.Open, open);
-				normalizeRecord.setValue(StatesNormalize.Fields.High, high);
-				normalizeRecord.setValue(StatesNormalize.Fields.Low, low);
-				normalizeRecord.setValue(StatesNormalize.Fields.Close, close);
+				normalizeRecord.setValue(Fields.Time, time);
+				normalizeRecord.setValue(Fields.Open, open);
+				normalizeRecord.setValue(Fields.High, high);
+				normalizeRecord.setValue(Fields.Low, low);
+				normalizeRecord.setValue(Fields.Close, close);
 				
 				// Averages.
 				for (int i = 0; i < statesNormalize.getAverages().size(); i++) {
@@ -235,14 +228,6 @@ public class TaskStatesNormalize extends TaskRunner {
 					normalizeRecord.getValue(range).setDouble(value);
 				}
 				
-				// Key.
-				double[] values = new double[keyNames.size()];
-				for (int i = 0; i < keyNames.size(); i++) {
-					values[i] = normalizeRecord.getValue(keyNames.get(i)).getDouble();
-				}
-				String key = NumberUtils.getStringKey(values, statesNormalize.getScale());
-				normalizeRecord.getValue(Fields.Key).setString(key);
-				
 				// Save record.
 				normalizePersistor.insert(normalizeRecord);
 				
@@ -258,47 +243,5 @@ public class TaskStatesNormalize extends TaskRunner {
 			}
 		}
 
-	}
-
-	/**
-	 * Returns a boolean indicating whether the task will support cancel requests. This task supports cancel.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isCancelSupported() {
-		return true;
-	}
-
-	/**
-	 * Returns a boolean indicating if the task supports counting steps through a call to <code>countSteps()</code>.
-	 * This task supports counting steps.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isCountStepsSupported() {
-		return true;
-	}
-
-	/**
-	 * Returns a boolean indicating if the task is indeterminate, that is, the task can not count its number of steps.
-	 * This task is not indeterminate.
-	 * 
-	 * @return A boolean indicating if the task is indeterminate.
-	 */
-	@Override
-	public boolean isIndeterminate() {
-		return false;
-	}
-
-	/**
-	 * Returns a boolean indicating whether the task will support the pause/resume requests. This task supports pause.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isPauseSupported() {
-		return true;
 	}
 }

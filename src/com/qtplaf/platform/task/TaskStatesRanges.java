@@ -20,21 +20,21 @@ import java.util.List;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.indicators.StatesSourceIndicator;
 import com.qtplaf.platform.statistics.Average;
+import com.qtplaf.platform.statistics.StatesAverages.Fields;
 import com.qtplaf.platform.statistics.StatesRanges;
 import com.qtplaf.platform.statistics.StatesSource;
 
 /**
- *
+ * Calculates minimums and maximums for states source values.
  *
  * @author Miquel Sas
  */
-public class TaskStatesRanges extends TaskRunner {
+public class TaskStatesRanges extends TaskStatesAverages {
 
 	/** The parent states ranges statistics. */
 	private StatesRanges statesRanges;
@@ -60,6 +60,7 @@ public class TaskStatesRanges extends TaskRunner {
 		Table table = indicator.getStatesSource().getTable();
 		DataPersistor persistor = new DataPersistor(table.getPersistor());
 		this.sourceList = new PersistorDataList(getSession(), info, persistor);
+		
 		StringBuilder name = new StringBuilder();
 		name.append(statesRanges.getServer().getId());
 		name.append("-");
@@ -137,12 +138,12 @@ public class TaskStatesRanges extends TaskRunner {
 		int index,
 		long time) {
 		Record record = persistor.getDefaultRecord();
-		record.setValue(StatesRanges.Fields.Name, name);
-		record.setValue(StatesRanges.Fields.Period, period);
-		record.setValue(StatesRanges.Fields.MinMax, (minimum ? "min" : "max"));
-		record.setValue(StatesRanges.Fields.Value, value);
-		record.setValue(StatesRanges.Fields.Index, index);
-		record.setValue(StatesRanges.Fields.Time, time);
+		record.setValue(Fields.Name, name);
+		record.setValue(Fields.Period, period);
+		record.setValue(Fields.MinMax, (minimum ? "min" : "max"));
+		record.setValue(Fields.Value, value);
+		record.setValue(Fields.Index, index);
+		record.setValue(Fields.Time, time);
 		return record;
 	}
 
@@ -229,47 +230,4 @@ public class TaskStatesRanges extends TaskRunner {
 			Thread.yield();
 		}
 	}
-
-	/**
-	 * Returns a boolean indicating whether the task will support cancel requests. This task supports cancel.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isCancelSupported() {
-		return true;
-	}
-
-	/**
-	 * Returns a boolean indicating if the task supports counting steps through a call to <code>countSteps()</code>.
-	 * This task supports counting steps.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isCountStepsSupported() {
-		return true;
-	}
-
-	/**
-	 * Returns a boolean indicating if the task is indeterminate, that is, the task can not count its number of steps.
-	 * This task is not indeterminate.
-	 * 
-	 * @return A boolean indicating if the task is indeterminate.
-	 */
-	@Override
-	public boolean isIndeterminate() {
-		return false;
-	}
-
-	/**
-	 * Returns a boolean indicating whether the task will support the pause/resume requests. This task supports pause.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isPauseSupported() {
-		return true;
-	}
-
 }

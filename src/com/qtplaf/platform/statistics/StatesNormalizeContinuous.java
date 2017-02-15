@@ -17,35 +17,29 @@ package com.qtplaf.platform.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.Types;
-import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
-import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.task.TaskStatesSource;
+import com.qtplaf.platform.task.TaskStatesNormalizeContinuous;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Retrieves the source values for the series of analisys to build the wave descriptor states and transitions. Contains
- * the source candle values, the series of rainbow averages smoothed, their relative spreads and their speed (tangent),
- * and finally the spreads of high, low and close over the fastest average. First add the averages and then call setup.
+ *
  *
  * @author Miquel Sas
  */
-public class StatesSource extends StatesAverages {
+public class StatesNormalizeContinuous extends StatesAverages {
+
+	/** States ranges related statistics. */
+	private StatesRanges statesRanges;
 
 	/**
 	 * Constructor.
@@ -55,26 +49,38 @@ public class StatesSource extends StatesAverages {
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 */
-	public StatesSource(Session session, Server server, Instrument instrument, Period period) {
-		super(session, server, instrument, period);
+	public StatesNormalizeContinuous(StatesRanges statesRanges) {
+		super(
+			statesRanges.getSession(),
+			statesRanges.getServer(),
+			statesRanges.getInstrument(),
+			statesRanges.getPeriod());
+		this.statesRanges = statesRanges;
+	}
+
+	/**
+	 * Returns the states ranges related statistics.
+	 * 
+	 * @return The states ranges related statistics.
+	 */
+	public StatesRanges getStatesRanges() {
+		return statesRanges;
+	}
+
+	/**
+	 * Returns the states source related statistics.
+	 * 
+	 * @return The states source related statistics.
+	 */
+	public StatesSource getStatesSource() {
+		return statesRanges.getStatesSource();
 	}
 
 	/**
 	 * Setup after adding the averages.
 	 */
+	@Override
 	protected void setup() {
-		if (getAverages().isEmpty()) {
-			throw new IllegalStateException();
-		}
-		clear();
-		Table table = getTable();
-		for (int i = 0; i < table.getFieldCount(); i++) {
-			Field field = table.getField(i);
-			String name = field.getName();
-			String description = field.getDisplayDescription();
-			add(new Output(name, description, Types.Double));
-		}
-
 	}
 
 	/**
@@ -82,8 +88,9 @@ public class StatesSource extends StatesAverages {
 	 * 
 	 * @return The calculator task.
 	 */
+	@Override
 	public Task getTask() {
-		return new TaskStatesSource(this);
+		return new TaskStatesNormalizeContinuous(this);
 	}
 
 	/**
@@ -96,35 +103,12 @@ public class StatesSource extends StatesAverages {
 	}
 
 	/**
-	 * Returns the list of fields that should be included in a <tt>Data</tt> of the corresponding indicator. It excludes
-	 * index, time and formatted time.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getIndicatorOutputFields() {
-		List<Field> fields = new ArrayList<>();
-		Table table = getTable();
-		for (int i = 0; i < table.getFieldCount(); i++) {
-			if (table.getField(i).getName().equals(Fields.Index)) {
-				continue;
-			}
-			if (table.getField(i).getName().equals(Fields.Time)) {
-				continue;
-			}
-			if (table.getField(i).getName().equals(Fields.TimeFmt)) {
-				continue;
-			}
-			fields.add(table.getField(i));
-		}
-		return fields;
-	}
-
-	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
 	 * @return The results table.
 	 */
+	@Override
 	public Table getTable() {
 
 		Table table = new Table();
@@ -175,7 +159,7 @@ public class StatesSource extends StatesAverages {
 	@Override
 	public RecordSet getRecordSet() {
 		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
-		configure(persistor, true);
+		configure(persistor, false);
 		return new DataRecordSet(persistor);
 	}
 
@@ -190,9 +174,11 @@ public class StatesSource extends StatesAverages {
 		// The data list.
 		PersistorDataList dataList =
 			new PersistorDataList(getSession(), new DataInfo(getSession()), getTable().getPersistor());
-
+		
 		List<PlotData> plotDataList = new ArrayList<>();
 		plotDataList.add(getPlotDataMain(dataList));
+		plotDataList.add(getPlotData(dataList, getSpreadFields()));
+		plotDataList.add(getPlotData(dataList, getSpeedFields()));
 
 		return plotDataList;
 	}

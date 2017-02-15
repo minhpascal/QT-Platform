@@ -31,124 +31,9 @@ import com.qtplaf.library.util.list.ListUtils;
  */
 public class StatisticsManager {
 
-	private static final String StateSource_01 = "stsrc_01";
-	private static final String StateRanges_01 = "strng_01";
-	private static final String StateNormalize_01 = "stnrm_01";
-
-	private static final String StateSource_02 = "stsrc_02";
-	private static final String StateRanges_02 = "strng_02";
-	private static final String StateNormalize_02 = "stnrm_02";
-
-	/**
-	 * An item is a defined statistics, identified by a code or id and a description.
-	 */
-	public static class Reference implements Comparable<Reference> {
-
-		public static final String Id = "id";
-		public static final String Title = "title";
-		public static final String Description = "desc";
-
-		private String id;
-		private String title;
-		private String description;
-		private AveragesConfiguration configuration;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param id The id or code.
-		 * @param title The title or short description.
-		 */
-		public Reference(String id, String title) {
-			super();
-			this.id = id;
-			this.title = title;
-			this.description = title;
-		}
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param id The id or code.
-		 * @param title The title or short description.
-		 * @param description The description.
-		 */
-		public Reference(String id, String title, String description) {
-			super();
-			this.id = id;
-			this.title = title;
-			this.description = description;
-		}
-
-		/**
-		 * Returns the averages configuration.
-		 * 
-		 * @return The averages configuration.
-		 */
-		public AveragesConfiguration getConfiguration() {
-			return configuration;
-		}
-
-		/**
-		 * Set the averages configuration.
-		 * 
-		 * @param configuration The averages configuration.
-		 */
-		public void setConfiguration(AveragesConfiguration configuration) {
-			this.configuration = configuration;
-		}
-
-		/**
-		 * Returns the statistics id.
-		 * 
-		 * @return The id.
-		 */
-		public String getId() {
-			return id;
-		}
-
-		/**
-		 * Returns the statistics title.
-		 * 
-		 * @return The title or short description.
-		 */
-		public String getTitle() {
-			return title;
-		}
-
-		/**
-		 * Returns the statistics description.
-		 * 
-		 * @return The description.
-		 */
-		public String getDescription() {
-			return description;
-		}
-
-		@Override
-		public int hashCode() {
-			return getId().hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof Reference) {
-				Reference item = (Reference) obj;
-				return getId().equals(item.getId());
-			}
-			return false;
-		}
-
-		@Override
-		public int compareTo(Reference item) {
-			return getId().compareTo(item.getId());
-		}
-
-		@Override
-		public String toString() {
-			return getId() + " - " + getTitle();
-		}
-	}
+	private static final String StateSource = "stsrc";
+	private static final String StateRanges = "strng";
+	private static final String StateNormalize = "stnrm";
 
 	/**
 	 * The list of defined statistics.
@@ -164,63 +49,35 @@ public class StatisticsManager {
 		}
 		String id, title;
 		Reference reference;
-		AveragesConfiguration configuration;
+		Configuration configuration;
 
-		// 5-21-89-377-1597-6765
-		configuration = new AveragesConfiguration();
-		configuration.getAverages().add(new Average(5, 3, 3));
-		configuration.getAverages().add(new Average(21, 5, 5));
-		configuration.getAverages().add(new Average(89, 13, 13));
-		configuration.getAverages().add(new Average(377, 21, 21));
-		configuration.getAverages().add(new Average(1597, 34, 34));
-		configuration.getAverages().add(new Average(6765, 55, 55));
+		// 5-21-89-377
+		configuration = new Configuration("00");
+		configuration.getAverages().add(new Average(5, 5, 3));
+		configuration.getAverages().add(new Average(21, 13, 5));
+		configuration.getAverages().add(new Average(89, 21, 13));
+		configuration.getAverages().add(new Average(377, 34, 21));
 		configuration.getRanges().add(new Average(89));
 		configuration.getRanges().add(new Average(377));
 
-		id = StateSource_01;
+		id = StateSource;
 		title = "States source (" + configuration.toStringAverages() + ")";
 		reference = new Reference(id, title);
 		reference.setConfiguration(configuration);
 		references.add(reference);
 
-		id = StateRanges_01;
+		id = StateRanges;
 		title = "States ranges (" + configuration.toStringAverages() + ") (" + configuration.toStringRanges() + ")";
 		reference = new Reference(id, title);
 		reference.setConfiguration(configuration);
 		references.add(reference);
 
-		id = StateNormalize_01;
+		id = StateNormalize;
 		title = "States normalized (" + configuration.toStringAverages() + ")";
 		reference = new Reference(id, title);
 		reference.setConfiguration(configuration);
 		references.add(reference);
 		
-		// 5-21-89-377-1597
-		configuration = new AveragesConfiguration();
-		configuration.getAverages().add(new Average(5, 3, 3));
-		configuration.getAverages().add(new Average(21, 5, 5));
-		configuration.getAverages().add(new Average(89, 13, 13));
-		configuration.getAverages().add(new Average(377, 21, 21));
-		configuration.getRanges().add(new Average(89));
-		configuration.getRanges().add(new Average(377));
-		
-		id = StateSource_02;
-		title = "States source (" + configuration.toStringAverages() + ")";
-		reference = new Reference(id, title);
-		reference.setConfiguration(configuration);
-		references.add(reference);
-
-		id = StateRanges_02;
-		title = "States ranges (" + configuration.toStringAverages() + ") (" + configuration.toStringRanges() + ")";
-		reference = new Reference(id, title);
-		reference.setConfiguration(configuration);
-		references.add(reference);
-
-		id = StateNormalize_02;
-		title = "States normalized (" + configuration.toStringAverages() + ")";
-		reference = new Reference(id, title);
-		reference.setConfiguration(configuration);
-		references.add(reference);
 	}
 
 	/**
@@ -266,13 +123,13 @@ public class StatisticsManager {
 		Instrument instrument,
 		Period period,
 		String id) {
-		if (id.equals(StateSource_01) || id.equals(StateSource_02)) {
+		if (id.equals(StateSource)) {
 			return getStatesSource(session, server, instrument, period, id);
 		}
-		if (id.equals(StateRanges_01) || id.equals(StateRanges_02)) {
+		if (id.equals(StateRanges)) {
 			return getStatesRanges(session, server, instrument, period, id);
 		}
-		if (id.equals(StateNormalize_01) || id.equals(StateNormalize_02)) {
+		if (id.equals(StateNormalize)) {
 			return getStatesNormalize(session, server, instrument, period, id);
 		}
 		return null;
@@ -319,7 +176,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesNormalize getStatesNormalize(
+	private static StatesNormalizeContinuous getStatesNormalize(
 		Session session,
 		Server server,
 		Instrument instrument,
@@ -327,14 +184,11 @@ public class StatisticsManager {
 		String id) {
 
 		String idRanges = null;
-		if (id.equals(StateNormalize_01)) {
-			idRanges = StateRanges_01;
-		}
-		if (id.equals(StateNormalize_02)) {
-			idRanges = StateRanges_02;
+		if (id.equals(StateNormalize)) {
+			idRanges = StateRanges;
 		}
 
-		StatesNormalize stnrm = new StatesNormalize(getStatesRanges(session, server, instrument, period, idRanges));
+		StatesNormalizeContinuous stnrm = new StatesNormalizeContinuous(getStatesRanges(session, server, instrument, period, idRanges));
 
 		Reference reference = getReference(id);
 		if (reference == null) {
@@ -367,11 +221,8 @@ public class StatisticsManager {
 		String id) {
 
 		String idSource = null;
-		if (id.equals(StateRanges_01)) {
-			idSource = StateSource_01;
-		}
-		if (id.equals(StateRanges_02)) {
-			idSource = StateSource_02;
+		if (id.equals(StateRanges)) {
+			idSource = StateSource;
 		}
 
 		StatesRanges strng = new StatesRanges(getStatesSource(session, server, instrument, period, idSource));

@@ -14,7 +14,8 @@
 package com.qtplaf.library.ai.rlearning;
 
 /**
- * Descriptor of state value. Includes a description of what the value means and its scale.
+ * Descriptor of state value. Includes a description of what the value means and its scale. A scale of -1 indicates a
+ * continuous value.
  * 
  * @author Miquel Sas
  */
@@ -31,7 +32,7 @@ public abstract class StateValueDescriptor {
 	/**
 	 * The scale.
 	 */
-	private int scale;
+	private int scale = -1;
 
 	/**
 	 * Default constructor.
@@ -101,7 +102,7 @@ public abstract class StateValueDescriptor {
 	 * @return The state value.
 	 */
 	public abstract double getValue(double value);
-	
+
 	/**
 	 * Check that the value descriptor has the necessary properties set.
 	 */

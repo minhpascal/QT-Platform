@@ -19,11 +19,24 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.statistics.Statistics;
+import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
+import com.qtplaf.library.trading.chart.plotter.LinePlotter;
+import com.qtplaf.library.trading.data.DataList;
+import com.qtplaf.library.trading.data.DataType;
+import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.list.ListUtils;
+import com.qtplaf.platform.database.formatters.DataValue;
+import com.qtplaf.platform.database.formatters.PipValue;
+import com.qtplaf.platform.database.formatters.TimeFmtValue;
+import com.qtplaf.platform.util.DomainUtils;
 
 /**
  * Root class for states statistics based on averages.
@@ -31,6 +44,41 @@ import com.qtplaf.library.util.list.ListUtils;
  * @author Miquel Sas
  */
 public abstract class StatesAverages extends Statistics {
+
+	/**
+	 * Field names for the series of averages statistics.
+	 */
+	public static class Fields {
+
+		/** Index in data list persistor. */
+		public static final String Index = "index";
+		/** Data time. */
+		public static final String Time = "time";
+		/** Data time formatted. */
+		public static final String TimeFmt = "time_fmt";
+		/** Data open value. */
+		public static final String Open = "open";
+		/** Data high value. */
+		public static final String High = "high";
+		/** Data low value. */
+		public static final String Low = "low";
+		/** Data close value. */
+		public static final String Close = "close";
+
+		public static final String Name = "name";
+		public static final String MinMax = "min_max";
+		public static final String Period = "period";
+		public static final String Value = "value";
+		public static final String Count = "count";
+		public static final String Minimum = "minimum";
+		public static final String Maximum = "maximum";
+		public static final String Average = "average";
+		public static final String StdDev = "stddev";
+		public static final String AvgStd_1 = "avgstd_1";
+		public static final String AvgStd_2 = "avgstd_2";
+
+		public static final String Key = "state_key";
+	}
 
 	/**
 	 * Working session.
@@ -50,7 +98,7 @@ public abstract class StatesAverages extends Statistics {
 	private Period period;
 
 	/**
-	 * The list of smoothed SMA definitions.
+	 * The list of averages definitions.
 	 */
 	private List<Average> averages = new ArrayList<Average>();
 
@@ -146,10 +194,10 @@ public abstract class StatesAverages extends Statistics {
 	 * 
 	 * @return The list of average fields.
 	 */
-	protected List<Field> getAverageFields() {
+	public List<Field> getAverageFields() {
 		List<Field> fields = new ArrayList<>();
 		for (int i = 0; i < getAverages().size(); i++) {
-			fields.add(Average.getAverageField(getSession(), getAverages().get(i)));
+			fields.add(getAverageField(getAverages().get(i)));
 		}
 		return fields;
 	}
@@ -159,12 +207,12 @@ public abstract class StatesAverages extends Statistics {
 	 * 
 	 * @return The list of spread fields.
 	 */
-	protected List<Field> getSpreadFields() {
+	public List<Field> getSpreadFields() {
 		List<Field> fields = new ArrayList<>();
 		for (int i = 1; i < getAverages().size(); i++) {
-			Average averageFast = getAverages().get(i+1);
+			Average averageFast = getAverages().get(i - 1);
 			Average averageSlow = getAverages().get(i);
-			fields.add(Average.getSpreadField(getSession(), averageFast, averageSlow));
+			fields.add(getSpreadField(averageFast, averageSlow));
 		}
 		return fields;
 	}
@@ -174,11 +222,300 @@ public abstract class StatesAverages extends Statistics {
 	 * 
 	 * @return The list of speed fields.
 	 */
-	protected List<Field> getSpeedFields() {
+	public List<Field> getSpeedFields() {
 		List<Field> fields = new ArrayList<>();
 		for (int i = 0; i < getAverages().size(); i++) {
-			fields.add(Average.getSpeedField(getSession(), getAverages().get(i)));
+			fields.add(getSpeedField(getAverages().get(i)));
 		}
 		return fields;
+	}
+
+	/**
+	 * Returns the speed field for the average.
+	 * 
+	 * @param average The average.
+	 * @return The field.
+	 */
+	private Field getSpeedField(Average average) {
+		String name = Average.getSpeedName(average);
+		String header = Average.getSpeedHeader(average);
+		String label = Average.getSpeedLabel(average);
+		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the spread field between two averages.
+	 * 
+	 * @param averageFast Fast average.
+	 * @param averageSlow Slow average.
+	 * @return The field.
+	 */
+	private Field getSpreadField(Average averageFast, Average averageSlow) {
+		String name = Average.getSpreadName(averageFast, averageSlow);
+		String header = Average.getSpreadHeader(averageFast, averageSlow);
+		String label = Average.getSpreadLabel(averageFast, averageSlow);
+		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the spread fields for high, low and close to the fast average.
+	 * 
+	 * @return The fields.
+	 */
+	public List<Field> getSpreadFieldsFastAverage() {
+		Average average = getAverages().get(0);
+		List<Field> fields = new ArrayList<>();
+		fields.add(getSpreadField(Fields.High, average));
+		fields.add(getSpreadField(Fields.Low, average));
+		fields.add(getSpreadField(Fields.Close, average));
+		return fields;
+	}
+
+	/**
+	 * Returns the spread field for a field name and an average.
+	 * 
+	 * @param fieldName The field name.
+	 * @param average The average.
+	 * @return The field.
+	 */
+	private Field getSpreadField(String fieldName, Average average) {
+		String name = Average.getSpreadName(fieldName, average);
+		String header = Average.getSpreadHeader(fieldName, average);
+		String label = Average.getSpreadLabel(fieldName, average);
+		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the field for the average.
+	 * 
+	 * @param average The average.
+	 * @return The field.
+	 */
+	private Field getAverageField(Average average) {
+		String name = Average.getAverageName(average);
+		String header = Average.getAverageHeader(average);
+		String label = Average.getAverageLabel(average);
+		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+	}
+
+	/**
+	 * Returns the list of field names to calculate maximum-minimum values.
+	 * 
+	 * @return The list of fieldd names.
+	 */
+	public List<String> getNamesToCalculateRanges() {
+		List<Field> fields = new ArrayList<>();
+		fields.addAll(getSpreadFieldsFastAverage());
+		fields.addAll(getSpreadFields());
+		fields.addAll(getSpeedFields());
+		List<String> names = new ArrayList<>();
+		for (Field field : fields) {
+			names.add(field.getName());
+		}
+		return names;
+	}
+
+	/**
+	 * Configure the persistor.
+	 * 
+	 * @param persistor The persistor.
+	 * @param raw A boolean that indicates that calculated (spread and speed) values are raw (not normalized).
+	 */
+	protected void configure(Persistor persistor, boolean raw) {
+		configurePip(persistor, Fields.Open);
+		configurePip(persistor, Fields.High);
+		configurePip(persistor, Fields.Low);
+		configurePip(persistor, Fields.Close);
+		configureTimeFmt(persistor);
+		configureAverageFields(persistor);
+
+		int scale = (raw ? 10 : 4);
+		configureSpreadFieldsFastAvg(persistor, scale);
+		configureSpreadFields(persistor, scale);
+		configureSpeedFields(persistor, scale);
+	}
+
+	/**
+	 * Configure the field as pip field, if the field exists.
+	 * 
+	 * @param persistor The persistor.
+	 * @param name The field name.
+	 */
+	private void configurePip(Persistor persistor, String name) {
+		if (persistor.getField(name) != null) {
+			persistor.getField(name).setFormatter(new PipValue(getSession(), getInstrument()));
+		}
+	}
+
+	/**
+	 * Configure the average fields.
+	 * 
+	 * @param persistor The persistor.
+	 */
+	private void configureAverageFields(Persistor persistor) {
+		List<Field> fields = getAverageFields();
+		for (Field field : fields) {
+			configurePip(persistor, field.getName());
+		}
+	}
+
+	/**
+	 * Configure the spread fields high, low, close with the scale.
+	 * 
+	 * @param persistor The persistor.
+	 * @param scale The scale.
+	 */
+	private void configureSpreadFieldsFastAvg(Persistor persistor, int scale) {
+		List<Field> fields = getSpreadFieldsFastAverage();
+		for (Field field : fields) {
+			configureValue(persistor, field, scale);
+		}
+	}
+
+	/**
+	 * Configure the spread fields with the scale.
+	 * 
+	 * @param persistor The persistor.
+	 * @param scale The scale.
+	 */
+	private void configureSpreadFields(Persistor persistor, int scale) {
+		List<Field> fields = getSpreadFields();
+		for (Field field : fields) {
+			configureValue(persistor, field, scale);
+		}
+	}
+
+	/**
+	 * Configure the speed fields with the scale.
+	 * 
+	 * @param persistor The persistor.
+	 * @param scale The scale.
+	 */
+	private void configureSpeedFields(Persistor persistor, int scale) {
+		List<Field> fields = getSpeedFields();
+		for (Field field : fields) {
+			configureValue(persistor, field, scale);
+		}
+	}
+
+	/**
+	 * Configure a field double value with a display scale.
+	 * 
+	 * @param persistor The persistor.
+	 * @param field The field.
+	 * @param scale The scale.
+	 */
+	private void configureValue(Persistor persistor, Field field, int scale) {
+		String name = field.getName();
+		if (persistor.getField(name) != null) {
+			persistor.getField(name).setFormatter(new DataValue(getSession(), scale));
+		}
+	}
+
+	/**
+	 * Configure the time formatted field.
+	 * 
+	 * @param persistor The persistor.
+	 */
+	private void configureTimeFmt(Persistor persistor) {
+		if (persistor.getField(Fields.TimeFmt) != null) {
+			TimeFmtValue timeFmt = new TimeFmtValue(getPeriod().getUnit());
+			persistor.getField(Fields.TimeFmt).setFormatter(timeFmt);
+			persistor.getField(Fields.TimeFmt).setCalculator(timeFmt);
+		}
+	}
+
+	/**
+	 * Returns the main plot data for the price and averages.
+	 * 
+	 * @param dataList The source list.
+	 * @return The plot data.
+	 */
+	protected PlotData getPlotDataMain(PersistorDataList dataList) {
+
+		// First data list: price and indicators.
+		DataInfo info = dataList.getDataInfo();
+		info.setDataType(DataType.Indicator);
+		info.setInstrument(getInstrument());
+		info.setName(getInstrument().getId());
+		info.setDescription(getInstrument().getDescription());
+		info.setPeriod(getPeriod());
+
+		// Candlestick on price: info
+		info.addOutput("Open", "O", dataList.getDataIndex(Fields.Open), "Open data value");
+		info.addOutput("High", "H", dataList.getDataIndex(Fields.High), "High data value");
+		info.addOutput("Low", "L", dataList.getDataIndex(Fields.Low), "Low data value");
+		info.addOutput("Close", "C", dataList.getDataIndex(Fields.Close), "Close data value");
+
+		// Candlestick on price: plotter.
+		CandlestickPlotter plotterCandle = new CandlestickPlotter();
+		plotterCandle.setIndexes(new int[] {
+			dataList.getDataIndex(Fields.Open),
+			dataList.getDataIndex(Fields.High),
+			dataList.getDataIndex(Fields.Low),
+			dataList.getDataIndex(Fields.Close) });
+		dataList.addDataPlotter(plotterCandle);
+
+		// Line plotter for each average. Skip the rane percentage.
+		for (int i = 0; i < getAverages().size(); i++) {
+			Average average = getAverages().get(i);
+			String name = Average.getAverageName(average);
+			String label = Average.getAverageLabel(average);
+			String header = Average.getAverageHeader(average);
+			int index = dataList.getDataIndex(name);
+
+			// Output info.
+			info.addOutput(label, header, index, label);
+
+			// Plotter.
+			LinePlotter plotterAvg = new LinePlotter();
+			plotterAvg.setIndex(index);
+			dataList.addDataPlotter(plotterAvg);
+		}
+
+		PlotData plotData = new PlotData();
+		plotData.add(dataList);
+		return plotData;
+	}
+
+	/**
+	 * Returns the plot data for the list of fields.
+	 * 
+	 * @param sourceList The source list.
+	 * @param fields The list of fields.
+	 * @return The plot data.
+	 */
+	protected PlotData getPlotData(PersistorDataList sourceList, List<Field> fields) {
+
+		// Data info.
+		DataInfo info = new DataInfo(getSession());
+		info.setDataType(DataType.Indicator);
+		info.setInstrument(getInstrument());
+		info.setName(getInstrument().getId());
+		info.setDescription(getInstrument().getDescription());
+		info.setPeriod(getPeriod());
+
+		// Data list.
+		DataList dataList = new DelegateDataList(getSession(), info, sourceList);
+
+		for (Field field : fields) {
+			String name = field.getName();
+			String header = field.getHeader();
+			String label = field.getLabel();
+			int index = sourceList.getDataIndex(name);
+
+			// Output info.
+			info.addOutput(label, header, index, label);
+
+			// Plotter.
+			LinePlotter plotter = new LinePlotter();
+			plotter.setIndex(index);
+			dataList.addDataPlotter(plotter);
+		}
+
+		PlotData plotData = new PlotData();
+		plotData.add(dataList);
+
+		return plotData;
 	}
 }

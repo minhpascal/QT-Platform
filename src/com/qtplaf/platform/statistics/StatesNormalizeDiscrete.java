@@ -33,9 +33,7 @@ import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.task.TaskStatesNormalize;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -44,20 +42,7 @@ import com.qtplaf.platform.util.PersistorUtils;
  *
  * @author Miquel Sas
  */
-public class StatesNormalize extends StatesAverages {
-
-	/** Field names. */
-	public static class Fields {
-		public static final String Index = "index";
-		public static final String Time = "time";
-		public static final String TimeFmt = "time_fmt";
-		public static final String Open = "open";
-		public static final String High = "high";
-		public static final String Low = "low";
-		public static final String Close = "close";
-		public static final String Range = "range";
-		public static final String Key = "state_key";
-	}
+public class StatesNormalizeDiscrete extends StatesAverages {
 
 	/** States ranges related statistics. */
 	private StatesRanges statesRanges;
@@ -72,7 +57,7 @@ public class StatesNormalize extends StatesAverages {
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 */
-	public StatesNormalize(StatesRanges statesRanges) {
+	public StatesNormalizeDiscrete(StatesRanges statesRanges) {
 		super(
 			statesRanges.getSession(),
 			statesRanges.getServer(),
@@ -158,7 +143,7 @@ public class StatesNormalize extends StatesAverages {
 	 */
 	@Override
 	public Task getTask() {
-		return new TaskStatesNormalize(this);
+		return null;
 	}
 
 	/**
@@ -196,18 +181,8 @@ public class StatesNormalize extends StatesAverages {
 		// Averages fields.
 		table.addFields(getAverageFields());
 
-		// Percentual range
-		{
-			String name = Fields.Range;
-			String header = Fields.Range;
-			String label = "Range factor";
-			table.addField(DomainUtils.getDouble(getSession(), name, name, header, label, label));
-		}
-
 		// Price spreads over the first (fastest) average.
-		table.addField(Average.getSpreadField(getSession(), Fields.High, getAverages().get(0)));
-		table.addField(Average.getSpreadField(getSession(), Fields.Low, getAverages().get(0)));
-		table.addField(Average.getSpreadField(getSession(), Fields.Close, getAverages().get(0)));
+		table.addFields(getSpreadFieldsFastAverage());
 
 		// Spreads between averages.
 		table.addFields(getSpreadFields());
@@ -246,7 +221,7 @@ public class StatesNormalize extends StatesAverages {
 	@Override
 	public RecordSet getRecordSet() {
 		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
-		Formatters.configureStatesNormalize(persistor, this);
+		configure(persistor, false);
 		return new DataRecordSet(persistor);
 	}
 

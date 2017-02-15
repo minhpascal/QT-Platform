@@ -17,7 +17,6 @@ package com.qtplaf.platform.task;
 import java.util.List;
 
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
@@ -31,7 +30,7 @@ import com.qtplaf.platform.statistics.StatesSource;
  *
  * @author Miquel Sas
  */
-public class TaskStatesSource extends TaskRunner {
+public class TaskStatesSource extends TaskStatesAverages {
 
 	/** The indicator used to perform calculations. */
 	private StatesSourceIndicator indicator;
@@ -179,47 +178,4 @@ public class TaskStatesSource extends TaskRunner {
 		}
 
 	}
-
-	/**
-	 * Returns a boolean indicating whether the task will support cancel requests. This task supports cancel.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isCancelSupported() {
-		return true;
-	}
-
-	/**
-	 * Returns a boolean indicating if the task supports counting steps through a call to <code>countSteps()</code>.
-	 * This task supports counting steps.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isCountStepsSupported() {
-		return true;
-	}
-
-	/**
-	 * Returns a boolean indicating if the task is indeterminate, that is, the task can not count its number of steps.
-	 * This task is not indeterminate.
-	 * 
-	 * @return A boolean indicating if the task is indeterminate.
-	 */
-	@Override
-	public boolean isIndeterminate() {
-		return false;
-	}
-
-	/**
-	 * Returns a boolean indicating whether the task will support the pause/resume requests. This task supports pause.
-	 * 
-	 * @return A boolean.
-	 */
-	@Override
-	public boolean isPauseSupported() {
-		return true;
-	}
-
 }
