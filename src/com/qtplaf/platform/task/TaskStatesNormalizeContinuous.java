@@ -14,24 +14,21 @@
 
 package com.qtplaf.platform.task;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
+import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
-import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.platform.statistics.Average;
+import com.qtplaf.platform.statistics.StatesAverages;
 import com.qtplaf.platform.statistics.StatesAverages.Fields;
 import com.qtplaf.platform.statistics.StatesNormalizeContinuous;
-import com.qtplaf.platform.statistics.StatesRanges;
-import com.qtplaf.platform.statistics.StatesSource;
 
 /**
  * Task to calculate the normalized states values.
@@ -44,7 +41,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 	private StatesNormalizeContinuous statesNormalize;
 
 	/** A map with normailzed state value descriptors by field name. */
-	private Map<String, NormalizedStateValueDescriptor> descriptorsMap = new HashMap<>();
+	private Map<String, NormalizedStateValueDescriptor> descriptorsMap;
 
 	/**
 	 * Constructor.
@@ -88,35 +85,6 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 	}
 
 	/**
-	 * Fill the map of normalized state value descriptors.
-	 * 
-	 * @throws Exception
-	 */
-	private void fillDescriptorsMap() throws Exception {
-		double stddevs = 2;
-		RecordSet recordSet = statesNormalize.getStatesRanges().getRecordSet(false);
-		for (int i = 0; i < recordSet.size(); i++) {
-			Record record = recordSet.get(i);
-			String fieldName = record.getValue(StatesRanges.Fields.Name).getString();
-			String minMax = record.getValue(StatesRanges.Fields.MinMax).getString();
-			double average = record.getValue(StatesRanges.Fields.Average).getDouble();
-			double stddev = record.getValue(StatesRanges.Fields.StdDev).getDouble();
-			NormalizedStateValueDescriptor descriptor = descriptorsMap.get(fieldName);
-			if (descriptor == null) {
-				descriptor = new NormalizedStateValueDescriptor();
-				descriptor.setMaximum(0);
-				descriptor.setMinimum(0);
-				descriptorsMap.put(fieldName, descriptor);
-			}
-			if (minMax.equals("min")) {
-				descriptor.setMinimum(average - (stddev * stddevs));
-			} else {
-				descriptor.setMaximum(average + (stddev * stddevs));
-			}
-		}
-	}
-
-	/**
 	 * Executes the underlying task processing.
 	 * 
 	 * @throws Exception If an unrecoverable error occurs during execution.
@@ -133,7 +101,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 			countSteps();
 			
 			// Fill descriptors map.
-			fillDescriptorsMap();
+			descriptorsMap = StatesAverages.getDescriptorsMap(statesNormalize.getStatesRanges());
 
 			// Result table and persistor.
 			Table tableNormalize = statesNormalize.getTable();
@@ -148,7 +116,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 			// Source persistor.
 			Persistor sourcePersistor = getSourcePersistor();
 			Order order = new Order();
-			order.add(sourcePersistor.getField(StatesSource.Fields.Index));
+			order.add(sourcePersistor.getField(Fields.Index));
 
 			// Source iterator.
 			iterator = sourcePersistor.iterator(null, order);
@@ -195,9 +163,9 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 				normalizeRecord.setValue(Fields.Close, close);
 				
 				// Averages.
-				for (int i = 0; i < statesNormalize.getAverages().size(); i++) {
-					Average average = statesNormalize.getAverages().get(i);
-					String name = Average.getAverageName(average);
+				List<Field> averageFields = statesNormalize.getAverageFields();
+				for (Field field : averageFields) {
+					String name = field.getName();
 					normalizeRecord.setValue(name, sourceRecord.getValue(name));
 				}
 				

@@ -112,9 +112,9 @@ public class StatesSourceIndicator extends Indicator {
 			sources.add(new IndicatorSource(getDataListPrice(), Data.IndexHigh, Data.IndexLow, Data.IndexClose));
 
 			// Averages.
-			List<Average> averages = statesSource.getAverages();
-			for (Average average : averages) {
-				sources.add(new IndicatorSource(getDataListAverage(average), 0));
+			List<Field> averageFields = statesSource.getAverageFields();
+			for (Field field : averageFields) {
+				sources.add(new IndicatorSource(getDataListAverage(field), 0));
 			}
 
 			// This indicator data list.
@@ -124,20 +124,21 @@ public class StatesSourceIndicator extends Indicator {
 	}
 
 	/**
-	 * Returns the data list for a given average.
+	 * Returns the data list for a given average field.
 	 * 
-	 * @param average The average.
-	 * @return The data list for the average.
+	 * @param averageField The average field.
+	 * @return The data list for the average field.
 	 */
-	public IndicatorDataList getDataListAverage(Average average) {
-		DataList dataList = mapDataLists.get(Average.getAverageName(average));
+	private IndicatorDataList getDataListAverage(Field averageField) {
+		DataList dataList = mapDataLists.get(averageField.getName());
 		if (dataList == null) {
+			Average average = StatesSource.getAverage(averageField);
 			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 				getDataListPrice(),
 				Data.IndexClose,
 				average.getPeriod(),
 				average.getSmooths());
-			mapDataLists.put(Average.getAverageName(average), dataList);
+			mapDataLists.put(averageField.getName(), dataList);
 		}
 		return (IndicatorDataList) dataList;
 	}
@@ -202,7 +203,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * @return The <tt>Data</tt>,
 	 */
 	private Data getInputDataAverage(int index, Average average) {
-		DataList dataList = mapDataLists.get(Average.getAverageName(average));
+		DataList dataList = mapDataLists.get(average.getName());
 		return dataList.get(index);
 	}
 
@@ -237,61 +238,55 @@ public class StatesSourceIndicator extends Indicator {
 		double high = Data.getHigh(price);
 		double low = Data.getLow(price);
 		double close = Data.getClose(price);
-		values[info.getOutputIndex(StatesSource.Fields.Open)] = open;
-		values[info.getOutputIndex(StatesSource.Fields.High)] = high;
-		values[info.getOutputIndex(StatesSource.Fields.Low)] = low;
-		values[info.getOutputIndex(StatesSource.Fields.Close)] = close;
+		values[info.getOutputIndex(Fields.Open)] = open;
+		values[info.getOutputIndex(Fields.High)] = high;
+		values[info.getOutputIndex(Fields.Low)] = low;
+		values[info.getOutputIndex(Fields.Close)] = close;
 
 		// Averages.
-		List<Average> averages = statesSource.getAverages();
-		for (Average average : averages) {
+		List<Field> averageFields = statesSource.getAverageFields();
+		for (Field field : averageFields) {
+			Average average = StatesSource.getAverage(field);
 			Data data = getInputDataAverage(index, average);
-			values[info.getOutputIndex(Average.getAverageName(average))] = data.getValue(0);
+			values[info.getOutputIndex(field.getName())] = data.getValue(0);
 		}
 
 		// Price spreads vs the fastest average.
-		{
-			Average fastAvg = averages.get(0);
-			Data data = getInputDataAverage(index, fastAvg);
+		List<Field> spreadFast = statesSource.getSpreadFieldsFastAverage();
+		for (Field field : spreadFast) {
+			Field srcField = StatesSource.getSourceField(field);
+			Average avg = StatesSource.getAverage(field);
+			Data data = getInputDataAverage(index, avg);
 			double avgValue = data.getValue(0);
-			// High spread.
-			{
-				double spread = (high / avgValue) - 1;
-				values[info.getOutputIndex(Average.getSpreadName(Fields.High, fastAvg))] = spread;
-			}
-			// Low spread.
-			{
-				double spread = (low / avgValue) - 1;
-				values[info.getOutputIndex(Average.getSpreadName(Fields.Low, fastAvg))] = spread;
-			}
-			// Close spread.
-			{
-				double spread = (close / avgValue) - 1;
-				values[info.getOutputIndex(Average.getSpreadName(Fields.Close, fastAvg))] = spread;
-			}
+			double srcValue = values[info.getOutputIndex(srcField.getName())];
+			double spread = (srcValue / avgValue) - 1;
+			values[info.getOutputIndex(field.getName())] = spread;
 		}
 
 		// Spreads between averages.
-		for (int i = 1; i < averages.size(); i++) {
-			Average averageFast = averages.get(i - 1);
-			Average averageSlow = averages.get(i);
+		List<Field> spreadFields = statesSource.getSpreadFields();
+		for (Field field : spreadFields) {
+			Average averageFast = StatesSource.getAverageFast(field);
+			Average averageSlow = StatesSource.getAverageSlow(field);
 			Data dataFast = getInputDataAverage(index, averageFast);
 			double valueFast = dataFast.getValue(0);
 			Data dataSlow = getInputDataAverage(index, averageSlow);
 			double valueSlow = dataSlow.getValue(0);
 			double spread = (valueFast / valueSlow) - 1;
-			values[info.getOutputIndex(Average.getSpreadName(averageFast, averageSlow))] = spread;
+			values[info.getOutputIndex(field.getName())] = spread;
 		}
 
 		// Speed (tangent) percentual of averages.
 		if (index > 0) {
-			for (int i = 0; i < averages.size(); i++) {
-				Data dataCurr = getInputDataAverage(index, averages.get(i));
+			List<Field> speedFields = statesSource.getSpeedFields();
+			for (Field field : speedFields) {
+				Average average = StatesSource.getAverage(field);
+				Data dataCurr = getInputDataAverage(index, average);
 				double valueCurr = dataCurr.getValue(0);
-				Data dataPrev = getInputDataAverage(index - 1, averages.get(i));
+				Data dataPrev = getInputDataAverage(index - 1, average);
 				double valuePrev = dataPrev.getValue(0);
 				double speed = (valueCurr / valuePrev) - 1;
-				values[info.getOutputIndex(Average.getSpeedName(averages.get(i)))] = speed;
+				values[info.getOutputIndex(field.getName())] = speed;
 			}
 		}
 

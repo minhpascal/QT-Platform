@@ -15,11 +15,16 @@
 package com.qtplaf.platform.statistics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Persistor;
+import com.qtplaf.library.database.Record;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
@@ -49,8 +54,7 @@ public abstract class StatesAverages extends Statistics {
 	 * Field names for the series of averages statistics.
 	 */
 	public static class Fields {
-
-		/** Index in data list persistor. */
+		/** Data index. */
 		public static final String Index = "index";
 		/** Data time. */
 		public static final String Time = "time";
@@ -80,6 +84,59 @@ public abstract class StatesAverages extends Statistics {
 		public static final String Key = "state_key";
 	}
 
+	public static Average getAverage(Field field) {
+		return (Average) field.getProperty("avg");
+	}
+
+	public static Average getAverageFast(Field field) {
+		return (Average) field.getProperty("fast");
+	}
+
+	public static Average getAverageSlow(Field field) {
+		return (Average) field.getProperty("slow");
+	}
+
+	public static Field getSourceField(Field field) {
+		return (Field) field.getProperty("source-field");
+	}
+
+	/**
+	 * Returns the descriptors map to normalize the values..
+	 * 
+	 * @param ranges The states ranges statistics.
+	 * @return The normalized descriptors map.
+	 * @throws Exception
+	 */
+	public static Map<String, NormalizedStateValueDescriptor> getDescriptorsMap(StatesRanges ranges) throws Exception {
+		Map<String, NormalizedStateValueDescriptor> descriptorsMap = new HashMap<>();
+		double stddevs = 2;
+		RecordSet recordSet = ranges.getRecordSet(false);
+		for (int i = 0; i < recordSet.size(); i++) {
+			Record record = recordSet.get(i);
+			String fieldName = record.getValue(Fields.Name).getString();
+			String minMax = record.getValue(Fields.MinMax).getString();
+			double average = record.getValue(Fields.Average).getDouble();
+			double stddev = record.getValue(Fields.StdDev).getDouble();
+			NormalizedStateValueDescriptor descriptor = descriptorsMap.get(fieldName);
+			if (descriptor == null) {
+				descriptor = new NormalizedStateValueDescriptor();
+				descriptor.setMaximum(0);
+				descriptor.setMinimum(0);
+				descriptorsMap.put(fieldName, descriptor);
+			}
+			if (minMax.equals("min")) {
+				descriptor.setMinimum(average - (stddev * stddevs));
+			} else {
+				descriptor.setMaximum(average + (stddev * stddevs));
+			}
+		}
+		return descriptorsMap;
+	}
+
+	/**
+	 * Map of fields.
+	 */
+	private Map<String, Field> mapFields = new HashMap<>();
 	/**
 	 * Working session.
 	 */
@@ -103,6 +160,21 @@ public abstract class StatesAverages extends Statistics {
 	private List<Average> averages = new ArrayList<Average>();
 
 	/**
+	 * Average fields.
+	 */
+	private List<Field> averageFields;
+
+	/**
+	 * Spread fields between averages.
+	 */
+	private List<Field> averageSpreadFields;
+
+	/**
+	 * Speedd fields of averages.
+	 */
+	private List<Field> averageSpeedFields;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param session Working session.
@@ -119,16 +191,6 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
-	 * Add a smoothed simple moving average
-	 * 
-	 * @param period
-	 * @param smooths Smoothing periods.
-	 */
-	public void addAverage(int period, int... smooths) {
-		addAverage(new Average(period, smooths));
-	}
-
-	/**
 	 * Add an average
 	 * 
 	 * @param average The average.
@@ -136,7 +198,6 @@ public abstract class StatesAverages extends Statistics {
 	public void addAverage(Average average) {
 		averages.add(average);
 		ListUtils.sort(averages);
-		setup();
 	}
 
 	/**
@@ -151,6 +212,214 @@ public abstract class StatesAverages extends Statistics {
 	 */
 	public List<Average> getAverages() {
 		return averages;
+	}
+
+	/**
+	 * Returns the index field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldIndex() {
+		Field field = mapFields.get(Fields.Index);
+		if (field == null) {
+			field = DomainUtils.getIndex(getSession(), Fields.Index);
+			mapFields.put(Fields.Index, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the name of the average.
+	 * 
+	 * @param avg The average.
+	 * @return The name.
+	 */
+	public String getAverageName(Average avg) {
+		return "average_" + avg.getPeriod();
+	}
+
+	/**
+	 * Returns the time field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldTime() {
+		Field field = mapFields.get(Fields.Time);
+		if (field == null) {
+			field = DomainUtils.getTime(getSession(), Fields.Time);
+			mapFields.put(Fields.Time, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the time_fmt field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldTimeFmt() {
+		Field field = mapFields.get(Fields.TimeFmt);
+		if (field == null) {
+			field = DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt);
+			mapFields.put(Fields.TimeFmt, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the open field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldOpen() {
+		Field field = mapFields.get(Fields.Open);
+		if (field == null) {
+			field = DomainUtils.getOpen(getSession(), Fields.Open);
+			mapFields.put(Fields.Open, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the high field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldHigh() {
+		Field field = mapFields.get(Fields.High);
+		if (field == null) {
+			field = DomainUtils.getOpen(getSession(), Fields.High);
+			mapFields.put(Fields.High, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the low field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldLow() {
+		Field field = mapFields.get(Fields.Low);
+		if (field == null) {
+			field = DomainUtils.getOpen(getSession(), Fields.Low);
+			mapFields.put(Fields.Low, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the close field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldClose() {
+		Field field = mapFields.get(Fields.Close);
+		if (field == null) {
+			field = DomainUtils.getOpen(getSession(), Fields.Close);
+			mapFields.put(Fields.Close, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the min_max field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldMinMax() {
+		Field field = mapFields.get(Fields.MinMax);
+		if (field == null) {
+			field = DomainUtils.getMinMax(getSession(), Fields.MinMax);
+			field.setHeader("Min/Max");
+			mapFields.put(Fields.MinMax, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the name field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldName() {
+		Field field = mapFields.get(Fields.Name);
+		if (field == null) {
+			field = DomainUtils.getName(getSession(), Fields.Name);
+			field.setHeader("Field name");
+			mapFields.put(Fields.Name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the period field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldPeriod() {
+		Field field = mapFields.get(Fields.Period);
+		if (field == null) {
+			field = DomainUtils.getPeriod(getSession(), Fields.Period);
+			field.setHeader("Period");
+			mapFields.put(Fields.Period, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the value field.
+	 * 
+	 * @return The field.
+	 */
+	protected Field getFieldValue() {
+		Field field = mapFields.get(Fields.Value);
+		if (field == null) {
+			field = DomainUtils.getDouble(getSession(), Fields.Value);
+			field.setHeader("Value");
+			mapFields.put(Fields.Value, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the spread field between two averages.
+	 * 
+	 * @param averageFast Fast average.
+	 * @param averageSlow Slow average.
+	 * @return The field.
+	 */
+	protected Field getFieldSpread(Average averageFast, Average averageSlow) {
+		String name = "spread_" + averageFast.getPeriod() + "_" + averageSlow.getPeriod();
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Spread-" + averageFast.getPeriod() + "-" + averageSlow.getPeriod();
+			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod();
+			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			field.setProperty("fast", averageFast);
+			field.setProperty("slow", averageSlow);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the speed field for the average.
+	 * 
+	 * @param average The average.
+	 * @return The field.
+	 */
+	protected Field getFieldSpeed(Average average) {
+		String name = "speed_" + average.getPeriod();
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Speed-" + average.getPeriod();
+			String label = "Speed " + average.getPeriod();
+			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			field.setProperty("avg", average);
+			mapFields.put(name, field);
+		}
+		return field;
 	}
 
 	/**
@@ -195,11 +464,13 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The list of average fields.
 	 */
 	public List<Field> getAverageFields() {
-		List<Field> fields = new ArrayList<>();
-		for (int i = 0; i < getAverages().size(); i++) {
-			fields.add(getAverageField(getAverages().get(i)));
+		if (averageFields == null) {
+			averageFields = new ArrayList<>();
+			for (int i = 0; i < getAverages().size(); i++) {
+				averageFields.add(getAverageField(getAverages().get(i)));
+			}
 		}
-		return fields;
+		return averageFields;
 	}
 
 	/**
@@ -208,13 +479,17 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The list of spread fields.
 	 */
 	public List<Field> getSpreadFields() {
-		List<Field> fields = new ArrayList<>();
-		for (int i = 1; i < getAverages().size(); i++) {
-			Average averageFast = getAverages().get(i - 1);
-			Average averageSlow = getAverages().get(i);
-			fields.add(getSpreadField(averageFast, averageSlow));
+		if (averageSpreadFields == null) {
+			averageSpreadFields = new ArrayList<>();
+			for (int i = 0; i < getAverages().size(); i++) {
+				Average averageFast = getAverages().get(i);
+				for (int j = i + 1; j < getAverages().size(); j++) {
+					Average averageSlow = getAverages().get(j);
+					averageSpreadFields.add(getFieldSpread(averageFast, averageSlow));
+				}
+			}
 		}
-		return fields;
+		return averageSpreadFields;
 	}
 
 	/**
@@ -223,38 +498,13 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The list of speed fields.
 	 */
 	public List<Field> getSpeedFields() {
-		List<Field> fields = new ArrayList<>();
-		for (int i = 0; i < getAverages().size(); i++) {
-			fields.add(getSpeedField(getAverages().get(i)));
+		if (averageSpeedFields == null) {
+			averageSpeedFields = new ArrayList<>();
+			for (int i = 0; i < getAverages().size(); i++) {
+				averageSpeedFields.add(getFieldSpeed(getAverages().get(i)));
+			}
 		}
-		return fields;
-	}
-
-	/**
-	 * Returns the speed field for the average.
-	 * 
-	 * @param average The average.
-	 * @return The field.
-	 */
-	private Field getSpeedField(Average average) {
-		String name = Average.getSpeedName(average);
-		String header = Average.getSpeedHeader(average);
-		String label = Average.getSpeedLabel(average);
-		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
-	}
-
-	/**
-	 * Returns the spread field between two averages.
-	 * 
-	 * @param averageFast Fast average.
-	 * @param averageSlow Slow average.
-	 * @return The field.
-	 */
-	private Field getSpreadField(Average averageFast, Average averageSlow) {
-		String name = Average.getSpreadName(averageFast, averageSlow);
-		String header = Average.getSpreadHeader(averageFast, averageSlow);
-		String label = Average.getSpreadLabel(averageFast, averageSlow);
-		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+		return averageSpeedFields;
 	}
 
 	/**
@@ -265,24 +515,31 @@ public abstract class StatesAverages extends Statistics {
 	public List<Field> getSpreadFieldsFastAverage() {
 		Average average = getAverages().get(0);
 		List<Field> fields = new ArrayList<>();
-		fields.add(getSpreadField(Fields.High, average));
-		fields.add(getSpreadField(Fields.Low, average));
-		fields.add(getSpreadField(Fields.Close, average));
+		fields.add(getSpreadField(getFieldHigh(), average));
+		fields.add(getSpreadField(getFieldLow(), average));
+		fields.add(getSpreadField(getFieldClose(), average));
 		return fields;
 	}
 
 	/**
-	 * Returns the spread field for a field name and an average.
+	 * Returns the spread field for a field (high, low, close) and an average.
 	 * 
-	 * @param fieldName The field name.
+	 * @param sourceField The field.
 	 * @param average The average.
 	 * @return The field.
 	 */
-	private Field getSpreadField(String fieldName, Average average) {
-		String name = Average.getSpreadName(fieldName, average);
-		String header = Average.getSpreadHeader(fieldName, average);
-		String label = Average.getSpreadLabel(fieldName, average);
-		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+	private Field getSpreadField(Field sourceField, Average average) {
+		String name = "spread_" + sourceField.getName() + "_" + average.getPeriod();
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Spread-" + sourceField.getName() + "-" + average.getPeriod();
+			String label = "Spread " + sourceField.getName() + " - " + average.getPeriod();
+			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			field.setProperty("source-field", sourceField);
+			field.setProperty("avg", average);
+			mapFields.put(name, field);
+		}
+		return field;
 	}
 
 	/**
@@ -292,10 +549,16 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The field.
 	 */
 	private Field getAverageField(Average average) {
-		String name = Average.getAverageName(average);
-		String header = Average.getAverageHeader(average);
-		String label = Average.getAverageLabel(average);
-		return DomainUtils.getDouble(getSession(), name, name, header, label, label);
+		String name = average.getName();
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = average.getHeader();
+			String label = average.getLabel();
+			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			field.setProperty("avg", average);
+			mapFields.put(name, field);
+		}
+		return field;
 	}
 
 	/**
@@ -456,12 +719,12 @@ public abstract class StatesAverages extends Statistics {
 			dataList.getDataIndex(Fields.Close) });
 		dataList.addDataPlotter(plotterCandle);
 
-		// Line plotter for each average. Skip the rane percentage.
-		for (int i = 0; i < getAverages().size(); i++) {
-			Average average = getAverages().get(i);
-			String name = Average.getAverageName(average);
-			String label = Average.getAverageLabel(average);
-			String header = Average.getAverageHeader(average);
+		// Line plotter for each average.
+		List<Field> averageFields = getAverageFields();
+		for (Field field : averageFields) {
+			String name = field.getName();
+			String label = field.getLabel();
+			String header = field.getHeader();
 			int index = dataList.getDataIndex(name);
 
 			// Output info.

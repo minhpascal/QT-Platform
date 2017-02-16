@@ -91,6 +91,15 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
+	 * Returns the underlying persistor.
+	 * 
+	 * @return The underlying persistor.
+	 */
+	public Persistor getPersistor() {
+		return persistor;
+	}
+
+	/**
 	 * Returns a boolean indicating whether the persistor is sensitive to new records added by another
 	 * <tt>DataPersistor</tt>.
 	 * 
@@ -261,6 +270,14 @@ public class DataPersistor implements Persistor {
 		return record;
 	}
 
+	public Record getRecordToInsert(Data data) {
+		Record record = getRecord(data);
+		Long last = getLastIndex() + 1;
+		record.setValue(0, last);
+		lastIndex = last;
+		return record;
+	}
+	
 	/**
 	 * Returns the record given a relative index in that starts at 0.
 	 * 
@@ -569,7 +586,7 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
-	 * Insert a record.
+	 * Insert a record. Automatically sets the index and increases the last index.
 	 * 
 	 * @param record The record to insert.
 	 * @return The number of already inserted records (one or zero).

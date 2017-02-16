@@ -51,6 +51,35 @@ public class IOList<E> {
 	}
 
 	/**
+	 * Returns the input buffer size.
+	 * 
+	 * @return The input buffer size.
+	 */
+	public int getInputSize() {
+		synchronized (inpuLock) {
+			return input.size();
+		}
+	}
+
+	/**
+	 * Check if input is empty.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isInputEmpty() {
+		return getInputSize() == 0;
+	}
+
+	/**
+	 * Check if output is empty.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isOutputEmpty() {
+		return getOutput().isEmpty();
+	}
+
+	/**
 	 * Transfer input data to output.
 	 */
 	public void transfer() {

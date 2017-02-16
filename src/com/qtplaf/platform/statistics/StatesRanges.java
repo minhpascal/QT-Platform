@@ -39,7 +39,6 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.task.TaskStatesRanges;
-import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -169,22 +168,18 @@ public class StatesRanges extends StatesAverages {
 		table.setName(getTableName());
 		table.setSchema(Names.getSchema(getServer()));
 
-		table.addField(DomainUtils.getName(getSession(), Fields.Name));
-		table.addField(DomainUtils.getMinMax(getSession(), Fields.MinMax));
-		table.addField(DomainUtils.getPeriod(getSession(), Fields.Period));
-		table.addField(DomainUtils.getDouble(getSession(), Fields.Value));
-		table.addField(DomainUtils.getIndex(getSession(), Fields.Index));
-		table.addField(DomainUtils.getTime(getSession(), Fields.Time));
-
-		table.getField(Fields.Name).setHeader("Field name");
-		table.getField(Fields.MinMax).setHeader("Min/Max");
-		table.getField(Fields.Period).setHeader("Period");
+		table.addField(getFieldName());
+		table.addField(getFieldMinMax());
+		table.addField(getFieldPeriod());
+		table.addField(getFieldValue());
+		table.addField(getFieldIndex());
+		table.addField(getFieldTime());
 
 		// Non unique index on name, minmax, period.
 		Index index = new Index();
-		index.add(table.getField(Fields.Name));
-		index.add(table.getField(Fields.MinMax));
-		index.add(table.getField(Fields.Period));
+		index.add(getFieldName());
+		index.add(getFieldMinMax());
+		index.add(getFieldPeriod());
 		index.setUnique(false);
 		table.addIndex(index);
 
@@ -218,8 +213,8 @@ public class StatesRanges extends StatesAverages {
 		view.setName(table.getName());
 
 		// Group by fields
-		view.addField(table.getField(Fields.Name));
-		view.addField(table.getField(Fields.MinMax));
+		view.addField(getFieldName());
+		view.addField(getFieldMinMax());
 		if (includePeriod) {
 			view.addField(table.getField(Fields.Period));
 		}
@@ -288,15 +283,15 @@ public class StatesRanges extends StatesAverages {
 		view.addField(norm2);
 
 		// Group by.
-		view.addGroupBy(view.getField(Fields.Name));
-		view.addGroupBy(view.getField(Fields.MinMax));
+		view.addGroupBy(getFieldName());
+		view.addGroupBy(getFieldMinMax());
 		if (includePeriod) {
 			view.addGroupBy(view.getField(Fields.Period));
 		}
 
 		// Order by.
-		view.addOrderBy(view.getField(Fields.Name));
-		view.addOrderBy(view.getField(Fields.MinMax));
+		view.addOrderBy(getFieldName());
+		view.addOrderBy(getFieldMinMax());
 		if (includePeriod) {
 			view.addOrderBy(view.getField(Fields.Period));
 		}

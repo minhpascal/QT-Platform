@@ -35,13 +35,15 @@ public class StatisticsManager {
 	private static final String ConfigurationSoft = "sf";
 
 	/** Source statistics: generates source values. */
-	private static final String StateSource = "stsrc";
+	private static final String StateSource = "st1src";
 	/** Ranges: calculates minimums and maximums. */
-	private static final String StateRanges = "strng";
+	private static final String StateRanges = "st2rng";
 	/** Normalize continuous: normalized values continuous. */
-	private static final String StateNormalizeContinuous = "stnmc";
+	private static final String StateNormalizeContinuous = "st3nmc";
 	/** Normalize discrete: normalized values discrete. */
-	private static final String StateNormalizeDiscrete = "stnmd";
+	private static final String StateNormalizeDiscrete = "st4nmd";
+	/** Normalize discrete: key analysis. */
+//	private static final String StateNormalizeKey = "st5key";
 
 	/**
 	 * The list of defined statistics.
@@ -211,6 +213,7 @@ public class StatisticsManager {
 		for (Average average : reference.getConfiguration().getAverages()) {
 			stsrc.addAverage(average);
 		}
+		stsrc.setup();
 
 		return stsrc;
 	}
@@ -249,6 +252,7 @@ public class StatisticsManager {
 		for (Average average : reference.getConfiguration().getAverages()) {
 			stnrm.addAverage(average);
 		}
+		stnrm.setup();
 
 		return stnrm;
 	}
@@ -287,6 +291,7 @@ public class StatisticsManager {
 		for (Average range : reference.getConfiguration().getRanges()) {
 			strng.addAverage(range);
 		}
+		strng.setup();
 
 		return strng;
 	}

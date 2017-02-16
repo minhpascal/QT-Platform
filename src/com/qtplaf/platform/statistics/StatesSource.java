@@ -35,7 +35,6 @@ import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.task.TaskStatesSource;
-import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -105,13 +104,13 @@ public class StatesSource extends StatesAverages {
 		List<Field> fields = new ArrayList<>();
 		Table table = getTable();
 		for (int i = 0; i < table.getFieldCount(); i++) {
-			if (table.getField(i).getName().equals(Fields.Index)) {
+			if (table.getField(i).equals(getFieldIndex())) {
 				continue;
 			}
-			if (table.getField(i).getName().equals(Fields.Time)) {
+			if (table.getField(i).equals(getFieldTime())) {
 				continue;
 			}
-			if (table.getField(i).getName().equals(Fields.TimeFmt)) {
+			if (table.getField(i).equals(getFieldTimeFmt())) {
 				continue;
 			}
 			fields.add(table.getField(i));
@@ -133,13 +132,13 @@ public class StatesSource extends StatesAverages {
 		table.setSchema(Names.getSchema(getServer()));
 
 		// Index, time and price fields.
-		table.addField(DomainUtils.getIndex(getSession(), Fields.Index));
-		table.addField(DomainUtils.getTime(getSession(), Fields.Time));
-		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
-		table.addField(DomainUtils.getOpen(getSession(), Fields.Open));
-		table.addField(DomainUtils.getHigh(getSession(), Fields.High));
-		table.addField(DomainUtils.getLow(getSession(), Fields.Low));
-		table.addField(DomainUtils.getClose(getSession(), Fields.Close));
+		table.addField(getFieldIndex());
+		table.addField(getFieldTime());
+		table.addField(getFieldTimeFmt());
+		table.addField(getFieldOpen());
+		table.addField(getFieldHigh());
+		table.addField(getFieldLow());
+		table.addField(getFieldClose());
 
 		// Averages fields.
 		table.addFields(getAverageFields());
@@ -154,11 +153,11 @@ public class StatesSource extends StatesAverages {
 		table.addFields(getSpeedFields());
 
 		// Primary key on Time.
-		table.getField(Fields.Time).setPrimaryKey(true);
+		getFieldTime().setPrimaryKey(true);
 
 		// Unique index on Index.
 		Index index = new Index();
-		index.add(table.getField(Fields.Index));
+		index.add(getFieldIndex());
 		index.setUnique(true);
 		table.addIndex(index);
 

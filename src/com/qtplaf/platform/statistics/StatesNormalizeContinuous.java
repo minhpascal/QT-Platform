@@ -28,7 +28,6 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.task.TaskStatesNormalizeContinuous;
-import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -117,13 +116,13 @@ public class StatesNormalizeContinuous extends StatesAverages {
 		table.setSchema(Names.getSchema(getServer()));
 
 		// Index, time and price fields.
-		table.addField(DomainUtils.getIndex(getSession(), Fields.Index));
-		table.addField(DomainUtils.getTime(getSession(), Fields.Time));
-		table.addField(DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt));
-		table.addField(DomainUtils.getOpen(getSession(), Fields.Open));
-		table.addField(DomainUtils.getHigh(getSession(), Fields.High));
-		table.addField(DomainUtils.getLow(getSession(), Fields.Low));
-		table.addField(DomainUtils.getClose(getSession(), Fields.Close));
+		table.addField(getFieldIndex());
+		table.addField(getFieldTime());
+		table.addField(getFieldTimeFmt());
+		table.addField(getFieldOpen());
+		table.addField(getFieldHigh());
+		table.addField(getFieldLow());
+		table.addField(getFieldClose());
 
 		// Averages fields.
 		table.addFields(getAverageFields());
@@ -138,11 +137,11 @@ public class StatesNormalizeContinuous extends StatesAverages {
 		table.addFields(getSpeedFields());
 
 		// Primary key on Time.
-		table.getField(Fields.Time).setPrimaryKey(true);
+		getFieldTime().setPrimaryKey(true);
 
 		// Unique index on Index.
 		Index index = new Index();
-		index.add(table.getField(Fields.Index));
+		index.add(getFieldIndex());
 		index.setUnique(true);
 		table.addIndex(index);
 
