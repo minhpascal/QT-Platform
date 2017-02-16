@@ -147,15 +147,6 @@ public class StatesRanges extends StatesAverages {
 	}
 
 	/**
-	 * Returns the table name.
-	 * 
-	 * @return The table name.
-	 */
-	public String getTableName() {
-		return Names.getName(getInstrument(), getPeriod(), getId().toLowerCase());
-	}
-
-	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 

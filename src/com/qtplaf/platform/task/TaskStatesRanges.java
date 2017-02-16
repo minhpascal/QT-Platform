@@ -17,6 +17,7 @@ package com.qtplaf.platform.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
@@ -150,8 +151,8 @@ public class TaskStatesRanges extends TaskStatesAverages {
 		}
 		persistor.getDDL().buildTable(table);
 
-		// Names of fields to calculate ranges.
-		List<String> names = statesSource.getNamesToCalculateRanges();
+		// Fields to calculate ranges.
+		List<Field> fields = statesSource.getFieldsToCalculateRanges();
 		// List of periods for min-max.
 		List<Integer> periods = getPeriods();
 
@@ -179,7 +180,8 @@ public class TaskStatesRanges extends TaskStatesAverages {
 			notifyStepStart(step, getStepMessage(step, steps, null, null));
 
 			// Do calculate if min-max for each name and period.
-			for (String name : names) {
+			for (Field field : fields) {
+				String name = field.getName();
 				int valueIndex = indicator.getIndicatorInfo().getOutputIndex(name);
 				double value = sourceList.get(index).getValue(valueIndex);
 				if (value == 0) {

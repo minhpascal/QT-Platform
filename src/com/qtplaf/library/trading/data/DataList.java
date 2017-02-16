@@ -162,6 +162,10 @@ public abstract class DataList {
 	 */
 	private List<DataPlotter> dataPlotters = new ArrayList<>();
 	/**
+	 * A boolean that indicates if the data list should be plotted.
+	 */
+	private boolean plot = true;
+	/**
 	 * The working session.
 	 */
 	private Session session;
@@ -185,6 +189,24 @@ public abstract class DataList {
 	 */
 	public void addDataPlotter(DataPlotter dataPlotter) {
 		dataPlotters.add(dataPlotter);
+	}
+
+	/**
+	 * Check if the data list must be plotted.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isPlot() {
+		return plot;
+	}
+
+	/**
+	 * Set if the data list must be plotted.
+	 * 
+	 * @param plot A boolean.
+	 */
+	public void setPlot(boolean plot) {
+		this.plot = plot;
 	}
 
 	/**

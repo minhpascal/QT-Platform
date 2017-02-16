@@ -19,11 +19,8 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.database.Types;
-import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
@@ -33,9 +30,7 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.task.TaskStatesSource;
-import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Retrieves the source values for the series of analisys to build the wave descriptor states and transitions. Contains
@@ -62,18 +57,7 @@ public class StatesSource extends StatesAverages {
 	 * Setup after adding the averages.
 	 */
 	protected void setup() {
-		if (getAverages().isEmpty()) {
-			throw new IllegalStateException();
-		}
-		clear();
-		Table table = getTable();
-		for (int i = 0; i < table.getFieldCount(); i++) {
-			Field field = table.getField(i);
-			String name = field.getName();
-			String description = field.getDisplayDescription();
-			add(new Output(name, description, Types.Double));
-		}
-
+		setupFromTable();
 	}
 
 	/**
@@ -83,15 +67,6 @@ public class StatesSource extends StatesAverages {
 	 */
 	public Task getTask() {
 		return new TaskStatesSource(this);
-	}
-
-	/**
-	 * Returns the table name.
-	 * 
-	 * @return The table name.
-	 */
-	public String getTableName() {
-		return Names.getName(getInstrument(), getPeriod(), getId().toLowerCase());
 	}
 
 	/**
@@ -125,45 +100,7 @@ public class StatesSource extends StatesAverages {
 	 * @return The results table.
 	 */
 	public Table getTable() {
-
-		Table table = new Table();
-
-		table.setName(getTableName());
-		table.setSchema(Names.getSchema(getServer()));
-
-		// Index, time and price fields.
-		table.addField(getFieldIndex());
-		table.addField(getFieldTime());
-		table.addField(getFieldTimeFmt());
-		table.addField(getFieldOpen());
-		table.addField(getFieldHigh());
-		table.addField(getFieldLow());
-		table.addField(getFieldClose());
-
-		// Averages fields.
-		table.addFields(getAverageFields());
-
-		// Price spreads over the first (fastest) average.
-		table.addFields(getSpreadFieldsFastAverage());
-
-		// Spreads between averages.
-		table.addFields(getSpreadFields());
-
-		// Speed (tangent) of averages.
-		table.addFields(getSpeedFields());
-
-		// Primary key on Time.
-		getFieldTime().setPrimaryKey(true);
-
-		// Unique index on Index.
-		Index index = new Index();
-		index.add(getFieldIndex());
-		index.setUnique(true);
-		table.addIndex(index);
-
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
-
-		return table;
+		return getTableForSourceAndNormalizedStatistics();
 	}
 
 	/**

@@ -25,48 +25,30 @@ import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.task.TaskStatesNormalizeContinuous;
+import com.qtplaf.platform.task.TaskStatesNormalizeDiscrete;
 
 /**
  *
  *
  * @author Miquel Sas
  */
-public class StatesNormalizeContinuous extends StatesAverages {
+public class StatesNormalizeDiscrete extends StatesAverages {
 
 	/** States ranges related statistics. */
-	private StatesRanges statesRanges;
+	private StatesNormalizeContinuous statesNormalizeContinuous;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param statesRanges The states ranges statistics.
+	 * @param statesNormalizeContinuous The parent states normalized continuous statistics.
 	 */
-	public StatesNormalizeContinuous(StatesRanges statesRanges) {
+	public StatesNormalizeDiscrete(StatesNormalizeContinuous statesNormalizeContinuous) {
 		super(
-			statesRanges.getSession(),
-			statesRanges.getServer(),
-			statesRanges.getInstrument(),
-			statesRanges.getPeriod());
-		this.statesRanges = statesRanges;
-	}
-
-	/**
-	 * Returns the states ranges related statistics.
-	 * 
-	 * @return The states ranges related statistics.
-	 */
-	public StatesRanges getStatesRanges() {
-		return statesRanges;
-	}
-
-	/**
-	 * Returns the states source related statistics.
-	 * 
-	 * @return The states source related statistics.
-	 */
-	public StatesSource getStatesSource() {
-		return statesRanges.getStatesSource();
+			statesNormalizeContinuous.getSession(),
+			statesNormalizeContinuous.getServer(),
+			statesNormalizeContinuous.getInstrument(),
+			statesNormalizeContinuous.getPeriod());
+		this.statesNormalizeContinuous = statesNormalizeContinuous;
 	}
 
 	/**
@@ -78,13 +60,22 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	}
 
 	/**
+	 * Returns the parent or source statistics.
+	 * 
+	 * @return The parent or source statistics.
+	 */
+	public StatesNormalizeContinuous getStatesNormalizeContinuous() {
+		return statesNormalizeContinuous;
+	}
+
+	/**
 	 * Returns the task that calculates the statistic.
 	 * 
 	 * @return The calculator task.
 	 */
 	@Override
 	public Task getTask() {
-		return new TaskStatesNormalizeContinuous(this);
+		return new TaskStatesNormalizeDiscrete(this);
 	}
 
 	/**
@@ -121,7 +112,7 @@ public class StatesNormalizeContinuous extends StatesAverages {
 		// The data list.
 		PersistorDataList dataList =
 			new PersistorDataList(getSession(), new DataInfo(getSession()), getTable().getPersistor());
-		
+
 		List<PlotData> plotDataList = new ArrayList<>();
 		plotDataList.add(getPlotDataMain(dataList));
 		plotDataList.add(getPlotData(dataList, getSpreadFields()));

@@ -180,13 +180,16 @@ public class StatisticsManager {
 			return getStatesRanges(session, server, instrument, period, id);
 		}
 		if (id.equals(getId(ConfigurationSoft, StateNormalizeContinuous))) {
-			return getStatesNormalize(session, server, instrument, period, id);
+			return getStatesNormalizeContinuous(session, server, instrument, period, id);
+		}
+		if (id.equals(getId(ConfigurationSoft, StateNormalizeDiscrete))) {
+			return getStatesNormalizeDiscrete(session, server, instrument, period, id);
 		}
 		return null;
 	}
 
 	/**
-	 * Returns the statictics of smoothed averages: 5, 21, 89, 377, 1597, 6765
+	 * Returns the statictics of smoothed averages.
 	 * 
 	 * @param session Working session.
 	 * @param server The server.
@@ -219,7 +222,7 @@ public class StatisticsManager {
 	}
 
 	/**
-	 * Returns the statictics of smoothed averages normalized: 5, 21, 89, 377, 1597, 6765
+	 * Returns the statictics of smoothed averages normalized continuous.
 	 * 
 	 * @param session Working session.
 	 * @param server The server.
@@ -227,7 +230,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesNormalizeContinuous getStatesNormalize(
+	private static StatesNormalizeContinuous getStatesNormalizeContinuous(
 		Session session,
 		Server server,
 		Instrument instrument,
@@ -239,26 +242,66 @@ public class StatisticsManager {
 			idRanges = getId(ConfigurationSoft, StateRanges);
 		}
 
-		StatesNormalizeContinuous stnrm =
+		StatesNormalizeContinuous stnrmc =
 			new StatesNormalizeContinuous(getStatesRanges(session, server, instrument, period, idRanges));
 
 		Reference reference = getReference(id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}
-		stnrm.setId(reference.getId());
-		stnrm.setTitle(reference.getTitle());
-		stnrm.setDescription(reference.getTitle());
+		stnrmc.setId(reference.getId());
+		stnrmc.setTitle(reference.getTitle());
+		stnrmc.setDescription(reference.getTitle());
 		for (Average average : reference.getConfiguration().getAverages()) {
-			stnrm.addAverage(average);
+			stnrmc.addAverage(average);
 		}
-		stnrm.setup();
+		stnrmc.setup();
 
-		return stnrm;
+		return stnrmc;
+	}
+
+
+	/**
+	 * Returns the statictics of smoothed averages normalized discrete.
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @return The statistics definition.
+	 */
+	private static StatesNormalizeDiscrete getStatesNormalizeDiscrete(
+		Session session,
+		Server server,
+		Instrument instrument,
+		Period period,
+		String id) {
+
+		String idStCont = null;
+		if (id.equals(getId(ConfigurationSoft, StateNormalizeDiscrete))) {
+			idStCont = getId(ConfigurationSoft, StateNormalizeContinuous);
+		}
+
+		StatesNormalizeDiscrete stnrmd =
+			new StatesNormalizeDiscrete(getStatesNormalizeContinuous(session, server, instrument, period, idStCont));
+
+		Reference reference = getReference(id);
+		if (reference == null) {
+			throw new IllegalStateException();
+		}
+		stnrmd.setId(reference.getId());
+		stnrmd.setTitle(reference.getTitle());
+		stnrmd.setDescription(reference.getTitle());
+		for (Average average : reference.getConfiguration().getAverages()) {
+			stnrmd.addAverage(average);
+		}
+		stnrmd.setup();
+
+		return stnrmd;
 	}
 
 	/**
-	 * Returns the statictics of ranges for the states source: 5, 21, 89, 377, 1597, 6765
+	 * Returns the statictics of ranges for the states source.
 	 * 
 	 * @param session Working session.
 	 * @param server The server.

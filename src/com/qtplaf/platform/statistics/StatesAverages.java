@@ -22,9 +22,13 @@ import java.util.Map;
 import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.Table;
+import com.qtplaf.library.database.Types;
+import com.qtplaf.library.statistics.Output;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
@@ -38,10 +42,12 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.list.ListUtils;
+import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Root class for states statistics based on averages.
@@ -562,20 +568,16 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
-	 * Returns the list of field names to calculate maximum-minimum values.
+	 * Returns the list of field to calculate maximum-minimum values and normalized values.
 	 * 
 	 * @return The list of fieldd names.
 	 */
-	public List<String> getNamesToCalculateRanges() {
+	public List<Field> getFieldsToCalculateRanges() {
 		List<Field> fields = new ArrayList<>();
 		fields.addAll(getSpreadFieldsFastAverage());
 		fields.addAll(getSpreadFields());
 		fields.addAll(getSpeedFields());
-		List<String> names = new ArrayList<>();
-		for (Field field : fields) {
-			names.add(field.getName());
-		}
-		return names;
+		return fields;
 	}
 
 	/**
@@ -780,5 +782,78 @@ public abstract class StatesAverages extends Statistics {
 		plotData.add(dataList);
 
 		return plotData;
+	}
+
+	/**
+	 * Returns the table name.
+	 * 
+	 * @return The table name.
+	 */
+	protected String getTableName() {
+		return Names.getName(getInstrument(), getPeriod(), getId().toLowerCase());
+	}
+
+	/**
+	 * Returns the definition of source and normalized continuous and discrete statistics.
+	 * 
+	 * @return The results table.
+	 */
+	protected Table getTableForSourceAndNormalizedStatistics() {
+
+		Table table = new Table();
+
+		table.setName(getTableName());
+		table.setSchema(Names.getSchema(getServer()));
+
+		// Index, time and price fields.
+		table.addField(getFieldIndex());
+		table.addField(getFieldTime());
+		table.addField(getFieldTimeFmt());
+		table.addField(getFieldOpen());
+		table.addField(getFieldHigh());
+		table.addField(getFieldLow());
+		table.addField(getFieldClose());
+
+		// Averages fields.
+		table.addFields(getAverageFields());
+
+		// Price spreads over the first (fastest) average.
+		table.addFields(getSpreadFieldsFastAverage());
+
+		// Spreads between averages.
+		table.addFields(getSpreadFields());
+
+		// Speed (tangent) of averages.
+		table.addFields(getSpeedFields());
+
+		// Primary key on Time.
+		getFieldTime().setPrimaryKey(true);
+
+		// Unique index on Index.
+		Index index = new Index();
+		index.add(getFieldIndex());
+		index.setUnique(true);
+		table.addIndex(index);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+
+		return table;
+	}
+
+	/**
+	 * Setup from the table definition.
+	 */
+	protected void setupFromTable() {
+		if (getAverages().isEmpty()) {
+			throw new IllegalStateException();
+		}
+		clear();
+		Table table = getTable();
+		for (int i = 0; i < table.getFieldCount(); i++) {
+			Field field = table.getField(i);
+			String name = field.getName();
+			String description = field.getDisplayDescription();
+			add(new Output(name, description, Types.Double));
+		}
 	}
 }

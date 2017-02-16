@@ -230,21 +230,27 @@ public class JChartPlotter extends JPanel {
 		if (!nonIndicator.isEmpty()) {
 			for (int index = startIndexClip; index < endIndexClip; index++) {
 				for (DataList dataList : nonIndicator) {
-					plotChartData(g2, dataList, index);
+					if (dataList.isPlot()) {
+						plotChartData(g2, dataList, index);
+					}
 				}
 			}
 		}
 		if (!fromClip.isEmpty()) {
 			for (int index = startIndexClip; index < endIndexClip; index++) {
 				for (DataList dataList : fromClip) {
-					plotChartData(g2, dataList, index);
+					if (dataList.isPlot()) {
+						plotChartData(g2, dataList, index);
+					}
 				}
 			}
 		}
 		if (!fromScratch.isEmpty()) {
 			for (DataList dataList : fromScratch) {
 				for (int index = startIndex; index < endIndex; index++) {
-					plotChartData(g2, dataList, index);
+					if (dataList.isPlot()) {
+						plotChartData(g2, dataList, index);
+					}
 				}
 			}
 		}

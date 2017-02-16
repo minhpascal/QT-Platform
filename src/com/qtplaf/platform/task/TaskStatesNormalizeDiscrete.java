@@ -15,7 +15,6 @@
 package com.qtplaf.platform.task;
 
 import java.util.List;
-import java.util.Map;
 
 import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 import com.qtplaf.library.database.Field;
@@ -26,29 +25,25 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.platform.statistics.StatesAverages;
 import com.qtplaf.platform.statistics.StatesAverages.Fields;
-import com.qtplaf.platform.statistics.StatesNormalizeContinuous;
+import com.qtplaf.platform.statistics.StatesNormalizeDiscrete;
 
 /**
- * Task to calculate the normalized states values.
+ * Task to calculate the normalized states values discrete. Values have been previously normalized continuous [-1, 1].
  *
  * @author Miquel Sas
  */
-public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
+public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 
 	/** The parent states normalize statistics. */
-	private StatesNormalizeContinuous statesNormalize;
-
-	/** A map with normailzed state value descriptors by field name. */
-	private Map<String, NormalizedStateValueDescriptor> descriptorsMap;
+	private StatesNormalizeDiscrete statesNormalize;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statesNormalize The parent states normalize statistics.
 	 */
-	public TaskStatesNormalizeContinuous(StatesNormalizeContinuous statesNormalize) {
+	public TaskStatesNormalizeDiscrete(StatesNormalizeDiscrete statesNormalize) {
 		super(statesNormalize.getSession());
 		this.statesNormalize = statesNormalize;
 		setNameAndDescription(statesNormalize);
@@ -81,7 +76,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 	 * @return The source persistor.
 	 */
 	private Persistor getSourcePersistor() {
-		return statesNormalize.getStatesSource().getTable().getPersistor();
+		return statesNormalize.getStatesNormalizeContinuous().getTable().getPersistor();
 	}
 
 	/**
@@ -100,9 +95,6 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 			// Count steps.
 			countSteps();
 			
-			// Fill descriptors map.
-			descriptorsMap = StatesAverages.getDescriptorsMap(statesNormalize.getStatesRanges());
-
 			// Result table and persistor.
 			Table tableNormalize = statesNormalize.getTable();
 			Persistor normalizePersistor = new DataPersistor(tableNormalize.getPersistor());
@@ -121,9 +113,10 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 			// Source iterator.
 			iterator = sourcePersistor.iterator(null, order);
 			
-			// Names to calculate ranges.
+			// Names to calculate ranges and descriptor.
 			List<Field> rangeFields = statesNormalize.getFieldsToCalculateRanges();
-			
+			NormalizedStateValueDescriptor descriptor = new NormalizedStateValueDescriptor(1.0, -1.0, 1);
+		
 			// Step and steps.
 			long step = 0;
 			long steps = getSteps();
@@ -172,7 +165,6 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 				// Ranges.
 				for (Field field : rangeFields) {
 					String name = field.getName();
-					NormalizedStateValueDescriptor descriptor = descriptorsMap.get(name);
 					double raw = sourceRecord.getValue(name).getDouble();
 					double value = descriptor.getValue(raw);
 					normalizeRecord.getValue(name).setDouble(value);
