@@ -1351,7 +1351,7 @@ public class JPanelProgress extends JPanel {
 		StringBuilder b = new StringBuilder();
 		b.append(getSession().getString("panelProgressProcessing"));
 		b.append(" ");
-		b.append(NumberUtils.round(performed, 1));
+		b.append(NumberUtils.getBigDecimal(performed, 1));
 		b.append(" %");
 		getLabelStatus().setText(b.toString());
 		getLabelTime().setText(getProgressTimeInfo(performed));

@@ -17,6 +17,7 @@ package com.qtplaf.platform.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.trading.data.Instrument;
@@ -85,18 +86,25 @@ public class StatisticsManager {
 				configuration.addAverage(average);
 			}
 
-			// Spreads.
-			for (int i = 1; i < averages.size(); i++) {
-				Average avgFast = averages.get(i - 1);
-				Average avgSlow = averages.get(i);
-				configuration.addSpread(new Spread(avgFast, avgSlow, null));
-			}
-
+			// Spread 5-21.
+			NormalizedStateValueDescriptor norm_5_21 = new NormalizedStateValueDescriptor(1.0, -1.0, 4, 40);
+			Spread spread_5_21 = new Spread(averages.get(0), averages.get(1), norm_5_21);
+			configuration.addSpread(spread_5_21);
+			// Spread 21-89.
+			NormalizedStateValueDescriptor norm_21_89 = new NormalizedStateValueDescriptor(1.0, -1.0, 4, 20);
+			Spread spread_21_89 = new Spread(averages.get(1), averages.get(2), norm_21_89);
+			configuration.addSpread(spread_21_89);
+			// Spread 89-377.
+			NormalizedStateValueDescriptor norm_89_377 = new NormalizedStateValueDescriptor(1.0, -1.0, 2, 10);
+			Spread spread_89_377 = new Spread(averages.get(2), averages.get(3), norm_89_377);
+			configuration.addSpread(spread_89_377);
+			
 			// Speeds only for slow averages.
 			Average speedSlow = averages.get(averages.size() - 1);
-			configuration.addSpeed(new Speed(speedSlow, null));
+			NormalizedStateValueDescriptor normSlow = new NormalizedStateValueDescriptor(1.0, -1.0, 2, 10);
+			configuration.addSpeed(new Speed(speedSlow, normSlow));
 
-			// Ranges (periods) fro min-max
+			// Ranges (periods) from min-max
 			configuration.getRanges().add(new Range(89));
 			configuration.getRanges().add(new Range(377));
 

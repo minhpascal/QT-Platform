@@ -26,6 +26,7 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
+import com.qtplaf.platform.statistics.StatesAverages;
 import com.qtplaf.platform.statistics.StatesAverages.Fields;
 import com.qtplaf.platform.statistics.StatesNormalizeDiscrete;
 
@@ -115,7 +116,7 @@ public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 			iterator = sourcePersistor.iterator(null, order);
 			
 			// Names to calculate ranges and descriptor.
-			List<Field> rangeFields = statesNormalize.getFieldsToCalculateRanges();
+			List<Field> normalizeDiscreteFields = statesNormalize.getFieldsToNormalizeDiscrete();
 			int scale = statesNormalize.getScale();
 			double maximum = 1.0;
 			double minimum = -1.0;
@@ -171,11 +172,19 @@ public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 					normalizeRecord.setValue(name, sourceRecord.getValue(name));
 				}
 				
-				// Ranges.
-				for (Field field : rangeFields) {
+				// Spread fields over the fast average are not discretized.
+				List<Field> spreadFast = statesNormalize.getSpreadFieldsFastAverage();
+				for (Field field : spreadFast) {
 					String name = field.getName();
+					normalizeRecord.setValue(name, sourceRecord.getValue(name));
+				}
+				
+				// Ranges.
+				for (Field field : normalizeDiscreteFields) {
+					String name = field.getName();
+					NormalizedStateValueDescriptor normalizer = StatesAverages.getNormalizer(field);
 					double raw = sourceRecord.getValue(name).getDouble();
-					double value = descriptor.getValue(raw);
+					double value = normalizer.getValue(raw);
 					normalizeRecord.getValue(name).setDouble(value);
 				}
 				

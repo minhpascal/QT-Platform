@@ -115,7 +115,7 @@ public abstract class StatesAverages extends Statistics {
 		return (Field) field.getProperty("source-field");
 	}
 	private static void setSourceField(Field field, Field source) {
-		field.setProperty("source-field", field);
+		field.setProperty("source-field", source);
 	}
 	
 	public static NormalizedStateValueDescriptor getNormalizer(Field field) {
@@ -187,6 +187,11 @@ public abstract class StatesAverages extends Statistics {
 	 * Average fields.
 	 */
 	private List<Field> averageFields;
+
+	/**
+	 * Spread fields vs fast average.
+	 */
+	private List<Field> spreadFieldsFast;
 
 	/**
 	 * Spread fields between averages.
@@ -320,7 +325,7 @@ public abstract class StatesAverages extends Statistics {
 	protected Field getFieldHigh() {
 		Field field = mapFields.get(Fields.High);
 		if (field == null) {
-			field = DomainUtils.getOpen(getSession(), Fields.High);
+			field = DomainUtils.getHigh(getSession(), Fields.High);
 			mapFields.put(Fields.High, field);
 		}
 		return field;
@@ -334,7 +339,7 @@ public abstract class StatesAverages extends Statistics {
 	protected Field getFieldLow() {
 		Field field = mapFields.get(Fields.Low);
 		if (field == null) {
-			field = DomainUtils.getOpen(getSession(), Fields.Low);
+			field = DomainUtils.getLow(getSession(), Fields.Low);
 			mapFields.put(Fields.Low, field);
 		}
 		return field;
@@ -348,7 +353,7 @@ public abstract class StatesAverages extends Statistics {
 	protected Field getFieldClose() {
 		Field field = mapFields.get(Fields.Close);
 		if (field == null) {
-			field = DomainUtils.getOpen(getSession(), Fields.Close);
+			field = DomainUtils.getClose(getSession(), Fields.Close);
 			mapFields.put(Fields.Close, field);
 		}
 		return field;
@@ -613,12 +618,14 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The fields.
 	 */
 	public List<Field> getSpreadFieldsFastAverage() {
-		Average average = getAverages().get(0);
-		List<Field> fields = new ArrayList<>();
-		fields.add(getSpreadField(getFieldHigh(), average));
-		fields.add(getSpreadField(getFieldLow(), average));
-		fields.add(getSpreadField(getFieldClose(), average));
-		return fields;
+		if (spreadFieldsFast == null) {
+			spreadFieldsFast = new ArrayList<>();
+			Average average = getAverages().get(0);
+			spreadFieldsFast.add(getSpreadField(getFieldHigh(), average));
+			spreadFieldsFast.add(getSpreadField(getFieldLow(), average));
+			spreadFieldsFast.add(getSpreadField(getFieldClose(), average));
+		}
+		return spreadFieldsFast;
 	}
 
 	/**
@@ -662,13 +669,25 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
-	 * Returns the list of field to calculate maximum-minimum values and normalized values.
+	 * Returns the list of field to calculate maximum-minimum values and normalize continuous.
 	 * 
 	 * @return The list of fieldd names.
 	 */
 	public List<Field> getFieldsToCalculateRanges() {
 		List<Field> fields = new ArrayList<>();
 		fields.addAll(getSpreadFieldsFastAverage());
+		fields.addAll(getSpreadFields());
+		fields.addAll(getSpeedFields());
+		return fields;
+	}
+
+	/**
+	 * Returns the list of field to calculate normalize discrete.
+	 * 
+	 * @return The list of fieldd names.
+	 */
+	public List<Field> getFieldsToNormalizeDiscrete() {
+		List<Field> fields = new ArrayList<>();
 		fields.addAll(getSpreadFields());
 		fields.addAll(getSpeedFields());
 		return fields;

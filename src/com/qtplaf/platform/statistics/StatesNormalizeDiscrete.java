@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
@@ -121,6 +122,13 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 		Table table = getTableForSourceAndNormalizedStatistics();
 		// Keys.
 		table.addField(getFieldKey());
+
+		// Unique index on Index.
+		Index index = new Index();
+		index.add(getFieldKey());
+		index.setUnique(false);
+		table.addIndex(index);
+		
 		// Must set persistor.
 		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
 		return table;

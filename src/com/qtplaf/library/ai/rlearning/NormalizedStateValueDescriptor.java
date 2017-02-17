@@ -88,6 +88,22 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 	}
 
 	/**
+	 * Constructor assigning maximum and minimum.
+	 * 
+	 * @param maximum The maximum.
+	 * @param minimum The minimum.
+	 * @param scale The scale.
+	 * @param segments The number of seghments.
+	 */
+	public NormalizedStateValueDescriptor(double maximum, double minimum, int scale, int segments) {
+		super();
+		this.maximum = maximum;
+		this.minimum = minimum;
+		setScale(scale);
+		setSegments(segments);
+	}
+
+	/**
 	 * Returns the maximum.
 	 * 
 	 * @return The maximum.
