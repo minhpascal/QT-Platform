@@ -98,12 +98,6 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	public boolean add(DataList dataList) {
 		// Validate subsequent lists.
 		if (!isEmpty()) {
-			// If it's price, volume or indicator only, data list can only be indicator.
-			if (isPrice() || isVolume() || isIndicatorOnly()) {
-				if (!dataList.getDataInfo().getDataType().equals(DataType.Indicator)) {
-					throw new IllegalArgumentException("Data list must be of type indicator.");
-				}
-			}
 			// The period must be the same.
 			DataList firstList = get(0);
 			if (!firstList.getDataInfo().getPeriod().equals(dataList.getDataInfo().getPeriod())) {
@@ -671,57 +665,6 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Check if this plot data has a data list of type <i>Price</i>.
-	 * 
-	 * @return A boolean.
-	 */
-	public boolean isPrice() {
-		return isDataType(DataType.Price);
-	}
-
-	/**
-	 * Check if this plot data has a data list of type <i>Indicator</i>.
-	 * 
-	 * @return A boolean.
-	 */
-	public boolean isIndicator() {
-		return isDataType(DataType.Indicator);
-	}
-
-	/**
-	 * Check if this plot data is made only of indicators.
-	 * 
-	 * @return A boolean that indicates if this plot data is made only of indicators.
-	 */
-	public boolean isIndicatorOnly() {
-		return isIndicator() && !isPrice() && !isVolume();
-	}
-
-	/**
-	 * Check if this plot data has a data list of type <i>Volume</i>.
-	 * 
-	 * @return A boolean.
-	 */
-	public boolean isVolume() {
-		return isDataType(DataType.Volume);
-	}
-
-	/**
-	 * Check if this plot data contains a data list of the argument data type.
-	 * 
-	 * @param dataType The required data type.
-	 * @return A boolean that indicates if this plot data contains a data list of the argument data type.
-	 */
-	public boolean isDataType(DataType dataType) {
-		for (DataList dataList : dataLists) {
-			if (dataList.getDataInfo().getDataType().equals(dataType)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

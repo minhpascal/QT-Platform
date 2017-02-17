@@ -77,6 +77,26 @@ public class ListUtils {
 	}
 
 	/**
+	 * Returns the first element of a list.
+	 * 
+	 * @param list The list.
+	 * @return The first element.
+	 */
+	public static <T> T getFirst(List<T> list) {
+		return list.get(0);
+	}
+
+	/**
+	 * Returns the last element of a list.
+	 * 
+	 * @param list The list.
+	 * @return The last element.
+	 */
+	public static <T> T getLast(List<T> list) {
+		return list.get(list.size() - 1);
+	}
+
+	/**
 	 * Check whether two lists are equal.
 	 * 
 	 * @param l1 List 1.

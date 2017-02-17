@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Indicator;
 
 /**
@@ -57,7 +56,6 @@ public class IndicatorInfo extends DataInfo {
 	 */
 	public IndicatorInfo(Session session, Indicator indicator) {
 		super(session);
-		setDataType(DataType.Indicator);
 	}
 
 	/**

@@ -66,6 +66,7 @@ public class Line extends Drawing {
 		this.v2 = v2;
 		this.stroke = stroke;
 		this.color = color;
+		setName("Line");
 	}
 
 	/**

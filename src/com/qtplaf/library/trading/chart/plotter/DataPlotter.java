@@ -18,6 +18,9 @@ import java.awt.Graphics2D;
 
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
+import com.qtplaf.library.trading.data.info.DataInfo;
+import com.qtplaf.library.trading.data.info.OutputInfo;
+import com.qtplaf.library.util.StringUtils;
 
 /**
  * Base class for data plotters of timed data.
@@ -52,10 +55,33 @@ public abstract class DataPlotter extends Plotter {
 	private Color colorBullishOdd = new Color(215, 215, 215);
 
 	/**
+	 * A boolean to control if the plotter should plot, thus allowing to hide/show plot actions.
+	 */
+	private boolean plot = true;
+
+	/**
 	 * Constructor.
 	 */
 	public DataPlotter() {
 		super();
+	}
+
+	/**
+	 * Check if the plotter should plot.
+	 * 
+	 * @return A boolean.
+	 */
+	public boolean isPlot() {
+		return plot;
+	}
+
+	/**
+	 * Set if the plotter should plot.
+	 * 
+	 * @param plot A boolean.
+	 */
+	public void setPlot(boolean plot) {
+		this.plot = plot;
 	}
 
 	/**
@@ -210,4 +236,23 @@ public abstract class DataPlotter extends Plotter {
 		return colorBullishOdd;
 	}
 
+	/**
+	 * Returns a string representation of this plotter and the data it plots.
+	 * 
+	 * @param info The data info of the data list the plotter plots.
+	 * @return A string representation.
+	 */
+	public String toString(DataInfo info) {
+		StringBuilder b = new StringBuilder();
+		StringUtils.append(b, getName());
+		for (int i = 0; i < indexes.length; i++) {
+			String sep = (i == 0 ? " " : ", ");
+			int index = indexes[i];
+			OutputInfo output = info.getOutputByDataIndex(index);
+			if (output != null) {
+				StringUtils.appendSep(b, output.getName(), sep);
+			}
+		}
+		return b.toString();
+	}
 }

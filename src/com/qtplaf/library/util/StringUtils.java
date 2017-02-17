@@ -444,4 +444,32 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return false;
 	}
+
+	/**
+	 * Append if not null.
+	 * 
+	 * @param b The string builder.
+	 * @param o The object to add.
+	 */
+	public static void append(StringBuilder b, Object o) {
+		if (o != null) {
+			b.append(o);
+		}
+	}
+
+	/**
+	 * Append separated if not null, inserting the separator if the buffer is not empty.
+	 * 
+	 * @param b The string builder.
+	 * @param o The object to add.
+	 * @param sep The separator.
+	 */
+	public static void appendSep(StringBuilder b, Object o, String sep) {
+		if (o != null) {
+			if (b.length() > 0) {
+				b.append(sep);
+			}
+			b.append(o);
+		}
+	}
 }

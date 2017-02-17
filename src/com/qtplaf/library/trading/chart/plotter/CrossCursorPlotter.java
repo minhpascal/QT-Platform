@@ -35,6 +35,7 @@ public class CrossCursorPlotter extends Plotter {
 	public CrossCursorPlotter(PlotterContext context) {
 		super();
 		setContext(context);
+		setName("Cross cursor");
 	}
 
 	/**

@@ -34,7 +34,6 @@ import com.qtplaf.library.trading.chart.plotter.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
-import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.PlotData;
 
 /**
@@ -345,26 +344,6 @@ public class JChart extends JPanel {
 	 */
 	public JChartHorizontalAxis getChartHorizontalAxis() {
 		return horizontalAxis;
-	}
-
-	/**
-	 * Returns the list of chart containers of the given type.
-	 * 
-	 * @param chartType The chart type.
-	 * @return The list of chart containers of the given type.
-	 */
-	public List<JChartContainer> getChartContainers(DataType chartType) {
-		List<JChartContainer> containers = new ArrayList<>();
-		for (JChartContainer chartContainer : chartContainers) {
-			PlotData plotData = chartContainer.getPlotData();
-			if (plotData == null) {
-				continue;
-			}
-			if (plotData.isDataType(chartType)) {
-				containers.add(chartContainer);
-			}
-		}
-		return containers;
 	}
 
 	/**

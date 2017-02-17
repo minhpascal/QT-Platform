@@ -80,6 +80,7 @@ public class HorizontalAxisPlotter extends Plotter {
 	public HorizontalAxisPlotter(PlotterContext context) {
 		super();
 		setContext(context);
+		setName("Horizontal axis");
 	}
 
 	/**

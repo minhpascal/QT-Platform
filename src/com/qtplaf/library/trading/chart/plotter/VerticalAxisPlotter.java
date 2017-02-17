@@ -45,6 +45,7 @@ public class VerticalAxisPlotter extends Plotter {
 	public VerticalAxisPlotter(PlotterContext context) {
 		super();
 		setContext(context);
+		setName("Vertical axis");
 	}
 
 	/**

@@ -344,17 +344,7 @@ public class Instrument {
 	 * @return A string representation.
 	 */
 	public String toString() {
-		StringBuilder b = new StringBuilder();
-		b.append("[");
-		b.append("id='" + getId() + "'");
-		b.append(", ");
-		b.append("pv=" + getPipValueAsBigDecimal().toPlainString());
-		b.append(", ");
-		b.append("tv=" + getTickValueAsBigDecimal().toPlainString());
-		b.append(", ");
-		b.append(getPrimaryCurrency() + "/" + getSecondaryCurrency());
-		b.append("]");
-		return b.toString();
+		return getId();
 	}
 
 }

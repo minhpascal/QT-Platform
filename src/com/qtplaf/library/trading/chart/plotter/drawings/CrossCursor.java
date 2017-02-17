@@ -63,6 +63,7 @@ public class CrossCursor extends Drawing {
 	 */
 	public CrossCursor(Point point) {
 		this.point = point;
+		setName("Cross cursor");
 	}
 
 	/**

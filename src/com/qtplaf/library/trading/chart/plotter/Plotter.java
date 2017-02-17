@@ -32,7 +32,11 @@ public class Plotter {
 	 * The plotter context.
 	 */
 	private PlotterContext context;
-	
+	/**
+	 * The name of the plotter.
+	 */
+	private String name;
+
 	/**
 	 * Default constructor.
 	 */
@@ -56,6 +60,24 @@ public class Plotter {
 	 */
 	public void setContext(PlotterContext context) {
 		this.context = context;
+	}
+
+	/**
+	 * Returns the plotter name. Every defined plotter should have an unique name.
+	 * 
+	 * @return The name.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Set the plotter name. Every defined plotter should have an unique name.
+	 * 
+	 * @param name The name.
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

@@ -41,6 +41,7 @@ public class BarPlotter extends DataPlotter {
 	public BarPlotter() {
 		super();
 		setIndexes(new int[]{ 0, 1, 2, 3 });
+		setName("Bar");
 	}
 
 	/**

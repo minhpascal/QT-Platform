@@ -20,10 +20,10 @@ import java.util.Map;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.data.Data;
-import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.util.FormatUtils;
+import com.qtplaf.library.util.StringUtils;
 
 /**
  * Base information that describes data in a data list.
@@ -45,10 +45,6 @@ public class DataInfo {
 	 * An optional long description that completely describes the data.
 	 */
 	private String description;
-	/**
-	 * The type of data to be plotted.
-	 */
-	private DataType dataType;
 	/**
 	 * Instrument of data if applicable.
 	 */
@@ -98,9 +94,6 @@ public class DataInfo {
 		if (obj instanceof DataInfo) {
 			DataInfo info = (DataInfo) obj;
 			if (!getName().equals(info.getName())) {
-				return false;
-			}
-			if (!getDataType().equals(info.getDataType())) {
 				return false;
 			}
 			if (!getInstrument().equals(info.getInstrument())) {
@@ -174,6 +167,21 @@ public class DataInfo {
 	}
 
 	/**
+	 * Returns the output info by data index or null if not found.
+	 * 
+	 * @param index The data index.
+	 * @return Teh output info.
+	 */
+	public OutputInfo getOutputByDataIndex(int index) {
+		for (OutputInfo output : outputs) {
+			if (output.getIndex() == index) {
+				return output;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Adds an output to the list of outputs.
 	 * 
 	 * @param name The output name.
@@ -203,21 +211,6 @@ public class DataInfo {
 	public OutputInfo getOutput(int index) {
 		if (index < outputs.size()) {
 			return outputs.get(index);
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the output with the given name.
-	 * 
-	 * @param name The output name.
-	 * @return The output or null.
-	 */
-	public OutputInfo getOutput(String name) {
-		for (OutputInfo output : outputs) {
-			if (output.getName().equals(name)) {
-				return output;
-			}
 		}
 		return null;
 	}
@@ -310,24 +303,6 @@ public class DataInfo {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * Returns the type of data (Price, Volume or Indicator).
-	 * 
-	 * @return The type of data.
-	 */
-	public DataType getDataType() {
-		return dataType;
-	}
-
-	/**
-	 * Sets the data type.
-	 * 
-	 * @param dataType The data type.
-	 */
-	public void setDataType(DataType dataType) {
-		this.dataType = dataType;
 	}
 
 	/**
@@ -432,18 +407,10 @@ public class DataInfo {
 	 * @return A string representation.
 	 */
 	public String toString() {
-		StringBuilder b = new StringBuilder();
-		b.append("[");
-		b.append(getInstrument().getId());
-		b.append(", ");
-		b.append(getPeriod());
-		b.append(", ");
-		b.append(getDataType());
-		if (getDataType().equals(DataType.Indicator)) {
-			b.append(", ");
-			b.append(getName());
-		}
-		b.append("]");
-		return b.toString();
+		StringBuilder info = new StringBuilder();
+		StringUtils.append(info, getInstrument());
+		StringUtils.appendSep(info, getPeriod(), ", ");
+		StringUtils.appendSep(info, getName(), ", ");
+		return info.toString();
 	}
 }

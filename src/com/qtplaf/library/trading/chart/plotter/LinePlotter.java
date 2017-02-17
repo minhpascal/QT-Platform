@@ -45,6 +45,7 @@ public class LinePlotter extends DataPlotter {
 	 */
 	public LinePlotter() {
 		super();
+		setName("Line");
 		setColorBearishEven(Color.BLACK);
 		setColorBearishOdd(Color.BLACK);
 		setColorBullishEven(Color.BLACK);

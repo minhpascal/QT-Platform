@@ -14,7 +14,6 @@
 
 package com.qtplaf.platform.task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.database.Field;
@@ -25,7 +24,7 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.indicators.StatesSourceIndicator;
-import com.qtplaf.platform.statistics.Average;
+import com.qtplaf.platform.statistics.Average.Range;
 import com.qtplaf.platform.statistics.StatesAverages.Fields;
 import com.qtplaf.platform.statistics.StatesRanges;
 import com.qtplaf.platform.statistics.StatesSource;
@@ -87,20 +86,6 @@ public class TaskStatesRanges extends TaskStatesAverages {
 	}
 
 	/**
-	 * Returtns the list of periods to calculate min-max values.
-	 * 
-	 * @return The list of periods.
-	 */
-	private List<Integer> getPeriods() {
-		List<Integer> periods = new ArrayList<>();
-		List<Average> averages = statesRanges.getAverages();
-		for (Average average : averages) {
-			periods.add(average.getPeriod());
-		}
-		return periods;
-	}
-
-	/**
 	 * Returns the result record.
 	 * 
 	 * @param persistor The persistor.
@@ -150,11 +135,12 @@ public class TaskStatesRanges extends TaskStatesAverages {
 			persistor.getDDL().dropTable(table);
 		}
 		persistor.getDDL().buildTable(table);
+		
+		// List of ranges.
+		List<Range> ranges = statesSource.getConfiguration().getRanges();
 
 		// Fields to calculate ranges.
 		List<Field> fields = statesSource.getFieldsToCalculateRanges();
-		// List of periods for min-max.
-		List<Integer> periods = getPeriods();
 
 		// The current index to calculate.
 		int index = 0;
@@ -187,7 +173,8 @@ public class TaskStatesRanges extends TaskStatesAverages {
 				if (value == 0) {
 					continue;
 				}
-				for (int period : periods) {
+				for (Range range : ranges) {
+					int period = range.getPeriod();
 					if (value < 0) {
 						if (sourceList.isMinimum(index, valueIndex, period)) {
 							long time = sourceList.get(index).getTime();

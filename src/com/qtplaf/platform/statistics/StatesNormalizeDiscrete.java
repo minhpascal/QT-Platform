@@ -17,6 +17,7 @@ package com.qtplaf.platform.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
@@ -26,6 +27,7 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.task.TaskStatesNormalizeDiscrete;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  *
@@ -34,8 +36,20 @@ import com.qtplaf.platform.task.TaskStatesNormalizeDiscrete;
  */
 public class StatesNormalizeDiscrete extends StatesAverages {
 
+	/**
+	 * Keys.
+	 */
+	public static class Keys {
+		/** Soft key. */
+		public static final String Soft = "soft";
+		/** Hard key. */
+		public static final String Hard = "hard";
+	}
+
 	/** States ranges related statistics. */
 	private StatesNormalizeContinuous statesNormalizeContinuous;
+	/** Normalize scale. */
+	private int scale = 2;
 
 	/**
 	 * Constructor.
@@ -49,6 +63,24 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 			statesNormalizeContinuous.getInstrument(),
 			statesNormalizeContinuous.getPeriod());
 		this.statesNormalizeContinuous = statesNormalizeContinuous;
+	}
+
+	/**
+	 * Returns the scale.
+	 * 
+	 * @return The scale.
+	 */
+	public int getScale() {
+		return scale;
+	}
+
+	/**
+	 * Set the scale.
+	 * 
+	 * @param scale The scale.
+	 */
+	public void setScale(int scale) {
+		this.scale = scale;
 	}
 
 	/**
@@ -86,7 +118,12 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 	 */
 	@Override
 	public Table getTable() {
-		return getTableForSourceAndNormalizedStatistics();
+		Table table = getTableForSourceAndNormalizedStatistics();
+		// Keys.
+		table.addField(getFieldKey());
+		// Must set persistor.
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
 	}
 
 	/**
@@ -119,5 +156,17 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 		plotDataList.add(getPlotData(dataList, getSpeedFields()));
 
 		return plotDataList;
+	}
+
+	/**
+	 * Returns the list of fields for the key.
+	 * 
+	 * @return The list of fields for the key.
+	 */
+	public List<Field> getFieldsKey() {
+		List<Field> fields = new ArrayList<>();
+		fields.addAll(getSpreadFields());
+		fields.addAll(getSpeedFields());
+		return fields;
 	}
 }

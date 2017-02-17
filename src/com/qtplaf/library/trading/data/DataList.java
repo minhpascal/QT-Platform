@@ -24,7 +24,6 @@ import com.qtplaf.library.trading.chart.plotter.DataPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.library.trading.data.info.VolumeInfo;
 import com.qtplaf.library.util.Calendar;
 import com.qtplaf.library.util.NumberUtils;
 
@@ -150,10 +149,6 @@ public abstract class DataList {
 	 */
 	private PlotType plotType = PlotType.Line;
 	/**
-	 * The price index case of price and line plot.
-	 */
-	private int indexPrice = Data.IndexClose;
-	/**
 	 * A list of data list listeners.
 	 */
 	private List<DataListListener> listeners = new ArrayList<>();
@@ -222,9 +217,6 @@ public abstract class DataList {
 				return false;
 			}
 			if (!getPlotType().equals(dataList.getPlotType())) {
-				return false;
-			}
-			if (getIndexPrice() != dataList.getIndexPrice()) {
 				return false;
 			}
 			return true;
@@ -306,24 +298,6 @@ public abstract class DataList {
 	}
 
 	/**
-	 * Returns the price index, in case of price chart and line plot.
-	 * 
-	 * @return The price index.
-	 */
-	public int getIndexPrice() {
-		return indexPrice;
-	}
-
-	/**
-	 * Sets the price index to plot, in case of price chart and line plot.
-	 * 
-	 * @param indexPrice The price index.
-	 */
-	public void setIndexPrice(int indexPrice) {
-		this.indexPrice = indexPrice;
-	}
-
-	/**
 	 * Add a data list listener.
 	 * 
 	 * @param listener The listener.
@@ -357,23 +331,6 @@ public abstract class DataList {
 		for (DataListListener listener : listeners) {
 			listener.dataListChanged(e);
 		}
-	}
-
-	/**
-	 * Returns the volume data list of this price data list.
-	 * 
-	 * @return The volume data list.
-	 * @throws IllegalStateException If this data list is not a price data list.
-	 */
-	public DataList getVolumeDataList() throws IllegalStateException {
-		if (!getDataInfo().getDataType().equals(DataType.Price)) {
-			throw new IllegalStateException("Data type must be price.");
-		}
-		DataInfo volumeDataInfo =
-			new VolumeInfo(getSession(), getDataInfo().getInstrument(), getDataInfo().getPeriod());
-		DataList volumeDataList = new DelegateDataList(getSession(), volumeDataInfo, this);
-		volumeDataList.setPlotType(PlotType.Histogram);
-		return volumeDataList;
 	}
 
 	/**
@@ -445,7 +402,17 @@ public abstract class DataList {
 	 */
 	@Override
 	public String toString() {
-		return getDataInfo().toString();
+		DataInfo info = getDataInfo();
+		StringBuilder b = new StringBuilder();
+		b.append("[");
+		b.append(info);
+		b.append("]");
+		for (DataPlotter dataPlotter : dataPlotters) {
+			b.append("[");
+			b.append(dataPlotter.toString(info));
+			b.append("]");
+		}
+		return b.toString();
 	}
 
 	/**

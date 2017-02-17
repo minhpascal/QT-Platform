@@ -14,12 +14,137 @@
 
 package com.qtplaf.platform.statistics;
 
+import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
+
 /**
  * Defines a smoothed average used as a movement descriptor.
  * 
  * @author Miquel Sas
  */
 public class Average implements Comparable<Average> {
+
+	/**
+	 * The range is used to calculate maximums and minimums of the range period, before and after.
+	 */
+	public static class Range {
+		/** The period. */
+		private int period;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param period The period.
+		 */
+		public Range(int period) {
+			super();
+			this.period = period;
+		}
+
+		/**
+		 * Returns the period.
+		 * 
+		 * @return The period.
+		 */
+		public int getPeriod() {
+			return period;
+		}
+	}
+
+	/**
+	 * A pair of averages, fast and slow, to calculate the spread.
+	 */
+	public static class Spread {
+		/** Fast average. */
+		private Average fastAverage;
+		/** Slow average. */
+		private Average slowAverage;
+		/** The normalizer to use when calculating discretional values. */
+		private NormalizedStateValueDescriptor normalizer;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param fastAverage The fast average.
+		 * @param slowAverage The slow average.
+		 * @param normalizer The normalizer to use when calculating discretional values.
+		 */
+		public Spread(Average fastAverage, Average slowAverage, NormalizedStateValueDescriptor normalizer) {
+			super();
+			this.fastAverage = fastAverage;
+			this.slowAverage = slowAverage;
+			this.normalizer = normalizer;
+		}
+
+		/**
+		 * Returns the fast average.
+		 * 
+		 * @return The fast average.
+		 */
+		public Average getFastAverage() {
+			return fastAverage;
+		}
+
+		/**
+		 * Returns the slow average.
+		 * 
+		 * @return The slow average.
+		 */
+		public Average getSlowAverage() {
+			return slowAverage;
+		}
+
+		/**
+		 * Returns the normalizer to use when calculating discretional values.
+		 * 
+		 * @return The normalizer.
+		 */
+		public NormalizedStateValueDescriptor getNormalizer() {
+			return normalizer;
+		}
+
+	}
+
+	/**
+	 * The speed class packs the average which speed has to be calculated and the normalized used to calculate
+	 * discretional values.
+	 */
+	public static class Speed {
+		/** The average. */
+		private Average average;
+		/** The normalizer to use when calculating discretional values. */
+		private NormalizedStateValueDescriptor normalizer;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param average The average.
+		 * @param normalizer The normalizer.
+		 */
+		public Speed(Average average, NormalizedStateValueDescriptor normalizer) {
+			super();
+			this.average = average;
+			this.normalizer = normalizer;
+		}
+
+		/**
+		 * Returns the average.
+		 * 
+		 * @return The average.
+		 */
+		public Average getAverage() {
+			return average;
+		}
+
+		/**
+		 * Returns the normalizer.
+		 * 
+		 * @return The normalizer.
+		 */
+		public NormalizedStateValueDescriptor getNormalizer() {
+			return normalizer;
+		}
+
+	}
 
 	/** Average period. */
 	private int period;

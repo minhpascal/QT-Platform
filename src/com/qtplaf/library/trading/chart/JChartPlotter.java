@@ -289,7 +289,9 @@ public class JChartPlotter extends JPanel {
 		// Do plot.
 		List<DataPlotter> dataPlotters = dataList.getDataPlotters();
 		for (DataPlotter dataPlotter : dataPlotters) {
-			dataPlotter.plotDataIndex(g2, dataList, index);
+			if (dataPlotter.isPlot()) {
+				dataPlotter.plotDataIndex(g2, dataList, index);
+			}
 		}
 	}
 

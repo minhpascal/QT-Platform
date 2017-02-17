@@ -61,6 +61,7 @@ public class CandlestickPlotter extends DataPlotter {
 	public CandlestickPlotter() {
 		super();
 		setIndexes(new int[]{ 0, 1, 2, 3 });
+		setName("Candlestick");
 	}
 
 	/**

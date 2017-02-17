@@ -283,8 +283,6 @@ public class Table implements Comparable<Object> {
 			primaryKey.clear();
 		}
 		primaryKey = null;
-		indexes.clear();
-		foreignKeys.clear();
 	}
 
 	/**

@@ -25,6 +25,7 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.statistics.StatesAverages.Fields;
 import com.qtplaf.platform.statistics.StatesNormalizeDiscrete;
 
@@ -115,8 +116,16 @@ public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 			
 			// Names to calculate ranges and descriptor.
 			List<Field> rangeFields = statesNormalize.getFieldsToCalculateRanges();
-			NormalizedStateValueDescriptor descriptor = new NormalizedStateValueDescriptor(1.0, -1.0, 1);
+			int scale = statesNormalize.getScale();
+			double maximum = 1.0;
+			double minimum = -1.0;
+			NormalizedStateValueDescriptor descriptor = new NormalizedStateValueDescriptor(maximum, minimum, scale);
+			descriptor.setSegments(20);
 		
+			// List of fields for the key.
+			List<Field> fieldsKey = statesNormalize.getFieldsKey();
+			String key = statesNormalize.getFieldKey().getName();
+			
 			// Step and steps.
 			long step = 0;
 			long steps = getSteps();
@@ -169,6 +178,14 @@ public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 					double value = descriptor.getValue(raw);
 					normalizeRecord.getValue(name).setDouble(value);
 				}
+				
+				// Keys.
+				double[] keyValues = new double[fieldsKey.size()];
+				for (int i = 0; i < fieldsKey.size(); i++) {
+					String name = fieldsKey.get(i).getName();
+					keyValues[i] = normalizeRecord.getValue(name).getDouble();
+				}
+				normalizeRecord.getValue(key).setString(NumberUtils.getStringKey(keyValues, scale));
 				
 				// Save record.
 				normalizePersistor.insert(normalizeRecord);

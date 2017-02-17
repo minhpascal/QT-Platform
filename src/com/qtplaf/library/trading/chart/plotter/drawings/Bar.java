@@ -39,6 +39,7 @@ public class Bar extends DataDrawing {
 	public Bar(int index, Data data, int[] indexes) {
 		super(index, data);
 		this.indexes = indexes;
+		setName("Bar");
 	}
 
 	/**

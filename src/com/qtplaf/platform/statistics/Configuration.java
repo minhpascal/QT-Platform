@@ -17,6 +17,10 @@ package com.qtplaf.platform.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.platform.statistics.Average.Range;
+import com.qtplaf.platform.statistics.Average.Speed;
+import com.qtplaf.platform.statistics.Average.Spread;
+
 /**
  * Averages configuration for source, ranges and normalize statistics.
  *
@@ -28,10 +32,15 @@ public class Configuration {
 	private String id;
 	/** A sort description. */
 	private String title;
+
 	/** List of averages for source and normalize calculations. */
 	private List<Average> averages = new ArrayList<>();
-	/** List of averages for range calculations. */
-	private List<Average> ranges = new ArrayList<>();
+	/** List of spread to calculate over averages. */
+	private List<Spread> spreads = new ArrayList<>();
+	/** List of speeds to calculate over averages. */
+	private List<Speed> speeds = new ArrayList<>();
+	/** List of ranges for min-max calculations. */
+	private List<Range> ranges = new ArrayList<>();
 
 	/**
 	 * Constructor.
@@ -64,6 +73,42 @@ public class Configuration {
 	}
 
 	/**
+	 * Add an average
+	 * 
+	 * @param average The average.
+	 */
+	public void addAverage(Average average) {
+		averages.add(average);
+	}
+
+	/**
+	 * Add a spread.
+	 * 
+	 * @param spread The spread.
+	 */
+	public void addSpread(Spread spread) {
+		spreads.add(spread);
+	}
+
+	/**
+	 * Add a speed.
+	 * 
+	 * @param speed The speed.
+	 */
+	public void addSpeed(Speed speed) {
+		speeds.add(speed);
+	}
+
+	/**
+	 * Add a range for min-max calculations.
+	 * 
+	 * @param range The range.
+	 */
+	public void addRange(Range range) {
+		ranges.add(range);
+	}
+
+	/**
 	 * Returns the list of averages.
 	 * 
 	 * @return The list of averages.
@@ -73,12 +118,30 @@ public class Configuration {
 	}
 
 	/**
-	 * Returns the list of averages (periods) for ranges.
+	 * Returns the list of (periods) for ranges.
 	 * 
-	 * @return The list of averages (periods) for ranges.
+	 * @return The list of (periods) for ranges.
 	 */
-	public List<Average> getRanges() {
+	public List<Range> getRanges() {
 		return ranges;
+	}
+
+	/**
+	 * Returns the spreads.
+	 * 
+	 * @return The spreads.
+	 */
+	public List<Spread> getSpreads() {
+		return spreads;
+	}
+
+	/**
+	 * Returns the speeds.
+	 * 
+	 * @return The speeds.
+	 */
+	public List<Speed> getSpeeds() {
+		return speeds;
 	}
 
 	/**

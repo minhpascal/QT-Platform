@@ -33,7 +33,6 @@ import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
 import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.data.DataList;
-import com.qtplaf.library.trading.data.DataType;
 import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
@@ -41,11 +40,12 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.library.util.list.ListUtils;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
+import com.qtplaf.platform.statistics.Average.Speed;
+import com.qtplaf.platform.statistics.Average.Spread;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -91,19 +91,38 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	public static Average getAverage(Field field) {
-		return (Average) field.getProperty("avg");
+		return (Average) field.getProperty("average");
+	}
+	private static void setAverage(Field field, Average average) {
+		field.setProperty("average", average);
 	}
 
 	public static Average getAverageFast(Field field) {
 		return (Average) field.getProperty("fast");
 	}
+	private static void setAverageFast(Field field, Average average) {
+		field.setProperty("fast", average);
+	}
 
 	public static Average getAverageSlow(Field field) {
 		return (Average) field.getProperty("slow");
 	}
+	private static void setAverageSlow(Field field, Average average) {
+		field.setProperty("slow", average);
+	}
 
 	public static Field getSourceField(Field field) {
 		return (Field) field.getProperty("source-field");
+	}
+	private static void setSourceField(Field field, Field source) {
+		field.setProperty("source-field", field);
+	}
+	
+	public static NormalizedStateValueDescriptor getNormalizer(Field field) {
+		return (NormalizedStateValueDescriptor) field.getProperty("normalizer");
+	}
+	private static void setNormalizer(Field field, NormalizedStateValueDescriptor normalizer) {
+		field.setProperty("normalizer", normalizer);
 	}
 
 	/**
@@ -159,11 +178,10 @@ public abstract class StatesAverages extends Statistics {
 	 * The period.
 	 */
 	private Period period;
-
 	/**
-	 * The list of averages definitions.
+	 * The configuration.
 	 */
-	private List<Average> averages = new ArrayList<Average>();
+	private Configuration configuration;
 
 	/**
 	 * Average fields.
@@ -173,12 +191,12 @@ public abstract class StatesAverages extends Statistics {
 	/**
 	 * Spread fields between averages.
 	 */
-	private List<Field> averageSpreadFields;
+	private List<Field> spreadFields;
 
 	/**
 	 * Speedd fields of averages.
 	 */
-	private List<Field> averageSpeedFields;
+	private List<Field> speedFields;
 
 	/**
 	 * Constructor.
@@ -197,13 +215,21 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
-	 * Add an average
+	 * Returns the configuration.
 	 * 
-	 * @param average The average.
+	 * @return The configuration.
 	 */
-	public void addAverage(Average average) {
-		averages.add(average);
-		ListUtils.sort(averages);
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	/**
+	 * Set the configuration.
+	 * 
+	 * @param configuration The conficuration.
+	 */
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
 	}
 
 	/**
@@ -217,7 +243,7 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The list of smoothed averages.
 	 */
 	public List<Average> getAverages() {
-		return averages;
+		return configuration.getAverages();
 	}
 
 	/**
@@ -402,8 +428,33 @@ public abstract class StatesAverages extends Statistics {
 			String header = "Spread-" + averageFast.getPeriod() + "-" + averageSlow.getPeriod();
 			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod();
 			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
-			field.setProperty("fast", averageFast);
-			field.setProperty("slow", averageSlow);
+			setAverageFast(field, averageFast);
+			setAverageSlow(field, averageSlow);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the spread field between two averages.
+	 * 
+	 * @param spread Spread.
+	 * @param averageSlow Slow average.
+	 * @return The field.
+	 */
+	protected Field getFieldSpread(Spread spread) {
+		Average averageFast = spread.getFastAverage();
+		Average averageSlow = spread.getSlowAverage();
+		String name = "spread_" + averageFast.getPeriod() + "_" + averageSlow.getPeriod();
+		Field field = mapFields.get(name);
+		if (field == null) {
+			NormalizedStateValueDescriptor normalizer = spread.getNormalizer();
+			String header = "Spread-" + averageFast.getPeriod() + "-" + averageSlow.getPeriod();
+			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod();
+			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			setAverageFast(field, averageFast);
+			setAverageSlow(field, averageSlow);
+			setNormalizer(field, normalizer);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -422,7 +473,51 @@ public abstract class StatesAverages extends Statistics {
 			String header = "Speed-" + average.getPeriod();
 			String label = "Speed " + average.getPeriod();
 			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
-			field.setProperty("avg", average);
+			setAverage(field, average);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+	/**
+	 * Returns the speed field for the average.
+	 * 
+	 * @param speed The speed definition.
+	 * @return The field.
+	 */
+	protected Field getFieldSpeed(Speed speed) {
+		Average average = speed.getAverage();
+		String name = "speed_" + average.getPeriod();
+		Field field = mapFields.get(name);
+		if (field == null) {
+			NormalizedStateValueDescriptor normalizer = speed.getNormalizer();
+			String header = "Speed-" + average.getPeriod();
+			String label = "Speed " + average.getPeriod();
+			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			setAverage(field, average);
+			setNormalizer(field, normalizer);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the key field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldKey() {
+		String name = Fields.Key;
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Key";
+			String label = "Key";
+			field = new Field();
+			field.setSession(getSession());
+			field.setName(name);
+			field.setHeader(header);
+			field.setLabel(label);
+			field.setType(Types.String);
+			field.setLength(100);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -472,8 +567,9 @@ public abstract class StatesAverages extends Statistics {
 	public List<Field> getAverageFields() {
 		if (averageFields == null) {
 			averageFields = new ArrayList<>();
-			for (int i = 0; i < getAverages().size(); i++) {
-				averageFields.add(getAverageField(getAverages().get(i)));
+			List<Average> averages = getConfiguration().getAverages();
+			for (Average average : averages) {
+				averageFields.add(getFieldAverage(average));
 			}
 		}
 		return averageFields;
@@ -485,17 +581,14 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The list of spread fields.
 	 */
 	public List<Field> getSpreadFields() {
-		if (averageSpreadFields == null) {
-			averageSpreadFields = new ArrayList<>();
-			for (int i = 0; i < getAverages().size(); i++) {
-				Average averageFast = getAverages().get(i);
-				for (int j = i + 1; j < getAverages().size(); j++) {
-					Average averageSlow = getAverages().get(j);
-					averageSpreadFields.add(getFieldSpread(averageFast, averageSlow));
-				}
+		if (spreadFields == null) {
+			spreadFields = new ArrayList<>();
+			List<Spread> spreads = getConfiguration().getSpreads();
+			for (Spread spread : spreads) {
+				spreadFields.add(getFieldSpread(spread));
 			}
 		}
-		return averageSpreadFields;
+		return spreadFields;
 	}
 
 	/**
@@ -504,13 +597,14 @@ public abstract class StatesAverages extends Statistics {
 	 * @return The list of speed fields.
 	 */
 	public List<Field> getSpeedFields() {
-		if (averageSpeedFields == null) {
-			averageSpeedFields = new ArrayList<>();
-			for (int i = 0; i < getAverages().size(); i++) {
-				averageSpeedFields.add(getFieldSpeed(getAverages().get(i)));
+		if (speedFields == null) {
+			speedFields = new ArrayList<>();
+			List<Speed> speeds = getConfiguration().getSpeeds();
+			for (Speed speed : speeds) {
+				speedFields.add(getFieldSpeed(speed));
 			}
 		}
-		return averageSpeedFields;
+		return speedFields;
 	}
 
 	/**
@@ -541,8 +635,8 @@ public abstract class StatesAverages extends Statistics {
 			String header = "Spread-" + sourceField.getName() + "-" + average.getPeriod();
 			String label = "Spread " + sourceField.getName() + " - " + average.getPeriod();
 			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
-			field.setProperty("source-field", sourceField);
-			field.setProperty("avg", average);
+			setSourceField(field, sourceField);
+			setAverage(field, average);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -554,14 +648,14 @@ public abstract class StatesAverages extends Statistics {
 	 * @param average The average.
 	 * @return The field.
 	 */
-	private Field getAverageField(Average average) {
+	private Field getFieldAverage(Average average) {
 		String name = average.getName();
 		Field field = mapFields.get(name);
 		if (field == null) {
 			String header = average.getHeader();
 			String label = average.getLabel();
 			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
-			field.setProperty("avg", average);
+			setAverage(field, average);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -700,10 +794,9 @@ public abstract class StatesAverages extends Statistics {
 
 		// First data list: price and indicators.
 		DataInfo info = dataList.getDataInfo();
-		info.setDataType(DataType.Indicator);
 		info.setInstrument(getInstrument());
-		info.setName(getInstrument().getId());
-		info.setDescription(getInstrument().getDescription());
+		info.setName("OHLC");
+		info.setDescription("OHLC values");
 		info.setPeriod(getPeriod());
 
 		// Candlestick on price: info
@@ -730,7 +823,7 @@ public abstract class StatesAverages extends Statistics {
 			int index = dataList.getDataIndex(name);
 
 			// Output info.
-			info.addOutput(label, header, index, label);
+			info.addOutput(name, header, index, label);
 
 			// Plotter.
 			LinePlotter plotterAvg = new LinePlotter();
@@ -754,7 +847,6 @@ public abstract class StatesAverages extends Statistics {
 
 		// Data info.
 		DataInfo info = new DataInfo(getSession());
-		info.setDataType(DataType.Indicator);
 		info.setInstrument(getInstrument());
 		info.setName(getInstrument().getId());
 		info.setDescription(getInstrument().getDescription());
@@ -770,7 +862,7 @@ public abstract class StatesAverages extends Statistics {
 			int index = sourceList.getDataIndex(name);
 
 			// Output info.
-			info.addOutput(label, header, index, label);
+			info.addOutput(name, header, index, label);
 
 			// Plotter.
 			LinePlotter plotter = new LinePlotter();
@@ -836,7 +928,6 @@ public abstract class StatesAverages extends Statistics {
 		table.addIndex(index);
 
 		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
-
 		return table;
 	}
 

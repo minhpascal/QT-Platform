@@ -23,6 +23,9 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.list.ListUtils;
+import com.qtplaf.platform.statistics.Average.Range;
+import com.qtplaf.platform.statistics.Average.Speed;
+import com.qtplaf.platform.statistics.Average.Spread;
 
 /**
  * Manager of access to statistics.
@@ -42,8 +45,6 @@ public class StatisticsManager {
 	private static final String StateNormalizeContinuous = "st3nmc";
 	/** Normalize discrete: normalized values discrete. */
 	private static final String StateNormalizeDiscrete = "st4nmd";
-	/** Normalize discrete: key analysis. */
-//	private static final String StateNormalizeKey = "st5key";
 
 	/**
 	 * The list of defined statistics.
@@ -72,17 +73,38 @@ public class StatisticsManager {
 	private static Configuration getConfiguration(String id) {
 		if (id.equals(ConfigurationSoft)) {
 			Configuration configuration = new Configuration(id, "Soft");
-			configuration.getAverages().add(new Average(5, 5, 3));
-			configuration.getAverages().add(new Average(21, 13, 5));
-			configuration.getAverages().add(new Average(89, 21, 13));
-			configuration.getAverages().add(new Average(377, 34, 21));
-			configuration.getRanges().add(new Average(89));
-			configuration.getRanges().add(new Average(377));
+
+			List<Average> averages = new ArrayList<>();
+			averages.add(new Average(5, 5, 3));
+			averages.add(new Average(21, 13, 5));
+			averages.add(new Average(89, 21, 13));
+			averages.add(new Average(377, 34, 21));
+
+			// Averages.
+			for (Average average : averages) {
+				configuration.addAverage(average);
+			}
+
+			// Spreads.
+			for (int i = 1; i < averages.size(); i++) {
+				Average avgFast = averages.get(i - 1);
+				Average avgSlow = averages.get(i);
+				configuration.addSpread(new Spread(avgFast, avgSlow, null));
+			}
+
+			// Speeds only for slow averages.
+			Average speedSlow = averages.get(averages.size() - 1);
+			configuration.addSpeed(new Speed(speedSlow, null));
+
+			// Ranges (periods) fro min-max
+			configuration.getRanges().add(new Range(89));
+			configuration.getRanges().add(new Range(377));
+
 			return configuration;
 		}
 		return null;
 	}
-	
+
 	private static String getId(String cfgId, String refId) {
 		return cfgId + refId;
 	}
@@ -213,9 +235,7 @@ public class StatisticsManager {
 		stsrc.setId(reference.getId());
 		stsrc.setTitle(reference.getTitle());
 		stsrc.setDescription(reference.getTitle());
-		for (Average average : reference.getConfiguration().getAverages()) {
-			stsrc.addAverage(average);
-		}
+		stsrc.setConfiguration(reference.getConfiguration());
 		stsrc.setup();
 
 		return stsrc;
@@ -252,14 +272,11 @@ public class StatisticsManager {
 		stnrmc.setId(reference.getId());
 		stnrmc.setTitle(reference.getTitle());
 		stnrmc.setDescription(reference.getTitle());
-		for (Average average : reference.getConfiguration().getAverages()) {
-			stnrmc.addAverage(average);
-		}
+		stnrmc.setConfiguration(reference.getConfiguration());
 		stnrmc.setup();
 
 		return stnrmc;
 	}
-
 
 	/**
 	 * Returns the statictics of smoothed averages normalized discrete.
@@ -292,9 +309,7 @@ public class StatisticsManager {
 		stnrmd.setId(reference.getId());
 		stnrmd.setTitle(reference.getTitle());
 		stnrmd.setDescription(reference.getTitle());
-		for (Average average : reference.getConfiguration().getAverages()) {
-			stnrmd.addAverage(average);
-		}
+		stnrmd.setConfiguration(reference.getConfiguration());
 		stnrmd.setup();
 
 		return stnrmd;
@@ -330,10 +345,7 @@ public class StatisticsManager {
 		strng.setId(reference.getId());
 		strng.setTitle(reference.getTitle());
 		strng.setDescription(reference.getTitle());
-
-		for (Average range : reference.getConfiguration().getRanges()) {
-			strng.addAverage(range);
-		}
+		strng.setConfiguration(reference.getConfiguration());
 		strng.setup();
 
 		return strng;

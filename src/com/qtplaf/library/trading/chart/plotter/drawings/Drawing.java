@@ -26,9 +26,32 @@ import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 public abstract class Drawing {
 
 	/**
+	 * The name.
+	 */
+	private String name;
+
+	/**
 	 * Default constructor.
 	 */
 	public Drawing() {
+	}
+
+	/**
+	 * Returns the name.
+	 * 
+	 * @return The name.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name The name.
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

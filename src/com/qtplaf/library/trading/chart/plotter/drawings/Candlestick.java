@@ -39,6 +39,7 @@ public class Candlestick extends DataDrawing {
 	public Candlestick(int index, Data data, int[] indexes) {
 		super(index, data);
 		this.indexes = indexes;
+		setName("Candlestick");
 	}
 
 	/**
