@@ -89,16 +89,20 @@ public class StatesTransitions extends StatesAverages {
 		table.setName(getTableName());
 		table.setSchema(Names.getSchema(getServer()));
 
-		// Input key.
+		// Input and output keys.
 		table.addField(getFieldKeyInput());
-		// Output key and its index.
 		table.addField(getFieldKeyOutput());
-		table.addField(getFieldIndex());
+		// Input and output indexes.
+		table.addField(getFieldIndexInput());
+		table.addField(getFieldIndexOutput());
+		// Group.
+		table.addField(getFieldGroup());
 
 		// Primary key on each field.
 		getFieldKeyInput().setPrimaryKey(true);
 		getFieldKeyOutput().setPrimaryKey(true);
-		getFieldIndex().setPrimaryKey(true);
+		getFieldIndexInput().setPrimaryKey(true);
+		getFieldIndexOutput().setPrimaryKey(true);
 
 		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
 		return table;

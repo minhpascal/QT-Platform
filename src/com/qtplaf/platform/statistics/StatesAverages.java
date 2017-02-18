@@ -88,6 +88,9 @@ public abstract class StatesAverages extends Statistics {
 		public static final String AvgStd_2 = "avgstd_2";
 
 		public static final String Key = "state_key";
+		public static final String IndexIn = "index_in";
+		public static final String IndexOut = "index_out";
+		public static final String IndexGroup = "index_group";
 	}
 
 	public static Average getAverage(Field field) {
@@ -266,6 +269,57 @@ public abstract class StatesAverages extends Statistics {
 		if (field == null) {
 			field = DomainUtils.getIndex(getSession(), Fields.Index);
 			mapFields.put(Fields.Index, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the index input field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldIndexInput() {
+		Field field = mapFields.get(Fields.IndexIn);
+		if (field == null) {
+			field = DomainUtils.getIndex(getSession(), Fields.IndexIn);
+			field.setHeader("Input index");
+			field.setLabel("Input index");
+			field.setTitle("Input index");
+			mapFields.put(Fields.IndexIn, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the index output field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldIndexOutput() {
+		Field field = mapFields.get(Fields.IndexOut);
+		if (field == null) {
+			field = DomainUtils.getIndex(getSession(), Fields.IndexOut);
+			field.setHeader("Output index");
+			field.setLabel("Output index");
+			field.setTitle("Output index");
+			mapFields.put(Fields.IndexOut, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the group field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldGroup() {
+		Field field = mapFields.get(Fields.IndexGroup);
+		if (field == null) {
+			field = DomainUtils.getIndex(getSession(), Fields.IndexGroup);
+			field.setHeader("Group");
+			field.setLabel("Group");
+			field.setTitle("Group of correlative keys");
+			mapFields.put(Fields.IndexGroup, field);
 		}
 		return field;
 	}

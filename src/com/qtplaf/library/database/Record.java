@@ -630,7 +630,10 @@ public class Record implements Comparable<Object> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
+		if (obj instanceof Record) {
+			Record record = (Record) obj;
+			return getPrimaryKey().equals(record.getPrimaryKey());
+		}
 		return super.equals(obj);
 	}
 

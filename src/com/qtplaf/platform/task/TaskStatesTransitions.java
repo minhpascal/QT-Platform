@@ -15,7 +15,9 @@
 package com.qtplaf.platform.task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
@@ -24,6 +26,7 @@ import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
+import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.platform.statistics.StatesAverages.Fields;
@@ -43,6 +46,14 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 	/** States discrete persistor. */
 	private Persistor persistorDiscrete;
 
+	private String keyName;
+	private String keyInputName;
+	private String keyOutputName;
+	private String indexInputName;
+	private String indexOutputName;
+	private String groupName;
+	private String indexName;
+
 	/**
 	 * Constructor.
 	 * 
@@ -52,6 +63,14 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 		super(statesTransitions.getSession());
 		this.statesTransitions = statesTransitions;
 		setNameAndDescription(statesTransitions);
+
+		keyName = statesTransitions.getFieldKey().getName();
+		keyInputName = statesTransitions.getFieldKeyInput().getName();
+		keyOutputName = statesTransitions.getFieldKeyOutput().getName();
+		indexInputName = statesTransitions.getFieldIndexInput().getName();
+		indexOutputName = statesTransitions.getFieldIndexOutput().getName();
+		groupName = statesTransitions.getFieldGroup().getName();
+		indexName = statesTransitions.getFieldIndex().getName();
 	}
 
 	/**
@@ -129,11 +148,8 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 			order.add(getPersistorDiscrete().getField(Fields.Index));
 			iterator = getPersistorDiscrete().iterator(null, order);
 
-			// Working field names.
-			String keyName = statesTransitions.getFieldKey().getName();
-			String indexName = statesTransitions.getFieldIndex().getName();
-			String keyInputName = statesTransitions.getFieldKeyInput().getName();
-			String keyOutputName = statesTransitions.getFieldKeyOutput().getName();
+			// Map of processed keys
+			Map<String, String> processedKeys = new HashMap<>();
 
 			// Step and steps.
 			long step = 0;
@@ -165,22 +181,12 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 				String key = discrete.getValue(keyName).getString();
 
 				// Process the key if not already processed.
-				if (!processed(key, keyInputName)) {
-
-					// The list of indexes in the source that have the key.
-					List<Integer> indexes = getDiscreteIndexes(key, keyName, indexName);
-					
-					// Create the transitions.
-					for (int index : indexes) {
-						String nextKey = getNextKey(index + 1, indexName, keyName);
-						if (nextKey != null) {
-							Record transition = getPersistorTransitions().getDefaultRecord();
-							transition.setValue(keyInputName, key);
-							transition.setValue(keyOutputName, nextKey);
-							transition.setValue(indexName, index + 1);
-							getPersistorTransitions().insert(transition);
-						}
+				if (!processedKeys.containsKey(key)) {
+					List<Record> transitions = getTransitions(key);
+					for (Record transition : transitions) {
+						getPersistorTransitions().insert(transition);
 					}
+					processedKeys.put(key, key);
 				}
 
 				// Notify step end.
@@ -197,70 +203,101 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 	}
 
 	/**
-	 * Check if the key has been processed.
+	 * Returns the list of transitions for the given key.
 	 * 
-	 * @param key The key.
-	 * @param keyInputName The name of the key input field in the transitions persistor.
-	 * @return A boolean.
+	 * @param keyInput The input key to analyze.
+	 * @return The list of transitions.
 	 */
-	private boolean processed(String key, String keyInputName) throws Exception {
-		Field keyField = getPersistorTransitions().getField(keyInputName);
-		Value keyValue = new Value(key);
-		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(keyField, keyValue));
-		boolean processed = false;
-		RecordIterator iterator = getPersistorTransitions().iterator(criteria);
-		if (iterator.hasNext()) {
-			processed = true;
+	private List<Record> getTransitions(String keyInput) throws Exception {
+		Map<Integer, Integer> map = new HashMap<>();
+		List<Record> transitions = new ArrayList<>();
+		RecordSet recordSet = getRecordSet(keyInput);
+		int group = -1;
+		String keyOutputPrevious = null;
+		for (int i = 0; i < recordSet.size(); i++) {
+			
+			int indexInput = recordSet.get(i).getValue(indexName).getInteger();
+			int indexOutput = indexInput + 1;
+			
+			String keyOutput = null;
+			
+			// If not the last record, check if next record is index output (same output key correlative).
+			if (i < recordSet.size() - 1) {
+				int indexNext = recordSet.get(i + 1).getValue(indexName).getInteger();
+				if (indexNext == indexOutput) {
+					keyOutput = keyInput;
+				}
+			}
+			// Not correlative.
+			if (keyOutput == null) {
+				keyOutput = getKey(indexOutput);
+			}
+			
+			// Create the transition.
+			if (keyOutput != null) {
+				if (group < 0) {
+					group = indexInput;
+					keyOutputPrevious = keyOutput;
+				}
+				if (!keyOutput.equals(keyOutputPrevious)) {
+					group = indexInput;
+				}
+				if (!map.containsKey(indexInput)) {
+					Record transition = getPersistorTransitions().getDefaultRecord();
+					transition.setValue(keyInputName, keyInput);
+					transition.setValue(keyOutputName, keyOutput);
+					transition.setValue(indexInputName, indexInput);
+					transition.setValue(indexOutputName, indexOutput);
+					transition.setValue(groupName, group);
+					transitions.add(transition);
+					map.put(indexInput, indexOutput);
+				}
+				keyOutputPrevious = keyOutput;
+			}
 		}
-		iterator.close();
-		return processed;
+		return transitions;
 	}
 
 	/**
-	 * Returns the list od indexes of the discrete source that have the key.
+	 * Returns the record set of discrete source with same key, ordered by index.
 	 * 
 	 * @param key The key.
-	 * @param keyName The key field name in the source persistor.
-	 * @param indexName The index field name.
-	 * @return The list of indexes tthat have the key.
+	 * @return The record set of discrete source with same key, ordered by index.
 	 */
-	private List<Integer> getDiscreteIndexes(String key, String keyName, String indexName) throws Exception {
+	private RecordSet getRecordSet(String key) throws Exception {
+
+		Field indexField = getPersistorDiscrete().getField(indexName);
 		Field keyField = getPersistorDiscrete().getField(keyName);
 		Value keyValue = new Value(key);
+
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(keyField, keyValue));
-		List<Integer> indexes = new ArrayList<>();
-		RecordIterator iterator = getPersistorDiscrete().iterator(criteria);
-		while (iterator.hasNext()) {
-			Record record = iterator.next();
-			int index = record.getValue(indexName).getInteger();
-			indexes.add(index);
-		}
-		iterator.close();
-		return indexes;
+
+		Order order = new Order();
+		order.add(indexField);
+
+		return getPersistorDiscrete().select(criteria, order);
 	}
 
 	/**
-	 * Returns the next key (or null) in the source given the index.
+	 * Returns the key (or null) in the source given the index.
 	 * 
 	 * @param index The index in the source.
-	 * @param indexName The index field name.
-	 * @param keyName The key field name.
-	 * @return The next key or null.
+	 * @return The key or null.
 	 */
-	private String getNextKey(int index, String indexName, String keyName) throws Exception {
+	private String getKey(int index) throws Exception {
 		Field indexField = getPersistorDiscrete().getField(indexName);
 		Value indexValue = new Value(index);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(indexField, indexValue));
 		String key = null;
 		RecordIterator iterator = getPersistorDiscrete().iterator(criteria);
-		while (iterator.hasNext()) {
+		if (iterator.hasNext()) {
 			Record record = iterator.next();
 			key = record.getValue(keyName).getString();
 		}
 		iterator.close();
 		return key;
 	}
+
 }
