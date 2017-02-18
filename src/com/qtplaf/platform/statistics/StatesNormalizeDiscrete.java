@@ -31,7 +31,7 @@ import com.qtplaf.platform.task.TaskStatesNormalizeDiscrete;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- *
+ * Normalizes source values in discrete mode.
  *
  * @author Miquel Sas
  */
@@ -47,7 +47,7 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 		public static final String Hard = "hard";
 	}
 
-	/** States ranges related statistics. */
+	/** States continuous related statistics. */
 	private StatesNormalizeContinuous statesNormalizeContinuous;
 	/** Normalize scale. */
 	private int scale = 2;

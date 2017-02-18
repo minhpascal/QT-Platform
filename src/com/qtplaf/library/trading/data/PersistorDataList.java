@@ -14,16 +14,17 @@
 
 package com.qtplaf.library.trading.data;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.library.util.list.ArrayDelist;
-import com.qtplaf.library.util.list.Delist;
 
 /**
  * A data list that retrieves its data from persistor. The contract for a persistor of data lists is that fields must be
@@ -48,11 +49,7 @@ public class PersistorDataList extends DataList {
 	/**
 	 * A map to cache retrieved records by relative index.
 	 */
-	private Map<Integer, Record> map = new HashMap<>();
-	/**
-	 * The stack to get the FIFO order.
-	 */
-	private Delist<Record> list = new ArrayDelist<>();
+	private Map<Integer, Record> map = new TreeMap<>();
 	/**
 	 * The cache size, default 1000.
 	 */
@@ -210,16 +207,29 @@ public class PersistorDataList extends DataList {
 	 * @param record The record.
 	 */
 	private void addToCache(int index, Record record) {
-		if (list.size() == cacheSize) {
+		if (map.size() == cacheSize) {
 			// Remove 1/5 or the cache.
-			int countRemove = cacheSize / 5;
-			while (countRemove > 0) {
-				map.remove(index);
-				countRemove--;
+			List<Integer> indexes = getCachedIndexes(cacheSize / 5);
+			for (Integer i : indexes) {
+				map.remove(i);
 			}
 		}
 		map.put(index, record);
-		list.addLast(record);
+	}
+
+	/**
+	 * Returns the first count cached indexes.
+	 * 
+	 * @param count The number of indexes to retrieve.
+	 * @return The list of indexes.
+	 */
+	private List<Integer> getCachedIndexes(int count) {
+		Iterator<Integer> iterator = map.keySet().iterator();
+		List<Integer> indexes = new ArrayList<>();
+		while (indexes.size() < count && iterator.hasNext()) {
+			indexes.add(iterator.next());
+		}
+		return indexes;
 	}
 
 	/**

@@ -14,59 +14,47 @@
 
 package com.qtplaf.platform.statistics;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
-import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.library.trading.data.DataRecordSet;
-import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
-import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.task.TaskStatesNormalizeContinuous;
+import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.task.TaskStatesTransitions;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Normalizes source values in continuous mode.
+ * Calculates transitions from discrete normalized values.
  *
  * @author Miquel Sas
  */
-public class StatesNormalizeContinuous extends StatesAverages {
+public class StatesTransitions extends StatesAverages {
 
-	/** States ranges related statistics. */
-	private StatesRanges statesRanges;
+	/** States discrete related statistics. */
+	private StatesNormalizeDiscrete statesNormalizeDiscrete;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param statesRanges The states ranges statistics.
+	 * @param statesNormalizeDiscrete The states discrete related statistics.
 	 */
-	public StatesNormalizeContinuous(StatesRanges statesRanges) {
+	public StatesTransitions(StatesNormalizeDiscrete statesNormalizeDiscrete) {
 		super(
-			statesRanges.getSession(),
-			statesRanges.getServer(),
-			statesRanges.getInstrument(),
-			statesRanges.getPeriod());
-		this.statesRanges = statesRanges;
+			statesNormalizeDiscrete.getSession(),
+			statesNormalizeDiscrete.getServer(),
+			statesNormalizeDiscrete.getInstrument(),
+			statesNormalizeDiscrete.getPeriod());
+		this.statesNormalizeDiscrete = statesNormalizeDiscrete;
 	}
 
 	/**
-	 * Returns the states ranges related statistics.
+	 * Returns the states discrete related statistics.
 	 * 
-	 * @return The states ranges related statistics.
+	 * @return The states discrete related statistics.
 	 */
-	public StatesRanges getStatesRanges() {
-		return statesRanges;
-	}
-
-	/**
-	 * Returns the states source related statistics.
-	 * 
-	 * @return The states source related statistics.
-	 */
-	public StatesSource getStatesSource() {
-		return statesRanges.getStatesSource();
+	public StatesNormalizeDiscrete getStatesNormalizeDiscrete() {
+		return statesNormalizeDiscrete;
 	}
 
 	/**
@@ -84,7 +72,7 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	 */
 	@Override
 	public Task getTask() {
-		return new TaskStatesNormalizeContinuous(this);
+		return new TaskStatesTransitions(this);
 	}
 
 	/**
@@ -95,7 +83,25 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	 */
 	@Override
 	public Table getTable() {
-		return getTableForSourceAndNormalizedStatistics();
+
+		Table table = new Table();
+
+		table.setName(getTableName());
+		table.setSchema(Names.getSchema(getServer()));
+
+		// Input key.
+		table.addField(getFieldKeyInput());
+		// Output key and its index.
+		table.addField(getFieldKeyOutput());
+		table.addField(getFieldIndex());
+
+		// Primary key on each field.
+		getFieldKeyInput().setPrimaryKey(true);
+		getFieldKeyOutput().setPrimaryKey(true);
+		getFieldIndex().setPrimaryKey(true);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
 	}
 
 	/**
@@ -105,9 +111,7 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	 */
 	@Override
 	public RecordSet getRecordSet() {
-		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
-		configure(persistor, false);
-		return new DataRecordSet(persistor);
+		return null;
 	}
 
 	/**
@@ -117,17 +121,8 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	 */
 	@Override
 	public List<PlotData> getPlotDataList() {
-
-		// The data list.
-		PersistorDataList dataList =
-			new PersistorDataList(getSession(), new DataInfo(getSession()), getTable().getPersistor());
-		dataList.setCacheSize(10000);
-		
-		List<PlotData> plotDataList = new ArrayList<>();
-		plotDataList.add(getPlotDataMain(dataList));
-		plotDataList.add(getPlotData(dataList, getSpreadFields()));
-		plotDataList.add(getPlotData(dataList, getSpeedFields()));
-
-		return plotDataList;
+		// TODO Auto-generated method stub
+		return null;
 	}
+
 }

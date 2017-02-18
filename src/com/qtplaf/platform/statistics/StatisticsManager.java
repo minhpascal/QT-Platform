@@ -46,6 +46,8 @@ public class StatisticsManager {
 	private static final String StateNormalizeContinuous = "st3nmc";
 	/** Normalize discrete: normalized values discrete. */
 	private static final String StateNormalizeDiscrete = "st4nmd";
+	/** States transitions: transitions from discrete values. */
+	private static final String StateTransition = "st5trs";
 
 	/**
 	 * The list of defined statistics.
@@ -63,6 +65,7 @@ public class StatisticsManager {
 		references.add(getReference(ConfigurationSoft, StateRanges));
 		references.add(getReference(ConfigurationSoft, StateNormalizeContinuous));
 		references.add(getReference(ConfigurationSoft, StateNormalizeDiscrete));
+		references.add(getReference(ConfigurationSoft, StateTransition));
 	}
 
 	/**
@@ -98,7 +101,7 @@ public class StatisticsManager {
 			NormalizedStateValueDescriptor norm_89_377 = new NormalizedStateValueDescriptor(1.0, -1.0, 2, 10);
 			Spread spread_89_377 = new Spread(averages.get(2), averages.get(3), norm_89_377);
 			configuration.addSpread(spread_89_377);
-			
+
 			// Speeds only for slow averages.
 			Average speedSlow = averages.get(averages.size() - 1);
 			NormalizedStateValueDescriptor normSlow = new NormalizedStateValueDescriptor(1.0, -1.0, 2, 10);
@@ -153,6 +156,14 @@ public class StatisticsManager {
 			Configuration cfg = getConfiguration(cfgId);
 			String id = cfgId + refId;
 			String title = cfg.getTitle() + " states normalized discrete (" + cfg.toStringAverages() + ")";
+			Reference ref = new Reference(id, title);
+			ref.setConfiguration(cfg);
+			return ref;
+		}
+		if (refId.equals(StateTransition)) {
+			Configuration cfg = getConfiguration(cfgId);
+			String id = cfgId + refId;
+			String title = cfg.getTitle() + " states transitions (" + cfg.toStringAverages() + ")";
 			Reference ref = new Reference(id, title);
 			ref.setConfiguration(cfg);
 			return ref;
@@ -214,6 +225,9 @@ public class StatisticsManager {
 		}
 		if (id.equals(getId(ConfigurationSoft, StateNormalizeDiscrete))) {
 			return getStatesNormalizeDiscrete(session, server, instrument, period, id);
+		}
+		if (id.equals(getId(ConfigurationSoft, StateTransition))) {
+			return getStatesTransitions(session, server, instrument, period, id);
 		}
 		return null;
 	}
@@ -321,6 +335,43 @@ public class StatisticsManager {
 		stnrmd.setup();
 
 		return stnrmd;
+	}
+
+	/**
+	 * Returns the statictics of transitions.
+	 * 
+	 * @param session Working session.
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @return The statistics definition.
+	 */
+	private static StatesTransitions getStatesTransitions(
+		Session session,
+		Server server,
+		Instrument instrument,
+		Period period,
+		String id) {
+
+		String idStDiscr = null;
+		if (id.equals(getId(ConfigurationSoft, StateTransition))) {
+			idStDiscr = getId(ConfigurationSoft, StateNormalizeDiscrete);
+		}
+
+		StatesTransitions sttrs =
+			new StatesTransitions(getStatesNormalizeDiscrete(session, server, instrument, period, idStDiscr));
+
+		Reference reference = getReference(id);
+		if (reference == null) {
+			throw new IllegalStateException();
+		}
+		sttrs.setId(reference.getId());
+		sttrs.setTitle(reference.getTitle());
+		sttrs.setDescription(reference.getTitle());
+		sttrs.setConfiguration(reference.getConfiguration());
+		sttrs.setup();
+
+		return sttrs;
 	}
 
 	/**
