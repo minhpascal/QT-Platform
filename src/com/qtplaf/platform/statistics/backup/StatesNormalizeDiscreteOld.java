@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ import com.qtplaf.platform.util.PersistorUtils;
  *
  * @author Miquel Sas
  */
-public class StatesNormalizeDiscrete extends StatesAverages {
+public class StatesNormalizeDiscreteOld extends StatesAveragesOld {
 
 	/**
 	 * Keys.
@@ -48,7 +48,7 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 	}
 
 	/** States continuous related statistics. */
-	private StatesNormalizeContinuous statesNormalizeContinuous;
+	private StatesNormalizeContinuousOld statesNormalizeContinuous;
 	/** Normalize scale. */
 	private int scale = 2;
 
@@ -57,7 +57,7 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 	 * 
 	 * @param statesNormalizeContinuous The parent states normalized continuous statistics.
 	 */
-	public StatesNormalizeDiscrete(StatesNormalizeContinuous statesNormalizeContinuous) {
+	public StatesNormalizeDiscreteOld(StatesNormalizeContinuousOld statesNormalizeContinuous) {
 		super(
 			statesNormalizeContinuous.getSession(),
 			statesNormalizeContinuous.getServer(),
@@ -97,7 +97,7 @@ public class StatesNormalizeDiscrete extends StatesAverages {
 	 * 
 	 * @return The parent or source statistics.
 	 */
-	public StatesNormalizeContinuous getStatesNormalizeContinuous() {
+	public StatesNormalizeContinuousOld getStatesNormalizeContinuous() {
 		return statesNormalizeContinuous;
 	}
 

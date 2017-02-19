@@ -46,16 +46,16 @@ public interface FeedListener {
 	/**
 	 * Notifies the current forming data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The data event.
+	 * @param dataEvent The data event.
 	 */
-	void onCurrentData(DataEvent ohlcvEvent);
+	void onCurrentData(DataEvent dataEvent);
 
 	/**
 	 * Notifies the completed data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The data event.
+	 * @param dataEvent The data event.
 	 */
-	void onData(DataEvent ohlcvEvent);
+	void onData(DataEvent dataEvent);
 
 	/**
 	 * Notifies every tick data event for the subscribed instruments.

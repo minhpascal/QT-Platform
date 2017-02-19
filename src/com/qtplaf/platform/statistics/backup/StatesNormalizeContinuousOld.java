@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +32,17 @@ import com.qtplaf.platform.task.TaskStatesNormalizeContinuous;
  *
  * @author Miquel Sas
  */
-public class StatesNormalizeContinuous extends StatesAverages {
+public class StatesNormalizeContinuousOld extends StatesAveragesOld {
 
 	/** States ranges related statistics. */
-	private StatesRanges statesRanges;
+	private StatesRangesOld statesRanges;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statesRanges The states ranges statistics.
 	 */
-	public StatesNormalizeContinuous(StatesRanges statesRanges) {
+	public StatesNormalizeContinuousOld(StatesRangesOld statesRanges) {
 		super(
 			statesRanges.getSession(),
 			statesRanges.getServer(),
@@ -56,7 +56,7 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	 * 
 	 * @return The states ranges related statistics.
 	 */
-	public StatesRanges getStatesRanges() {
+	public StatesRangesOld getStatesRanges() {
 		return statesRanges;
 	}
 
@@ -65,7 +65,7 @@ public class StatesNormalizeContinuous extends StatesAverages {
 	 * 
 	 * @return The states source related statistics.
 	 */
-	public StatesSource getStatesSource() {
+	public StatesSourceOld getStatesSource() {
 		return statesRanges.getStatesSource();
 	}
 

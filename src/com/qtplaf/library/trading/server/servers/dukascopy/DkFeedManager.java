@@ -99,8 +99,8 @@ public class DkFeedManager implements FeedManager {
 	 */
 	private void subscribeToCompletedBars(FeedListener listener) {
 		IContext context = server.getStrategyListener().getContext();
-		List<DataSubscription> ohlcvSubscriptions = listener.getDataSubscriptions();
-		for (DataSubscription subscription : ohlcvSubscriptions) {
+		List<DataSubscription> subscriptions = listener.getDataSubscriptions();
+		for (DataSubscription subscription : subscriptions) {
 			Instrument dkInstrument = server.getDkConverter().toDkInstrument(subscription.getInstrument());
 			Period dkPeriod = server.getDkConverter().toDkPeriod(subscription.getPeriod());
 			OfferSide dkOfferSide = server.getDkConverter().toDkOfferSide(subscription.getOfferSide());
@@ -118,8 +118,8 @@ public class DkFeedManager implements FeedManager {
 	 */
 	private void unsubscribeToCompletedBars(FeedListener listener) {
 		IContext context = server.getStrategyListener().getContext();
-		List<DataSubscription> ohlcvSubscriptions = listener.getDataSubscriptions();
-		for (DataSubscription subscription : ohlcvSubscriptions) {
+		List<DataSubscription> subscriptions = listener.getDataSubscriptions();
+		for (DataSubscription subscription : subscriptions) {
 			DkBarFeedListener dkListener = (DkBarFeedListener) subscription.getObject();
 			if (dkListener != null) {
 				context.unsubscribeFromBarsFeed(dkListener);
@@ -147,8 +147,8 @@ public class DkFeedManager implements FeedManager {
 				instruments.add(subscription.getInstrument());
 			}
 		}
-		List<DataSubscription> ohlcvSubscriptions = listener.getDataSubscriptions();
-		for (DataSubscription subscription : ohlcvSubscriptions) {
+		List<DataSubscription> subscriptions = listener.getDataSubscriptions();
+		for (DataSubscription subscription : subscriptions) {
 			if (!instruments.contains(subscription.getInstrument())) {
 				instruments.add(subscription.getInstrument());
 			}

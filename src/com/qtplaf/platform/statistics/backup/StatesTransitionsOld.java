@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 import java.util.List;
 
@@ -29,17 +29,17 @@ import com.qtplaf.platform.util.PersistorUtils;
  *
  * @author Miquel Sas
  */
-public class StatesTransitions extends StatesAverages {
+public class StatesTransitionsOld extends StatesAveragesOld {
 
 	/** States discrete related statistics. */
-	private StatesNormalizeDiscrete statesNormalizeDiscrete;
+	private StatesNormalizeDiscreteOld statesNormalizeDiscrete;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statesNormalizeDiscrete The states discrete related statistics.
 	 */
-	public StatesTransitions(StatesNormalizeDiscrete statesNormalizeDiscrete) {
+	public StatesTransitionsOld(StatesNormalizeDiscreteOld statesNormalizeDiscrete) {
 		super(
 			statesNormalizeDiscrete.getSession(),
 			statesNormalizeDiscrete.getServer(),
@@ -53,7 +53,7 @@ public class StatesTransitions extends StatesAverages {
 	 * 
 	 * @return The states discrete related statistics.
 	 */
-	public StatesNormalizeDiscrete getStatesNormalizeDiscrete() {
+	public StatesNormalizeDiscreteOld getStatesNormalizeDiscrete() {
 		return statesNormalizeDiscrete;
 	}
 

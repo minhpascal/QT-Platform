@@ -46,7 +46,7 @@ import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
-import com.qtplaf.platform.statistics.StatisticsManager;
+import com.qtplaf.platform.statistics.backup.StatisticsManagerOld;
 import com.qtplaf.platform.util.FormUtils;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.PeriodUtils;
@@ -125,7 +125,7 @@ public class ActionStatistics extends AbstractAction {
 					return;
 				}
 				String statsId = rcStats.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Statistics stats = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				Statistics stats = StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
 				// Create the statistics record.
 				Persistor persistor = PersistorUtils.getPersistorStatistics(session);
 				persistor.insert(rcStats);
@@ -184,7 +184,7 @@ public class ActionStatistics extends AbstractAction {
 					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
 					Period period = Period.parseId(periodId);
 					Statistics statistics =
-						StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+						StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
 					Table table = statistics.getTable();
 					PersistorUtils.getDDL().dropTable(table);
 					getTableModel().deleteRecord(record);
@@ -228,7 +228,7 @@ public class ActionStatistics extends AbstractAction {
 				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
 				Period period = Period.parseId(periodId);
 				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				Statistics statistics = StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
 				if (statistics.getTask() == null) {
 					MessageBox.warning(session, "No calculation task defined.");
 					return;
@@ -275,7 +275,7 @@ public class ActionStatistics extends AbstractAction {
 				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
 				Period period = Period.parseId(periodId);
 				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				Statistics statistics = StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
 				RecordSet recordSet = statistics.getRecordSet();
 				if (recordSet == null) {
 					MessageBox.warning(session, "No recordset configurated");
@@ -350,7 +350,7 @@ public class ActionStatistics extends AbstractAction {
 				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
 				Period period = Period.parseId(periodId);
 				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Statistics statistics = StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+				Statistics statistics = StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
 				List<PlotData> plotDataList = statistics.getPlotDataList();
 				if (plotDataList == null || plotDataList.isEmpty()) {
 					MessageBox.warning(session, "No plot data defined for the current statistics");

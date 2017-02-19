@@ -29,8 +29,8 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.statistics.Reference;
-import com.qtplaf.platform.statistics.StatisticsManager;
+import com.qtplaf.platform.statistics.backup.ReferenceOld;
+import com.qtplaf.platform.statistics.backup.StatisticsManagerOld;
 
 /**
  * Centralizes recordset operations.
@@ -112,19 +112,19 @@ public class RecordSetUtils {
 	public static RecordSet getRecordSetStatisticsReferences(Session session) {
 
 		FieldList fields = new FieldList();
-		Field fieldId = DomainUtils.getStatisticsId(session, Reference.Id);
+		Field fieldId = DomainUtils.getStatisticsId(session, ReferenceOld.Id);
 		fieldId.setPrimaryKey(true);
 		fields.addField(fieldId);
-		fields.addField(DomainUtils.getStatisticsTitle(session, Reference.Title));
-		fields.addField(DomainUtils.getStatisticsDesc(session, Reference.Description));
+		fields.addField(DomainUtils.getStatisticsTitle(session, ReferenceOld.Title));
+		fields.addField(DomainUtils.getStatisticsDesc(session, ReferenceOld.Description));
 
 		RecordSet rs = new RecordSet(fields);
-		List<Reference> items = StatisticsManager.getReferences();
-		for (Reference item : items) {
+		List<ReferenceOld> items = StatisticsManagerOld.getReferences(session);
+		for (ReferenceOld item : items) {
 			Record rc = fields.getDefaultRecord();
-			rc.setValue(Reference.Id, item.getId());
-			rc.setValue(Reference.Title, item.getTitle());
-			rc.setValue(Reference.Description, item.getTitle());
+			rc.setValue(ReferenceOld.Id, item.getId());
+			rc.setValue(ReferenceOld.Title, item.getTitle());
+			rc.setValue(ReferenceOld.Description, item.getTitle());
 			rs.add(rc);
 		}
 

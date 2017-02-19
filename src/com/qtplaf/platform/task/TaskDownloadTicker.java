@@ -28,10 +28,10 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.task.TaskRunner;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.library.trading.data.Filter;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.DataIterator;
-import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
@@ -123,7 +123,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		// Delete data from time from on in the table.
 		deleteFromTimeFrom();
 
-		// Iterate receiving bars.
+		// Iterate receiving data (bars).
 		DataIterator iter =
 			getServer().getHistoryManager().getDataIterator(
 				instrument,
@@ -132,6 +132,7 @@ public class TaskDownloadTicker extends TaskRunner {
 				filter,
 				getTimeFrom(),
 				getTimeTo());
+		
 		while (true) {
 
 			// Check request of cancel.
@@ -150,16 +151,16 @@ public class TaskDownloadTicker extends TaskRunner {
 			}
 
 			// Next bar.
-			Data ohlcv = iter.next();
+			Data data = iter.next();
 
 			// Get the step from the bar time and notify.
-			long time = ohlcv.getTime();
+			long time = data.getTime();
 			long step = getStepCurrent(time);
 			long steps = getSteps();
 			notifyStepStart(step, getStepMessage(step, steps));
 
 			// Get the data record.
-			Record record = RecordUtils.getRecordDataPrice(getPersistor().getDefaultRecord(), ohlcv);
+			Record record = RecordUtils.getRecordDataPrice(getPersistor().getDefaultRecord(), data);
 
 			// Insert the record.
 			getPersistor().insert(record);
@@ -302,7 +303,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	}
 
 	/**
-	 * Returns the current step given the time of an ohlcv bar.
+	 * Returns the current step given the time of an data bar.
 	 * 
 	 * @param time The current time.
 	 * @return The corresponding step.

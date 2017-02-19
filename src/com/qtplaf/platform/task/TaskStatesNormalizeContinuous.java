@@ -26,9 +26,9 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.platform.statistics.StatesAverages;
-import com.qtplaf.platform.statistics.StatesAverages.Fields;
-import com.qtplaf.platform.statistics.StatesNormalizeContinuous;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
+import com.qtplaf.platform.statistics.backup.StatesNormalizeContinuousOld;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
 
 /**
  * Task to calculate the normalized states values.
@@ -38,7 +38,7 @@ import com.qtplaf.platform.statistics.StatesNormalizeContinuous;
 public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 
 	/** The parent states normalize statistics. */
-	private StatesNormalizeContinuous statesNormalize;
+	private StatesNormalizeContinuousOld statesNormalize;
 
 	/** A map with normailzed state value descriptors by field name. */
 	private Map<String, NormalizedStateValueDescriptor> descriptorsMap;
@@ -48,7 +48,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 	 * 
 	 * @param statesNormalize The parent states normalize statistics.
 	 */
-	public TaskStatesNormalizeContinuous(StatesNormalizeContinuous statesNormalize) {
+	public TaskStatesNormalizeContinuous(StatesNormalizeContinuousOld statesNormalize) {
 		super(statesNormalize.getSession());
 		this.statesNormalize = statesNormalize;
 		setNameAndDescription(statesNormalize);
@@ -101,7 +101,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 			countSteps();
 			
 			// Fill descriptors map.
-			descriptorsMap = StatesAverages.getDescriptorsMap(statesNormalize.getStatesRanges());
+			descriptorsMap = StatesAveragesOld.getDescriptorsMap(statesNormalize.getStatesRanges());
 
 			// Result table and persistor.
 			Table tableNormalize = statesNormalize.getTable();

@@ -12,12 +12,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 /**
  * An item is a defined statistics, identified by a code or id and a description.
  */
-public class Reference implements Comparable<Reference> {
+public class ReferenceOld implements Comparable<ReferenceOld> {
 
 	public static final String Id = "id";
 	public static final String Title = "title";
@@ -25,7 +25,7 @@ public class Reference implements Comparable<Reference> {
 
 	private String id;
 	private String title;
-	private Configuration configuration;
+	private ConfigurationOld configuration;
 
 	/**
 	 * Constructor.
@@ -33,7 +33,7 @@ public class Reference implements Comparable<Reference> {
 	 * @param id The id or code.
 	 * @param title The title or short description.
 	 */
-	public Reference(String id, String title) {
+	public ReferenceOld(String id, String title) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -44,7 +44,7 @@ public class Reference implements Comparable<Reference> {
 	 * 
 	 * @return The averages configuration.
 	 */
-	public Configuration getConfiguration() {
+	public ConfigurationOld getConfiguration() {
 		return configuration;
 	}
 
@@ -53,7 +53,7 @@ public class Reference implements Comparable<Reference> {
 	 * 
 	 * @param configuration The averages configuration.
 	 */
-	public void setConfiguration(Configuration configuration) {
+	public void setConfiguration(ConfigurationOld configuration) {
 		this.configuration = configuration;
 	}
 
@@ -82,15 +82,15 @@ public class Reference implements Comparable<Reference> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Reference) {
-			Reference item = (Reference) obj;
+		if (obj instanceof ReferenceOld) {
+			ReferenceOld item = (ReferenceOld) obj;
 			return getId().equals(item.getId());
 		}
 		return false;
 	}
 
 	@Override
-	public int compareTo(Reference item) {
+	public int compareTo(ReferenceOld item) {
 		return getId().compareTo(item.getId());
 	}
 

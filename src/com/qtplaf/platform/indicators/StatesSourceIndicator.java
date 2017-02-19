@@ -39,9 +39,10 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.statistics.Average;
-import com.qtplaf.platform.statistics.StatesAverages.Fields;
-import com.qtplaf.platform.statistics.StatesSource;
+import com.qtplaf.platform.statistics.backup.AverageOld;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
+import com.qtplaf.platform.statistics.backup.StatesSourceOld;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -59,7 +60,7 @@ public class StatesSourceIndicator extends Indicator {
 	private static final String KeyPrice = "price";
 
 	/** Underlying states source statistics. */
-	private StatesSource statesSource;
+	private StatesSourceOld statesSource;
 	/** Caching of data lists. */
 	private Map<String, DataList> mapDataLists = new HashMap<>();
 	/** This indicator data list. */
@@ -70,7 +71,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * 
 	 * @param statesSource The underlying states source statistics.
 	 */
-	public StatesSourceIndicator(StatesSource statesSource) {
+	public StatesSourceIndicator(StatesSourceOld statesSource) {
 		super(statesSource.getSession());
 		this.statesSource = statesSource;
 
@@ -94,7 +95,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * 
 	 * @return The underlying states source statistics.
 	 */
-	public StatesSource getStatesSource() {
+	public StatesSourceOld getStatesSource() {
 		return statesSource;
 	}
 
@@ -132,7 +133,7 @@ public class StatesSourceIndicator extends Indicator {
 	private IndicatorDataList getDataListAverage(Field averageField) {
 		DataList dataList = mapDataLists.get(averageField.getName());
 		if (dataList == null) {
-			Average average = StatesSource.getAverage(averageField);
+			AverageOld average = StatesAveragesOld.getAverage(averageField);
 			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 				getDataListPrice(),
 				Data.IndexClose,
@@ -202,7 +203,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * @param average The average.
 	 * @return The <tt>Data</tt>,
 	 */
-	private Data getInputDataAverage(int index, Average average) {
+	private Data getInputDataAverage(int index, AverageOld average) {
 		DataList dataList = mapDataLists.get(average.getName());
 		return dataList.get(index);
 	}
@@ -228,7 +229,7 @@ public class StatesSourceIndicator extends Indicator {
 	 */
 	@Override
 	public Data calculate(int index, List<IndicatorSource> indicatorSources, DataList indicatorData) {
-
+		
 		IndicatorInfo info = getIndicatorInfo();
 		double[] values = new double[info.getOutputCount()];
 
@@ -246,16 +247,16 @@ public class StatesSourceIndicator extends Indicator {
 		// Averages.
 		List<Field> averageFields = statesSource.getAverageFields();
 		for (Field field : averageFields) {
-			Average average = StatesSource.getAverage(field);
+			AverageOld average = StatesAveragesOld.getAverage(field);
 			Data data = getInputDataAverage(index, average);
 			values[info.getOutputIndex(field.getName())] = data.getValue(0);
 		}
 
 		// Price spreads vs the fastest average.
-		List<Field> spreadFast = statesSource.getSpreadFieldsFastAverage();
+		List<Field> spreadFast = getStatesSource().getSpreadFieldsFastAverage();
 		for (Field field : spreadFast) {
-			Field srcField = StatesSource.getSourceField(field);
-			Average avg = StatesSource.getAverage(field);
+			Field srcField = StatesSourceOld.getSourceField(field);
+			AverageOld avg = StatesAveragesOld.getAverage(field);
 			Data data = getInputDataAverage(index, avg);
 			double avgValue = data.getValue(0);
 			double srcValue = values[info.getOutputIndex(srcField.getName())];
@@ -264,10 +265,10 @@ public class StatesSourceIndicator extends Indicator {
 		}
 
 		// Spreads between averages.
-		List<Field> spreadFields = statesSource.getSpreadFields();
+		List<Field> spreadFields = getStatesSource().getSpreadFields();
 		for (Field field : spreadFields) {
-			Average averageFast = StatesSource.getAverageFast(field);
-			Average averageSlow = StatesSource.getAverageSlow(field);
+			AverageOld averageFast = StatesSourceOld.getAverageFast(field);
+			AverageOld averageSlow = StatesSourceOld.getAverageSlow(field);
 			Data dataFast = getInputDataAverage(index, averageFast);
 			double valueFast = dataFast.getValue(0);
 			Data dataSlow = getInputDataAverage(index, averageSlow);
@@ -278,9 +279,9 @@ public class StatesSourceIndicator extends Indicator {
 
 		// Speed (tangent) percentual of averages.
 		if (index > 0) {
-			List<Field> speedFields = statesSource.getSpeedFields();
+			List<Field> speedFields = getStatesSource().getSpeedFields();
 			for (Field field : speedFields) {
-				Average average = StatesSource.getAverage(field);
+				AverageOld average = StatesAveragesOld.getAverage(field);
 				Data dataCurr = getInputDataAverage(index, average);
 				double valueCurr = dataCurr.getValue(0);
 				Data dataPrev = getInputDataAverage(index - 1, average);

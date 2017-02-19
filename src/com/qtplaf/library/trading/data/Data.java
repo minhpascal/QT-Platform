@@ -14,8 +14,8 @@
 package com.qtplaf.library.trading.data;
 
 /**
- * Base class of timed data. An arbitrary number of double values with the starting time. It can be an data (open,
- * high, low, close, volume) pack or the list of values of an indicator.
+ * Base class of timed data. An arbitrary number of double values with the starting time. It can be an data (open, high,
+ * low, close, volume) pack or the list of values of an indicator.
  * 
  * @author Miquel Sas
  */
@@ -37,10 +37,10 @@ public class Data {
 	public static final int IndexTypicalPrice = -2;
 	/** Weighted close price: (High + Low + 2*Close) / 4 */
 	public static final int IndexWeightedClosePrice = -3;
-	
+
 	/** Data price (OHLCV) size. */
 	public static final int DataPriceSize = 5;
-	
+
 	/**
 	 * Returns the median price: (H + L) / 2
 	 * 
@@ -213,6 +213,41 @@ public class Data {
 	 */
 	public static boolean isBearish(Data data) {
 		return !isBullish(data);
+	}
+
+	/**
+	 * Check if the data bar is flat (open = high = low = close).
+	 * 
+	 * @param data The data bar.
+	 * @return A boolean.
+	 */
+	public static boolean isFlat(Data data) {
+		double open = getOpen(data);
+		double high = getHigh(data);
+		double low = getLow(data);
+		double close = getClose(data);
+		return (open == high && open == low && open == close);
+	}
+
+	/**
+	 * Check if the data should accepted applyuuing the filter.
+	 * 
+	 * @param data The data.
+	 * @param filter The filter.
+	 * @return A boolean.
+	 */
+	public static boolean accept(Data data, Filter filter) {
+		switch (filter) {
+		case NoFilter:
+			return true;
+		case AllFlats:
+			return !isFlat(data);
+		case Weekends:
+			// TODO implement weekend filter.
+			return !isFlat(data);
+		default:
+			return true;
+		}
 	}
 
 	/**

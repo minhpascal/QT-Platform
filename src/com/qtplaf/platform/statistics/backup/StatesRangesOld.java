@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ import com.qtplaf.platform.util.PersistorUtils;
  *
  * @author Miquel Sas
  */
-public class StatesRanges extends StatesAverages {
+public class StatesRangesOld extends StatesAveragesOld {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
@@ -105,14 +105,14 @@ public class StatesRanges extends StatesAverages {
 	/**
 	 * The parent states source statistics.
 	 */
-	private StatesSource statesSource;
+	private StatesSourceOld statesSource;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statesSource The parent states source statistics.
 	 */
-	public StatesRanges(StatesSource statesSource) {
+	public StatesRangesOld(StatesSourceOld statesSource) {
 		super(
 			statesSource.getSession(),
 			statesSource.getServer(),
@@ -126,7 +126,7 @@ public class StatesRanges extends StatesAverages {
 	 * 
 	 * @return The parent states source statistics.
 	 */
-	public StatesSource getStatesSource() {
+	public StatesSourceOld getStatesSource() {
 		return statesSource;
 	}
 

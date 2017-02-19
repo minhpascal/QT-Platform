@@ -23,7 +23,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.platform.statistics.Reference;
+import com.qtplaf.platform.statistics.backup.ReferenceOld;
 
 /**
  * Centralizes master field definitions (domains). These definitions do not include table attributes like primary key.
@@ -174,8 +174,8 @@ public class DomainUtils {
 		RecordSet rs = RecordSetUtils.getRecordSetStatisticsReferences(session);
 		for (int i = 0; i < rs.size(); i++) {
 			Record rc = rs.get(i);
-			Value value = new Value(rc.getValue(Reference.Id).getString());
-			value.setLabel(rc.getValue(Reference.Title).getString());
+			Value value = new Value(rc.getValue(ReferenceOld.Id).getString());
+			value.setLabel(rc.getValue(ReferenceOld.Title).getString());
 			values.add(value);
 		}
 		return values;

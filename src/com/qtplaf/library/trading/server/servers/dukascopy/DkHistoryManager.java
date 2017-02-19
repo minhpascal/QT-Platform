@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.Filter;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Tick;
 import com.qtplaf.library.trading.server.DataIterator;
-import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.HistoryManager;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Order;
@@ -279,19 +279,19 @@ public class DkHistoryManager implements HistoryManager {
 			com.dukascopy.api.IHistory history = server.getContext().getHistory();
 			List<com.dukascopy.api.IBar> bars =
 				history.getBars(dkInstrument, dkPeriod, dkOfferSide, dkFilter, from, to);
-			List<Data> ohlcvData = new ArrayList<>();
+			List<Data> dataList = new ArrayList<>();
 			for (int i = 0; i < bars.size(); i++) {
 				com.dukascopy.api.IBar bar = bars.get(i);
-				Data ohlcv = new Data(Data.DataPriceSize);
-				Data.setOpen(ohlcv, bar.getOpen());
-				Data.setHigh(ohlcv, bar.getHigh());
-				Data.setLow(ohlcv, bar.getLow());
-				Data.setClose(ohlcv, bar.getClose());
-				Data.setVolume(ohlcv, bar.getVolume());
-				ohlcv.setTime(bar.getTime());
-				ohlcvData.add(ohlcv);
+				Data data = new Data(Data.DataPriceSize);
+				Data.setOpen(data, bar.getOpen());
+				Data.setHigh(data, bar.getHigh());
+				Data.setLow(data, bar.getLow());
+				Data.setClose(data, bar.getClose());
+				Data.setVolume(data, bar.getVolume());
+				data.setTime(bar.getTime());
+				dataList.add(data);
 			}
-			return ohlcvData;
+			return dataList;
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}
@@ -356,7 +356,7 @@ public class DkHistoryManager implements HistoryManager {
 				periodsBefore,
 				time,
 				periodsAfter);
-			List<Data> ohlcvData = new ArrayList<>();
+			List<Data> dataList = new ArrayList<>();
 			for (int i = 0; i < bars.size(); i++) {
 				com.dukascopy.api.IBar bar = bars.get(i);
 				Data data = new Data(Data.DataPriceSize);
@@ -366,9 +366,9 @@ public class DkHistoryManager implements HistoryManager {
 				Data.setClose(data, bar.getClose());
 				Data.setVolume(data, bar.getVolume());
 				data.setTime(bar.getTime());
-				ohlcvData.add(data);
+				dataList.add(data);
 			}
-			return ohlcvData;
+			return dataList;
 		} catch (Exception cause) {
 			throw new ServerException(cause);
 		}

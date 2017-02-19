@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.Filter;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.DataIterator;
-import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.ServerException;
 
@@ -154,23 +154,24 @@ public class DkDataIterator implements DataIterator {
 		// Calculate the buffer size to not pass the to limit.
 		int execBufferSize = 0;
 		long nextTime = lastTimeLoaded;
+		long periodTime = period.getTime();
 		for (int i = 0; i < bufferSize; i++) {
-			nextTime += period.getTime();
-			if (nextTime > to) {
+			nextTime += periodTime;
+			if (nextTime >= to) {
 				break;
 			}
 			execBufferSize++;
 		}
 
 		// Load data.
-		List<Data> ohlcvData = null;
+		List<Data> dataList = null;
 		while (execBufferSize > 0) {
 			try {
-				ohlcvData = historyManager.getDataList(
+				dataList = historyManager.getDataList(
 					instrument,
 					period,
 					offerSide,
-					filter,
+					Filter.NoFilter,
 					lastTimeLoaded,
 					0,
 					execBufferSize);
@@ -181,8 +182,8 @@ public class DkDataIterator implements DataIterator {
 		}
 
 		// Tranfer loaded data to buffer with the limit of to.
-		for (Data ohlcv : ohlcvData) {
-			long time = ohlcv.getTime();
+		for (Data data : dataList) {
+			long time = data.getTime();
 
 			// Skipt last loaded uppon buffer loads.
 			if (time == lastTimeLoaded) {
@@ -196,7 +197,9 @@ public class DkDataIterator implements DataIterator {
 			}
 
 			// Add data to the buffer and register the last loaded time.
-			buffer.add(ohlcv);
+			if (Data.accept(data, filter)) {
+				buffer.add(data);
+			}
 			lastTimeLoaded = time;
 		}
 	}

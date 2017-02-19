@@ -26,9 +26,9 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
-import com.qtplaf.platform.statistics.StatesAverages;
-import com.qtplaf.platform.statistics.StatesAverages.Fields;
-import com.qtplaf.platform.statistics.StatesNormalizeDiscrete;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
+import com.qtplaf.platform.statistics.backup.StatesNormalizeDiscreteOld;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
 
 /**
  * Task to calculate the normalized states values discrete. Values have been previously normalized continuous [-1, 1].
@@ -38,14 +38,14 @@ import com.qtplaf.platform.statistics.StatesNormalizeDiscrete;
 public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 
 	/** The parent states normalize statistics. */
-	private StatesNormalizeDiscrete statesNormalize;
+	private StatesNormalizeDiscreteOld statesNormalize;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statesNormalize The parent states normalize statistics.
 	 */
-	public TaskStatesNormalizeDiscrete(StatesNormalizeDiscrete statesNormalize) {
+	public TaskStatesNormalizeDiscrete(StatesNormalizeDiscreteOld statesNormalize) {
 		super(statesNormalize.getSession());
 		this.statesNormalize = statesNormalize;
 		setNameAndDescription(statesNormalize);
@@ -182,7 +182,7 @@ public class TaskStatesNormalizeDiscrete extends TaskStatesAverages {
 				// Ranges.
 				for (Field field : normalizeDiscreteFields) {
 					String name = field.getName();
-					NormalizedStateValueDescriptor normalizer = StatesAverages.getNormalizer(field);
+					NormalizedStateValueDescriptor normalizer = StatesAveragesOld.getNormalizer(field);
 					double raw = sourceRecord.getValue(name).getDouble();
 					double value = normalizer.getValue(raw);
 					normalizeRecord.getValue(name).setDouble(value);

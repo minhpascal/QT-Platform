@@ -24,10 +24,10 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.indicators.StatesSourceIndicator;
-import com.qtplaf.platform.statistics.Average.Range;
-import com.qtplaf.platform.statistics.StatesAverages.Fields;
-import com.qtplaf.platform.statistics.StatesRanges;
-import com.qtplaf.platform.statistics.StatesSource;
+import com.qtplaf.platform.statistics.backup.StatesRangesOld;
+import com.qtplaf.platform.statistics.backup.StatesSourceOld;
+import com.qtplaf.platform.statistics.backup.AverageOld.Range;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
 
 /**
  * Calculates minimums and maximums for states source values.
@@ -37,9 +37,9 @@ import com.qtplaf.platform.statistics.StatesSource;
 public class TaskStatesRanges extends TaskStatesAverages {
 
 	/** The parent states ranges statistics. */
-	private StatesRanges statesRanges;
+	private StatesRangesOld statesRanges;
 	/** Origin states source statistics. */
-	private StatesSource statesSource;
+	private StatesSourceOld statesSource;
 	/** The states source indicator used to retrieve indexes of values. */
 	private StatesSourceIndicator indicator;
 	/** The persistor data list to retrieve states source data. */
@@ -50,7 +50,7 @@ public class TaskStatesRanges extends TaskStatesAverages {
 	 * 
 	 * @param statesRanges The parent states ranges statistics.
 	 */
-	public TaskStatesRanges(StatesRanges statesRanges) {
+	public TaskStatesRanges(StatesRangesOld statesRanges) {
 		super(statesRanges.getSession());
 		this.statesRanges = statesRanges;
 		this.statesSource = statesRanges.getStatesSource();

@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import com.qtplaf.platform.task.TaskStatesSource;
  *
  * @author Miquel Sas
  */
-public class StatesSource extends StatesAverages {
+public class StatesSourceOld extends StatesAveragesOld {
 
 	/**
 	 * Constructor.
@@ -49,7 +49,7 @@ public class StatesSource extends StatesAverages {
 	 * @param instrument The instrument.
 	 * @param period The period.
 	 */
-	public StatesSource(Session session, Server server, Instrument instrument, Period period) {
+	public StatesSourceOld(Session session, Server server, Instrument instrument, Period period) {
 		super(session, server, instrument, period);
 	}
 

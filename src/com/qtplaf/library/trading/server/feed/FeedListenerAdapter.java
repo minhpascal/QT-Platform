@@ -99,17 +99,17 @@ public class FeedListenerAdapter implements FeedListener {
 	/**
 	 * Notifies the current forming data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The data event.
+	 * @param dataEvent The data event.
 	 */
-	public void onCurrentData(DataEvent ohlcvEvent) {
+	public void onCurrentData(DataEvent dataEvent) {
 	}
 
 	/**
 	 * Notifies the completed data for the subscribed instruments.
 	 * 
-	 * @param ohlcvEvent The data event.
+	 * @param dataEvent The data event.
 	 */
-	public void onData(DataEvent ohlcvEvent) {
+	public void onData(DataEvent dataEvent) {
 	}
 
 	/**

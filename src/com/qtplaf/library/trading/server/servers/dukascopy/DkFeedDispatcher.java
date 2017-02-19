@@ -56,8 +56,8 @@ public class DkFeedDispatcher extends FeedDispatcher {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
 		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
-		Data ohlcv = server.getDkConverter().fromDkBar(dkBar);
-		addCurrentData(instrument, period, offerSide, ohlcv);
+		Data data = server.getDkConverter().fromDkBar(dkBar);
+		addCurrentData(instrument, period, offerSide, data);
 	}
 
 	/**
@@ -72,8 +72,8 @@ public class DkFeedDispatcher extends FeedDispatcher {
 		com.qtplaf.library.trading.data.Instrument instrument = server.getDkConverter().fromDkInstrument(dkInstrument);
 		com.qtplaf.library.trading.data.Period period = server.getDkConverter().fromDkPeriod(dkPeriod);
 		com.qtplaf.library.trading.server.OfferSide offerSide = server.getDkConverter().fromDkOfferSide(dkOfferSide);
-		Data ohlcv = server.getDkConverter().fromDkBar(dkBar);
-		addData(instrument, period, offerSide, ohlcv);
+		Data data = server.getDkConverter().fromDkBar(dkBar);
+		addData(instrument, period, offerSide, data);
 	}
 
 	/**

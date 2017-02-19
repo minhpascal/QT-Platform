@@ -29,8 +29,8 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.platform.statistics.StatesAverages.Fields;
-import com.qtplaf.platform.statistics.StatesTransitions;
+import com.qtplaf.platform.statistics.backup.StatesTransitionsOld;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
 
 /**
  * Task to calculate transitions among discrete states.
@@ -40,7 +40,7 @@ import com.qtplaf.platform.statistics.StatesTransitions;
 public class TaskStatesTransitions extends TaskStatesAverages {
 
 	/** Origin states transitions statistics. */
-	private StatesTransitions statesTransitions;
+	private StatesTransitionsOld statesTransitions;
 	/** States transitions persistor. */
 	private Persistor persistorTransitions;
 	/** States discrete persistor. */
@@ -59,7 +59,7 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 	 * 
 	 * @param statesTransitions Origin states transitions statistics.
 	 */
-	public TaskStatesTransitions(StatesTransitions statesTransitions) {
+	public TaskStatesTransitions(StatesTransitionsOld statesTransitions) {
 		super(statesTransitions.getSession());
 		this.statesTransitions = statesTransitions;
 		setNameAndDescription(statesTransitions);

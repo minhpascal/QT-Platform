@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.backup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +24,16 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.util.list.ListUtils;
-import com.qtplaf.platform.statistics.Average.Range;
-import com.qtplaf.platform.statistics.Average.Speed;
-import com.qtplaf.platform.statistics.Average.Spread;
+import com.qtplaf.platform.statistics.backup.AverageOld.Range;
+import com.qtplaf.platform.statistics.backup.AverageOld.Speed;
+import com.qtplaf.platform.statistics.backup.AverageOld.Spread;
 
 /**
  * Manager of access to statistics.
  *
  * @author Miquel Sas
  */
-public class StatisticsManager {
+public class StatisticsManagerOld {
 
 	/** Configuration id: soft 5-21-89-377 */
 	private static final String ConfigurationSoft = "sf";
@@ -52,40 +52,43 @@ public class StatisticsManager {
 	/**
 	 * The list of defined statistics.
 	 */
-	private static List<Reference> references = new ArrayList<Reference>();
+	private static List<ReferenceOld> references = new ArrayList<ReferenceOld>();
 
 	/**
 	 * Initialize the statistics references.
+	 * 
+	 * @param session The session.
 	 */
-	private static void initializeReferences() {
+	private static void initializeReferences(Session session) {
 		if (!references.isEmpty()) {
 			return;
 		}
-		references.add(getReference(ConfigurationSoft, StateSource));
-		references.add(getReference(ConfigurationSoft, StateRanges));
-		references.add(getReference(ConfigurationSoft, StateNormalizeContinuous));
-		references.add(getReference(ConfigurationSoft, StateNormalizeDiscrete));
-		references.add(getReference(ConfigurationSoft, StateTransition));
+		references.add(getReference(session, ConfigurationSoft, StateSource));
+		references.add(getReference(session, ConfigurationSoft, StateRanges));
+		references.add(getReference(session, ConfigurationSoft, StateNormalizeContinuous));
+		references.add(getReference(session, ConfigurationSoft, StateNormalizeDiscrete));
+		references.add(getReference(session, ConfigurationSoft, StateTransition));
 	}
 
 	/**
 	 * Returns the configuration given the id, or null.
 	 * 
+	 * @param session The session.
 	 * @param id The configuration id.
 	 * @return The configuration.
 	 */
-	private static Configuration getConfiguration(String id) {
+	private static ConfigurationOld getConfiguration(Session session, String id) {
 		if (id.equals(ConfigurationSoft)) {
-			Configuration configuration = new Configuration(id, "Soft");
+			ConfigurationOld configuration = new ConfigurationOld(session, id, "Soft");
 
-			List<Average> averages = new ArrayList<>();
-			averages.add(new Average(5, 5, 3));
-			averages.add(new Average(21, 13, 5));
-			averages.add(new Average(89, 21, 13));
-			averages.add(new Average(377, 34, 21));
+			List<AverageOld> averages = new ArrayList<>();
+			averages.add(new AverageOld(5, 5, 3));
+			averages.add(new AverageOld(21, 13, 5));
+			averages.add(new AverageOld(89, 21, 13));
+			averages.add(new AverageOld(377, 34, 21));
 
 			// Averages.
-			for (Average average : averages) {
+			for (AverageOld average : averages) {
 				configuration.addAverage(average);
 			}
 
@@ -103,7 +106,7 @@ public class StatisticsManager {
 			configuration.addSpread(spread_89_377);
 
 			// Speeds only for slow averages.
-			Average speedSlow = averages.get(averages.size() - 1);
+			AverageOld speedSlow = averages.get(averages.size() - 1);
 			NormalizedStateValueDescriptor normSlow = new NormalizedStateValueDescriptor(1.0, -1.0, 2, 10);
 			configuration.addSpeed(new Speed(speedSlow, normSlow));
 
@@ -123,48 +126,49 @@ public class StatisticsManager {
 	/**
 	 * Returns the reference for the configuration.
 	 * 
+	 * @param session The session.
 	 * @param cfgId The configuration id.
 	 * @param refId The reference id.
 	 * @return The reference.
 	 */
-	private static Reference getReference(String cfgId, String refId) {
+	private static ReferenceOld getReference(Session session, String cfgId, String refId) {
 		if (refId.equals(StateSource)) {
-			Configuration cfg = getConfiguration(cfgId);
+			ConfigurationOld cfg = getConfiguration(session, cfgId);
 			String id = getId(cfgId, refId);
 			String title = cfg.getTitle() + " states source (" + cfg.toStringAverages() + ")";
-			Reference ref = new Reference(id, title);
+			ReferenceOld ref = new ReferenceOld(id, title);
 			ref.setConfiguration(cfg);
 			return ref;
 		}
 		if (refId.equals(StateRanges)) {
-			Configuration cfg = getConfiguration(cfgId);
+			ConfigurationOld cfg = getConfiguration(session, cfgId);
 			String id = cfgId + refId;
 			String title = cfg.getTitle() + " states ranges (" + cfg.toStringAverages() + ")";
-			Reference ref = new Reference(id, title);
+			ReferenceOld ref = new ReferenceOld(id, title);
 			ref.setConfiguration(cfg);
 			return ref;
 		}
 		if (refId.equals(StateNormalizeContinuous)) {
-			Configuration cfg = getConfiguration(cfgId);
+			ConfigurationOld cfg = getConfiguration(session, cfgId);
 			String id = cfgId + refId;
 			String title = cfg.getTitle() + " states normalized continuous (" + cfg.toStringAverages() + ")";
-			Reference ref = new Reference(id, title);
+			ReferenceOld ref = new ReferenceOld(id, title);
 			ref.setConfiguration(cfg);
 			return ref;
 		}
 		if (refId.equals(StateNormalizeDiscrete)) {
-			Configuration cfg = getConfiguration(cfgId);
+			ConfigurationOld cfg = getConfiguration(session, cfgId);
 			String id = cfgId + refId;
 			String title = cfg.getTitle() + " states normalized discrete (" + cfg.toStringAverages() + ")";
-			Reference ref = new Reference(id, title);
+			ReferenceOld ref = new ReferenceOld(id, title);
 			ref.setConfiguration(cfg);
 			return ref;
 		}
 		if (refId.equals(StateTransition)) {
-			Configuration cfg = getConfiguration(cfgId);
+			ConfigurationOld cfg = getConfiguration(session, cfgId);
 			String id = cfgId + refId;
 			String title = cfg.getTitle() + " states transitions (" + cfg.toStringAverages() + ")";
-			Reference ref = new Reference(id, title);
+			ReferenceOld ref = new ReferenceOld(id, title);
 			ref.setConfiguration(cfg);
 			return ref;
 		}
@@ -174,12 +178,13 @@ public class StatisticsManager {
 	/**
 	 * Returns the reference with the given id or null.
 	 * 
+	 * @param session The session.
 	 * @param id The id.
 	 * @return The reference or null.
 	 */
-	private static Reference getReference(String id) {
-		initializeReferences();
-		for (Reference reference : references) {
+	private static ReferenceOld getReference(Session session, String id) {
+		initializeReferences(session);
+		for (ReferenceOld reference : references) {
 			if (reference.getId().toLowerCase().equals(id.toLowerCase())) {
 				return reference;
 			}
@@ -190,12 +195,13 @@ public class StatisticsManager {
 	/**
 	 * Returns the list of defined statistics references.
 	 * 
+	 * @param session The session.
 	 * @return The list of defined statistics references.
 	 */
-	public static List<Reference> getReferences() {
-		initializeReferences();
-		ListUtils.sort(StatisticsManager.references);
-		List<Reference> references = new ArrayList<Reference>(StatisticsManager.references);
+	public static List<ReferenceOld> getReferences(Session session) {
+		initializeReferences(session);
+		ListUtils.sort(StatisticsManagerOld.references);
+		List<ReferenceOld> references = new ArrayList<ReferenceOld>(StatisticsManagerOld.references);
 		return references;
 	}
 
@@ -241,16 +247,16 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesSource getStatesSource(
+	private static StatesSourceOld getStatesSource(
 		Session session,
 		Server server,
 		Instrument instrument,
 		Period period,
 		String id) {
 
-		StatesSource stsrc = new StatesSource(session, server, instrument, period);
+		StatesSourceOld stsrc = new StatesSourceOld(session, server, instrument, period);
 
-		Reference reference = getReference(id);
+		ReferenceOld reference = getReference(session, id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}
@@ -272,7 +278,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesNormalizeContinuous getStatesNormalizeContinuous(
+	private static StatesNormalizeContinuousOld getStatesNormalizeContinuous(
 		Session session,
 		Server server,
 		Instrument instrument,
@@ -284,10 +290,10 @@ public class StatisticsManager {
 			idRanges = getId(ConfigurationSoft, StateRanges);
 		}
 
-		StatesNormalizeContinuous stnrmc =
-			new StatesNormalizeContinuous(getStatesRanges(session, server, instrument, period, idRanges));
+		StatesNormalizeContinuousOld stnrmc =
+			new StatesNormalizeContinuousOld(getStatesRanges(session, server, instrument, period, idRanges));
 
-		Reference reference = getReference(id);
+		ReferenceOld reference = getReference(session, id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}
@@ -309,7 +315,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesNormalizeDiscrete getStatesNormalizeDiscrete(
+	private static StatesNormalizeDiscreteOld getStatesNormalizeDiscrete(
 		Session session,
 		Server server,
 		Instrument instrument,
@@ -321,10 +327,10 @@ public class StatisticsManager {
 			idStCont = getId(ConfigurationSoft, StateNormalizeContinuous);
 		}
 
-		StatesNormalizeDiscrete stnrmd =
-			new StatesNormalizeDiscrete(getStatesNormalizeContinuous(session, server, instrument, period, idStCont));
+		StatesNormalizeDiscreteOld stnrmd =
+			new StatesNormalizeDiscreteOld(getStatesNormalizeContinuous(session, server, instrument, period, idStCont));
 
-		Reference reference = getReference(id);
+		ReferenceOld reference = getReference(session, id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}
@@ -346,7 +352,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesTransitions getStatesTransitions(
+	private static StatesTransitionsOld getStatesTransitions(
 		Session session,
 		Server server,
 		Instrument instrument,
@@ -358,10 +364,10 @@ public class StatisticsManager {
 			idStDiscr = getId(ConfigurationSoft, StateNormalizeDiscrete);
 		}
 
-		StatesTransitions sttrs =
-			new StatesTransitions(getStatesNormalizeDiscrete(session, server, instrument, period, idStDiscr));
+		StatesTransitionsOld sttrs =
+			new StatesTransitionsOld(getStatesNormalizeDiscrete(session, server, instrument, period, idStDiscr));
 
-		Reference reference = getReference(id);
+		ReferenceOld reference = getReference(session, id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}
@@ -383,7 +389,7 @@ public class StatisticsManager {
 	 * @param period The period.
 	 * @return The statistics definition.
 	 */
-	private static StatesRanges getStatesRanges(
+	private static StatesRangesOld getStatesRanges(
 		Session session,
 		Server server,
 		Instrument instrument,
@@ -395,9 +401,9 @@ public class StatisticsManager {
 			idSource = getId(ConfigurationSoft, StateSource);
 		}
 
-		StatesRanges strng = new StatesRanges(getStatesSource(session, server, instrument, period, idSource));
+		StatesRangesOld strng = new StatesRangesOld(getStatesSource(session, server, instrument, period, idSource));
 
-		Reference reference = getReference(id);
+		ReferenceOld reference = getReference(session, id);
 		if (reference == null) {
 			throw new IllegalStateException();
 		}

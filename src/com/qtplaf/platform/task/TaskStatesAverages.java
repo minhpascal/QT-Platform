@@ -16,7 +16,7 @@ package com.qtplaf.platform.task;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.task.TaskRunner;
-import com.qtplaf.platform.statistics.StatesAverages;
+import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
 
 /**
  * Root class for states statistics tasks.
@@ -39,7 +39,7 @@ public abstract class TaskStatesAverages extends TaskRunner {
 	 * 
 	 * @param stats The averages statistics.
 	 */
-	protected void setNameAndDescription(StatesAverages stats) {
+	protected void setNameAndDescription(StatesAveragesOld stats) {
 
 		StringBuilder name = new StringBuilder();
 		name.append(stats.getServer().getId());

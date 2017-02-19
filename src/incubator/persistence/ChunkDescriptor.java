@@ -14,10 +14,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.qtplaf.library.trading.data.Filter;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Unit;
-import com.qtplaf.library.trading.server.Filter;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.util.xml.Parser;
 import com.qtplaf.library.util.xml.ParserHandler;

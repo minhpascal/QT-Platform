@@ -40,7 +40,7 @@ import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.statistics.StatisticsManager;
+import com.qtplaf.platform.statistics.backup.StatisticsManagerOld;
 
 /**
  * Centralizes form operations.
@@ -214,7 +214,7 @@ public class FormUtils {
 					Period period = Period.parseId(periodId);
 
 					Statistics statistics =
-						StatisticsManager.getStatistics(session, server, instrument, period, statsId);
+						StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
 					Value tableName = new Value(statistics.getTable().getName());
 					
 					form.getRecord().setValue(StatisticsDefs.Fields.TableName, tableName);

@@ -23,7 +23,7 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.platform.indicators.StatesSourceIndicator;
-import com.qtplaf.platform.statistics.StatesSource;
+import com.qtplaf.platform.statistics.backup.StatesSourceOld;
 
 /**
  * The task that calculates the states source statistics.
@@ -40,7 +40,7 @@ public class TaskStatesSource extends TaskStatesAverages {
 	 * 
 	 * @param statesSource The states source statistics.
 	 */
-	public TaskStatesSource(StatesSource statesSource) {
+	public TaskStatesSource(StatesSourceOld statesSource) {
 		super(statesSource.getSession());
 		this.indicator = new StatesSourceIndicator(statesSource);
 		setNameAndDescription(statesSource);

@@ -16,6 +16,7 @@ package com.qtplaf.library.trading.server;
 import java.util.List;
 
 import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.Filter;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.data.Tick;
