@@ -252,66 +252,22 @@ public class DomainUtils {
 	}
 
 	/**
-	 * Returns the <b><i>InstrumentId</i></b> field definition.
+	 * Returns the <b><i>InstrumentPipScale</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getInstrumentId(Session session, String name) {
-		return getInstrumentId(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentId</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentId(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(20);
-		field.setHeader(session.getString("fieldInstrumentIdHeader"));
-		field.setLabel(session.getString("fieldInstrumentIdLabel"));
-		field.setTitle(session.getString("fieldInstrumentIdLabel"));
-		return field;
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentDesc</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentDesc(Session session, String name) {
-		return getInstrumentDesc(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentDesc</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentDesc(Session session, String name, String alias) {
+	public static Field getInstrumentPipScale(Session session, String name) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
 		field.setAlias(name);
-		field.setType(Types.String);
-		field.setLength(120);
-		field.setHeader(session.getString("fieldInstrumentDescHeader"));
-		field.setLabel(session.getString("fieldInstrumentDescLabel"));
-		field.setTitle(session.getString("fieldInstrumentDescLabel"));
+		field.setType(Types.Integer);
+		field.setLength(2);
+		field.setHeader(session.getString("fieldInstrumentPipScaleHeader"));
+		field.setLabel(session.getString("fieldInstrumentPipScaleLabel"));
+		field.setTitle(session.getString("fieldInstrumentPipScaleLabel"));
 		return field;
 	}
 
@@ -323,22 +279,10 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentPipValue(Session session, String name) {
-		return getInstrumentPipValue(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentPipValue</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentPipValue(Session session, String name, String alias) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
-		field.setAlias(alias);
+		field.setAlias(name);
 		field.setType(Types.Decimal);
 		field.setLength(16);
 		field.setDecimals(8);
@@ -349,35 +293,39 @@ public class DomainUtils {
 	}
 
 	/**
-	 * Returns the <b><i>InstrumentPipScale</i></b> field definition.
+	 * Returns the <b><i>InstrumentPrimaryCurrency</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getInstrumentPipScale(Session session, String name) {
-		return getInstrumentPipScale(session, name, name);
+	public static Field getInstrumentPrimaryCurrency(Session session, String name) {
+		return getString(
+			session,
+			name,
+			name,
+			6,
+			session.getString("fieldInstrumentPrimaryCurrencyHeader"),
+			session.getString("fieldInstrumentPrimaryCurrencyLabel"),
+			session.getString("fieldInstrumentPrimaryCurrencyLabel"));
 	}
 
 	/**
-	 * Returns the <b><i>InstrumentPipScale</i></b> field definition.
+	 * Returns the <b><i>InstrumentSecondaryCurrency</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
-	 * @param alias Field alias.
 	 * @return The field definition.
 	 */
-	public static Field getInstrumentPipScale(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Integer);
-		field.setLength(2);
-		field.setHeader(session.getString("fieldInstrumentPipScaleHeader"));
-		field.setLabel(session.getString("fieldInstrumentPipScaleLabel"));
-		field.setTitle(session.getString("fieldInstrumentPipScaleLabel"));
-		return field;
+	public static Field getInstrumentSecondaryCurrency(Session session, String name) {
+		return getString(
+			session,
+			name,
+			name,
+			6,
+			session.getString("fieldInstrumentSecondaryCurrencyHeader"),
+			session.getString("fieldInstrumentSecondaryCurrencyLabel"),
+			session.getString("fieldInstrumentSecondaryCurrencyLabel"));
 	}
 
 	/**
@@ -388,22 +336,10 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentTickValue(Session session, String name) {
-		return getInstrumentTickValue(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentTickValue</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentTickValue(Session session, String name, String alias) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
-		field.setAlias(alias);
+		field.setAlias(name);
 		field.setType(Types.Decimal);
 		field.setLength(16);
 		field.setDecimals(8);
@@ -421,22 +357,10 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentTickScale(Session session, String name) {
-		return getInstrumentTickScale(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentTickScale</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentTickScale(Session session, String name, String alias) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
-		field.setAlias(alias);
+		field.setAlias(name);
 		field.setType(Types.Integer);
 		field.setLength(2);
 		field.setHeader(session.getString("fieldInstrumentTickScaleHeader"));
@@ -453,22 +377,10 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentVolumeScale(Session session, String name) {
-		return getInstrumentVolumeScale(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentVolumeScale</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentVolumeScale(Session session, String name, String alias) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
-		field.setAlias(alias);
+		field.setAlias(name);
 		field.setType(Types.Integer);
 		field.setLength(2);
 		field.setHeader(session.getString("fieldInstrumentVolumeScaleHeader"));
@@ -478,67 +390,38 @@ public class DomainUtils {
 	}
 
 	/**
-	 * Returns the <b><i>InstrumentPrimaryCurrency</i></b> field definition.
+	 * Returns the <b><i>Low</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getInstrumentPrimaryCurrency(Session session, String name) {
-		return getInstrumentPrimaryCurrency(session, name, name);
+	public static Field getLow(Session session, String name) {
+		return getDouble(
+			session,
+			name,
+			name,
+			session.getString("fieldDataLowHeader"),
+			session.getString("fieldDataLowLabel"),
+			session.getString("fieldDataLowLabel"));
 	}
 
 	/**
-	 * Returns the <b><i>InstrumentPrimaryCurrency</i></b> field definition.
+	 * Returns the <b><i>OfferSide</i></b> field definition.
 	 * 
 	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
+	 * @param name The field name.
 	 * @return The field definition.
 	 */
-	public static Field getInstrumentPrimaryCurrency(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(6);
-		field.setHeader(session.getString("fieldInstrumentPrimaryCurrencyHeader"));
-		field.setLabel(session.getString("fieldInstrumentPrimaryCurrencyLabel"));
-		field.setTitle(session.getString("fieldInstrumentPrimaryCurrencyLabel"));
-		return field;
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentSecondaryCurrency</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentSecondaryCurrency(Session session, String name) {
-		return getInstrumentSecondaryCurrency(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>InstrumentSecondaryCurrency</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias Field alias.
-	 * @return The field definition.
-	 */
-	public static Field getInstrumentSecondaryCurrency(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(6);
-		field.setHeader(session.getString("fieldInstrumentSecondaryCurrencyHeader"));
-		field.setLabel(session.getString("fieldInstrumentSecondaryCurrencyLabel"));
-		field.setTitle(session.getString("fieldInstrumentSecondaryCurrencyLabel"));
-		return field;
+	public static Field getOfferSide(Session session, String name) {
+		return getString(
+			session,
+			name,
+			name,
+			3,
+			session.getString("fieldOfferSideHeader"),
+			session.getString("fieldOfferSideLabel"),
+			session.getString("fieldOfferSideLabel"));
 	}
 
 	/**
@@ -704,6 +587,23 @@ public class DomainUtils {
 	}
 
 	/**
+	 * Returns the <b><i>Close</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getClose(Session session, String name) {
+		return getDouble(
+			session,
+			name,
+			name,
+			session.getString("fieldDataCloseHeader"),
+			session.getString("fieldDataCloseLabel"),
+			session.getString("fieldDataCloseLabel"));
+	}
+
+	/**
 	 * Returns the <b><i>DataFilter</i></b> field definition.
 	 * 
 	 * @param session Working session.
@@ -711,60 +611,102 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getDataFilter(Session session, String name) {
-		return getDataFilter(session, name, name);
+		return getString(
+			session,
+			name,
+			name,
+			10,
+			session.getString("fieldDataFilterHeader"),
+			session.getString("fieldDataFilterLabel"),
+			session.getString("fieldDataFilterLabel"));
 	}
 
 	/**
-	 * Returns the <b><i>DataFilter</i></b> field definition.
+	 * Returns field definition for a double value.
 	 * 
 	 * @param session Working session.
-	 * @param name The field name.
-	 * @param alias The field alias.
+	 * @param name Field name.
+	 * @param header The field header.
+	 * @param label The field label.
 	 * @return The field definition.
 	 */
-	public static Field getDataFilter(Session session, String name, String alias) {
+	public static Field getDouble(Session session, String name, String header, String label) {
+		return getDouble(session, name, name, header, label, label);
+	}
+
+	/**
+	 * Returns field definition for a double value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param alias The field alias.
+	 * @param header The header.
+	 * @param label The label.
+	 * @param title The title.
+	 * @return The field definition.
+	 */
+	public static Field getDouble(
+		Session session,
+		String name,
+		String alias,
+		String header,
+		String label,
+		String title) {
+
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
 		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(10);
-		field.setHeader(session.getString("fieldDataFilterHeader"));
-		field.setLabel(session.getString("fieldDataFilterLabel"));
-		field.setTitle(session.getString("fieldDataFilterLabel"));
+		field.setType(Types.Double);
+		field.setHeader(header);
+		field.setLabel(label);
+		field.setTitle(title);
+
 		return field;
 	}
 
 	/**
-	 * Returns the <b><i>OfferSide</i></b> field definition.
+	 * Returns the <b><i>High</i></b> field definition.
 	 * 
 	 * @param session Working session.
-	 * @param name The field name.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getOfferSide(Session session, String name) {
-		return getOfferSide(session, name, name);
+	public static Field getHigh(Session session, String name) {
+		return getDouble(
+			session,
+			name,
+			name,
+			session.getString("fieldDataHighHeader"),
+			session.getString("fieldDataHighLabel"),
+			session.getString("fieldDataHighLabel"));
 	}
 
 	/**
-	 * Returns the <b><i>OfferSide</i></b> field definition.
+	 * Returns the <b><i>Index</i></b> field definition.
 	 * 
 	 * @param session Working session.
-	 * @param name The field name.
-	 * @param alias The field alias.
+	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getOfferSide(Session session, String name, String alias) {
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(3);
-		field.setHeader(session.getString("fieldOfferSideHeader"));
-		field.setLabel(session.getString("fieldOfferSideLabel"));
-		field.setTitle(session.getString("fieldOfferSideLabel"));
-		return field;
+	public static Field getIndex(Session session, String name) {
+		String header = session.getString("fieldDataIndexLabel");
+		String label = session.getString("fieldDataIndexLabel");
+		String title = session.getString("fieldDataIndexHeader");
+		return getIndex(session, name, name, header, label, title);
+	}
+
+	/**
+	 * Returns the <b><i>Index</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param header Field header.
+	 * @param label Field label.
+	 * @return The field definition.
+	 */
+	public static Field getIndex(Session session, String name, String header, String label) {
+		return getIndex(session, name, name, header, label, label);
 	}
 
 	/**
@@ -775,7 +717,11 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getTime(Session session, String name) {
-		return getTime(session, name, name);
+		return getTime(
+			session, 
+			name, 
+			session.getString("fieldDataTimeHeader"),
+			session.getString("fieldDataTimeLabel"));
 	}
 
 	/**
@@ -783,18 +729,19 @@ public class DomainUtils {
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
-	 * @param alias The field alias.
+	 * @param header Field header.
+	 * @param label Field label.
 	 * @return The field definition.
 	 */
-	public static Field getTime(Session session, String name, String alias) {
+	public static Field getTime(Session session, String name, String header, String label) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
-		field.setAlias(alias);
+		field.setAlias(name);
 		field.setType(Types.Long);
-		field.setHeader(session.getString("fieldDataTimeLabel"));
-		field.setLabel(session.getString("fieldDataTimeLabel"));
-		field.setTitle(session.getString("fieldDataTimeHeader"));
+		field.setHeader(header);
+		field.setLabel(label);
+		field.setTitle(label);
 		return field;
 	}
 
@@ -806,7 +753,11 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getTimeFmt(Session session, String name) {
-		return getTimeFmt(session, name, name);
+		return getTimeFmt(
+			session, 
+			name, 
+			session.getString("fieldDataTimeFmtHeader"),
+			session.getString("fieldDataTimeFmtLabel"));
 	}
 
 	/**
@@ -814,18 +765,19 @@ public class DomainUtils {
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
-	 * @param alias The field alias.
+	 * @param header Field header.
+	 * @param label Field label.
 	 * @return The field definition.
 	 */
-	public static Field getTimeFmt(Session session, String name, String alias) {
+	public static Field getTimeFmt(Session session, String name, String header, String label) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
-		field.setAlias(alias);
+		field.setAlias(name);
 		field.setType(Types.Long);
-		field.setHeader(session.getString("fieldDataTimeFmtLabel"));
-		field.setLabel(session.getString("fieldDataTimeFmtLabel"));
-		field.setTitle(session.getString("fieldDataTimeFmtHeader"));
+		field.setHeader(header);
+		field.setLabel(label);
+		field.setTitle(label);
 		field.setPersistent(false);
 		return field;
 	}
@@ -838,112 +790,13 @@ public class DomainUtils {
 	 * @return The field definition.
 	 */
 	public static Field getOpen(Session session, String name) {
-		return getOpen(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>Open</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getOpen(Session session, String name, String alias) {
 		return getDouble(
 			session,
 			name,
-			alias,
+			name,
 			session.getString("fieldDataOpenHeader"),
 			session.getString("fieldDataOpenLabel"),
 			session.getString("fieldDataOpenLabel"));
-	}
-
-	/**
-	 * Returns the <b><i>High</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getHigh(Session session, String name) {
-		return getHigh(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>High</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getHigh(Session session, String name, String alias) {
-		return getDouble(
-			session,
-			name,
-			alias,
-			session.getString("fieldDataHighHeader"),
-			session.getString("fieldDataHighLabel"),
-			session.getString("fieldDataHighLabel"));
-	}
-
-	/**
-	 * Returns the <b><i>Low</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getLow(Session session, String name) {
-		return getLow(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>Low</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getLow(Session session, String name, String alias) {
-		return getDouble(
-			session,
-			name,
-			alias,
-			session.getString("fieldDataLowHeader"),
-			session.getString("fieldDataLowLabel"),
-			session.getString("fieldDataLowLabel"));
-	}
-
-	/**
-	 * Returns the <b><i>Close</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getClose(Session session, String name) {
-		return getClose(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>Close</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getClose(Session session, String name, String alias) {
-		return getDouble(
-			session,
-			name,
-			alias,
-			session.getString("fieldDataCloseHeader"),
-			session.getString("fieldDataCloseLabel"),
-			session.getString("fieldDataCloseLabel"));
 	}
 
 	/**
@@ -980,64 +833,132 @@ public class DomainUtils {
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getIndex(Session session, String name) {
-		return getIndex(session, name, name);
-	}
-
-	/**
-	 * Returns the <b><i>Index</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
 	 * @param alias Field alias.
 	 * @return The field definition.
 	 */
-	public static Field getIndex(Session session, String name, String alias) {
+	public static
+		Field
+		getIndex(Session session, String name, String alias, String header, String label, String title) {
 		Field field = new Field();
 		field.setSession(session);
 		field.setName(name);
 		field.setAlias(alias);
 		field.setType(Types.Long);
-		field.setHeader(session.getString("fieldDataIndexLabel"));
-		field.setLabel(session.getString("fieldDataIndexLabel"));
-		field.setTitle(session.getString("fieldDataIndexHeader"));
+		field.setHeader(header);
+		field.setLabel(label);
+		field.setTitle(title);
 		return field;
 	}
 
 	/**
-	 * Returns field definition for a double value.
+	 * Returns the <b><i>InstrumentDesc</i></b> field definition.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @return The field definition.
 	 */
-	public static Field getDouble(Session session, String name) {
-		return getDouble(session, name, name);
+	public static Field getInstrumentDesc(Session session, String name) {
+		return getString(
+			session,
+			name,
+			name,
+			120,
+			session.getString("fieldInstrumentDescHeader"),
+			session.getString("fieldInstrumentDescLabel"),
+			session.getString("fieldInstrumentDescLabel"));
 	}
 
 	/**
-	 * Returns field definition for a double value.
+	 * Returns the <b><i>InstrumentId</i></b> field definition.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getInstrumentId(Session session, String name) {
+		return getString(
+			session,
+			name,
+			name,
+			20,
+			session.getString("fieldInstrumentIdHeader"),
+			session.getString("fieldInstrumentIdLabel"),
+			session.getString("fieldInstrumentIdLabel"));
+	}
+
+	/**
+	 * Returns field definition for a string value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param length Field length.
+	 * @param header The field header.
+	 * @param label The field label.
+	 * @return The field definition.
+	 */
+	public static Field getString(Session session, String name, int length, String header, String label) {
+		return getString(session, name, name, length, header, label, label);
+	}
+
+
+	/**
+	 * Returns field definition for an integer value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param header The field header.
+	 * @param label The field label.
+	 * @return The field definition.
+	 */
+	public static Field getInteger(Session session, String name, String header, String label) {
+		return getInteger(session, name, name, header, label, label);
+	}
+	
+	/**
+	 * Returns field definition for a string value.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @param alias The field alias.
-	 * @return The field definition.
+	 * @param length The field length.
+	 * @param header The header.
+	 * @param label The label.
+	 * @param title The title.
 	 */
-	public static Field getDouble(Session session, String name, String alias) {
-		return getDouble(session, name, alias, alias, alias, alias);
+	public static Field getString(
+		Session session,
+		String name,
+		String alias,
+		int length,
+		String header,
+		String label,
+		String title) {
+
+		Field field = new Field();
+		field.setSession(session);
+		field.setName(name);
+		field.setAlias(alias);
+		field.setType(Types.String);
+		field.setLength(length);
+		field.setHeader(header);
+		field.setLabel(label);
+		field.setTitle(title);
+
+		return field;
 	}
 
+
 	/**
-	 * Returns field definition for a double value.
+	 * Returns field definition for an integer value.
 	 * 
 	 * @param session Working session.
 	 * @param name Field name.
 	 * @param alias The field alias.
-	 * @return The field definition.
+	 * @param header The header.
+	 * @param label The label.
+	 * @param title The title.
 	 */
-	public static Field getDouble(
+	public static Field getInteger(
 		Session session,
 		String name,
 		String alias,
@@ -1049,104 +970,12 @@ public class DomainUtils {
 		field.setSession(session);
 		field.setName(name);
 		field.setAlias(alias);
-		field.setType(Types.Double);
+		field.setType(Types.Integer);
+
 		field.setHeader(header);
 		field.setLabel(label);
 		field.setTitle(title);
 
 		return field;
 	}
-	
-	/**
-	 * Returns field definition for period field.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getPeriod(Session session, String name) {
-		return getPeriod(session, name, name);
-	}
-	
-	/**
-	 * Returns field definition for period field.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getPeriod(Session session, String name, String alias) {
-		
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.Integer);
-
-		return field;
-	}
-	
-	/**
-	 * Returns field definition for min-max field.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getMinMax(Session session, String name) {
-		return getMinMax(session, name, name);
-	}
-	
-	/**
-	 * Returns field definition for min-max field.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getMinMax(Session session, String name, String alias) {
-		
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(3);
-
-		return field;
-	}
-	
-	/**
-	 * Returns field definition for name field, a 40 chars string used as name of fields.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @return The field definition.
-	 */
-	public static Field getName(Session session, String name) {
-		return getName(session, name, name);
-	}
-	
-	/**
-	 * Returns field definition for name field, a 40 chars string used as name of fields.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param alias The field alias.
-	 * @return The field definition.
-	 */
-	public static Field getName(Session session, String name, String alias) {
-		
-		Field field = new Field();
-		field.setSession(session);
-		field.setName(name);
-		field.setAlias(alias);
-		field.setType(Types.String);
-		field.setLength(40);
-
-		return field;
-	}
-
 }

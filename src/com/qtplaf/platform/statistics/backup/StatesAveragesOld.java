@@ -171,10 +171,6 @@ public abstract class StatesAveragesOld extends Statistics {
 	 */
 	private Map<String, Field> mapFields = new HashMap<>();
 	/**
-	 * Working session.
-	 */
-	private Session session;
-	/**
 	 * The server.
 	 */
 	private Server server;
@@ -220,8 +216,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	 * @param period The period.
 	 */
 	public StatesAveragesOld(Session session, Server server, Instrument instrument, Period period) {
-		super();
-		this.session = session;
+		super(session);
 		this.server = server;
 		this.instrument = instrument;
 		this.period = period;
@@ -426,8 +421,10 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldMinMax() {
 		Field field = mapFields.get(Fields.MinMax);
 		if (field == null) {
-			field = DomainUtils.getMinMax(getSession(), Fields.MinMax);
-			field.setHeader("Min/Max");
+			int length = 3;
+			String header = "Min/Max";
+			String label = "Minimum/Maximum calculation";
+			field = DomainUtils.getString(getSession(), Fields.MinMax, length, header, label);
 			mapFields.put(Fields.MinMax, field);
 		}
 		return field;
@@ -441,7 +438,12 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldName() {
 		Field field = mapFields.get(Fields.Name);
 		if (field == null) {
-			field = DomainUtils.getName(getSession(), Fields.Name);
+			field = new Field();
+			field.setSession(getSession());
+			field.setName(Fields.Name);
+			field.setAlias(Fields.Name);
+			field.setType(Types.String);
+			field.setLength(40);
 			field.setHeader("Field name");
 			mapFields.put(Fields.Name, field);
 		}
@@ -456,7 +458,11 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldPeriod() {
 		Field field = mapFields.get(Fields.Period);
 		if (field == null) {
-			field = DomainUtils.getPeriod(getSession(), Fields.Period);
+			field = new Field();
+			field.setSession(getSession());
+			field.setName(Fields.Period);
+			field.setAlias(Fields.Period);
+			field.setType(Types.Integer);
 			field.setHeader("Period");
 			mapFields.put(Fields.Period, field);
 		}
@@ -471,8 +477,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldValue() {
 		Field field = mapFields.get(Fields.Value);
 		if (field == null) {
-			field = DomainUtils.getDouble(getSession(), Fields.Value);
-			field.setHeader("Value");
+			field = DomainUtils.getDouble(getSession(), Fields.Value, "Value", "Value");
 			mapFields.put(Fields.Value, field);
 		}
 		return field;
@@ -614,15 +619,6 @@ public abstract class StatesAveragesOld extends Statistics {
 			mapFields.put(name, field);
 		}
 		return field;
-	}
-
-	/**
-	 * Returns the working session.
-	 * 
-	 * @return The working session.
-	 */
-	public Session getSession() {
-		return session;
 	}
 
 	/**

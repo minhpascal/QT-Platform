@@ -17,6 +17,7 @@ package com.qtplaf.library.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
@@ -47,10 +48,27 @@ public abstract class Statistics {
 	private List<Output> outputs = new ArrayList<>();
 
 	/**
-	 * Default constructor.
+	 * Working session.
 	 */
-	public Statistics() {
+	private Session session;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param session The working session.
+	 */
+	public Statistics(Session session) {
 		super();
+		this.session = session;
+	}
+
+	/**
+	 * Returns the working session.
+	 * 
+	 * @return The session.
+	 */
+	public Session getSession() {
+		return session;
 	}
 
 	/**

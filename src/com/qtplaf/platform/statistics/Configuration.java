@@ -19,12 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.Types;
-import com.qtplaf.platform.statistics.Average.Range;
-import com.qtplaf.platform.statistics.Average.Speed;
-import com.qtplaf.platform.statistics.Average.Spread;
 import com.qtplaf.platform.util.DomainUtils;
 
 /**
@@ -33,9 +30,6 @@ import com.qtplaf.platform.util.DomainUtils;
  * @author Miquel Sas
  */
 public class Configuration {
-
-	/** Field property: average. */
-	private static final String PropertyAverage = "average";
 
 	/** An id that identifies the configuration root. */
 	private String id;
@@ -54,7 +48,7 @@ public class Configuration {
 	/** Working session. */
 	private Session session;
 
-	/** Map of cached fields. */
+	/** Map of fields. */
 	private Map<String, Field> mapFields = new HashMap<>();
 
 	/**
@@ -107,12 +101,12 @@ public class Configuration {
 	}
 
 	/**
-	 * Add a spread.
+	 * Add a range for min-max calculations.
 	 * 
-	 * @param spread The spread.
+	 * @param range The range.
 	 */
-	public void addSpread(Spread spread) {
-		spreads.add(spread);
+	public void addRange(Range range) {
+		ranges.add(range);
 	}
 
 	/**
@@ -125,12 +119,12 @@ public class Configuration {
 	}
 
 	/**
-	 * Add a range for min-max calculations.
+	 * Add a spread.
 	 * 
-	 * @param range The range.
+	 * @param spread The spread.
 	 */
-	public void addRange(Range range) {
-		ranges.add(range);
+	public void addSpread(Spread spread) {
+		spreads.add(spread);
 	}
 
 	/**
@@ -213,7 +207,7 @@ public class Configuration {
 		if (field == null) {
 			String header = average.getHeader();
 			String label = average.getLabel();
-			field = DomainUtils.getDouble(getSession(), name, name, header, label, label);
+			field = DomainUtils.getDouble(getSession(), name, header, label);
 			setPropertyAverage(field, average);
 			mapFields.put(name, field);
 		}
@@ -226,27 +220,13 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldClose() {
-		Field field = mapFields.get("close");
+		String name = "close";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getClose(getSession(), "close");
-			mapFields.put("close", field);
-		}
-		return field;
-	}
-
-	/**
-	 * Returns the index group field.
-	 * 
-	 * @return The field.
-	 */
-	public Field getFieldIndexGroup() {
-		Field field = mapFields.get("index_group");
-		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), "index_group");
-			field.setHeader("Index group");
-			field.setLabel("Index group");
-			field.setTitle("Index group of correlative indexes,");
-			mapFields.put("index_group", field);
+			String header = "Close";
+			String label = "Close price";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -257,10 +237,13 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldHigh() {
-		Field field = mapFields.get("high");
+		String name = "high";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getHigh(getSession(), "high");
-			mapFields.put("high", field);
+			String header = "High";
+			String label = "High price";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -271,10 +254,30 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldIndex() {
-		Field field = mapFields.get("index");
+		String name = "index";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), "index");
-			mapFields.put("index", field);
+			String header = "Index";
+			String label = "Index";
+			field = DomainUtils.getIndex(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the index group field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldIndexGroup() {
+		String name = "index_group";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Index group";
+			String label = "Index group";
+			field = DomainUtils.getIndex(getSession(), name, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -285,13 +288,13 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldIndexInput() {
-		Field field = mapFields.get("index_in");
+		String name = "index_in";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), "index_in");
-			field.setHeader("Input index");
-			field.setLabel("Input index");
-			field.setTitle("Input index");
-			mapFields.put("index_in", field);
+			String header = "Input index";
+			String label = "Input index";
+			field = DomainUtils.getIndex(getSession(), name, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -302,13 +305,13 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldIndexOutput() {
-		Field field = mapFields.get("index_out");
+		String name = "index_out";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), "index_out");
-			field.setHeader("Output index");
-			field.setLabel("Output index");
-			field.setTitle("Output index");
-			mapFields.put("index_out", field);
+			String header = "Output index";
+			String label = "Output index";
+			field = DomainUtils.getIndex(getSession(), name, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -319,18 +322,14 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldKeyInput() {
-		Field field = mapFields.get("key_in");
+		String name = "key_in";
+		Field field = mapFields.get(name);
 		if (field == null) {
+			int length = 100;
 			String header = "Input key";
 			String label = "Input key";
-			field = new Field();
-			field.setSession(getSession());
-			field.setName("key_in");
-			field.setHeader(header);
-			field.setLabel(label);
-			field.setType(Types.String);
-			field.setLength(100);
-			mapFields.put("key_in", field);
+			field = DomainUtils.getString(getSession(), name, length, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -341,33 +340,32 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldKeyOutput() {
-		Field field = mapFields.get("key_out");
+		String name = "key_out";
+		Field field = mapFields.get(name);
 		if (field == null) {
+			int length = 100;
 			String header = "Output key";
 			String label = "Output key";
-			field = new Field();
-			field.setSession(getSession());
-			field.setName("key_out");
-			field.setHeader(header);
-			field.setLabel(label);
-			field.setType(Types.String);
-			field.setLength(100);
-			mapFields.put("key_out", field);
+			field = DomainUtils.getString(getSession(), name, length, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
 
 	/**
-	 * Returns the min_max field.
+	 * Returns the key state field.
 	 * 
 	 * @return The field.
 	 */
-	public Field getFieldMinMax() {
-		Field field = mapFields.get("min_max");
+	public Field getFieldKeyState() {
+		String name = "key_state";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getMinMax(getSession(), "min_max");
-			field.setHeader("Min/Max");
-			mapFields.put("min_max", field);
+			int length = 100;
+			String header = "State key";
+			String label = "State key";
+			field = DomainUtils.getString(getSession(), name, length, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -378,10 +376,185 @@ public class Configuration {
 	 * @return The field.
 	 */
 	public Field getFieldLow() {
-		Field field = mapFields.get("low");
+		String name = "low";
+		Field field = mapFields.get(name);
 		if (field == null) {
-			field = DomainUtils.getLow(getSession(), "low");
-			mapFields.put("low", field);
+			String header = "Low";
+			String label = "Low price";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the min_max field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldMinMax() {
+		String name = "min_max";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			int length = 3;
+			String header = "Min/Max";
+			String label = "Minimum/Maximum calculation";
+			field = DomainUtils.getString(getSession(), name, length, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns field definition for name field, a 40 chars string used as name of fields.
+	 * 
+	 * @return The field definition.
+	 */
+	public Field getFieldName() {
+		String name = "name";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			int length = 40;
+			String header = "Name";
+			String label = "Value name";
+			field = DomainUtils.getString(getSession(), name, length, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the period field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldPeriod() {
+		String name = "period";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Period";
+			String label = "Period";
+			field = DomainUtils.getInteger(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the open field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldOpen() {
+		String name = "open";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Open";
+			String label = "Open price";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the speed field.
+	 * 
+	 * @param speed The speed definition.
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
+	 * @return The field.
+	 */
+	public Field getFieldSpeed(Speed speed, String suffix) {
+		Average average = speed.getAverage();
+		String name = "speed_" + average.getPeriod() + "_" + suffix;
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Speed-" + average.getPeriod() + "-" + suffix;
+			String label = "Speed " + average.getPeriod() + " - " + suffix;
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			setPropertyAverage(field, average);
+			setPropertyNormalizer(field, speed.getNormalizer());
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the spread field.
+	 * 
+	 * @param spread Spread.
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
+	 * @return The field.
+	 */
+	public Field getFieldSpread(Spread spread, String suffix) {
+		Average averageFast = spread.getFastAverage();
+		Average averageSlow = spread.getSlowAverage();
+		String name = "spread_" + averageFast.getPeriod() + "_" + averageSlow.getPeriod() + "_" + suffix;
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Spread-" + averageFast.getPeriod() + "-" + averageSlow.getPeriod() + "-" + suffix;
+			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod() + " - " + suffix;
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			setPropertyNormalizer(field, spread.getNormalizer());
+			setPropertyAverageFast(field, averageFast);
+			setPropertyAverageSlow(field, averageSlow);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the spread field between a source field (high, low, close) and an average (normally the fast one).
+	 * 
+	 * @param source Source field.
+	 * @param average The average.
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
+	 * @return The field.
+	 */
+	public Field getFieldSpread(Field source, Average average, String suffix) {
+		String name = "spread_" + source.getName() + "_" + average.getPeriod() + "_" + suffix;
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Spread-" + source.getName() + "-" + average.getPeriod() + "-" + suffix;
+			String label = "Spread " + source.getName() + " - " + average.getPeriod() + " - " + suffix;
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			setPropertySourceField(field, source);
+			setPropertyAverage(field, average);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the time field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldTime() {
+		String name = "time";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Time";
+			String label = "Time in millis";
+			field = DomainUtils.getTime(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the time field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldTimeFmt() {
+		String name = "time_fmt";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Time fmt";
+			String label = "Time formatted";
+			field = DomainUtils.getTimeFmt(getSession(), name, header, label);
+			mapFields.put(name, field);
 		}
 		return field;
 	}
@@ -393,7 +566,7 @@ public class Configuration {
 	 * @return The average.
 	 */
 	public Average getPropertyAverage(Field field) {
-		return (Average) field.getProperty(PropertyAverage);
+		return (Average) field.getProperty("average");
 	}
 
 	/**
@@ -403,6 +576,86 @@ public class Configuration {
 	 * @param average The average.
 	 */
 	private void setPropertyAverage(Field field, Average average) {
-		field.setProperty(PropertyAverage, average);
+		field.setProperty("average", average);
+	}
+
+	/**
+	 * Returns the fast average property of the field.
+	 * 
+	 * @param field The source field.
+	 * @return The average.
+	 */
+	public Average getPropertyAverageFast(Field field) {
+		return (Average) field.getProperty("average-fast");
+	}
+
+	/**
+	 * Sets the fast average property to the field.
+	 * 
+	 * @param field The field.
+	 * @param average The average.
+	 */
+	private void setPropertyAverageFast(Field field, Average average) {
+		field.setProperty("average-fast", average);
+	}
+
+	/**
+	 * Returns the slow average property of the field.
+	 * 
+	 * @param field The source field.
+	 * @return The average.
+	 */
+	public Average getPropertyAverageSlow(Field field) {
+		return (Average) field.getProperty("average-slow");
+	}
+
+	/**
+	 * Sets the slow average property to the field.
+	 * 
+	 * @param field The field.
+	 * @param average The average.
+	 */
+	private void setPropertyAverageSlow(Field field, Average average) {
+		field.setProperty("average-slow", average);
+	}
+
+	/**
+	 * Returns the normmalizer property of the field.
+	 * 
+	 * @param field The source field.
+	 * @return The normalizer.
+	 */
+	public NormalizedStateValueDescriptor getPropertyNormalizer(Field field) {
+		return (NormalizedStateValueDescriptor) field.getProperty("normalizer");
+	}
+
+	/**
+	 * Sets the normalizer property for the field.
+	 * 
+	 * @param field The field.
+	 * @param normalizer The normalizer.
+	 */
+	private void setPropertyNormalizer(Field field, NormalizedStateValueDescriptor normalizer) {
+		field.setProperty("normalizer", normalizer);
+	}
+
+	/**
+	 * Return the source field property.
+	 * 
+	 * @param field The field.
+	 * @return The source field.
+	 */
+	public Field getPropertySourceField(Field field) {
+		return (Field) field.getProperty("source-field");
+	}
+
+	/**
+	 * Sets the source field property for the field.
+	 * 
+	 * @param field The field.
+	 * @param source The source field.
+	 */
+	private void setPropertySourceField(Field field, Field source) {
+		field.setProperty("source-field", source);
 	}
 }
