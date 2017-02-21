@@ -25,11 +25,6 @@ import com.qtplaf.library.math.Vector;
  */
 public class NumberImageIOData extends IOData {
 
-	/**
-	 * Version UID
-	 */
-	private static final long serialVersionUID = -1772205670034912024L;
-
 	/** Image rows. */
 	public static final int ROWS = 28;
 	/** Image columns. */

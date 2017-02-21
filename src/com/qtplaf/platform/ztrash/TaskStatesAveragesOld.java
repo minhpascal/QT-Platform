@@ -12,25 +12,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.task;
+package com.qtplaf.platform.ztrash;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.task.TaskRunner;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
 
 /**
  * Root class for states statistics tasks.
  *
  * @author Miquel Sas
  */
-public abstract class TaskStatesAverages extends TaskRunner {
+public abstract class TaskStatesAveragesOld extends TaskRunner {
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param session Working session.
 	 */
-	public TaskStatesAverages(Session session) {
+	public TaskStatesAveragesOld(Session session) {
 		super(session);
 	}
 

@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 import java.util.List;
 
@@ -21,7 +21,6 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.task.TaskStatesTransitions;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -72,7 +71,7 @@ public class StatesTransitionsOld extends StatesAveragesOld {
 	 */
 	@Override
 	public Task getTask() {
-		return new TaskStatesTransitions(this);
+		return new TaskStatesTransitionsOld(this);
 	}
 
 	/**

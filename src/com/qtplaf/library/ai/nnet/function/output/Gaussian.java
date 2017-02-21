@@ -23,11 +23,6 @@ import com.qtplaf.library.ai.nnet.function.OutputFunction;
 public class Gaussian implements OutputFunction {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 4049318519841720073L;
-
-	/**
 	 * The sigma parameter.
 	 */
 	private double sigma = 0.5;

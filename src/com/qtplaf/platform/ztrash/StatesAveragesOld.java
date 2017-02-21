@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,10 +44,10 @@ import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
-import com.qtplaf.platform.statistics.backup.AverageOld.Speed;
-import com.qtplaf.platform.statistics.backup.AverageOld.Spread;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
+import com.qtplaf.platform.ztrash.AverageOld.Speed;
+import com.qtplaf.platform.ztrash.AverageOld.Spread;
 
 /**
  * Root class for states statistics based on averages.

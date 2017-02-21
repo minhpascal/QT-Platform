@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.task;
+package com.qtplaf.platform.ztrash;
 
 import java.util.List;
 import java.util.Map;
@@ -26,16 +26,14 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
-import com.qtplaf.platform.statistics.backup.StatesNormalizeContinuousOld;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
+import com.qtplaf.platform.ztrash.StatesAveragesOld.Fields;
 
 /**
  * Task to calculate the normalized states values.
  *
  * @author Miquel Sas
  */
-public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
+public class TaskStatesNormalizeContinuousOld extends TaskStatesAveragesOld {
 
 	/** The parent states normalize statistics. */
 	private StatesNormalizeContinuousOld statesNormalize;
@@ -48,7 +46,7 @@ public class TaskStatesNormalizeContinuous extends TaskStatesAverages {
 	 * 
 	 * @param statesNormalize The parent states normalize statistics.
 	 */
-	public TaskStatesNormalizeContinuous(StatesNormalizeContinuousOld statesNormalize) {
+	public TaskStatesNormalizeContinuousOld(StatesNormalizeContinuousOld statesNormalize) {
 		super(statesNormalize.getSession());
 		this.statesNormalize = statesNormalize;
 		setNameAndDescription(statesNormalize);

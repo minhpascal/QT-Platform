@@ -23,11 +23,6 @@ import com.qtplaf.library.ai.nnet.function.OutputFunction;
 public class Sigmoid implements OutputFunction {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 5541027766668660421L;
-
-	/**
 	 * Default constructor.
 	 */
 	public Sigmoid() {

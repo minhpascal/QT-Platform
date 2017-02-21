@@ -25,11 +25,6 @@ import java.util.List;
 public class IOData implements Serializable {
 
 	/**
-	 * Version UID
-	 */
-	private static final long serialVersionUID = -8512856836750318682L;
-
-	/**
 	 * Input data.
 	 */
 	private List<Double> inputs;

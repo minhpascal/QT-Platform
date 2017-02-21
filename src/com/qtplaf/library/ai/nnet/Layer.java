@@ -26,11 +26,6 @@ import java.util.List;
 public class Layer implements Iterable<Neuron>, Serializable {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 3641239539146378713L;
-
-	/**
 	 * The list of neurons.
 	 */
 	private List<Neuron> neurons;

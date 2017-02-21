@@ -46,12 +46,12 @@ import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
-import com.qtplaf.platform.statistics.backup.StatisticsManagerOld;
 import com.qtplaf.platform.util.FormUtils;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.PeriodUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordSetUtils;
+import com.qtplaf.platform.ztrash.StatisticsManagerOld;
 
 /**
  * Statistics definitions.

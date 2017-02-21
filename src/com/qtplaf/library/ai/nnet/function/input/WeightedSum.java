@@ -26,11 +26,6 @@ import com.qtplaf.library.ai.nnet.function.InputFunction;
 public class WeightedSum implements InputFunction {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 1296477402067237846L;
-
-	/**
 	 * Default constructor.
 	 */
 	public WeightedSum() {

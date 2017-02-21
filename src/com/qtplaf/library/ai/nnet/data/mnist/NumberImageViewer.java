@@ -51,11 +51,6 @@ public class NumberImageViewer extends JFrame {
 		new NumberImageViewer(reader.getNumberImages());
 	}
 
-	/**
-	 * Version UID
-	 */
-	private static final long serialVersionUID = -4153039015152723855L;
-
 	private int rows = NumberImageIOData.ROWS;
 	private int columns = NumberImageIOData.COLUMNS;
 

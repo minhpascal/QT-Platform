@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 

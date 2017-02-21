@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.task;
+package com.qtplaf.platform.ztrash;
 
 import java.util.List;
 
@@ -23,25 +23,22 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.indicators.StatesSourceIndicator;
-import com.qtplaf.platform.statistics.backup.StatesRangesOld;
-import com.qtplaf.platform.statistics.backup.StatesSourceOld;
-import com.qtplaf.platform.statistics.backup.AverageOld.Range;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
+import com.qtplaf.platform.ztrash.AverageOld.Range;
+import com.qtplaf.platform.ztrash.StatesAveragesOld.Fields;
 
 /**
  * Calculates minimums and maximums for states source values.
  *
  * @author Miquel Sas
  */
-public class TaskStatesRanges extends TaskStatesAverages {
+public class TaskStatesRangesOld extends TaskStatesAveragesOld {
 
 	/** The parent states ranges statistics. */
 	private StatesRangesOld statesRanges;
 	/** Origin states source statistics. */
 	private StatesSourceOld statesSource;
 	/** The states source indicator used to retrieve indexes of values. */
-	private StatesSourceIndicator indicator;
+	private StatesSourceIndicatorOld indicator;
 	/** The persistor data list to retrieve states source data. */
 	private PersistorDataList sourceList;
 
@@ -50,11 +47,11 @@ public class TaskStatesRanges extends TaskStatesAverages {
 	 * 
 	 * @param statesRanges The parent states ranges statistics.
 	 */
-	public TaskStatesRanges(StatesRangesOld statesRanges) {
+	public TaskStatesRangesOld(StatesRangesOld statesRanges) {
 		super(statesRanges.getSession());
 		this.statesRanges = statesRanges;
 		this.statesSource = statesRanges.getStatesSource();
-		this.indicator = new StatesSourceIndicator(statesSource);
+		this.indicator = new StatesSourceIndicatorOld(statesSource);
 
 		DataInfo info = indicator.getIndicatorInfo();
 		Table table = indicator.getStatesSource().getTable();

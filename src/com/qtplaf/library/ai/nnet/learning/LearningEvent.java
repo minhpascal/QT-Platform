@@ -23,11 +23,6 @@ import java.util.EventObject;
 public class LearningEvent extends EventObject {
 
 	/**
-	 * Version UID
-	 */
-	private static final long serialVersionUID = -5868989457257176452L;
-
-	/**
 	 * The key of event.
 	 */
 	private String key;

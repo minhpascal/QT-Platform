@@ -31,11 +31,6 @@ import javax.swing.JMenuItem;
 public class JNetworkManager extends JFrame {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 6633615459388701788L;
-
-	/**
 	 * Default constructor.
 	 * 
 	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()

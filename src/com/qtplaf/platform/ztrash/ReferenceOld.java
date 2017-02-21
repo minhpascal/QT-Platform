@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 /**
  * An item is a defined statistics, identified by a code or id and a description.

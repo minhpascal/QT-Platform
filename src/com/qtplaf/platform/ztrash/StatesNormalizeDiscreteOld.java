@@ -12,11 +12,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
@@ -25,48 +27,60 @@ import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.task.TaskStatesNormalizeContinuous;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Normalizes source values in continuous mode.
+ * Normalizes source values in discrete mode.
  *
  * @author Miquel Sas
  */
-public class StatesNormalizeContinuousOld extends StatesAveragesOld {
+public class StatesNormalizeDiscreteOld extends StatesAveragesOld {
 
-	/** States ranges related statistics. */
-	private StatesRangesOld statesRanges;
+	/**
+	 * Keys.
+	 */
+	public static class Keys {
+		/** Soft key. */
+		public static final String Soft = "soft";
+		/** Hard key. */
+		public static final String Hard = "hard";
+	}
+
+	/** States continuous related statistics. */
+	private StatesNormalizeContinuousOld statesNormalizeContinuous;
+	/** Normalize scale. */
+	private int scale = 2;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param statesRanges The states ranges statistics.
+	 * @param statesNormalizeContinuous The parent states normalized continuous statistics.
 	 */
-	public StatesNormalizeContinuousOld(StatesRangesOld statesRanges) {
+	public StatesNormalizeDiscreteOld(StatesNormalizeContinuousOld statesNormalizeContinuous) {
 		super(
-			statesRanges.getSession(),
-			statesRanges.getServer(),
-			statesRanges.getInstrument(),
-			statesRanges.getPeriod());
-		this.statesRanges = statesRanges;
+			statesNormalizeContinuous.getSession(),
+			statesNormalizeContinuous.getServer(),
+			statesNormalizeContinuous.getInstrument(),
+			statesNormalizeContinuous.getPeriod());
+		this.statesNormalizeContinuous = statesNormalizeContinuous;
 	}
 
 	/**
-	 * Returns the states ranges related statistics.
+	 * Returns the scale.
 	 * 
-	 * @return The states ranges related statistics.
+	 * @return The scale.
 	 */
-	public StatesRangesOld getStatesRanges() {
-		return statesRanges;
+	public int getScale() {
+		return scale;
 	}
 
 	/**
-	 * Returns the states source related statistics.
+	 * Set the scale.
 	 * 
-	 * @return The states source related statistics.
+	 * @param scale The scale.
 	 */
-	public StatesSourceOld getStatesSource() {
-		return statesRanges.getStatesSource();
+	public void setScale(int scale) {
+		this.scale = scale;
 	}
 
 	/**
@@ -78,13 +92,22 @@ public class StatesNormalizeContinuousOld extends StatesAveragesOld {
 	}
 
 	/**
+	 * Returns the parent or source statistics.
+	 * 
+	 * @return The parent or source statistics.
+	 */
+	public StatesNormalizeContinuousOld getStatesNormalizeContinuous() {
+		return statesNormalizeContinuous;
+	}
+
+	/**
 	 * Returns the task that calculates the statistic.
 	 * 
 	 * @return The calculator task.
 	 */
 	@Override
 	public Task getTask() {
-		return new TaskStatesNormalizeContinuous(this);
+		return new TaskStatesNormalizeDiscreteOld(this);
 	}
 
 	/**
@@ -95,7 +118,19 @@ public class StatesNormalizeContinuousOld extends StatesAveragesOld {
 	 */
 	@Override
 	public Table getTable() {
-		return getTableForSourceAndNormalizedStatistics();
+		Table table = getTableForSourceAndNormalizedStatistics();
+		// Keys.
+		table.addField(getFieldKey());
+
+		// Unique index on Index.
+		Index index = new Index();
+		index.add(getFieldKey());
+		index.setUnique(false);
+		table.addIndex(index);
+		
+		// Must set persistor.
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
 	}
 
 	/**
@@ -121,13 +156,24 @@ public class StatesNormalizeContinuousOld extends StatesAveragesOld {
 		// The data list.
 		PersistorDataList dataList =
 			new PersistorDataList(getSession(), new DataInfo(getSession()), getTable().getPersistor());
-		dataList.setCacheSize(10000);
-		
+
 		List<PlotData> plotDataList = new ArrayList<>();
 		plotDataList.add(getPlotDataMain(dataList));
 		plotDataList.add(getPlotData(dataList, getSpreadFields()));
 		plotDataList.add(getPlotData(dataList, getSpeedFields()));
 
 		return plotDataList;
+	}
+
+	/**
+	 * Returns the list of fields for the key.
+	 * 
+	 * @return The list of fields for the key.
+	 */
+	public List<Field> getFieldsKey() {
+		List<Field> fields = new ArrayList<>();
+		fields.addAll(getSpreadFields());
+		fields.addAll(getSpeedFields());
+		return fields;
 	}
 }

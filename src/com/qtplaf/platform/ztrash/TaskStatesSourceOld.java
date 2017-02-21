@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.task;
+package com.qtplaf.platform.ztrash;
 
 import java.util.List;
 
@@ -22,27 +22,25 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
-import com.qtplaf.platform.indicators.StatesSourceIndicator;
-import com.qtplaf.platform.statistics.backup.StatesSourceOld;
 
 /**
  * The task that calculates the states source statistics.
  *
  * @author Miquel Sas
  */
-public class TaskStatesSource extends TaskStatesAverages {
+public class TaskStatesSourceOld extends TaskStatesAveragesOld {
 
 	/** The indicator used to perform calculations. */
-	private StatesSourceIndicator indicator;
+	private StatesSourceIndicatorOld indicator;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statesSource The states source statistics.
 	 */
-	public TaskStatesSource(StatesSourceOld statesSource) {
+	public TaskStatesSourceOld(StatesSourceOld statesSource) {
 		super(statesSource.getSession());
-		this.indicator = new StatesSourceIndicator(statesSource);
+		this.indicator = new StatesSourceIndicatorOld(statesSource);
 		setNameAndDescription(statesSource);
 	}
 

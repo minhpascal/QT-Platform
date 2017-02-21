@@ -75,7 +75,6 @@ public class JMaskedFieldDate extends JMaskedFieldButton {
 	 * Event handler.
 	 */
 	class ButtonAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == getButton()) {
 				if (getWindowCalendar().isVisible()) {

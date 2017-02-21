@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.platform.util.DomainUtils;
@@ -55,13 +54,10 @@ public class Configuration {
 	 * Constructor.
 	 * 
 	 * @param id The id.
-	 * @param title The title or short description.
 	 */
-	public Configuration(Session session, String id, String title) {
+	public Configuration(Session session) {
 		super();
 		this.session = session;
-		this.id = id;
-		this.title = title;
 	}
 
 	/**
@@ -83,12 +79,30 @@ public class Configuration {
 	}
 
 	/**
+	 * Sets the configuration id.
+	 * 
+	 * @param id The id.
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
 	 * Returns the short description.
 	 * 
 	 * @return The short description.
 	 */
 	public String getTitle() {
 		return title;
+	}
+
+	/**
+	 * Set the configuration title.
+	 * 
+	 * @param title The title.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	/**
@@ -472,8 +486,7 @@ public class Configuration {
 			String header = "Speed-" + average.getPeriod() + "-" + suffix;
 			String label = "Speed " + average.getPeriod() + " - " + suffix;
 			field = DomainUtils.getDouble(getSession(), name, header, label);
-			setPropertyAverage(field, average);
-			setPropertyNormalizer(field, speed.getNormalizer());
+			setPropertySpeed(field, speed);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -495,9 +508,7 @@ public class Configuration {
 			String header = "Spread-" + averageFast.getPeriod() + "-" + averageSlow.getPeriod() + "-" + suffix;
 			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod() + " - " + suffix;
 			field = DomainUtils.getDouble(getSession(), name, header, label);
-			setPropertyNormalizer(field, spread.getNormalizer());
-			setPropertyAverageFast(field, averageFast);
-			setPropertyAverageSlow(field, averageSlow);
+			setPropertySpread(field, spread);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -560,6 +571,74 @@ public class Configuration {
 	}
 
 	/**
+	 * Returns the transition value field.v
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldTransitionValueClose() {
+		String name = "value_close";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Value close";
+			String label = "Transition value close";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the transition value field.v
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldTransitionValueHigh() {
+		String name = "value_high";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Value high";
+			String label = "Transition value high";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the transition value field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldTransitionValueLow() {
+		String name = "value_low";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Value low";
+			String label = "Transition value low";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the value field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldValue() {
+		String name = "value";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Value";
+			String label = "Value";
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
 	 * Returns the average property of the field.
 	 * 
 	 * @param field The source field.
@@ -580,63 +659,43 @@ public class Configuration {
 	}
 
 	/**
-	 * Returns the fast average property of the field.
+	 * Returns the spread property of the field.
 	 * 
 	 * @param field The source field.
-	 * @return The average.
+	 * @return The spread.
 	 */
-	public Average getPropertyAverageFast(Field field) {
-		return (Average) field.getProperty("average-fast");
+	public Spread getPropertySpread(Field field) {
+		return (Spread) field.getProperty("spread");
 	}
 
 	/**
-	 * Sets the fast average property to the field.
+	 * Sets the spread property to the field.
 	 * 
 	 * @param field The field.
-	 * @param average The average.
+	 * @param spread The spread.
 	 */
-	private void setPropertyAverageFast(Field field, Average average) {
-		field.setProperty("average-fast", average);
+	private void setPropertySpread(Field field, Spread spread) {
+		field.setProperty("spread", spread);
 	}
 
 	/**
-	 * Returns the slow average property of the field.
+	 * Returns the speed property of the field.
 	 * 
 	 * @param field The source field.
-	 * @return The average.
+	 * @return The speed.
 	 */
-	public Average getPropertyAverageSlow(Field field) {
-		return (Average) field.getProperty("average-slow");
+	public Speed getPropertySpeed(Field field) {
+		return (Speed) field.getProperty("speed");
 	}
 
 	/**
-	 * Sets the slow average property to the field.
+	 * Sets the speed property to the field.
 	 * 
 	 * @param field The field.
-	 * @param average The average.
+	 * @param speed The speed.
 	 */
-	private void setPropertyAverageSlow(Field field, Average average) {
-		field.setProperty("average-slow", average);
-	}
-
-	/**
-	 * Returns the normmalizer property of the field.
-	 * 
-	 * @param field The source field.
-	 * @return The normalizer.
-	 */
-	public NormalizedStateValueDescriptor getPropertyNormalizer(Field field) {
-		return (NormalizedStateValueDescriptor) field.getProperty("normalizer");
-	}
-
-	/**
-	 * Sets the normalizer property for the field.
-	 * 
-	 * @param field The field.
-	 * @param normalizer The normalizer.
-	 */
-	private void setPropertyNormalizer(Field field, NormalizedStateValueDescriptor normalizer) {
-		field.setProperty("normalizer", normalizer);
+	private void setPropertySpeed(Field field, Speed speed) {
+		field.setProperty("speed", speed);
 	}
 
 	/**

@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.indicators;
+package com.qtplaf.platform.ztrash;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,19 +39,16 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.statistics.backup.AverageOld;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld;
-import com.qtplaf.platform.statistics.backup.StatesSourceOld;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
+import com.qtplaf.platform.ztrash.StatesAveragesOld.Fields;
 
 /**
  * Indicator to calculate the states source values.
  *
  * @author Miquel Sas
  */
-public class StatesSourceIndicator extends Indicator {
+public class StatesSourceIndicatorOld extends Indicator {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
@@ -71,7 +68,7 @@ public class StatesSourceIndicator extends Indicator {
 	 * 
 	 * @param statesSource The underlying states source statistics.
 	 */
-	public StatesSourceIndicator(StatesSourceOld statesSource) {
+	public StatesSourceIndicatorOld(StatesSourceOld statesSource) {
 		super(statesSource.getSession());
 		this.statesSource = statesSource;
 

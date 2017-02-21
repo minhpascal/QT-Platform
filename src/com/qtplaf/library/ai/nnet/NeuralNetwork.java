@@ -33,11 +33,6 @@ import com.qtplaf.library.math.Vector;
 public class NeuralNetwork implements Iterable<Layer>, Serializable {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = -3911090832772643438L;
-
-	/**
 	 * Unique identifier. This identifier is aimed to uniquely identify this network within a pool of networks.
 	 */
 	private String id;

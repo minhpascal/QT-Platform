@@ -21,11 +21,6 @@ import com.qtplaf.library.trading.chart.JChart;
  * @author Miquel Sas
  */
 public class JFrameChartTest extends JFrame {
-
-	/**
-	 * Serial version UID.
-	 */
-	private static final long serialVersionUID = -8590834709272058335L;
 	
 	/**
 	 * The chart panel.

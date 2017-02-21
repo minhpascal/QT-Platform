@@ -50,15 +50,9 @@ public abstract class StatesAverages extends Statistics {
 	 * Constructor.
 	 * 
 	 * @param session Working session.
-	 * @param server The server.
-	 * @param instrument The instrument.
-	 * @param period The period.
 	 */
-	public StatesAverages(Session session, Server server, Instrument instrument, Period period) {
+	public StatesAverages(Session session) {
 		super(session);
-		this.server = server;
-		this.instrument = instrument;
-		this.period = period;
 	}
 
 	/**
@@ -71,6 +65,15 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
+	 * Set the server.
+	 * 
+	 * @param server The server
+	 */
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	/**
 	 * Returns the instrument.
 	 * 
 	 * @return The instrument.
@@ -80,12 +83,30 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
+	 * Set the instrument.
+	 * 
+	 * @param instrument The instrument.
+	 */
+	public void setInstrument(Instrument instrument) {
+		this.instrument = instrument;
+	}
+
+	/**
 	 * Returns the period.
 	 * 
 	 * @return The period.
 	 */
 	public Period getPeriod() {
 		return period;
+	}
+
+	/**
+	 * Set the period.
+	 * 
+	 * @param period The period.
+	 */
+	public void setPeriod(Period period) {
+		this.period = period;
 	}
 
 	/**
@@ -247,11 +268,70 @@ public abstract class StatesAverages extends Statistics {
 	}
 
 	/**
+	 * Returns the list of fields to calculate the state key.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListStateKey() {
+		List<Field> spreadFields = new ArrayList<>();
+		spreadFields.addAll(getFieldListSpreadsNormalizedDiscrete());
+		List<Field> speedFields = new ArrayList<>();
+		speedFields.addAll(getFieldListSpeedsNormalizedDiscrete());
+		List<Field> keyFields = new ArrayList<>();
+		for (Field field : spreadFields) {
+			Spread spread = getConfiguration().getPropertySpread(field);
+			if (spread.isStateKey()) {
+				keyFields.add(field);
+			}
+		}
+		for (Field field : speedFields) {
+			Speed speed = getConfiguration().getPropertySpeed(field);
+			if (speed.isStateKey()) {
+				keyFields.add(field);
+			}
+		}
+		return keyFields;
+	}
+
+	/**
+	 * Returns the table definition to calculate ranges for minimums and maximums.
+	 * 
+	 * @return The table definition.
+	 */
+	protected Table getTableRanges() {
+		validateState();
+
+		Table table = new Table();
+
+		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setSchema(Names.getSchema(getServer()));
+
+		table.addField(getConfiguration().getFieldName());
+		table.addField(getConfiguration().getFieldMinMax());
+		table.addField(getConfiguration().getFieldPeriod());
+		table.addField(getConfiguration().getFieldValue());
+		table.addField(getConfiguration().getFieldIndex());
+		table.addField(getConfiguration().getFieldTime());
+
+		// Non unique index on name, minmax, period.
+		Index index = new Index();
+		index.add(getConfiguration().getFieldName());
+		index.add(getConfiguration().getFieldMinMax());
+		index.add(getConfiguration().getFieldPeriod());
+		index.setUnique(false);
+		table.addIndex(index);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
+	}
+
+	/**
 	 * Returns the table definition for states values.
 	 * 
 	 * @return The table definition.
 	 */
 	protected Table getTableStates() {
+		validateState();
 
 		Table table = new Table();
 
@@ -259,16 +339,13 @@ public abstract class StatesAverages extends Statistics {
 		table.setSchema(Names.getSchema(getServer()));
 
 		// Index and time.
-		Field index = getConfiguration().getFieldIndex();
-		table.addField(index);
-		Field time = getConfiguration().getFieldTime();
-		table.addField(time);
+		table.addField(getConfiguration().getFieldIndex());
+		table.addField(getConfiguration().getFieldIndex());
 
 		// Time formatted.
-		Field timeFmt = getConfiguration().getFieldTimeFmt();
-		timeFmt.setFormatter(new TimeFmtValue(getPeriod().getUnit()));
-		timeFmt.setCalculator(new TimeFmtValue(getPeriod().getUnit()));
-		table.addField(timeFmt);
+		getConfiguration().getFieldTimeFmt().setFormatter(new TimeFmtValue(getPeriod().getUnit()));
+		getConfiguration().getFieldTimeFmt().setCalculator(new TimeFmtValue(getPeriod().getUnit()));
+		table.addField(getConfiguration().getFieldTimeFmt());
 
 		// Open, high, low, close.
 		table.addField(getConfiguration().getFieldOpen());
@@ -306,17 +383,73 @@ public abstract class StatesAverages extends Statistics {
 		// Speed (tangent) of averages, normalized values discrete.
 		table.addFields(getFieldListSpeedsNormalizedDiscrete());
 
+		// The state key.
+		table.addField(getConfiguration().getFieldKeyState());
+
 		// Primary key on Time.
-		time.setPrimaryKey(true);
+		getConfiguration().getFieldIndex().setPrimaryKey(true);
 
 		// Unique index on Index.
 		Index indexOnIndex = new Index();
-		indexOnIndex.add(index);
+		indexOnIndex.add(getConfiguration().getFieldIndex());
 		indexOnIndex.setUnique(true);
 		table.addIndex(indexOnIndex);
+
+		// Non unique index on the state key.
+		Index indexOnKeyState = new Index();
+		indexOnKeyState.add(getConfiguration().getFieldKeyState());
+		indexOnKeyState.setUnique(false);
+		table.addIndex(indexOnKeyState);
 
 		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
 		return table;
 	}
 
+	/**
+	 * Returns the table definition for states transitions.
+	 * 
+	 * @return The table definition.
+	 */
+	protected Table getTableTransitions() {
+		validateState();
+
+		Table table = new Table();
+
+		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setSchema(Names.getSchema(getServer()));
+
+		// Input and output states (keys)
+		table.addField(getConfiguration().getFieldKeyInput());
+		table.addField(getConfiguration().getFieldKeyOutput());
+
+		// Input and output indexes of source states.
+		table.addField(getConfiguration().getFieldIndexInput());
+		table.addField(getConfiguration().getFieldIndexOutput());
+
+		// Index group (groups consecutive transitions of the same state).
+		table.addField(getConfiguration().getFieldIndexGroup());
+
+		// Estimaded function value high, low and close.
+		table.addField(getConfiguration().getFieldTransitionValueHigh());
+		table.addField(getConfiguration().getFieldTransitionValueLow());
+		table.addField(getConfiguration().getFieldTransitionValueClose());
+
+		// Primary key.
+		getConfiguration().getFieldKeyInput().setPrimaryKey(true);
+		getConfiguration().getFieldKeyOutput().setPrimaryKey(true);
+		getConfiguration().getFieldIndexInput().setPrimaryKey(true);
+		getConfiguration().getFieldIndexOutput().setPrimaryKey(true);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
+	}
+
+	/**
+	 * Validate that server, instrument, period and configuration are set.
+	 */
+	private void validateState() {
+		if (getServer() == null || getInstrument() == null || getPeriod() == null || getConfiguration() == null) {
+			throw new IllegalStateException();
+		}
+	}
 }

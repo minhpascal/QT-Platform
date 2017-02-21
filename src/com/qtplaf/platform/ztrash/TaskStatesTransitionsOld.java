@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.task;
+package com.qtplaf.platform.ztrash;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,15 +29,14 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.platform.statistics.backup.StatesTransitionsOld;
-import com.qtplaf.platform.statistics.backup.StatesAveragesOld.Fields;
+import com.qtplaf.platform.ztrash.StatesAveragesOld.Fields;
 
 /**
  * Task to calculate transitions among discrete states.
  *
  * @author Miquel Sas
  */
-public class TaskStatesTransitions extends TaskStatesAverages {
+public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 
 	/** Origin states transitions statistics. */
 	private StatesTransitionsOld statesTransitions;
@@ -59,7 +58,7 @@ public class TaskStatesTransitions extends TaskStatesAverages {
 	 * 
 	 * @param statesTransitions Origin states transitions statistics.
 	 */
-	public TaskStatesTransitions(StatesTransitionsOld statesTransitions) {
+	public TaskStatesTransitionsOld(StatesTransitionsOld statesTransitions) {
 		super(statesTransitions.getSession());
 		this.statesTransitions = statesTransitions;
 		setNameAndDescription(statesTransitions);

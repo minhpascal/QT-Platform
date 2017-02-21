@@ -40,7 +40,7 @@ import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.statistics.backup.StatisticsManagerOld;
+import com.qtplaf.platform.ztrash.StatisticsManagerOld;
 
 /**
  * Centralizes form operations.

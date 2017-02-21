@@ -21,11 +21,6 @@ import com.qtplaf.library.ai.nnet.function.OutputFunction;
  * @author Miquel Sas
  */
 public class Linear implements OutputFunction {
-
-	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = 479406385189704891L;
 	
 	/**
 	 * The slope of this linear function, 1.0 by default.

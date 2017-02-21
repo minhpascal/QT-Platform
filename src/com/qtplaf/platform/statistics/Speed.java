@@ -14,7 +14,7 @@
 
 package com.qtplaf.platform.statistics;
 
-import com.qtplaf.library.ai.rlearning.NormalizedStateValueDescriptor;
+import com.qtplaf.library.ai.rlearning.function.Normalizer;
 
 /**
  * The speed class packs the average which speed has to be calculated and the normalizer used to calculate discretional
@@ -26,7 +26,7 @@ public class Speed {
 	/** The average. */
 	private Average average;
 	/** The normalizer to use when calculating discretional values. */
-	private NormalizedStateValueDescriptor normalizer;
+	private Normalizer normalizer;
 	/** A boolean that indicates if the spread should be inclided in the state key. */
 	private boolean stateKey = false;
 
@@ -60,7 +60,7 @@ public class Speed {
 	 * 
 	 * @return The normalizer.
 	 */
-	public NormalizedStateValueDescriptor getNormalizer() {
+	public Normalizer getNormalizer() {
 		return normalizer;
 	}
 
@@ -69,7 +69,7 @@ public class Speed {
 	 * 
 	 * @param normalizer The normalizer.
 	 */
-	public void setNormalizer(NormalizedStateValueDescriptor normalizer) {
+	public void setNormalizer(Normalizer normalizer) {
 		this.normalizer = normalizer;
 	}
 

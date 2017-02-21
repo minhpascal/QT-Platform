@@ -83,7 +83,6 @@ public class JPanelCalendar extends JPanel {
 	 * A JButton class that contains the number of the day of the month.
 	 */
 	class JButton extends javax.swing.JButton {
-		private static final long serialVersionUID = 1L;
 		/** The day of the month. */
 		private int day = -1;
 

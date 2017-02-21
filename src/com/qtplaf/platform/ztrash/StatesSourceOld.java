@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,6 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.task.TaskStatesSource;
 
 /**
  * Retrieves the source values for the series of analisys to build the wave descriptor states and transitions. Contains
@@ -66,7 +65,7 @@ public class StatesSourceOld extends StatesAveragesOld {
 	 * @return The calculator task.
 	 */
 	public Task getTask() {
-		return new TaskStatesSource(this);
+		return new TaskStatesSourceOld(this);
 	}
 
 	/**

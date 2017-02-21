@@ -23,7 +23,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Types;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.platform.statistics.backup.ReferenceOld;
+import com.qtplaf.platform.ztrash.ReferenceOld;
 
 /**
  * Centralizes master field definitions (domains). These definitions do not include table attributes like primary key.

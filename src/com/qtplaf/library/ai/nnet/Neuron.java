@@ -30,11 +30,6 @@ import com.qtplaf.library.util.TextServer;
 public class Neuron implements Serializable {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = -192916342210818547L;
-
-	/**
 	 * Links two neurons.
 	 * 
 	 * @param inputNeuron The input neuron.

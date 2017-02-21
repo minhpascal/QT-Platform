@@ -24,11 +24,6 @@ import java.util.Objects;
 public class Synapse implements Serializable {
 
 	/**
-	 * Serial version UID
-	 */
-	private static final long serialVersionUID = -5690239369134501230L;
-
-	/**
 	 * The input neuron.
 	 */
 	private Neuron inputNeuron;

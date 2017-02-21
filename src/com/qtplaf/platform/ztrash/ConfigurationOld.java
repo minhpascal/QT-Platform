@@ -12,16 +12,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.backup;
+package com.qtplaf.platform.ztrash;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.Field;
-import com.qtplaf.platform.statistics.backup.AverageOld.Range;
-import com.qtplaf.platform.statistics.backup.AverageOld.Speed;
-import com.qtplaf.platform.statistics.backup.AverageOld.Spread;
+import com.qtplaf.platform.ztrash.AverageOld.Range;
+import com.qtplaf.platform.ztrash.AverageOld.Speed;
+import com.qtplaf.platform.ztrash.AverageOld.Spread;
 
 /**
  * Averages configuration for source, ranges and normalize statistics.
