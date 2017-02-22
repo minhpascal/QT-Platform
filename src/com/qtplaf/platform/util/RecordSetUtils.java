@@ -112,11 +112,10 @@ public class RecordSetUtils {
 	public static RecordSet getRecordSetStatisticsReferences(Session session) {
 
 		FieldList fields = new FieldList();
-		Field fieldId = DomainUtils.getStatisticsId(session, ReferenceOld.Id);
+		Field fieldId = FieldUtils.getStatisticsId(session, ReferenceOld.Id);
 		fieldId.setPrimaryKey(true);
 		fields.addField(fieldId);
-		fields.addField(DomainUtils.getStatisticsTitle(session, ReferenceOld.Title));
-		fields.addField(DomainUtils.getStatisticsDesc(session, ReferenceOld.Description));
+		fields.addField(FieldUtils.getStatisticsTitle(session, ReferenceOld.Title));
 
 		RecordSet rs = new RecordSet(fields);
 		List<ReferenceOld> items = StatisticsManagerOld.getReferences(session);
@@ -124,7 +123,6 @@ public class RecordSetUtils {
 			Record rc = fields.getDefaultRecord();
 			rc.setValue(ReferenceOld.Id, item.getId());
 			rc.setValue(ReferenceOld.Title, item.getTitle());
-			rc.setValue(ReferenceOld.Description, item.getTitle());
 			rs.add(rc);
 		}
 

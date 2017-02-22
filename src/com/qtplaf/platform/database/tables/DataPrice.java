@@ -19,7 +19,7 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -54,14 +54,14 @@ public class DataPrice extends Table {
 		setName(name);
 		setSchema(Names.getSchema(server));
 
-		addField(DomainUtils.getIndex(session, Fields.Index));
-		addField(DomainUtils.getTime(session, Fields.Time));
-		addField(DomainUtils.getOpen(session, Fields.Open));
-		addField(DomainUtils.getHigh(session, Fields.High));
-		addField(DomainUtils.getLow(session, Fields.Low));
-		addField(DomainUtils.getClose(session, Fields.Close));
-		addField(DomainUtils.getVolume(session, Fields.Volume));
-		addField(DomainUtils.getTimeFmt(session, Fields.TimeFmt));
+		addField(FieldUtils.getIndex(session, Fields.Index));
+		addField(FieldUtils.getTime(session, Fields.Time));
+		addField(FieldUtils.getOpen(session, Fields.Open));
+		addField(FieldUtils.getHigh(session, Fields.High));
+		addField(FieldUtils.getLow(session, Fields.Low));
+		addField(FieldUtils.getClose(session, Fields.Close));
+		addField(FieldUtils.getVolume(session, Fields.Volume));
+		addField(FieldUtils.getTimeFmt(session, Fields.TimeFmt));
 
 		getField(Fields.Time).setPrimaryKey(true);
 		

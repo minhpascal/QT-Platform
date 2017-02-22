@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.averages.configuration;
 
 /**
  * The range is used to calculate maximums and minimums of the range period, before and after.

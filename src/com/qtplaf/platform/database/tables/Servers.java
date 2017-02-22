@@ -17,7 +17,7 @@ package com.qtplaf.platform.database.tables;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -48,9 +48,9 @@ public class Servers extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 		
-		addField(DomainUtils.getServerId(session, Fields.ServerId));
-		addField(DomainUtils.getServerName(session, Fields.ServerName));
-		addField(DomainUtils.getServerTitle(session, Fields.ServerTitle));
+		addField(FieldUtils.getServerId(session, Fields.ServerId));
+		addField(FieldUtils.getServerName(session, Fields.ServerName));
+		addField(FieldUtils.getServerTitle(session, Fields.ServerTitle));
 		
 		getField(Fields.ServerId).setPrimaryKey(true);
 		

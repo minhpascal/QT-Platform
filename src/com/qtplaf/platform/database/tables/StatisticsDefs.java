@@ -19,7 +19,7 @@ import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -52,13 +52,13 @@ public class StatisticsDefs extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 
-		addField(DomainUtils.getServerId(session, Fields.ServerId));
-		addField(DomainUtils.getInstrumentId(session, Fields.InstrumentId));
-		addField(DomainUtils.getPeriodId(session, Fields.PeriodId));
-		addField(DomainUtils.getStatisticsId(session, Fields.StatisticsId));
-		addField(DomainUtils.getTableName(session, Fields.TableName));
+		addField(FieldUtils.getServerId(session, Fields.ServerId));
+		addField(FieldUtils.getInstrumentId(session, Fields.InstrumentId));
+		addField(FieldUtils.getPeriodId(session, Fields.PeriodId));
+		addField(FieldUtils.getStatisticsId(session, Fields.StatisticsId));
+		addField(FieldUtils.getTableName(session, Fields.TableName));
 		
-		getField(Fields.StatisticsId).addPossibleValues(DomainUtils.getStatisticsIdPossibleValues(session));
+		getField(Fields.StatisticsId).addPossibleValues(FieldUtils.getStatisticsIdPossibleValues(session));
 
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);

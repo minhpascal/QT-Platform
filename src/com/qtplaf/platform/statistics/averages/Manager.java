@@ -12,20 +12,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.averages;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
 import com.qtplaf.library.app.Session;
+import com.qtplaf.platform.statistics.averages.configuration.Average;
+import com.qtplaf.platform.statistics.averages.configuration.Configuration;
+import com.qtplaf.platform.statistics.averages.configuration.Range;
+import com.qtplaf.platform.statistics.averages.configuration.Speed;
+import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
  * Manager to centralize states statistics access.
  *
  * @author Miquel Sas
  */
-public class StatesManager {
+public class Manager {
 
 	/** Working session. */
 	private Session session;
@@ -35,7 +40,7 @@ public class StatesManager {
 	 * 
 	 * @param session Working session.
 	 */
-	public StatesManager(Session session) {
+	public Manager(Session session) {
 		super();
 		this.session = session;
 	}
@@ -112,6 +117,19 @@ public class StatesManager {
 		speed_89.setStateKey(true);
 		speed_89.setNormalizer(norm_89);
 		cfg.addSpeed(speed_89);
+		
+		// Speed 377 and normalizer with 20 segments.
+		Normalizer norm_377 = new Normalizer();
+		norm_377.setSegments(20);
+		Speed speed_377 = new Speed();
+		speed_377.setAverage(avg_377);
+		speed_377.setStateKey(true);
+		speed_377.setNormalizer(norm_377);
+		cfg.addSpeed(speed_377);
+		
+		// Ranges for min-max values.
+		cfg.addRange(new Range(89));
+		cfg.addRange(new Range(377));
 
 		return cfg;
 	}

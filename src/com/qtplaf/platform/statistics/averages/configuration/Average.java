@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics;
+package com.qtplaf.platform.statistics.averages.configuration;
 
 /**
  * Defines a smoothed average used as a movement descriptor.

@@ -107,7 +107,6 @@ public class QTPlatform {
 		// Text resources and session.
 		TextServer.addBaseResource("StringsLibrary.xml");
 		TextServer.addBaseResource("StringsQTPlatform.xml");
-		TextServer.addBaseResource("StringsQTPlatformDB.xml");
 		Session session = new Session(Locale.UK);
 
 		// Frame menu.

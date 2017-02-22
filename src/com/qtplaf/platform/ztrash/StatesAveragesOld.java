@@ -45,6 +45,7 @@ import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.ztrash.AverageOld.Speed;
 import com.qtplaf.platform.ztrash.AverageOld.Spread;
@@ -262,7 +263,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldIndex() {
 		Field field = mapFields.get(Fields.Index);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), Fields.Index);
+			field = FieldUtils.getIndex(getSession(), Fields.Index);
 			mapFields.put(Fields.Index, field);
 		}
 		return field;
@@ -276,7 +277,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldIndexInput() {
 		Field field = mapFields.get(Fields.IndexIn);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), Fields.IndexIn);
+			field = FieldUtils.getIndex(getSession(), Fields.IndexIn);
 			field.setHeader("Input index");
 			field.setLabel("Input index");
 			field.setTitle("Input index");
@@ -293,7 +294,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldIndexOutput() {
 		Field field = mapFields.get(Fields.IndexOut);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), Fields.IndexOut);
+			field = FieldUtils.getIndex(getSession(), Fields.IndexOut);
 			field.setHeader("Output index");
 			field.setLabel("Output index");
 			field.setTitle("Output index");
@@ -310,7 +311,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldGroup() {
 		Field field = mapFields.get(Fields.IndexGroup);
 		if (field == null) {
-			field = DomainUtils.getIndex(getSession(), Fields.IndexGroup);
+			field = FieldUtils.getIndex(getSession(), Fields.IndexGroup);
 			field.setHeader("Group");
 			field.setLabel("Group");
 			field.setTitle("Group of correlative keys");
@@ -337,7 +338,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldTime() {
 		Field field = mapFields.get(Fields.Time);
 		if (field == null) {
-			field = DomainUtils.getTime(getSession(), Fields.Time);
+			field = FieldUtils.getTime(getSession(), Fields.Time);
 			mapFields.put(Fields.Time, field);
 		}
 		return field;
@@ -351,7 +352,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldTimeFmt() {
 		Field field = mapFields.get(Fields.TimeFmt);
 		if (field == null) {
-			field = DomainUtils.getTimeFmt(getSession(), Fields.TimeFmt);
+			field = FieldUtils.getTimeFmt(getSession(), Fields.TimeFmt);
 			mapFields.put(Fields.TimeFmt, field);
 		}
 		return field;
@@ -365,7 +366,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldOpen() {
 		Field field = mapFields.get(Fields.Open);
 		if (field == null) {
-			field = DomainUtils.getOpen(getSession(), Fields.Open);
+			field = FieldUtils.getOpen(getSession(), Fields.Open);
 			mapFields.put(Fields.Open, field);
 		}
 		return field;
@@ -379,7 +380,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldHigh() {
 		Field field = mapFields.get(Fields.High);
 		if (field == null) {
-			field = DomainUtils.getHigh(getSession(), Fields.High);
+			field = FieldUtils.getHigh(getSession(), Fields.High);
 			mapFields.put(Fields.High, field);
 		}
 		return field;
@@ -393,7 +394,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldLow() {
 		Field field = mapFields.get(Fields.Low);
 		if (field == null) {
-			field = DomainUtils.getLow(getSession(), Fields.Low);
+			field = FieldUtils.getLow(getSession(), Fields.Low);
 			mapFields.put(Fields.Low, field);
 		}
 		return field;
@@ -407,7 +408,7 @@ public abstract class StatesAveragesOld extends Statistics {
 	public Field getFieldClose() {
 		Field field = mapFields.get(Fields.Close);
 		if (field == null) {
-			field = DomainUtils.getClose(getSession(), Fields.Close);
+			field = FieldUtils.getClose(getSession(), Fields.Close);
 			mapFields.put(Fields.Close, field);
 		}
 		return field;

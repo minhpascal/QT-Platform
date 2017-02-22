@@ -17,7 +17,7 @@ package com.qtplaf.platform.database.tables;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -55,16 +55,16 @@ public class Instruments extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 		
-		addField(DomainUtils.getServerId(session, Fields.ServerId));
-		addField(DomainUtils.getInstrumentId(session, Fields.InstrumentId));
-		addField(DomainUtils.getInstrumentDesc(session, Fields.InstrumentDesc));
-		addField(DomainUtils.getInstrumentPipValue(session, Fields.InstrumentPipValue));
-		addField(DomainUtils.getInstrumentPipScale(session, Fields.InstrumentPipScale));
-		addField(DomainUtils.getInstrumentTickValue(session, Fields.InstrumentTickValue));
-		addField(DomainUtils.getInstrumentTickScale(session, Fields.InstrumentTickScale));
-		addField(DomainUtils.getInstrumentVolumeScale(session, Fields.InstrumentVolumeScale));
-		addField(DomainUtils.getInstrumentPrimaryCurrency(session, Fields.InstrumentPrimaryCurrency));
-		addField(DomainUtils.getInstrumentSecondaryCurrency(session, Fields.InstrumentSecondaryCurrency));
+		addField(FieldUtils.getServerId(session, Fields.ServerId));
+		addField(FieldUtils.getInstrumentId(session, Fields.InstrumentId));
+		addField(FieldUtils.getInstrumentDesc(session, Fields.InstrumentDesc));
+		addField(FieldUtils.getInstrumentPipValue(session, Fields.InstrumentPipValue));
+		addField(FieldUtils.getInstrumentPipScale(session, Fields.InstrumentPipScale));
+		addField(FieldUtils.getInstrumentTickValue(session, Fields.InstrumentTickValue));
+		addField(FieldUtils.getInstrumentTickScale(session, Fields.InstrumentTickScale));
+		addField(FieldUtils.getInstrumentVolumeScale(session, Fields.InstrumentVolumeScale));
+		addField(FieldUtils.getInstrumentPrimaryCurrency(session, Fields.InstrumentPrimaryCurrency));
+		addField(FieldUtils.getInstrumentSecondaryCurrency(session, Fields.InstrumentSecondaryCurrency));
 		
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);

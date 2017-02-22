@@ -17,7 +17,7 @@ package com.qtplaf.platform.database.tables;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.util.DomainUtils;
+import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -46,7 +46,7 @@ public class DataFilters extends Table {
 		setName(Name);
 		setSchema(Names.getSchema());
 		
-		addField(DomainUtils.getDataFilter(session, Fields.DataFilter));
+		addField(FieldUtils.getDataFilter(session, Fields.DataFilter));
 		
 		getField(Fields.DataFilter).setPrimaryKey(true);
 		
