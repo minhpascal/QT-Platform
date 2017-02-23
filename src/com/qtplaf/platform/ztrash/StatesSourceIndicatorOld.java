@@ -116,7 +116,7 @@ public class StatesSourceIndicatorOld extends Indicator {
 			}
 
 			// This indicator data list.
-			indicatorDataList = new IndicatorDataList(getSession(), this, getIndicatorInfo(), sources);
+			indicatorDataList = new IndicatorDataList(getSession(), this, sources);
 		}
 		return indicatorDataList;
 	}

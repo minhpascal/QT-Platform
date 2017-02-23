@@ -24,7 +24,6 @@ import com.qtplaf.library.trading.data.indicators.MeanSquaredTranslation;
 import com.qtplaf.library.trading.data.indicators.PeriodIndicator;
 import com.qtplaf.library.trading.data.indicators.SimpleMovingAverage;
 import com.qtplaf.library.trading.data.indicators.WeightedMovingAverage;
-import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.util.list.ListUtils;
 
 /**
@@ -52,8 +51,7 @@ public class IndicatorUtils {
 		ExponentialMovingAverage ema = new ExponentialMovingAverage(session);
 		ema.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
-		IndicatorDataList avgList =
-			new IndicatorDataList(session, ema, ema.getIndicatorInfo(), ListUtils.asList(source));
+		IndicatorDataList avgList =	new IndicatorDataList(session, ema, ListUtils.asList(source));
 		LinePlotter plotter = new LinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
@@ -82,8 +80,7 @@ public class IndicatorUtils {
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
 		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
-		IndicatorDataList avgList =
-			new IndicatorDataList(session, sma, sma.getIndicatorInfo(), ListUtils.asList(source));
+		IndicatorDataList avgList =	new IndicatorDataList(session, sma, ListUtils.asList(source));
 		LinePlotter plotter = new LinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
@@ -112,8 +109,7 @@ public class IndicatorUtils {
 		WeightedMovingAverage sma = new WeightedMovingAverage(session);
 		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
-		IndicatorDataList avgList =
-			new IndicatorDataList(session, sma, sma.getIndicatorInfo(), ListUtils.asList(source));
+		IndicatorDataList avgList =	new IndicatorDataList(session, sma, ListUtils.asList(source));
 		LinePlotter plotter = new LinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
@@ -159,29 +155,29 @@ public class IndicatorUtils {
 		int indexPeriod = PeriodIndicator.ParamPeriodIndex;
 
 		SimpleMovingAverage sma = new SimpleMovingAverage(session);
-		IndicatorInfo inf = sma.getIndicatorInfo();
-		inf.getParameter(indexPeriod).getValue().setInteger(period);
+		sma.getIndicatorInfo().getParameter(indexPeriod).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
-		IndicatorDataList lst = new IndicatorDataList(session, sma, inf, ListUtils.asList(source));
+		IndicatorDataList lst = new IndicatorDataList(session, sma, ListUtils.asList(source));
 		LinePlotter plotter = new LinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
 		plotter.setColorBullishOdd(color);
 		plotter.setColorBearishOdd(color);
+		plotter.setIndex(0);
 		lst.addDataPlotter(plotter);
-		
+
 		int indexSma = 0;
 		for (int smooth : smoothingPeriods) {
 			SimpleMovingAverage smoothedSma = new SimpleMovingAverage(session);
-			inf = smoothedSma.getIndicatorInfo();
-			inf.getParameter(indexPeriod).getValue().setInteger(smooth);
+			smoothedSma.getIndicatorInfo().getParameter(indexPeriod).getValue().setInteger(smooth);
 			source = new IndicatorSource(lst, indexSma);
-			lst = new IndicatorDataList(session, smoothedSma, inf, ListUtils.asList(source));
+			lst = new IndicatorDataList(session, smoothedSma, ListUtils.asList(source));
 			plotter = new LinePlotter();
 			plotter.setColorBullishEven(color);
 			plotter.setColorBearishEven(color);
 			plotter.setColorBullishOdd(color);
 			plotter.setColorBearishOdd(color);
+			plotter.setIndex(0);
 			lst.addDataPlotter(plotter);
 			sma = smoothedSma;
 		}
@@ -214,7 +210,7 @@ public class IndicatorUtils {
 		IndicatorSource outputSource = new IndicatorSource(outputList, outputIndex);
 		IndicatorSource inputSource = new IndicatorSource(inputList, inputIndex);
 		List<IndicatorSource> sources = ListUtils.asList(outputSource, inputSource);
-		IndicatorDataList msList = new IndicatorDataList(session, ms, ms.getIndicatorInfo(), sources);
+		IndicatorDataList msList = new IndicatorDataList(session, ms, sources);
 		LinePlotter plotter = new LinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);

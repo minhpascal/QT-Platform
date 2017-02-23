@@ -41,8 +41,6 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
-import com.qtplaf.platform.statistics.averages.configuration.Speed;
-import com.qtplaf.platform.statistics.averages.configuration.Spread;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -77,11 +75,25 @@ public class StatesIndicator extends Indicator {
 		info.setPeriod(states.getPeriod());
 
 		// Output informations.
-		List<Field> fields = getOutputFields();
-		for (int index = 0; index < fields.size(); index++) {
-			Field field = fields.get(index);
-			info.addOutput(field.getName(), field.getTitle(), index);
+		int index = 0;
+
+		Field open = states.getFieldDefOpen();
+		Field high = states.getFieldDefHigh();
+		Field low = states.getFieldDefLow();
+		Field close = states.getFieldDefClose();
+		info.addOutput(open.getName(), open.getTitle(), index++);
+		info.addOutput(high.getName(), high.getTitle(), index++);
+		info.addOutput(low.getName(), low.getTitle(), index++);
+		info.addOutput(close.getName(), close.getTitle(), index++);
+
+		List<Field> fields = states.getFieldListAverages();
+		int lookBackward = 0;
+		for (Field field : fields) {
+			info.addOutput(field.getName(), field.getTitle(), index++);
+			int period = states.getPropertyAverage(field).getPeriod();
+			lookBackward = Math.max(lookBackward, period);
 		}
+		info.setLookBackward(lookBackward);
 	}
 
 	/**
@@ -105,8 +117,8 @@ public class StatesIndicator extends Indicator {
 			}
 
 			// This indicator data list.
-			dataList = new IndicatorDataList(getSession(), this, getIndicatorInfo(), sources);
-			
+			dataList = new IndicatorDataList(getSession(), this, sources);
+
 			mapDataLists.put("this_indicator", dataList);
 		}
 		return dataList;
@@ -118,9 +130,10 @@ public class StatesIndicator extends Indicator {
 	 * @return The price data list.
 	 */
 	public PersistorDataList getDataListPrice() {
-		DataList price = mapDataLists.get("price");
+		PersistorDataList price = (PersistorDataList) mapDataLists.get("price");
 		if (price == null) {
 			try {
+
 				// Server, instrument, period.
 				Server server = states.getServer();
 				Instrument instrument = states.getInstrument();
@@ -132,6 +145,7 @@ public class StatesIndicator extends Indicator {
 				DataInfo infoPrice = new PriceInfo(getSession(), instrument, period);
 				Persistor persistor = PersistorUtils.getPersistorDataPrice(getSession(), server, tableName);
 				price = new PersistorDataList(getSession(), infoPrice, persistor);
+				price.setCacheSize(getIndicatorInfo().getLookBackward());
 
 				mapDataLists.put("price", price);
 			} catch (Exception exc) {
@@ -169,34 +183,6 @@ public class StatesIndicator extends Indicator {
 			mapDataLists.put(averageField.getName(), dataList);
 		}
 		return (IndicatorDataList) dataList;
-	}
-
-	/**
-	 * Returns the data list for a given average field.
-	 * 
-	 * @param averageName The average name.
-	 * @return The data list for the average field.
-	 */
-	private IndicatorDataList getDataListAverage(String averageName) {
-		return (IndicatorDataList) mapDataLists.get(averageName);
-	}
-
-	/**
-	 * Returns the list of output fields.
-	 * 
-	 * @return The list of output fields.
-	 */
-	public List<Field> getOutputFields() {
-		List<Field> outputFields = new ArrayList<>();
-		outputFields.add(states.getFieldDefOpen());
-		outputFields.add(states.getFieldDefHigh());
-		outputFields.add(states.getFieldDefLow());
-		outputFields.add(states.getFieldDefClose());
-		outputFields.addAll(states.getFieldListAverages());
-		outputFields.addAll(states.getFieldListSpreadsAverageRaw());
-		outputFields.addAll(states.getFieldListSpreadsRaw());
-		outputFields.addAll(states.getFieldListSpeedsRaw());
-		return outputFields;
 	}
 
 	/**
@@ -238,46 +224,6 @@ public class StatesIndicator extends Indicator {
 		for (Field field : averageFields) {
 			Data data = getDataListAverage(field).get(index);
 			values[info.getOutputIndex(field.getName())] = data.getValue(0);
-		}
-
-		// Price spreads vs the fastest average.
-		List<Field> spreadFieldsAvgFast = states.getFieldListSpreadsAverageRaw();
-		for (Field field : spreadFieldsAvgFast) {
-			Field srcField = states.getPropertySourceField(field);
-			Data data = getDataListAverage(srcField).get(index);
-			double avgValue = data.getValue(0);
-			double srcValue = values[info.getOutputIndex(srcField.getName())];
-			double spread = (srcValue / avgValue) - 1;
-			values[info.getOutputIndex(field.getName())] = spread;
-		}
-
-		// Spreads between averages.
-		List<Field> spreadFields = states.getFieldListSpreadsRaw();
-		for (Field field : spreadFields) {
-			Spread spread = states.getPropertySpread(field);
-			Average averageFast = spread.getFastAverage();
-			Average averageSlow = spread.getSlowAverage();
-			Data dataFast = getDataListAverage(averageFast.getName()).get(index);
-			Data dataSlow = getDataListAverage(averageSlow.getName()).get(index);
-			double valueFast = dataFast.getValue(0);
-			double valueSlow = dataSlow.getValue(0);
-			double valueSpread = (valueFast / valueSlow) - 1;
-			values[info.getOutputIndex(field.getName())] = valueSpread;
-		}
-
-		// Speed (tangent) percentual of averages.
-		if (index > 0) {
-			List<Field> speedFields = states.getFieldListSpeedsRaw();
-			for (Field field : speedFields) {
-				Speed speed = states.getPropertySpeed(field);
-				Average average = speed.getAverage();
-				Data dataCurr = getDataListAverage(average.getName()).get(index);
-				Data dataPrev = getDataListAverage(average.getName()).get(index - 1);
-				double valueCurr = dataCurr.getValue(0);
-				double valuePrev = dataPrev.getValue(0);
-				double valueSpeed = (valueCurr / valuePrev) - 1;
-				values[info.getOutputIndex(field.getName())] = valueSpeed;
-			}
 		}
 
 		// Result data.

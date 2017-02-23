@@ -28,8 +28,6 @@ public class Configuration {
 
 	/** An id that identifies the configuration root. */
 	private String id;
-	/** A sort description. */
-	private String title;
 
 	/** List of averages for source and normalize calculations. */
 	private List<Average> averages = new ArrayList<>();
@@ -86,16 +84,16 @@ public class Configuration {
 	 * @return The short description.
 	 */
 	public String getTitle() {
-		return title;
-	}
-
-	/**
-	 * Set the configuration title.
-	 * 
-	 * @param title The title.
-	 */
-	public void setTitle(String title) {
-		this.title = title;
+		StringBuilder b = new StringBuilder();
+		b.append(getId().toUpperCase());
+		b.append(" ");
+		for (int i = 0; i < averages.size(); i++) {
+			if (i > 0) {
+				b.append(", ");
+			}
+			b.append(averages.get(i).getPeriod());
+		}
+		return b.toString();
 	}
 
 	/**

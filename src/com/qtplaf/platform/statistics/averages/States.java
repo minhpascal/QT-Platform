@@ -22,7 +22,10 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
+import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.data.info.DataInfo;
+import com.qtplaf.platform.statistics.averages.task.TaskStates;
 
 /**
  * States based on averages.
@@ -41,13 +44,32 @@ public class States extends Averages {
 	}
 
 	/**
+	 * Returns the persistor data list for this states statistics.
+	 * 
+	 * @return The persistor data list.
+	 */
+	public PersistorDataList getDataList() {
+
+		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
+
+		DataInfo info = new DataInfo(getSession());
+		info.setName("States");
+		info.setDescription("States data info");
+		info.setInstrument(getInstrument());
+		info.setPeriod(getPeriod());
+		DataPersistor.setDataInfoOutput(info, persistor);
+
+		return new PersistorDataList(getSession(), info, persistor);
+	}
+
+	/**
 	 * Returns the task that calculates the statistic.
 	 * 
 	 * @return The calculator task.
 	 */
 	@Override
 	public Task getTask() {
-		return null;
+		return new TaskStates(this);
 	}
 
 	/**
@@ -79,7 +101,6 @@ public class States extends Averages {
 	 */
 	@Override
 	public List<PlotData> getPlotDataList() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -16,14 +16,18 @@ package com.qtplaf.platform.statistics.averages.task;
 
 import java.util.List;
 
+import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.Data;
-import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.platform.indicators.StatesIndicator;
 import com.qtplaf.platform.statistics.averages.States;
+import com.qtplaf.platform.statistics.averages.configuration.Speed;
+import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
  *
@@ -32,7 +36,7 @@ import com.qtplaf.platform.statistics.averages.States;
  */
 public class TaskStates extends TaskAverages {
 
-	/** Underlying states source statistics. */
+	/** Underlying states statistics. */
 	private States states;
 	/** States indicator. */
 	private StatesIndicator indicator;
@@ -84,7 +88,7 @@ public class TaskStates extends TaskAverages {
 
 		// Count steps.
 		countSteps();
-		
+
 		// Result table and persistor.
 		Table table = states.getTable();
 		DataPersistor persistor = new DataPersistor(table.getPersistor());
@@ -95,20 +99,11 @@ public class TaskStates extends TaskAverages {
 		}
 		persistor.getDDL().buildTable(table);
 
-		// And the result indicator data list.
+		// And the result indicator info and data list.
+		IndicatorInfo info = indicator.getIndicatorInfo();
 		IndicatorDataList indicatorList = indicator.getDataList();
 		// The list of indicator data lists that must be calculated prior as sources.
 		List<IndicatorDataList> sources = indicator.getIndicatorDataListsToCalculate();
-
-		// All lists involved.
-		List<DataList> dataLists = DataList.getDataLists(indicatorList);
-
-		// No need to maintain all data cached in the indicator data lists. Remove when max lookback is achieved.
-		int lookBackward = 0;
-		for (IndicatorDataList source : sources) {
-			lookBackward = Math.max(lookBackward, source.getIndicator().getIndicatorInfo().getLookBackward());
-		}
-		lookBackward = Math.max(lookBackward, indicatorList.getIndicator().getIndicatorInfo().getLookBackward());
 
 		// The current index to calculate.
 		int index = 0;
@@ -139,19 +134,78 @@ public class TaskStates extends TaskAverages {
 			}
 			// Calculate the result indicator and save the data.
 			Data data = indicatorList.calculate(index);
-			persistor.insert(data);
 
-			// Remove when index greater than max look backward.
-			if (index > lookBackward) {
-				int start = index - lookBackward;
-				for (DataList dataList : dataLists) {
-					for (int i = start; i >= 0; i--) {
-						if (dataList.remove(i) == null) {
-							break;
-						}
-					}
+			// Indicator data contains open, high, low, close and the averages. Raw spreads and speed will be calculated
+			// here.
+			Record record = persistor.getDefaultRecord();
+
+			// Time.
+			record.getValue(states.getFieldDefTime().getName()).setLong(data.getTime());
+
+			// Open, high, low, close.
+			{
+				String open = states.getFieldDefOpen().getName();
+				String high = states.getFieldDefHigh().getName();
+				String low = states.getFieldDefLow().getName();
+				String close = states.getFieldDefClose().getName();
+				record.getValue(open).setDouble(data.getValue(info.getOutputIndex(open)));
+				record.getValue(high).setDouble(data.getValue(info.getOutputIndex(high)));
+				record.getValue(low).setDouble(data.getValue(info.getOutputIndex(low)));
+				record.getValue(close).setDouble(data.getValue(info.getOutputIndex(close)));
+			}
+
+			// Averages.
+			{
+				List<Field> fields = states.getFieldListAverages();
+				for (Field field : fields) {
+					String name = field.getName();
+					record.getValue(name).setDouble(data.getValue(info.getOutputIndex(name)));
 				}
 			}
+
+			// Raw price spreads vs the fastest average.
+			{
+				List<Field> fields = states.getFieldListSpreadsAverageRaw();
+				for (Field field : fields) {
+					String srcName = states.getPropertySourceField(field).getName();
+					String avgName = states.getPropertyAverage(field).getName();
+					double srcValue = data.getValue(info.getOutputIndex(srcName));
+					double avgValue = data.getValue(info.getOutputIndex(avgName));
+					double spread = (srcValue / avgValue) - 1;
+					record.getValue(field.getName()).setDouble(spread);
+				}
+			}
+
+			// Raw spreads between averages.
+			{
+				List<Field> fields = states.getFieldListSpreadsRaw();
+				for (Field field : fields) {
+					Spread spread = states.getPropertySpread(field);
+					String avgFastName = spread.getFastAverage().getName();
+					String avgSlowName = spread.getSlowAverage().getName();
+					double valueFast = data.getValue(info.getOutputIndex(avgFastName));
+					double valueSlow = data.getValue(info.getOutputIndex(avgSlowName));
+					double valueSpread = (valueFast / valueSlow) - 1;
+					record.getValue(field.getName()).setDouble(valueSpread);
+				}
+			}
+			
+			// Raw speeds of averages.
+			if (index > 0) {
+				Data prev = indicatorList.get(index - 1);
+				List<Field> fields = states.getFieldListSpeedsRaw();
+				for (Field field : fields) {
+					Speed speed = states.getPropertySpeed(field);
+					String avgName = speed.getAverage().getName();
+					double valueCurr = data.getValue(info.getOutputIndex(avgName));
+					double valuePrev = prev.getValue(info.getOutputIndex(avgName));
+					double valueSpeed = (valueCurr / valuePrev) - 1;
+					record.getValue(field.getName()).setDouble(valueSpeed);
+				}
+			}
+			
+			// Insert.
+			persistor.insert(record);
 
 			// Skip to next index.
 			index++;

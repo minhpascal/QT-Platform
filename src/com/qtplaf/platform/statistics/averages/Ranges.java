@@ -34,10 +34,11 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.platform.statistics.averages.task.TaskRanges;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- *
+ * Ranges for min-max values statistics.
  *
  * @author Miquel Sas
  */
@@ -51,7 +52,6 @@ public class Ranges extends Averages {
 	 */
 	public Ranges(Session session) {
 		super(session);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -61,8 +61,7 @@ public class Ranges extends Averages {
 	 */
 	@Override
 	public Task getTask() {
-		// TODO Auto-generated method stub
-		return null;
+		return new TaskRanges(this);
 	}
 
 	/**

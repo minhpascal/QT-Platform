@@ -57,8 +57,6 @@ public class StatisticsDefs extends Table {
 		addField(FieldUtils.getPeriodId(session, Fields.PeriodId));
 		addField(FieldUtils.getStatisticsId(session, Fields.StatisticsId));
 		addField(FieldUtils.getTableName(session, Fields.TableName));
-		
-		getField(Fields.StatisticsId).addPossibleValues(FieldUtils.getStatisticsIdPossibleValues(session));
 
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);

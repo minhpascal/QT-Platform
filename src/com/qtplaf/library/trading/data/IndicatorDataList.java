@@ -17,8 +17,8 @@ package com.qtplaf.library.trading.data;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.util.list.ListUtils;
+import com.qtplaf.library.util.map.CacheMap;
 
 /**
  * A data list that retrieves its data from an indicator, thus calculating the data each time it is retrieved through
@@ -39,7 +39,7 @@ public class IndicatorDataList extends DataList {
 	/**
 	 * A data list to cache this indicator calculated data.
 	 */
-	private MapDataList indicatorData;
+	private CacheMap<Integer, Data> map = new CacheMap<>();
 
 	/**
 	 * Constructor.
@@ -52,14 +52,29 @@ public class IndicatorDataList extends DataList {
 	public IndicatorDataList(
 		Session session,
 		Indicator indicator,
-		IndicatorInfo dataInfo,
 		List<IndicatorSource> indicatorSources) {
-		super(session, dataInfo);
+		super(session, indicator.getIndicatorInfo());
 		this.indicator = indicator;
 		this.indicatorSources = indicatorSources;
 		this.indicator.start(indicatorSources);
+	}
 
-		this.indicatorData = new MapDataList(session, dataInfo);
+	/**
+	 * Returns the cache size.
+	 * 
+	 * @return The cache size.
+	 */
+	public int getCacheSize() {
+		return map.getCacheSize();
+	}
+
+	/**
+	 * Sets the cache size. Setting the cache size to -1 has the effect to cache all data.
+	 * 
+	 * @param cacheSize The cache size.
+	 */
+	public void setCacheSize(int cacheSize) {
+		map.setCacheSize(cacheSize);
 	}
 
 	/**
@@ -101,15 +116,6 @@ public class IndicatorDataList extends DataList {
 	}
 
 	/**
-	 * Returns the indicator data size already calculated.
-	 * 
-	 * @return The indicator data size already calculated.
-	 */
-	public int getIndicatorDataSize() {
-		return indicatorData.size();
-	}
-
-	/**
 	 * Returns the number of elements in this list.
 	 *
 	 * @return The number of elements in this list.
@@ -148,7 +154,7 @@ public class IndicatorDataList extends DataList {
 	 */
 	@Override
 	public Data get(int index) {
-		Data data = indicatorData.get(index);
+		Data data = map.get(index);
 		if (data != null) {
 			return data;
 		}
@@ -163,18 +169,8 @@ public class IndicatorDataList extends DataList {
 	 */
 	public Data calculate(int index) {
 		Data data = indicator.calculate(index, indicatorSources, this);
-		indicatorData.put(index, data);
+		map.put(index, data);
 		return data;
-	}
-
-	/**
-	 * Put data at the given index.
-	 * 
-	 * @param index The index.
-	 * @param data The data.
-	 */
-	public void put(int index, Data data) {
-		indicatorData.put(index, data);
 	}
 
 	/**
@@ -184,7 +180,7 @@ public class IndicatorDataList extends DataList {
 	 * @return The removed data.
 	 */
 	public Data remove(int index) {
-		return indicatorData.remove(index);
+		return map.remove(index);
 	}
 
 	/**
@@ -194,7 +190,7 @@ public class IndicatorDataList extends DataList {
 	 * @return A boolean indicating if the argument index has been calculated.
 	 */
 	public boolean hasCalculated(int index) {
-		return indicatorData.contains(index);
+		return map.containsKey(index);
 	}
 
 	/**
@@ -206,15 +202,15 @@ public class IndicatorDataList extends DataList {
 	public String toString() {
 		StringBuilder b = new StringBuilder();
 		b.append(super.toString());
-//		if (indicatorSources != null && !indicatorSources.isEmpty()) {
-//			b.append(" Sources: ");
-//			for (int i = 0; i < indicatorSources.size(); i++) {
-//				if (i > 0) {
-//					b.append(", ");
-//				}
-//				b.append(indicatorSources.get(i));
-//			}
-//		}
+		// if (indicatorSources != null && !indicatorSources.isEmpty()) {
+		// b.append(" Sources: ");
+		// for (int i = 0; i < indicatorSources.size(); i++) {
+		// if (i > 0) {
+		// b.append(", ");
+		// }
+		// b.append(indicatorSources.get(i));
+		// }
+		// }
 		return b.toString();
 	}
 }

@@ -35,6 +35,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.ValueMap;
 import com.qtplaf.library.database.View;
+import com.qtplaf.library.trading.data.info.DataInfo;
 
 /**
  * A persistor for elements of timed <tt>Data</tt>. The general contract for a persistor of timed <tt>Data</tt> is that
@@ -53,6 +54,22 @@ public class DataPersistor implements Persistor {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Sets the data info output for a persistor that conform to the data persistor contract.
+	 * 
+	 * @param dataInfo The data info.
+	 * @param persistor The persistor.
+	 */
+	public static void setDataInfoOutput(DataInfo dataInfo, Persistor persistor) {
+		int index = 0;
+		for (int i = 2; i < persistor.getFieldCount(); i++) {
+			Field field = persistor.getField(i);
+			if (field.isDouble() && field.isPersistent()) {
+				dataInfo.addOutput(field.getName(), field.getTitle(), index++);
+			}
+		}
+	}
 
 	/**
 	 * The uderlying persistor.
@@ -277,7 +294,7 @@ public class DataPersistor implements Persistor {
 		lastIndex = last;
 		return record;
 	}
-	
+
 	/**
 	 * Returns the record given a relative index in that starts at 0.
 	 * 

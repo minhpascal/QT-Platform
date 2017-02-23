@@ -14,13 +14,9 @@
 
 package com.qtplaf.platform.util;
 
-import java.util.List;
-
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
-import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
@@ -29,8 +25,6 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.ztrash.ReferenceOld;
-import com.qtplaf.platform.ztrash.StatisticsManagerOld;
 
 /**
  * Centralizes recordset operations.
@@ -101,31 +95,5 @@ public class RecordSetUtils {
 		criteria.add(Condition.fieldEQ(persistor.getField(StatisticsDefs.Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
-	}
-
-	/**
-	 * Returns the recordset of statistics references.
-	 * 
-	 * @param session The working session.
-	 * @return The recordset of statistics references.
-	 */
-	public static RecordSet getRecordSetStatisticsReferences(Session session) {
-
-		FieldList fields = new FieldList();
-		Field fieldId = FieldUtils.getStatisticsId(session, ReferenceOld.Id);
-		fieldId.setPrimaryKey(true);
-		fields.addField(fieldId);
-		fields.addField(FieldUtils.getStatisticsTitle(session, ReferenceOld.Title));
-
-		RecordSet rs = new RecordSet(fields);
-		List<ReferenceOld> items = StatisticsManagerOld.getReferences(session);
-		for (ReferenceOld item : items) {
-			Record rc = fields.getDefaultRecord();
-			rc.setValue(ReferenceOld.Id, item.getId());
-			rc.setValue(ReferenceOld.Title, item.getTitle());
-			rs.add(rc);
-		}
-
-		return rs;
 	}
 }

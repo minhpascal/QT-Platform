@@ -14,15 +14,8 @@
 
 package com.qtplaf.platform.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.Record;
-import com.qtplaf.library.database.RecordSet;
-import com.qtplaf.library.database.Value;
-import com.qtplaf.platform.ztrash.ReferenceOld;
 
 /**
  * Field definitions.
@@ -309,24 +302,6 @@ public class FieldUtils {
 	}
 
 	/**
-	 * Returns the list of possible values of the <b><i>StatisticsId</i></b> field.
-	 * 
-	 * @param session Working session.
-	 * @return The list of possible values.
-	 */
-	public static List<Value> getStatisticsIdPossibleValues(Session session) {
-		List<Value> values = new ArrayList<>();
-		RecordSet rs = RecordSetUtils.getRecordSetStatisticsReferences(session);
-		for (int i = 0; i < rs.size(); i++) {
-			Record rc = rs.get(i);
-			Value value = new Value(rc.getValue(ReferenceOld.Id).getString());
-			value.setLabel(rc.getValue(ReferenceOld.Title).getString());
-			values.add(value);
-		}
-		return values;
-	}
-
-	/**
 	 * Returns the <b><i>StatisticsTitle</i></b> field definition.
 	 * 
 	 * @param session Working session.
@@ -367,7 +342,9 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getTimeFmt(Session session, String name) {
-		return DomainUtils.getLong(session, name, "Time fmt", "Time fmt");
+		Field timeFmt = DomainUtils.getLong(session, name, "Time fmt", "Time fmt");
+		timeFmt.setPersistent(false);
+		return timeFmt;
 	}
 
 	/**

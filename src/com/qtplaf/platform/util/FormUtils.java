@@ -40,7 +40,7 @@ import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.ztrash.StatisticsManagerOld;
+import com.qtplaf.platform.statistics.Manager;
 
 /**
  * Centralizes form operations.
@@ -203,20 +203,20 @@ public class FormUtils {
 					if (periodId.isEmpty()) {
 						return;
 					}
-					
+
 					String serverId = form.getEditField(StatisticsDefs.Fields.ServerId).getValue().toString();
 					String instrId = form.getEditField(StatisticsDefs.Fields.InstrumentId).getValue().toString();
 					String statsId = form.getEditField(StatisticsDefs.Fields.StatisticsId).getValue().toString();
- 
+
 					Session session = form.getSession();
 					Server server = ServerFactory.getServer(serverId);
 					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
 					Period period = Period.parseId(periodId);
 
-					Statistics statistics =
-						StatisticsManagerOld.getStatistics(session, server, instrument, period, statsId);
+					Manager manager = new Manager(session);
+					Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
 					Value tableName = new Value(statistics.getTable().getName());
-					
+
 					form.getRecord().setValue(StatisticsDefs.Fields.TableName, tableName);
 					form.getEditField(StatisticsDefs.Fields.TableName).setValue(tableName);
 				} catch (Exception exc) {
@@ -312,6 +312,10 @@ public class FormUtils {
 	 */
 	public static Record getStatistics(Session session, Server server, Instrument instrument, Period period) {
 		Persistor persistor = PersistorUtils.getPersistorStatistics(session);
+		Manager manager = new Manager(session);
+		persistor.getField(StatisticsDefs.Fields.StatisticsId).setPossibleValues(
+			manager.getStatisticsIdPossibleValues(server, instrument, period));
+
 		Record record = persistor.getDefaultRecord();
 		record.getValue(StatisticsDefs.Fields.ServerId).setValue(server.getId());
 		record.getValue(StatisticsDefs.Fields.InstrumentId).setValue(instrument.getId());

@@ -452,6 +452,19 @@ public abstract class Averages extends Statistics {
 		}
 		return keyFields;
 	}
+	
+	/**
+	 * Returns the list of fields to calculate ranges.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListToCalculateRanges() {
+		List<Field> fields = new ArrayList<>();
+		fields.addAll(getFieldListSpreadsAverageRaw());
+		fields.addAll(getFieldListSpreadsRaw());
+		fields.addAll(getFieldListSpeedsRaw());
+		return fields;
+	}
 
 	/**
 	 * Returns the table definition to calculate ranges for minimums and maximums.
@@ -500,7 +513,7 @@ public abstract class Averages extends Statistics {
 
 		// Index and time.
 		table.addField(getFieldDefIndex());
-		table.addField(getFieldDefIndex());
+		table.addField(getFieldDefTime());
 
 		// Time formatted.
 		table.addField(getFieldDefTimeFmt());
