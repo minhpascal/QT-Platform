@@ -30,6 +30,22 @@ import com.qtplaf.library.swing.event.WindowHandler;
 public class JDialogSession extends JDialog {
 
 	/**
+	 * Swing later show.
+	 */
+	class Show implements Runnable {
+		private boolean b;
+
+		Show(boolean b) {
+			this.b = b;
+		}
+
+		@Override
+		public void run() {
+			JDialogSession.super.setVisible(b);
+		}
+	}
+
+	/**
 	 * The working session.
 	 */
 	private Session session;
@@ -109,6 +125,10 @@ public class JDialogSession extends JDialog {
 		} else {
 			WindowManager.remove(this);
 		}
-		super.setVisible(b);
+		if (isModal()) {
+			super.setVisible(b);
+		} else {
+			SwingUtils.invokeLater(new Show(b));
+		}
 	}
 }

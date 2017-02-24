@@ -37,6 +37,7 @@ import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
+import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.statistics.averages.configuration.Configuration;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
@@ -275,23 +276,6 @@ public abstract class Averages extends Statistics {
 	}
 
 	/**
-	 * Returns the list of fields for spreads between the field and the fast average, normalized discrete values.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsAverageNormalizedDiscrete() {
-		List<Field> fields = mapFieldLists.get("spreads_avg_dsc");
-		if (fields == null) {
-			fields = getFieldListSpreadsAverage("dsc");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterNormDisc());
-			}
-			mapFieldLists.put("spreads_avg_dsc", fields);
-		}
-		return fields;
-	}
-
-	/**
 	 * Returns the list of fields for spreads between the field and the fast average, raw values.
 	 * 
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
@@ -454,18 +438,18 @@ public abstract class Averages extends Statistics {
 	}
 	
 	/**
-	 * Returns the list of fields to calculate ranges.
+	 * Returns the list of fields to calculate ranges raw.
 	 * 
 	 * @return The list of fields.
 	 */
-	public List<Field> getFieldListToCalculateRanges() {
+	public List<Field> getFieldListToCalculateRangesRaw() {
 		List<Field> fields = new ArrayList<>();
 		fields.addAll(getFieldListSpreadsAverageRaw());
 		fields.addAll(getFieldListSpreadsRaw());
 		fields.addAll(getFieldListSpeedsRaw());
 		return fields;
 	}
-
+	
 	/**
 	 * Returns the table definition to calculate ranges for minimums and maximums.
 	 * 
@@ -544,9 +528,6 @@ public abstract class Averages extends Statistics {
 
 		// Speed (tangent) of averages, normalized values continuous.
 		table.addFields(getFieldListSpeedsNormalizedContinuous());
-
-		// Price spreads over the first (fastest) average, normalized values discrete.
-		table.addFields(getFieldListSpreadsAverageNormalizedDiscrete());
 
 		// Spreads between averages, normalized values discrete.
 		table.addFields(getFieldListSpreadsNormalizedDiscrete());
@@ -718,6 +699,40 @@ public abstract class Averages extends Statistics {
 	}
 
 	/**
+	 * Returns the avg/stddev field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldDefAvgStd1() {
+		String name = "avgstd1";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			field = DomainUtils.getDouble(getSession(), "avgstd_1", "AvgStd_1", "Avg/1 Stddev value");
+			field.setPersistent(false);
+			field.setFormatter(new DataValue(getSession(), 2));
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the avg/stddev field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getFieldDefAvgStd2() {
+		String name = "avgstd2";
+		Field field = mapFields.get(name);
+		if (field == null) {
+			field = DomainUtils.getDouble(getSession(), "avgstd_2", "AvgStd_2", "Avg/2 Stddev value");
+			field.setPersistent(false);
+			field.setFormatter(new DataValue(getSession(), 2));
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
 	 * Returns the aggregate stddev field.
 	 * 
 	 * @return The field.
@@ -867,6 +882,7 @@ public abstract class Averages extends Statistics {
 			String header = "State key";
 			String label = "State key";
 			field = DomainUtils.getString(getSession(), name, length, header, label);
+			field.setNullable(true);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1222,8 +1238,8 @@ public abstract class Averages extends Statistics {
 		try {
 
 			// Ranges statistics.
-			Ranges ranges = new Ranges(getSession());
-			ranges.setConfiguration(getConfiguration());
+			Manager manager = new Manager(getSession());
+			Ranges ranges = manager.getRanges(getServer(), getInstrument(), getPeriod(), getConfiguration());
 
 			// The map to fill.
 			Map<String, Normalizer> map = new HashMap<>();

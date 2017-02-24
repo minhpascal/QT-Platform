@@ -24,6 +24,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.FieldCalculator;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -46,6 +47,46 @@ public class Ranges extends Averages {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Field calculator to view the normal distribution index.
+	 */
+	class NormalIndex implements FieldCalculator {
+		
+		/** Stddev times. */
+		private double stddevs;
+		
+		NormalIndex(double stddevs) {
+			this.stddevs = stddevs;
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public Value getValue(Record record) {
+			List<Double> values = (List<Double>) record.getProperty("values");
+			Value normalIndex = (Value) record.getProperty(stddevs);
+			if (normalIndex == null) {
+				double average = record.getValue(getFieldDefAverage().getName()).getDouble();
+				double stddev = record.getValue(getFieldDefStdDev().getName()).getDouble();
+				double min = average - (stddev * stddevs);
+				double max = average + (stddev * stddevs);
+				int count = 0;
+				for (Double value : values) {
+					if (value >= min && value <= max) {
+						count++;
+					}
+				}
+				double index = 0;
+				if (!values.isEmpty()) {
+					index = 100.0 * Double.valueOf(count) / Double.valueOf(values.size());
+				}
+				normalIndex = new Value(index);
+				record.setProperty(stddevs, normalIndex);
+			}
+			return normalIndex;
+		}
+
+	}
 
 	/**
 	 * @param session
@@ -159,6 +200,12 @@ public class Ranges extends Averages {
 		// Aggregate function stddev.
 		view.addField(getFieldDefStdDev());
 
+		// Index +- n * stddev
+		view.addField(getFieldDefAvgStd1());
+		view.addField(getFieldDefAvgStd2());
+		getFieldDefAvgStd1().setCalculator(new NormalIndex(1));
+		getFieldDefAvgStd2().setCalculator(new NormalIndex(2));
+		
 		// Group by.
 		view.addGroupBy(getFieldDefName());
 		view.addGroupBy(getFieldDefMinMax());

@@ -228,7 +228,7 @@ public class Normalizer implements StateValueFunction {
 			double step = 1.0 / Double.valueOf(segments);
 			double value = 0;
 			for (int i = 0; i < size; i++) {
-				positives[i] = NumberUtils.round(value, getScale());
+				positives[i] = value;
 				value += step;
 			}
 		}
@@ -253,7 +253,7 @@ public class Normalizer implements StateValueFunction {
 			double step = (-1.0) / Double.valueOf(segments);
 			double value = 0;
 			for (int i = 0; i < size; i++) {
-				negatives[i] = NumberUtils.round(value, getScale());
+				negatives[i] = value;
 				value += step;
 			}
 		}

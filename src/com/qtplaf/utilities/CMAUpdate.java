@@ -139,7 +139,7 @@ public class CMAUpdate {
 				progressManager.addTask(task);
 			}
 			progressManager.addPreCloseAction(new ActionClose(session));
-			progressManager.showFrame(true);
+			progressManager.showFrame();
 		} catch (Exception exc) {
 			logger.catching(exc);
 		}

@@ -16,7 +16,6 @@ package com.qtplaf.library.swing;
 import javax.swing.UIManager;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.swing.core.JOptionDialog;
 
 /**
  * Message box with standard options.
@@ -387,7 +386,7 @@ public class MessageBox {
 		Option[] options,
 		Option initialOption) {
 		
-		JOptionDialog dialog = new JOptionDialog(session, WindowManager.getLast());
+		OptionDialog dialog = new OptionDialog(session);
 		if (title != null) {
 			dialog.setTitle(title);
 		}

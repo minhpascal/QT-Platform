@@ -44,7 +44,7 @@ public abstract class Indicator {
 	 * @return The indicator data list.
 	 */
 	public static DataList calculate(Session session, Indicator indicator, List<IndicatorSource> indicatorSources) {
-		DataList indicatorData = new MapDataList(session, indicator.getIndicatorInfo());
+		IndicatorDataList indicatorData = new IndicatorDataList(session, indicator, indicatorSources);
 		indicator.start(indicatorSources);
 		int size = indicatorSources.get(0).getDataList().size();
 		for (int index = 0; index < size; index++) {

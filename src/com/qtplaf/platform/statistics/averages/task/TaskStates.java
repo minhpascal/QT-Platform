@@ -30,7 +30,7 @@ import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
- *
+ * Calculates source states values.
  *
  * @author Miquel Sas
  */
@@ -51,7 +51,7 @@ public class TaskStates extends TaskAverages {
 		this.states = states;
 		this.indicator = new StatesIndicator(states);
 
-		setNameAndDescription(states);
+		setNameAndDescription(states, "States raw values");
 	}
 
 	/**

@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.ztrash;
+package com.qtplaf.platform.statistics.averages.task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,73 +27,71 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
-import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.platform.ztrash.StatesAveragesOld.Fields;
+import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.platform.statistics.Manager;
+import com.qtplaf.platform.statistics.averages.States;
+import com.qtplaf.platform.statistics.averages.Transitions;
 
 /**
- * Task to calculate transitions among discrete states.
+ * Calculates transitions.
  *
  * @author Miquel Sas
  */
-public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
+public class TaskTransitions extends TaskAverages {
 
-	/** Origin states transitions statistics. */
-	private StatesTransitionsOld statesTransitions;
-	/** States transitions persistor. */
-	private Persistor persistorTransitions;
-	/** States discrete persistor. */
-	private Persistor persistorDiscrete;
+	/** Underlying transitions statistics. */
+	private Transitions transitions;
+	/** Transitions persistor. */
+	private Persistor transitionsPersistor;
+	/** Underlying transitions statistics. */
+	private States states;
+	/** Source states data list. */
+	private DataPersistor statesPersistor;
 
+	/** Short cut to key name. */
 	private String keyName;
+	/** Short cut to input key name. */
 	private String keyInputName;
+	/** Short cut to output key name. */
 	private String keyOutputName;
+	/** Short cut to input index name. */
 	private String indexInputName;
+	/** Short cut to output index name. */
 	private String indexOutputName;
-	private String groupName;
+	/** Short cut to index group name. */
+	private String indexGroupName;
+	/** Short cut to index name. */
 	private String indexName;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param statesTransitions Origin states transitions statistics.
+	 * @param transitions The underlying transitions statistics.
 	 */
-	public TaskStatesTransitionsOld(StatesTransitionsOld statesTransitions) {
-		super(statesTransitions.getSession());
-		this.statesTransitions = statesTransitions;
-		setNameAndDescription(statesTransitions);
+	public TaskTransitions(Transitions transitions) {
+		super(transitions.getSession());
+		
+		this.transitions = transitions;
+		this.transitionsPersistor = transitions.getTable().getPersistor();
 
-		keyName = statesTransitions.getFieldKey().getName();
-		keyInputName = statesTransitions.getFieldKeyInput().getName();
-		keyOutputName = statesTransitions.getFieldKeyOutput().getName();
-		indexInputName = statesTransitions.getFieldIndexInput().getName();
-		indexOutputName = statesTransitions.getFieldIndexOutput().getName();
-		groupName = statesTransitions.getFieldGroup().getName();
-		indexName = statesTransitions.getFieldIndex().getName();
-	}
+		Manager manager = new Manager(getSession());
+		this.states = manager.getStates(
+			transitions.getServer(),
+			transitions.getInstrument(),
+			transitions.getPeriod(),
+			transitions.getConfiguration());
+		this.statesPersistor = states.getDataList().getDataPersistor();
 
-	/**
-	 * Returns the transitions persistor.
-	 * 
-	 * @return The transitions persistor.
-	 */
-	private Persistor getPersistorTransitions() {
-		if (persistorTransitions == null) {
-			persistorTransitions = statesTransitions.getTable().getPersistor();
-		}
-		return persistorTransitions;
-	}
+		keyName = transitions.getFieldDefKeyState().getName();
+		keyInputName = transitions.getFieldDefKeyInput().getName();
+		keyOutputName = transitions.getFieldDefKeyOutput().getName();
+		indexInputName = transitions.getFieldDefIndexInput().getName();
+		indexOutputName = transitions.getFieldDefIndexOutput().getName();
+		indexGroupName = transitions.getFieldDefIndexGroup().getName();
+		indexName = transitions.getFieldDefIndex().getName();
 
-	/**
-	 * Returns the states discrete persistor.
-	 * 
-	 * @return The states discrete persistor.
-	 */
-	private Persistor getPersistorDiscrete() {
-		if (persistorDiscrete == null) {
-			persistorDiscrete = statesTransitions.getStatesNormalizeDiscrete().getTable().getPersistor();
-		}
-		return persistorDiscrete;
+		setNameAndDescription(transitions, "Transitions values");
 	}
 
 	/**
@@ -109,8 +107,8 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 		// Notify counting.
 		notifyCounting();
 
-		// Do count.
-		long count = getPersistorDiscrete().count(null);
+		// Number of steps.
+		int count = Long.valueOf(statesPersistor.size()).intValue();
 
 		// Notify.
 		notifyStepCount(count);
@@ -133,22 +131,20 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 			// Count steps.
 			countSteps();
 
-			// Result table and persistor.
-			Table tableTransitions = statesTransitions.getTable();
-
 			// Drop and create the table.
-			if (getPersistorTransitions().getDDL().existsTable(tableTransitions)) {
-				getPersistorTransitions().getDDL().dropTable(tableTransitions);
+			if (transitionsPersistor.getDDL().existsTable(transitions.getTable())) {
+				transitionsPersistor.getDDL().dropTable(transitions.getTable());
 			}
-			getPersistorTransitions().getDDL().buildTable(tableTransitions);
-
-			// Source (discrete) iterator.
-			Order order = new Order();
-			order.add(getPersistorDiscrete().getField(Fields.Index));
-			iterator = getPersistorDiscrete().iterator(null, order);
+			transitionsPersistor.getDDL().buildTable(transitions.getTable());
 
 			// Map of processed keys
 			Map<String, String> processedKeys = new HashMap<>();
+			
+			// Source (states) iterator.
+			Order order = new Order();
+			order.add(states.getFieldDefIndex());
+			iterator = statesPersistor.iterator(null, order);
+
 
 			// Step and steps.
 			long step = 0;
@@ -175,15 +171,15 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 					break;
 				}
 
-				// The source discrete record, key and index values.
-				Record discrete = iterator.next();
-				String key = discrete.getValue(keyName).getString();
+				// Record.
+				Record record = iterator.next();
+				String key = record.getValue(keyName).getString();
 
 				// Process the key if not already processed.
 				if (!processedKeys.containsKey(key)) {
 					List<Record> transitions = getTransitions(key);
 					for (Record transition : transitions) {
-						getPersistorTransitions().insert(transition);
+						transitionsPersistor.insert(transition);
 					}
 					processedKeys.put(key, key);
 				}
@@ -193,7 +189,6 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 				// Yield.
 				Thread.yield();
 			}
-
 		} finally {
 			if (iterator != null) {
 				iterator.close();
@@ -214,12 +209,12 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 		int group = -1;
 		String keyOutputPrevious = null;
 		for (int i = 0; i < recordSet.size(); i++) {
-			
+
 			int indexInput = recordSet.get(i).getValue(indexName).getInteger();
 			int indexOutput = indexInput + 1;
-			
+
 			String keyOutput = null;
-			
+
 			// If not the last record, check if next record is index output (same output key correlative).
 			if (i < recordSet.size() - 1) {
 				int indexNext = recordSet.get(i + 1).getValue(indexName).getInteger();
@@ -229,9 +224,12 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 			}
 			// Not correlative.
 			if (keyOutput == null) {
-				keyOutput = getKey(indexOutput);
+				Record rcOutput = statesPersistor.getRecord(Long.valueOf(indexOutput));
+				if (rcOutput != null) {
+					keyOutput = rcOutput.getValue(keyName).getString();
+				}
 			}
-			
+
 			// Create the transition.
 			if (keyOutput != null) {
 				if (group < 0) {
@@ -242,12 +240,12 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 					group = indexInput;
 				}
 				if (!map.containsKey(indexInput)) {
-					Record transition = getPersistorTransitions().getDefaultRecord();
+					Record transition = transitionsPersistor.getDefaultRecord();
 					transition.setValue(keyInputName, keyInput);
 					transition.setValue(keyOutputName, keyOutput);
 					transition.setValue(indexInputName, indexInput);
 					transition.setValue(indexOutputName, indexOutput);
-					transition.setValue(groupName, group);
+					transition.setValue(indexGroupName, group);
 					transitions.add(transition);
 					map.put(indexInput, indexOutput);
 				}
@@ -265,8 +263,8 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 	 */
 	private RecordSet getRecordSet(String key) throws Exception {
 
-		Field indexField = getPersistorDiscrete().getField(indexName);
-		Field keyField = getPersistorDiscrete().getField(keyName);
+		Field indexField = statesPersistor.getField(indexName);
+		Field keyField = statesPersistor.getField(keyName);
 		Value keyValue = new Value(key);
 
 		Criteria criteria = new Criteria();
@@ -275,28 +273,7 @@ public class TaskStatesTransitionsOld extends TaskStatesAveragesOld {
 		Order order = new Order();
 		order.add(indexField);
 
-		return getPersistorDiscrete().select(criteria, order);
-	}
-
-	/**
-	 * Returns the key (or null) in the source given the index.
-	 * 
-	 * @param index The index in the source.
-	 * @return The key or null.
-	 */
-	private String getKey(int index) throws Exception {
-		Field indexField = getPersistorDiscrete().getField(indexName);
-		Value indexValue = new Value(index);
-		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(indexField, indexValue));
-		String key = null;
-		RecordIterator iterator = getPersistorDiscrete().iterator(criteria);
-		if (iterator.hasNext()) {
-			Record record = iterator.next();
-			key = record.getValue(keyName).getString();
-		}
-		iterator.close();
-		return key;
+		return statesPersistor.select(criteria, order);
 	}
 
 }

@@ -29,6 +29,22 @@ import com.qtplaf.library.swing.event.WindowHandler;
 public class JFrameSession extends JFrame {
 
 	/**
+	 * Swing later show.
+	 */
+	class Show implements Runnable {
+		private boolean b;
+
+		Show(boolean b) {
+			this.b = b;
+		}
+
+		@Override
+		public void run() {
+			JFrameSession.super.setVisible(b);
+		}
+	}
+
+	/**
 	 * The working session.
 	 */
 	private Session session;
@@ -91,6 +107,20 @@ public class JFrameSession extends JFrame {
 	 */
 	@Override
 	public void setVisible(boolean b) {
+		if (b) {
+			WindowManager.add(this);
+		} else {
+			WindowManager.remove(this);
+		}
+		SwingUtils.invokeLater(new Show(b));
+	}
+
+	/**
+	 * Set the frame visible immediately.
+	 * 
+	 * @param b A boolean.
+	 */
+	public void setVisibleImmediately(boolean b) {
 		if (b) {
 			WindowManager.add(this);
 		} else {

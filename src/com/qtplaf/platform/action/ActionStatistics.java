@@ -37,6 +37,7 @@ import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
@@ -232,13 +233,13 @@ public class ActionStatistics extends AbstractAction {
 				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
 				Manager manager = new Manager(session);
 				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
-				if (statistics.getTask() == null) {
-					MessageBox.warning(session, "No calculation task defined.");
+				Task task = statistics.getTask();
+				if (task == null) {
 					return;
 				}
 				ProgressManager progress = new ProgressManager(session);
 				progress.setSize(0.4, 0.4);
-				progress.addTask(statistics.getTask());
+				progress.addTask(task);
 				progress.showFrame();
 
 			} catch (Exception exc) {

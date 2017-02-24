@@ -37,6 +37,7 @@ import com.qtplaf.library.task.Task;
  * @author Miquel Sas
  */
 public class ProgressManager {
+	
 	/**
 	 * Action close.
 	 */
@@ -156,19 +157,10 @@ public class ProgressManager {
 	 * Show the frame resizable.
 	 */
 	public void showFrame() {
-		showFrame(true);
-	}
-
-	/**
-	 * Show the frame..
-	 * 
-	 * @param resizable A boolean that indicates if the frame is resizable.
-	 */
-	public void showFrame(boolean resizable) {
 		frame.setTitle(title);
 		frame.setComponent(new JScrollPane(progress));
 		frame.addAction(new ActionClose(getSession()));
-		frame.showFrame(resizable);
+		frame.showFrame(true);
 	}
 
 	/**
@@ -190,5 +182,4 @@ public class ProgressManager {
 	public void setSize(int width, int height) {
 		frame.setSize(width, height);
 	}
-
 }

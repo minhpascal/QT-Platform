@@ -21,6 +21,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.platform.statistics.averages.task.TaskTransitions;
 
 /**
  * Transitions statistics.
@@ -34,38 +35,43 @@ public class Transitions extends Averages {
 	 */
 	public Transitions(Session session) {
 		super(session);
-		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see com.qtplaf.library.statistics.Statistics#getTask()
+	/**
+	 * Returns the task that calculates the statistic.
+	 * 
+	 * @return The calculator task.
 	 */
 	@Override
 	public Task getTask() {
-		// TODO Auto-generated method stub
-		return null;
+		return new TaskTransitions(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.qtplaf.library.statistics.Statistics#getTable()
+	/**
+	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
+	 * expected to have at least fields to hold the output values.
+	 * 
+	 * @return The results table.
 	 */
 	@Override
 	public Table getTable() {
-		// TODO Auto-generated method stub
-		return null;
+		return getTableTransitions();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.qtplaf.library.statistics.Statistics#getRecordSet()
+	/**
+	 * Returns the recordset to browse the statistic results.
+	 * 
+	 * @return The recordset to browse the statistic results.
 	 */
 	@Override
 	public RecordSet getRecordSet() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.qtplaf.library.statistics.Statistics#getPlotDataList()
+	/**
+	 * Returns the list of plot datas to configure a chart and show the statistics results.
+	 * 
+	 * @return The list of plot datas.
 	 */
 	@Override
 	public List<PlotData> getPlotDataList() {

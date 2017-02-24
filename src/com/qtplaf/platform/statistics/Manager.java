@@ -199,6 +199,7 @@ public class Manager {
 	private Configuration getConfigurationSF() {
 		Configuration cfg = new Configuration(getSession());
 		cfg.setId("sf");
+		cfg.setScale(3);
 
 		// Averages.
 		Average avg_5 = new Average(5, 5, 3);
@@ -212,6 +213,8 @@ public class Manager {
 
 		// Spread 5-21 and normalizer with 40 segments.
 		Normalizer norm_5_21 = new Normalizer();
+		norm_5_21.setMaximum(1.0);
+		norm_5_21.setMinimum(-1.0);
 		norm_5_21.setSegments(40);
 		Spread spread_5_21 = new Spread();
 		spread_5_21.setFastAverage(avg_5);
@@ -222,6 +225,8 @@ public class Manager {
 
 		// Spread 21-89 and normalizer with 20 segments.
 		Normalizer norm_21_89 = new Normalizer();
+		norm_21_89.setMaximum(1.0);
+		norm_21_89.setMinimum(-1.0);
 		norm_21_89.setSegments(20);
 		Spread spread_21_89 = new Spread();
 		spread_21_89.setFastAverage(avg_21);
@@ -232,6 +237,8 @@ public class Manager {
 
 		// Spread 89-377 and normalizer with 20 segments.
 		Normalizer norm_89_377 = new Normalizer();
+		norm_89_377.setMaximum(1.0);
+		norm_89_377.setMinimum(-1.0);
 		norm_89_377.setSegments(20);
 		Spread spread_89_377 = new Spread();
 		spread_89_377.setFastAverage(avg_89);
@@ -242,6 +249,8 @@ public class Manager {
 
 		// Speed 89 and normalizer with 20 segments.
 		Normalizer norm_89 = new Normalizer();
+		norm_89.setMaximum(1.0);
+		norm_89.setMinimum(-1.0);
 		norm_89.setSegments(20);
 		Speed speed_89 = new Speed();
 		speed_89.setAverage(avg_89);
@@ -251,6 +260,8 @@ public class Manager {
 
 		// Speed 377 and normalizer with 20 segments.
 		Normalizer norm_377 = new Normalizer();
+		norm_377.setMaximum(1.0);
+		norm_377.setMinimum(-1.0);
 		norm_377.setSegments(20);
 		Speed speed_377 = new Speed();
 		speed_377.setAverage(avg_377);

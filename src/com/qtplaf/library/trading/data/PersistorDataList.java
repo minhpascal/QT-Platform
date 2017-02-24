@@ -175,20 +175,30 @@ public class PersistorDataList extends DataList {
 	 */
 	@Override
 	public Data get(int index) {
+		return dataPersistor.getData(getRecord(index));
+	}
 
-		Data data = getFromCache(index);
-		if (data != null) {
-			return data;
+	/**
+	 * Returns the record given the index.
+	 * 
+	 * @param index The index.
+	 * @return The record.
+	 */
+	public Record getRecord(int index) {
+
+		Record record = getRecordFromCache(index);
+		if (record != null) {
+			return record;
 		}
 
 		RecordSet recordSet = dataPersistor.getPage(Long.valueOf(index), getPageSize());
-		Record record = recordSet.get(0);
+		record = recordSet.get(0);
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record rc = recordSet.get(i);
 			int rcIndex = dataPersistor.getIndex(rc).intValue();
-			addToCache(rcIndex, recordSet.get(i));
+			addRecordToCache(rcIndex, recordSet.get(i));
 		}
-		return dataPersistor.getData(record);
+		return record;
 	}
 
 	/**
@@ -197,22 +207,18 @@ public class PersistorDataList extends DataList {
 	 * @param index The index relative to 0.
 	 * @param record The record.
 	 */
-	private void addToCache(int index, Record record) {
+	private void addRecordToCache(int index, Record record) {
 		map.put(index, record);
 	}
 
 	/**
-	 * Returns the data from the cache.
+	 * Returns the record from the cache.
 	 * 
 	 * @param index The relative index starting at 0.
-	 * @return The data or null if not present in the cache.
+	 * @return The record or null if not present in the cache.
 	 */
-	private Data getFromCache(int index) {
-		Record record = map.get(index);
-		if (record != null) {
-			return dataPersistor.getData(record);
-		}
-		return null;
+	private Record getRecordFromCache(int index) {
+		return map.get(index);
 	}
 
 	/**

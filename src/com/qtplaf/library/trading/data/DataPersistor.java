@@ -699,6 +699,18 @@ public class DataPersistor implements Persistor {
 	}
 
 	/**
+	 * Saves the data, inserting if it does not exists and updating if it does.
+	 * 
+	 * @param data The data to save.
+	 * @return The number of updated records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int save(Data data) throws PersistorException {
+		Record record = getRecord(data);
+		return persistor.save(record);
+	}
+
+	/**
 	 * Select a list of records based on a selection criteria.
 	 *
 	 * @param criteria The selection criteria.
@@ -743,6 +755,18 @@ public class DataPersistor implements Persistor {
 	 */
 	public ValueMap sum(Criteria criteria, String... aliases) throws PersistorException {
 		return persistor.sum(criteria, aliases);
+	}
+
+	/**
+	 * Update a data.
+	 * 
+	 * @param data The data.
+	 * @return The number of updated records (one or zero).
+	 * @throws PersistorException
+	 */
+	public int update(Data data) throws PersistorException {
+		Record record = getRecord(data);
+		return persistor.update(record);
 	}
 
 	/**

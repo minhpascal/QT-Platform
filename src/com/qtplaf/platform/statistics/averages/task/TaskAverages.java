@@ -37,9 +37,10 @@ public abstract class TaskAverages extends TaskRunner {
 	/**
 	 * Set the name and the description given the averages statistics.
 	 * 
-	 * @param stats The averages statistics.
+	 * @param averages The averages statistics.
+	 * @param descriptionPrefix The description prefix.
 	 */
-	protected void setNameAndDescription(Averages averages) {
+	protected void setNameAndDescription(Averages averages, String descriptionPrefix) {
 		
 		StringBuilder name = new StringBuilder();
 		name.append(averages.getServer().getId());
@@ -52,6 +53,10 @@ public abstract class TaskAverages extends TaskRunner {
 		setName(name.toString());
 
 		StringBuilder desc = new StringBuilder();
+		if (descriptionPrefix != null) {
+			desc.append(descriptionPrefix);
+			desc.append(" - ");
+		}
 		desc.append(averages.getServer().getName());
 		desc.append(" - ");
 		desc.append(averages.getInstrument().getId());

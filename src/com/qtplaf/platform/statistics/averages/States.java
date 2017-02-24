@@ -19,12 +19,14 @@ import java.util.List;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.swing.OptionDialog;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
+import com.qtplaf.platform.statistics.averages.task.TaskNormalizes;
 import com.qtplaf.platform.statistics.averages.task.TaskStates;
 
 /**
@@ -69,7 +71,23 @@ public class States extends Averages {
 	 */
 	@Override
 	public Task getTask() {
-		return new TaskStates(this);
+		
+		OptionDialog dialog = new OptionDialog(getSession());
+		dialog.setTitle("Task selection");
+		dialog.setMessage("Select the task to execute");
+		dialog.addOption("Calculate states");
+		dialog.addOption("Normalize values");
+		dialog.addOption("Cancel", true);
+		
+		String option = dialog.showDialog();
+		if (option.equals("Calculate states")) {
+			return new TaskStates(this);
+		}
+		if (option.equals("Normalize values")) {
+			return new TaskNormalizes(this);
+		}
+		
+		return null;
 	}
 
 	/**
@@ -94,10 +112,10 @@ public class States extends Averages {
 		return new DataRecordSet(persistor);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the list of plot datas to configure a chart and show the statistics results.
 	 * 
-	 * @see com.qtplaf.library.statistics.Statistics#getPlotDataList()
+	 * @return The list of plot datas.
 	 */
 	@Override
 	public List<PlotData> getPlotDataList() {

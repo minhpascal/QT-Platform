@@ -55,7 +55,7 @@ public class TaskRanges extends TaskAverages {
 			ranges.getConfiguration());
 		this.statesList = states.getDataList();
 
-		setNameAndDescription(ranges);
+		setNameAndDescription(ranges, "Ranges (min-max) values");
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class TaskRanges extends TaskAverages {
 		statesList.setCacheSize(cacheSize * 10);
 
 		// Fields to calculate ranges.
-		List<Field> fields = ranges.getFieldListToCalculateRanges();
+		List<Field> fields = ranges.getFieldListToCalculateRangesRaw();
 
 		// The current index to calculate.
 		int index = 0;

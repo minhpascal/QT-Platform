@@ -435,7 +435,7 @@ public class JChart extends JPanel {
 			// Set the bottom the chart pointed by index.
 			splitPane.setBottomComponent(chartContainers.get(index));
 
-			// Cecrease the index because we add charts in inverse order.
+			// Decrease the index because we add charts in inverse order.
 			index--;
 
 			// If there are no split panels added, then simply add this one, otherwise this one will be the top
