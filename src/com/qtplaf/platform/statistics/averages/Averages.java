@@ -242,58 +242,6 @@ public abstract class Averages extends Statistics {
 	}
 
 	/**
-	 * Returns the list of fields for spreads between the field and the fast average, raw values.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsAverageRaw() {
-		List<Field> fields = mapFieldLists.get("spreads_avg_raw");
-		if (fields == null) {
-			fields = getFieldListSpreadsAverage("raw");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterRaw());
-			}
-			mapFieldLists.put("spreads_avg_raw", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of fields for spreads between the field and the fast average, normalized continuous values.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsAverageNormalizedContinuous() {
-		List<Field> fields = mapFieldLists.get("spreads_avg_nrm");
-		if (fields == null) {
-			fields = getFieldListSpreadsAverage("nrm");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterNormCont());
-			}
-			mapFieldLists.put("spreads_avg_nrm", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of fields for spreads between the field and the fast average, raw values.
-	 * 
-	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
-	 * @return The list of fields.
-	 */
-	private List<Field> getFieldListSpreadsAverage(String suffix) {
-		List<Field> fields = new ArrayList<>();
-		Average averageFast = getConfiguration().getAverages().get(0);
-		Field high = getFieldDefHigh();
-		Field low = getFieldDefLow();
-		Field close = getFieldDefClose();
-		fields.add(getFieldDefSpread(high, averageFast, suffix));
-		fields.add(getFieldDefSpread(low, averageFast, suffix));
-		fields.add(getFieldDefSpread(close, averageFast, suffix));
-		return fields;
-	}
-
-	/**
 	 * Returns the list of spread fields, raw values
 	 * 
 	 * @return The list of fields.
@@ -333,7 +281,55 @@ public abstract class Averages extends Statistics {
 	}
 
 	/**
-	 * Returns the list of spread fields, raw values
+	 * Returns the list of delta fields, raw values.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListDeltasRaw() {
+		List<Field> fields = mapFieldLists.get("deltas_raw");
+		if (fields == null) {
+			fields = getFieldListDeltas("raw");
+			for (Field field : fields) {
+				field.setFormatter(getValueFormatterRaw());
+			}
+			mapFieldLists.put("deltas_raw", fields);
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of delta fields, normalized continuous.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListDeltasNormalizedContinuous() {
+		List<Field> fields = mapFieldLists.get("deltas_nrm");
+		if (fields == null) {
+			fields = getFieldListDeltas("nrm");
+			for (Field field : fields) {
+				field.setFormatter(getValueFormatterRaw());
+			}
+			mapFieldLists.put("deltas_nrm", fields);
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of delta fields.
+	 * 
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
+	 * @return The list of fields.
+	 */
+	private List<Field> getFieldListDeltas(String suffix) {
+		List<Field> fields = new ArrayList<>();
+		fields.add(getFieldDefDelta(getFieldDefHigh(), suffix));
+		fields.add(getFieldDefDelta(getFieldDefLow(), suffix));
+		fields.add(getFieldDefDelta(getFieldDefClose(), suffix));
+		return fields;
+	}
+
+	/**
+	 * Returns the list of spread fields.
 	 * 
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
@@ -436,7 +432,7 @@ public abstract class Averages extends Statistics {
 		}
 		return keyFields;
 	}
-	
+
 	/**
 	 * Returns the list of fields to calculate ranges raw.
 	 * 
@@ -444,12 +440,12 @@ public abstract class Averages extends Statistics {
 	 */
 	public List<Field> getFieldListToCalculateRangesRaw() {
 		List<Field> fields = new ArrayList<>();
-		fields.addAll(getFieldListSpreadsAverageRaw());
+		fields.addAll(getFieldListDeltasRaw());
 		fields.addAll(getFieldListSpreadsRaw());
 		fields.addAll(getFieldListSpeedsRaw());
 		return fields;
 	}
-	
+
 	/**
 	 * Returns the table definition to calculate ranges for minimums and maximums.
 	 * 
@@ -510,18 +506,18 @@ public abstract class Averages extends Statistics {
 
 		// Averages fields.
 		table.addFields(getFieldListAverages());
-
-		// Price spreads over the first (fastest) average, raw values.
-		table.addFields(getFieldListSpreadsAverageRaw());
+		
+		// Deltas high, low, close, raw values.
+		table.addFields(getFieldListDeltasRaw());
 
 		// Spreads between averages, raw values.
 		table.addFields(getFieldListSpreadsRaw());
 
 		// Speed (tangent) of averages, raw values
 		table.addFields(getFieldListSpeedsRaw());
-
-		// Price spreads over the first (fastest) average, normalized values continuous.
-		table.addFields(getFieldListSpreadsAverageNormalizedContinuous());
+		
+		// Deltas high, low, close, normalized values continuous.
+		table.addFields(getFieldListDeltasNormalizedContinuous());
 
 		// Spreads between averages, normalized values continuous.
 		table.addFields(getFieldListSpreadsNormalizedContinuous());
@@ -536,7 +532,7 @@ public abstract class Averages extends Statistics {
 		table.addFields(getFieldListSpeedsNormalizedDiscrete());
 
 		// The state key.
-		table.addField(getFieldDefKeyState());
+		table.addField(getFieldDefState());
 
 		// Primary key on Time.
 		getFieldDefIndex().setPrimaryKey(true);
@@ -549,7 +545,7 @@ public abstract class Averages extends Statistics {
 
 		// Non unique index on the state key.
 		Index indexOnKeyState = new Index();
-		indexOnKeyState.add(getFieldDefKeyState());
+		indexOnKeyState.add(getFieldDefState());
 		indexOnKeyState.setUnique(false);
 		table.addIndex(indexOnKeyState);
 
@@ -571,8 +567,8 @@ public abstract class Averages extends Statistics {
 		table.setSchema(Names.getSchema(getServer()));
 
 		// Input and output states (keys)
-		table.addField(getFieldDefKeyInput());
-		table.addField(getFieldDefKeyOutput());
+		table.addField(getFieldDefStateInput());
+		table.addField(getFieldDefStateOutput());
 
 		// Input and output indexes of source states.
 		table.addField(getFieldDefIndexInput());
@@ -587,8 +583,8 @@ public abstract class Averages extends Statistics {
 		table.addField(getFieldDefTransitionValueClose());
 
 		// Primary key.
-		getFieldDefKeyInput().setPrimaryKey(true);
-		getFieldDefKeyOutput().setPrimaryKey(true);
+		getFieldDefStateInput().setPrimaryKey(true);
+		getFieldDefStateOutput().setPrimaryKey(true);
 		getFieldDefIndexInput().setPrimaryKey(true);
 		getFieldDefIndexOutput().setPrimaryKey(true);
 
@@ -838,13 +834,13 @@ public abstract class Averages extends Statistics {
 	 * 
 	 * @return The field.
 	 */
-	public Field getFieldDefKeyInput() {
-		String name = "key_in";
+	public Field getFieldDefStateInput() {
+		String name = "state_in";
 		Field field = mapFields.get(name);
 		if (field == null) {
 			int length = 100;
-			String header = "Input key";
-			String label = "Input key";
+			String header = "Input state key";
+			String label = "Input state key";
 			field = DomainUtils.getString(getSession(), name, length, header, label);
 			mapFields.put(name, field);
 		}
@@ -856,13 +852,13 @@ public abstract class Averages extends Statistics {
 	 * 
 	 * @return The field.
 	 */
-	public Field getFieldDefKeyOutput() {
-		String name = "key_out";
+	public Field getFieldDefStateOutput() {
+		String name = "state_out";
 		Field field = mapFields.get(name);
 		if (field == null) {
 			int length = 100;
-			String header = "Output key";
-			String label = "Output key";
+			String header = "Output state key";
+			String label = "Output state key";
 			field = DomainUtils.getString(getSession(), name, length, header, label);
 			mapFields.put(name, field);
 		}
@@ -874,8 +870,8 @@ public abstract class Averages extends Statistics {
 	 * 
 	 * @return The field.
 	 */
-	public Field getFieldDefKeyState() {
-		String name = "key_state";
+	public Field getFieldDefState() {
+		String name = "state";
 		Field field = mapFields.get(name);
 		if (field == null) {
 			int length = 100;
@@ -1013,6 +1009,53 @@ public abstract class Averages extends Statistics {
 			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod() + " - " + suffix;
 			field = DomainUtils.getDouble(getSession(), name, header, label);
 			setPropertySpread(field, spread);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+	
+	/**
+	 * Returns the field definition for the delta high (normalized continuous).
+	 * 
+	 * @return The field definition.
+	 */
+	public Field getFieldDefDeltaHight() {
+		return getFieldDefDelta(getFieldDefHigh(), "nrm");
+	}
+
+	/**
+	 * Returns the field definition for the delta low (normalized continuous).
+	 * 
+	 * @return The field definition.
+	 */
+	public Field getFieldDefDeltaLow() {
+		return getFieldDefDelta(getFieldDefLow(), "nrm");
+	}
+
+	/**
+	 * Returns the field definition for the delta close (normalized continuous).
+	 * 
+	 * @return The field definition.
+	 */
+	public Field getFieldDefDeltaClose() {
+		return getFieldDefDelta(getFieldDefClose(), "nrm");
+	}
+
+	/**
+	 * Returns the field definition for a delta field.
+	 * 
+	 * @param source The source field.
+	 * @param suffix The suffix (raw, nrm)
+	 * @return The field definition.
+	 */
+	public Field getFieldDefDelta(Field source, String suffix) {
+		String name = "delta_" + source.getName() + "_" + suffix;
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = "Delta-" + source.getName() + "-" + suffix;
+			String label = "Delta " + source.getName() + " - " + suffix;
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			setPropertySourceField(field, source);
 			mapFields.put(name, field);
 		}
 		return field;

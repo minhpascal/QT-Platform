@@ -95,7 +95,7 @@ public class TaskNormalizes extends TaskAverages {
 	 * @return The select criteria.
 	 */
 	private Criteria getSelectCriteria() {
-		Field f_key_state = states.getFieldDefKeyState();
+		Field f_key_state = states.getFieldDefState();
 		Value v_key_state = new Value("");
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(f_key_state, v_key_state));
@@ -164,11 +164,11 @@ public class TaskNormalizes extends TaskAverages {
 					break;
 				}
 				Record record = iterator.next();
-
-				// Field spreads against the fast average, only normalized continuous values.
+				
+				// Deltas high, low, close.
 				{
-					List<Field> fieldsRaw = states.getFieldListSpreadsAverageRaw();
-					List<Field> fieldsCont = states.getFieldListSpreadsAverageNormalizedContinuous();
+					List<Field> fieldsRaw = states.getFieldListDeltasRaw();
+					List<Field> fieldsCont = states.getFieldListDeltasNormalizedContinuous();
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
@@ -176,7 +176,7 @@ public class TaskNormalizes extends TaskAverages {
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						record.getValue(fieldCont.getName()).setDouble(valueCont);
-					}
+					}					
 				}
 
 				// Spreads between averages.
@@ -219,7 +219,7 @@ public class TaskNormalizes extends TaskAverages {
 
 				// Key state.
 				{
-					Field fieldKey = states.getFieldDefKeyState();
+					Field fieldKey = states.getFieldDefState();
 					List<Field> fieldsKey = states.getFieldListStateKey();
 					double[] keyValues = new double[fieldsKey.size()];
 					for (int i = 0; i < fieldsKey.size(); i++) {

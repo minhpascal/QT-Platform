@@ -247,11 +247,11 @@ public class Manager {
 		spread_89_377.setNormalizer(norm_89_377);
 		cfg.addSpread(spread_89_377);
 
-		// Speed 89 and normalizer with 20 segments.
+		// Speed 89 and normalizer with 10 segments.
 		Normalizer norm_89 = new Normalizer();
 		norm_89.setMaximum(1.0);
 		norm_89.setMinimum(-1.0);
-		norm_89.setSegments(20);
+		norm_89.setSegments(10);
 		Speed speed_89 = new Speed();
 		speed_89.setAverage(avg_89);
 		speed_89.setStateKey(true);

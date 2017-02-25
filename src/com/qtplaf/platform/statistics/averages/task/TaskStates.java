@@ -162,17 +162,19 @@ public class TaskStates extends TaskAverages {
 					record.getValue(name).setDouble(data.getValue(info.getOutputIndex(name)));
 				}
 			}
-
-			// Raw price spreads vs the fastest average.
+			
+			// Deltas high, low, close, raw values.
 			{
-				List<Field> fields = states.getFieldListSpreadsAverageRaw();
-				for (Field field : fields) {
-					String srcName = states.getPropertySourceField(field).getName();
-					String avgName = states.getPropertyAverage(field).getName();
-					double srcValue = data.getValue(info.getOutputIndex(srcName));
-					double avgValue = data.getValue(info.getOutputIndex(avgName));
-					double spread = (srcValue / avgValue) - 1;
-					record.getValue(field.getName()).setDouble(spread);
+				if (index > 0) {
+					Data prev = indicatorList.get(index - 1);
+					List<Field> fields = states.getFieldListDeltasRaw();
+					for (Field field : fields) {
+						String srcName = states.getPropertySourceField(field).getName();
+						double valuePrev = prev.getValue(info.getOutputIndex(srcName));
+						double valueCurr = data.getValue(info.getOutputIndex(srcName));
+						double valueDelta = (valueCurr / valuePrev) - 1;
+						record.getValue(field.getName()).setDouble(valueDelta);
+					}
 				}
 			}
 
@@ -191,16 +193,18 @@ public class TaskStates extends TaskAverages {
 			}
 			
 			// Raw speeds of averages.
-			if (index > 0) {
-				Data prev = indicatorList.get(index - 1);
-				List<Field> fields = states.getFieldListSpeedsRaw();
-				for (Field field : fields) {
-					Speed speed = states.getPropertySpeed(field);
-					String avgName = speed.getAverage().getName();
-					double valueCurr = data.getValue(info.getOutputIndex(avgName));
-					double valuePrev = prev.getValue(info.getOutputIndex(avgName));
-					double valueSpeed = (valueCurr / valuePrev) - 1;
-					record.getValue(field.getName()).setDouble(valueSpeed);
+			{
+				if (index > 0) {
+					Data prev = indicatorList.get(index - 1);
+					List<Field> fields = states.getFieldListSpeedsRaw();
+					for (Field field : fields) {
+						Speed speed = states.getPropertySpeed(field);
+						String avgName = speed.getAverage().getName();
+						double valueCurr = data.getValue(info.getOutputIndex(avgName));
+						double valuePrev = prev.getValue(info.getOutputIndex(avgName));
+						double valueSpeed = (valueCurr / valuePrev) - 1;
+						record.getValue(field.getName()).setDouble(valueSpeed);
+					}
 				}
 			}
 			

@@ -49,7 +49,7 @@ public class TaskTransitions extends TaskAverages {
 	/** Source states data list. */
 	private DataPersistor statesPersistor;
 
-	/** Short cut to key name. */
+	/** Short cut to state name. */
 	private String keyName;
 	/** Short cut to input key name. */
 	private String keyInputName;
@@ -63,6 +63,18 @@ public class TaskTransitions extends TaskAverages {
 	private String indexGroupName;
 	/** Short cut to index name. */
 	private String indexName;
+	/** Transition value hight. */
+	private String valueHighName;
+	/** Transition value low. */
+	private String valueLowName;
+	/** Transition value close. */
+	private String valueCloseName;
+	/** Short cut to delta high name. */
+	private String deltaHighName;
+	/** Short cut to delta low name. */
+	private String deltaLowName;
+	/** Short cut to delta close name. */
+	private String deltaCloseName;
 
 	/**
 	 * Constructor.
@@ -71,7 +83,7 @@ public class TaskTransitions extends TaskAverages {
 	 */
 	public TaskTransitions(Transitions transitions) {
 		super(transitions.getSession());
-		
+
 		this.transitions = transitions;
 		this.transitionsPersistor = transitions.getTable().getPersistor();
 
@@ -83,13 +95,20 @@ public class TaskTransitions extends TaskAverages {
 			transitions.getConfiguration());
 		this.statesPersistor = states.getDataList().getDataPersistor();
 
-		keyName = transitions.getFieldDefKeyState().getName();
-		keyInputName = transitions.getFieldDefKeyInput().getName();
-		keyOutputName = transitions.getFieldDefKeyOutput().getName();
+		keyName = transitions.getFieldDefState().getName();
+		keyInputName = transitions.getFieldDefStateInput().getName();
+		keyOutputName = transitions.getFieldDefStateOutput().getName();
 		indexInputName = transitions.getFieldDefIndexInput().getName();
 		indexOutputName = transitions.getFieldDefIndexOutput().getName();
 		indexGroupName = transitions.getFieldDefIndexGroup().getName();
 		indexName = transitions.getFieldDefIndex().getName();
+		valueHighName = transitions.getFieldDefTransitionValueHigh().getName();
+		valueLowName = transitions.getFieldDefTransitionValueLow().getName();
+		valueCloseName = transitions.getFieldDefTransitionValueClose().getName();
+		
+		deltaHighName = states.getFieldDefDeltaHight().getName();
+		deltaLowName = states.getFieldDefDeltaLow().getName();
+		deltaCloseName = states.getFieldDefDeltaClose().getName();
 
 		setNameAndDescription(transitions, "Transitions values");
 	}
@@ -139,12 +158,11 @@ public class TaskTransitions extends TaskAverages {
 
 			// Map of processed keys
 			Map<String, String> processedKeys = new HashMap<>();
-			
+
 			// Source (states) iterator.
 			Order order = new Order();
 			order.add(states.getFieldDefIndex());
 			iterator = statesPersistor.iterator(null, order);
-
 
 			// Step and steps.
 			long step = 0;
@@ -210,28 +228,27 @@ public class TaskTransitions extends TaskAverages {
 		String keyOutputPrevious = null;
 		for (int i = 0; i < recordSet.size(); i++) {
 
-			int indexInput = recordSet.get(i).getValue(indexName).getInteger();
-			int indexOutput = indexInput + 1;
+			Record stateInput = recordSet.get(i);
+			Record stateOutput = null;
 
-			String keyOutput = null;
+			int indexInput = stateInput.getValue(indexName).getInteger();
+			int indexOutput = indexInput + 1;
 
 			// If not the last record, check if next record is index output (same output key correlative).
 			if (i < recordSet.size() - 1) {
-				int indexNext = recordSet.get(i + 1).getValue(indexName).getInteger();
-				if (indexNext == indexOutput) {
-					keyOutput = keyInput;
+				if (indexOutput == recordSet.get(i + 1).getValue(indexName).getInteger()) {
+					stateOutput = recordSet.get(i + 1);
 				}
 			}
+			
 			// Not correlative.
-			if (keyOutput == null) {
-				Record rcOutput = statesPersistor.getRecord(Long.valueOf(indexOutput));
-				if (rcOutput != null) {
-					keyOutput = rcOutput.getValue(keyName).getString();
-				}
+			if (stateOutput == null) {
+				stateOutput = statesPersistor.getRecord(Long.valueOf(indexOutput));
 			}
-
-			// Create the transition.
-			if (keyOutput != null) {
+			
+			// Transition available.
+			if (stateOutput != null) {
+				String keyOutput = stateOutput.getValue(keyName).getString();
 				if (group < 0) {
 					group = indexInput;
 					keyOutputPrevious = keyOutput;
@@ -246,11 +263,15 @@ public class TaskTransitions extends TaskAverages {
 					transition.setValue(indexInputName, indexInput);
 					transition.setValue(indexOutputName, indexOutput);
 					transition.setValue(indexGroupName, group);
+					transition.setValue(valueHighName, stateOutput.getValue(deltaHighName));
+					transition.setValue(valueLowName, stateOutput.getValue(deltaLowName));
+					transition.setValue(valueCloseName, stateOutput.getValue(deltaCloseName));
 					transitions.add(transition);
 					map.put(indexInput, indexOutput);
 				}
 				keyOutputPrevious = keyOutput;
 			}
+
 		}
 		return transitions;
 	}
