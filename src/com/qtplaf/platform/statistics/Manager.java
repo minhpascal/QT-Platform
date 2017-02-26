@@ -20,7 +20,6 @@ import java.util.List;
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
@@ -71,9 +70,9 @@ public class Manager {
 	 * @return The list of possible statistics id values.
 	 */
 	public List<Value> getStatisticsIdPossibleValues(Server server, Instrument instrument, Period period) {
-		List<Statistics> statistics = getListStatistics(server, instrument, period);
+		List<TickerStatistics> statistics = getListStatistics(server, instrument, period);
 		List<Value> values = new ArrayList<>();
-		for (Statistics stats : statistics) {
+		for (TickerStatistics stats : statistics) {
 			Value value = new Value(stats.getId());
 			value.setLabel(stats.getTitle());
 			values.add(value);
@@ -90,9 +89,9 @@ public class Manager {
 	 * @param id The statistics id.
 	 * @return The statistics definition.
 	 */
-	public Statistics getStatistics(Server server, Instrument instrument, Period period, String id) {
-		List<Statistics> statistics = getListStatistics(server, instrument, period);
-		for (Statistics stats : statistics) {
+	public TickerStatistics getStatistics(Server server, Instrument instrument, Period period, String id) {
+		List<TickerStatistics> statistics = getListStatistics(server, instrument, period);
+		for (TickerStatistics stats : statistics) {
 			if (stats.getId().equals(id)) {
 				return stats;
 			}
@@ -168,8 +167,8 @@ public class Manager {
 	 * @param period The period.
 	 * @return The list of statistics definition.
 	 */
-	public List<Statistics> getListStatistics(Server server, Instrument instrument, Period period) {
-		List<Statistics> statistics = new ArrayList<>();
+	public List<TickerStatistics> getListStatistics(Server server, Instrument instrument, Period period) {
+		List<TickerStatistics> statistics = new ArrayList<>();
 		List<Configuration> configurations = getConfigurations();
 		for (Configuration cfg : configurations) {
 			statistics.add(getStates(server, instrument, period, cfg));

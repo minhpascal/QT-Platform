@@ -154,6 +154,22 @@ public class ActionList {
 	}
 
 	/**
+	 * Returns the action with the escape accelerator key or null.
+	 * 
+	 * @return The escape action.
+	 */
+	public Action getActionEscape() {
+		for (Action action : actions) {
+			if (ActionUtils.isVisibleInPopupMenu(action)) {
+				if (ActionUtils.getAcceleratorKey(action).equals(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0))) {
+					return action;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the list of actions that should be visible in a buttons panel, conveniently sorted.
 	 * 
 	 * @return The list of visible actions.

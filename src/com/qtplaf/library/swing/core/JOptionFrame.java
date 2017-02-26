@@ -20,6 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +31,18 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.MenuKeyEvent;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.event.KeyHandler;
+import com.qtplaf.library.swing.event.MenuKeyHandler;
+import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
@@ -47,6 +52,48 @@ import com.qtplaf.library.swing.event.WindowHandler;
  * @author Miquel Sas
  */
 public class JOptionFrame extends JFrameSession {
+
+	/**
+	 * Menu key listener to avoid closing all when exiting with escape a popup menu.
+	 */
+	class MenuKeyAdapter extends MenuKeyHandler {
+		@Override
+		public void menuKeyPressed(MenuKeyEvent e) {
+			int keyCode = e.getKeyCode();
+			int modifiers = e.getModifiers();
+			if (keyCode == KeyEvent.VK_ESCAPE && modifiers == 0) {
+				escapeFromPopupMenu = true;
+			}
+		}
+	}
+
+	/**
+	 * Mouse adapter to show the popup menu if available.
+	 */
+	class PopupTrigger extends MouseHandler {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			showPopup(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			showPopup(e);
+		}
+
+		private void showPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				JPopupMenu popupMenu = getPanelButtons().getPopupMenu();
+				if (getPopupConfigurator() != null) {
+					getPopupConfigurator().configure(popupMenu);
+				}
+				SwingUtils.installMenuKeyListener(popupMenu, new MenuKeyAdapter());
+				if (!SwingUtils.isEmtpy(popupMenu)) {
+					popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		}
+	}
 
 	/**
 	 * Window adapter to handle the close operation.
@@ -94,6 +141,12 @@ public class JOptionFrame extends JFrameSession {
 		 */
 		@Override
 		public void keyReleased(KeyEvent e) {
+
+			// If escaped from popup menu do not continue.
+			if (escapeFromPopupMenu) {
+				escapeFromPopupMenu = false;
+				return;
+			}
 
 			// Key data.
 			int keyCode = e.getKeyCode();
@@ -154,6 +207,15 @@ public class JOptionFrame extends JFrameSession {
 	 * Initial option.
 	 */
 	private String initialOption;
+
+	/**
+	 * A boolean to check if escaped from the popup menu.
+	 */
+	private boolean escapeFromPopupMenu = false;
+	/**
+	 * Additional popup menu configurator.
+	 */
+	private JPopupMenuConfigurator popupConfigurator;
 
 	/**
 	 * Constructor.
@@ -231,6 +293,7 @@ public class JOptionFrame extends JFrameSession {
 	 */
 	public void setComponent(JComponent component) {
 		this.component = component;
+		SwingUtils.installMouseListener(this.component, new PopupTrigger());
 	}
 
 	/**
@@ -299,6 +362,24 @@ public class JOptionFrame extends JFrameSession {
 			}
 		}
 		throw new IllegalStateException("Panel buttons not set.");
+	}
+
+	/**
+	 * Returns the popup configurator.
+	 * 
+	 * @return The popup configurator.
+	 */
+	public JPopupMenuConfigurator getPopupConfigurator() {
+		return popupConfigurator;
+	}
+
+	/**
+	 * Set the popup configurator.
+	 * 
+	 * @param popupConfigurator The popup configurator.
+	 */
+	public void setPopupConfigurator(JPopupMenuConfigurator popupConfigurator) {
+		this.popupConfigurator = popupConfigurator;
 	}
 
 	/**

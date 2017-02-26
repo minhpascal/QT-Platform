@@ -14,11 +14,16 @@
 
 package com.qtplaf.platform.statistics.averages;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.Action;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.swing.ActionGroup;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.OptionDialog;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.DataPersistor;
@@ -26,6 +31,8 @@ import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
+import com.qtplaf.platform.statistics.action.ActionBrowse;
+import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.averages.task.TaskNormalizes;
 import com.qtplaf.platform.statistics.averages.task.TaskStates;
 
@@ -43,6 +50,40 @@ public class States extends Averages {
 	 */
 	public States(Session session) {
 		super(session);
+	}
+
+	/**
+	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
+	 * be selected for instance from a popup menu.
+	 * 
+	 * @return The list of actions.
+	 */
+	public List<Action> getActions() {
+		
+		List<Action> actions = new ArrayList<>();
+		
+		// Standard browse of data.
+		ActionBrowse actionBrowse = new ActionBrowse(this, getRecordSet());
+		ActionUtils.setName(actionBrowse, "Browse data");
+		ActionUtils.setShortDescription(actionBrowse, "Browse calculated data");
+		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
+		actions.add(actionBrowse);
+		
+		// Calculate states.
+		ActionCalculate actionCalcStates = new ActionCalculate(this, new TaskStates(this));
+		ActionUtils.setName(actionCalcStates, "Calculate states");
+		ActionUtils.setShortDescription(actionCalcStates, "Calculate states from scratch");
+		ActionUtils.setActionGroup(actionCalcStates, new ActionGroup("Calculate", 10100));
+		actions.add(actionCalcStates);
+		
+		// Normalize values.
+		ActionCalculate actionCalcNorm = new ActionCalculate(this, new TaskNormalizes(this));
+		ActionUtils.setName(actionCalcNorm, "Normalize values");
+		ActionUtils.setShortDescription(actionCalcNorm, "Calculate normalized values");
+		ActionUtils.setActionGroup(actionCalcNorm, new ActionGroup("Calculate", 10100));
+		actions.add(actionCalcNorm);
+		
+		return actions;
 	}
 
 	/**

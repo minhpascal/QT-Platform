@@ -17,6 +17,8 @@ package com.qtplaf.library.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Action;
+
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
@@ -174,6 +176,14 @@ public abstract class Statistics {
 	 * @return The results table.
 	 */
 	public abstract Table getTable();
+
+	/**
+	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
+	 * be selected for instance from a popup menu.
+	 * 
+	 * @return The list of actions.
+	 */
+	public abstract List<Action> getActions();
 
 	/**
 	 * Returns the recordset to browse the statistic results.

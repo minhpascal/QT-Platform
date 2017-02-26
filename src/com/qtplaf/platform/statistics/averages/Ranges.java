@@ -17,6 +17,8 @@ package com.qtplaf.platform.statistics.averages;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Action;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,8 +35,11 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
+import com.qtplaf.library.swing.ActionGroup;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.averages.task.TaskRanges;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -153,6 +158,27 @@ public class Ranges extends Averages {
 
 		record.setProperty("values", values);
 	}
+
+	/**
+	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
+	 * be selected for instance from a popup menu.
+	 * 
+	 * @return The list of actions.
+	 */
+	public List<Action> getActions() {
+		
+		List<Action> actions = new ArrayList<>();
+		
+		// Standard browse of data.
+		ActionBrowse actionBrowse = new ActionBrowse(this, getRecordSet());
+		ActionUtils.setName(actionBrowse, "Browse min/max values");
+		ActionUtils.setShortDescription(actionBrowse, "Browse min/max, average and standard deviation values");
+		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
+		actions.add(actionBrowse);
+		
+		return actions;
+	}
+
 
 	/**
 	 * Returns the recordset to browse the statistic results.

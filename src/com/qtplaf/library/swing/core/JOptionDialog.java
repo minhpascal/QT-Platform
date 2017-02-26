@@ -14,6 +14,7 @@
 
 package com.qtplaf.library.swing.core;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,6 +22,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +34,19 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.MenuKeyEvent;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.event.KeyHandler;
+import com.qtplaf.library.swing.event.MenuKeyHandler;
+import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
 
 /**
@@ -50,6 +56,44 @@ import com.qtplaf.library.swing.event.WindowHandler;
  * @author Miquel Sas
  */
 public class JOptionDialog extends JDialogSession {
+	
+	/**
+	 * Menu key listener to avoid closing all when exiting with escape a popup menu.
+	 */
+	class MenuKeyAdapter extends MenuKeyHandler {
+		@Override
+		public void menuKeyPressed(MenuKeyEvent e) {
+			int keyCode = e.getKeyCode();
+			int modifiers = e.getModifiers();
+			if (keyCode == KeyEvent.VK_ESCAPE && modifiers == 0) {
+				escapeFromPopupMenu = true;
+			}
+		}
+	}
+	
+	/**
+	 * Mouse adapter to show the popup menu if available.
+	 */
+	class PopupTrigger extends MouseHandler {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			showPopup(e);
+		}
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			showPopup(e);
+		}
+		private void showPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				JPopupMenu popupMenu = getPanelButtons().getPopupMenu();
+				SwingUtils.installMenuKeyListener(popupMenu, new MenuKeyAdapter());
+				if (!SwingUtils.isEmtpy(popupMenu)) {
+					popupMenu.show(e.getComponent(),e.getX(),e.getY());
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * Window adapter to handle the close operation.
@@ -119,6 +163,12 @@ public class JOptionDialog extends JDialogSession {
 		 */
 		@Override
 		public void keyReleased(KeyEvent e) {
+			
+			// If escaped from popup menu do not continue.
+			if (escapeFromPopupMenu) {
+				escapeFromPopupMenu = false;
+				return;
+			}
 
 			// Key data.
 			int keyCode = e.getKeyCode();
@@ -183,6 +233,10 @@ public class JOptionDialog extends JDialogSession {
 	 * Selected option.
 	 */
 	private String selectedOption;
+	/**
+	 * A boolean to check if escaped from the popup menu.
+	 */
+	private boolean escapeFromPopupMenu = false;
 
 	/**
 	 * Constructor.
@@ -391,6 +445,21 @@ public class JOptionDialog extends JDialogSession {
 	 */
 	public String showDialog() {
 		return showDialog(false);
+	}
+
+	/**
+	 * Returns the panel buttons.
+	 * 
+	 * @return The panel buttons.
+	 */
+	public JPanelButtons getPanelButtons() {
+		List<Component> components = SwingUtils.getAllComponents(this);
+		for (Component component : components) {
+			if (component instanceof JPanelButtons) {
+				return (JPanelButtons) component;
+			}
+		}
+		throw new IllegalStateException("Panel buttons not set.");
 	}
 
 	/**

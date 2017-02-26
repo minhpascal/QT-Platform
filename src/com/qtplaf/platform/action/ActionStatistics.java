@@ -18,6 +18,8 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +37,9 @@ import com.qtplaf.library.swing.ProgressManager;
 import com.qtplaf.library.swing.action.ActionTableOption;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
+import com.qtplaf.library.swing.core.JPopupMenuConfigurator;
 import com.qtplaf.library.swing.core.JTableRecord;
+import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.chart.JFrameChart;
@@ -48,6 +52,7 @@ import com.qtplaf.platform.database.Lookup;
 import com.qtplaf.platform.database.tables.Periods;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.statistics.Manager;
+import com.qtplaf.platform.statistics.TickerStatistics;
 import com.qtplaf.platform.util.FormUtils;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.PeriodUtils;
@@ -63,6 +68,39 @@ public class ActionStatistics extends AbstractAction {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Popup configurator.
+	 */
+	class PopupConfigurator implements JPopupMenuConfigurator {
+		private JTableRecord tableRecord;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param tableRecord The table record.
+		 */
+		public PopupConfigurator(JTableRecord tableRecord) {
+			this.tableRecord = tableRecord;
+		}
+
+		/**
+		 * Configura the popup menu.
+		 */
+		@Override
+		public void configure(JPopupMenu popupMenu) {
+			Record record = tableRecord.getSelectedRecord();
+			if (record == null) {
+				return;
+			}
+			TickerStatistics statistics = getStatistics(record);
+			List<Action> actions = statistics.getActions();
+			if (actions != null && !actions.isEmpty()) {
+				popupMenu.addSeparator();
+				SwingUtils.addMenuItems(popupMenu, actions);
+			}
+		}
+	}
 
 	/**
 	 * Action to close the frame.
@@ -128,7 +166,7 @@ public class ActionStatistics extends AbstractAction {
 				String statsId = rcStats.getValue(StatisticsDefs.Fields.StatisticsId).getString();
 				Manager manager = new Manager(session);
 				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
-				
+
 				// Create the statistics record.
 				Persistor persistor = PersistorUtils.getPersistorStatistics(session);
 				persistor.insert(rcStats);
@@ -268,30 +306,23 @@ public class ActionStatistics extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				Session session = ActionUtils.getSession(ActionStatistics.this);
-				Server server = LaunchArgs.getServer(ActionStatistics.this);
 				Record record = getSelectedRecord();
 				if (record == null) {
 					return;
 				}
-				String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
-				String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
-				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
-				Period period = Period.parseId(periodId);
-				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Manager manager = new Manager(session);
-				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
+				TickerStatistics statistics = getStatistics(record);
 				RecordSet recordSet = statistics.getRecordSet();
 				if (recordSet == null) {
-					MessageBox.warning(session, "No recordset configurated");
+					MessageBox.warning(getSession(), "No recordset configurated");
 					return;
 				}
 
 				Record masterRecord = recordSet.getFieldList().getDefaultRecord();
 
-				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				JTableRecord tableRecord =
+					new JTableRecord(getSession(), ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
-				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+				TableModelRecord tableModelRecord = new TableModelRecord(getSession(), masterRecord);
 				for (int i = 0; i < recordSet.getFieldCount(); i++) {
 					tableModelRecord.addColumn(recordSet.getField(i).getAlias());
 				}
@@ -299,14 +330,14 @@ public class ActionStatistics extends AbstractAction {
 				tableModelRecord.setRecordSet(recordSet);
 				tableRecord.setModel(tableModelRecord);
 
-				JOptionFrame frame = new JOptionFrame(session);
+				JOptionFrame frame = new JOptionFrame(getSession());
 
 				StringBuilder title = new StringBuilder();
-				title.append(server.getName());
+				title.append(getServer().getName());
 				title.append(", ");
-				title.append(instrId);
+				title.append(getInstrument(record).getId());
 				title.append(" ");
-				title.append(Period.parseId(periodId));
+				title.append(getPeriod(record));
 				title.append(" [");
 				title.append(statistics.getTable().getName());
 				title.append("]");
@@ -314,7 +345,7 @@ public class ActionStatistics extends AbstractAction {
 
 				frame.setComponent(panelTableRecord);
 
-				frame.addAction(new ActionClose(session));
+				frame.addAction(new ActionClose(getSession()));
 				frame.setSize(0.6, 0.8);
 				frame.showFrame();
 
@@ -362,7 +393,7 @@ public class ActionStatistics extends AbstractAction {
 					MessageBox.warning(session, "No plot data defined for the current statistics");
 					return;
 				}
-				
+
 				// Chart title.
 				StringBuilder title = new StringBuilder();
 				title.append(server.getName());
@@ -380,7 +411,7 @@ public class ActionStatistics extends AbstractAction {
 				for (PlotData plotData : plotDataList) {
 					frame.getChart().addPlotData(plotData);
 				}
-			
+
 			} catch (Exception exc) {
 				logger.catching(exc);
 			}
@@ -395,60 +426,118 @@ public class ActionStatistics extends AbstractAction {
 	}
 
 	/**
+	 * Returns the working session.
+	 * 
+	 * @return The session.
+	 */
+	public Session getSession() {
+		return ActionUtils.getSession(this);
+	}
+
+	/**
+	 * Returns the server.
+	 * 
+	 * @return The server.
+	 */
+	public Server getServer() {
+		return LaunchArgs.getServer(this);
+	}
+
+	/**
 	 * Perform the action.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
 
-			Session session = ActionUtils.getSession(ActionStatistics.this);
-			Server server = LaunchArgs.getServer(ActionStatistics.this);
-			Persistor persistor = PersistorUtils.getPersistorStatistics(session);
+			Persistor persistor = PersistorUtils.getPersistorStatistics(getSession());
 			Record masterRecord = persistor.getDefaultRecord();
 
-			JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
+			JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.SINGLE_SELECTION);
 			JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
-			TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
+			TableModelRecord tableModelRecord = new TableModelRecord(getSession(), masterRecord);
 			tableModelRecord.addColumn(StatisticsDefs.Fields.InstrumentId);
 			tableModelRecord.addColumn(Periods.Fields.PeriodName);
 			tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticsId);
 			tableModelRecord.addColumn(StatisticsDefs.Fields.TableName);
 
-			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(session, server));
+			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(getSession(), getServer()));
 			tableRecord.setModel(tableModelRecord);
 
-			JOptionFrame frame = new JOptionFrame(session);
+			JOptionFrame frame = new JOptionFrame(getSession());
 			frame.setTitle(
-				server.getName() + " " + session.getString("qtMenuServersTickersStatistics").toLowerCase());
+				getServer().getName() + " " + getSession().getString("qtMenuServersTickersStatistics").toLowerCase());
 			frame.setComponent(panelTableRecord);
 
-			ActionCreate actionCreate = new ActionCreate(session);
+			ActionCreate actionCreate = new ActionCreate(getSession());
 			ActionUtils.setSortIndex(actionCreate, 0);
 			frame.addAction(actionCreate);
 
-			ActionDelete actionDelete = new ActionDelete(session);
+			ActionDelete actionDelete = new ActionDelete(getSession());
 			ActionUtils.setSortIndex(actionDelete, 1);
 			frame.addAction(actionDelete);
 
-			ActionBrowse actionBrowse = new ActionBrowse(session);
+			ActionBrowse actionBrowse = new ActionBrowse(getSession());
 			ActionUtils.setSortIndex(actionBrowse, 2);
 			frame.addAction(actionBrowse);
-			
-			ActionChart actionChart = new ActionChart(session);
+
+			ActionChart actionChart = new ActionChart(getSession());
 			ActionUtils.setSortIndex(actionChart, 3);
 			frame.addAction(actionChart);
 
-			ActionCalculate actionCalculate = new ActionCalculate(session);
+			ActionCalculate actionCalculate = new ActionCalculate(getSession());
 			ActionUtils.setSortIndex(actionCalculate, 4);
 			frame.addAction(actionCalculate);
 
-			frame.addAction(new ActionClose(session));
+			frame.addAction(new ActionClose(getSession()));
+			
+			frame.setPopupConfigurator(new PopupConfigurator(tableRecord));
+			
 			frame.setSize(0.6, 0.8);
 			frame.showFrame();
 
 		} catch (Exception exc) {
 			logger.catching(exc);
 		}
+	}
+
+	/**
+	 * Returns the instrument given the selected record.
+	 * 
+	 * @param record The statistics selected record.
+	 * @return The instrument.
+	 */
+	public Instrument getInstrument(Record record) {
+		String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
+		Instrument instrument = InstrumentUtils.getInstrument(getSession(), getServer().getId(), instrId);
+		return instrument;
+	}
+
+	/**
+	 * Returns the period given the selected record.
+	 * 
+	 * @param record The statistics selected record.
+	 * @return The period.
+	 */
+	public Period getPeriod(Record record) {
+		String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
+		Period period = Period.parseId(periodId);
+		return period;
+	}
+
+	/**
+	 * Returns the statistics of the record.
+	 * 
+	 * @param record The selected record.
+	 * @return The statistics.
+	 */
+	public TickerStatistics getStatistics(Record record) {
+		Instrument instrument = getInstrument(record);
+		Period period = getPeriod(record);
+		String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+		Manager manager = new Manager(getSession());
+		TickerStatistics statistics = manager.getStatistics(getServer(), instrument, period, statsId);
+		return statistics;
 	}
 
 }

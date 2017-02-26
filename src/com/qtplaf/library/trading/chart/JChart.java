@@ -52,6 +52,28 @@ import com.qtplaf.library.trading.data.PlotData;
  *
  */
 public class JChart extends JPanel {
+	
+	/**
+	 * Runnable to invoke later adding plot data.
+	 */
+	class AddPlotData implements Runnable {
+		private PlotData plotData;
+		AddPlotData(PlotData ploData) {
+			this.plotData = ploData;
+		}
+		@Override
+		public void run() {
+			JChartContainer chartContainer = new JChartContainer(JChart.this);
+			chartContainer.setBackground(getDefaultBackgroundColor());
+			chartContainer.getChartPlotter().setBackground(getDefaultBackgroundColor());
+			chartContainer.getChartVerticalAxis().setBackground(getDefaultBackgroundColor());
+			chartContainer.setPlotData(plotData);
+			chartContainers.add(chartContainer);
+			setOrPropagatePlotDataIndexes();
+			layoutPanels();
+		}
+		
+	}
 
 	/**
 	 * The list with chart containers added to this chart.
@@ -135,14 +157,7 @@ public class JChart extends JPanel {
 	 * @param plotData The plot data.
 	 */
 	public void addPlotData(PlotData plotData) {
-		JChartContainer chartContainer = new JChartContainer(this);
-		chartContainer.setBackground(getDefaultBackgroundColor());
-		chartContainer.getChartPlotter().setBackground(getDefaultBackgroundColor());
-		chartContainer.getChartVerticalAxis().setBackground(getDefaultBackgroundColor());
-		chartContainer.setPlotData(plotData);
-		chartContainers.add(chartContainer);
-		setOrPropagatePlotDataIndexes();
-		layoutPanels();
+		SwingUtils.invokeLater(new AddPlotData(plotData));
 	}
 
 	/**

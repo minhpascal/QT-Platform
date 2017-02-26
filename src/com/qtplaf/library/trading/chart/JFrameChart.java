@@ -77,7 +77,7 @@ public class JFrameChart extends JFrameSession {
 		SwingUtils.setSizeAndCenterOnSreen(this, 0.8, 0.8);
 
 		setWindowHandler(new WindowAdapter());
-		setVisibleImmediately(true);
+		setVisible(true);
 	}
 
 	/**

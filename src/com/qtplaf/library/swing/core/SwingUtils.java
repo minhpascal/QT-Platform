@@ -41,13 +41,17 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.MenuKeyListener;
 
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.EditField;
 import com.qtplaf.library.util.NumberUtils;
@@ -65,6 +69,79 @@ import com.qtplaf.library.util.list.ListUtils;
  * @author Miquel Sas
  */
 public class SwingUtils {
+
+	/**
+	 * Add menu items to the popup menu.
+	 * 
+	 * @param popupMenu The popup menu.
+	 * @param actions The actions.
+	 */
+	public static void addMenuItems(JPopupMenu popupMenu, List<Action> actions) {
+		for (int i = 0; i < actions.size(); i++) {
+			Action action = actions.get(i);
+			if (i > 0) {
+				Action actionPrev = actions.get(i - 1);
+				ActionGroup groupCurr = ActionUtils.getActionGroup(action);
+				ActionGroup groupPrev = ActionUtils.getActionGroup(actionPrev);
+				if (groupCurr != null && groupPrev != null && !groupCurr.equals(groupPrev)) {
+					popupMenu.addSeparator();
+				}
+			}
+			JMenuItem menuItem = null;
+			if (ActionUtils.getButton(action) != null) {
+				menuItem = SwingUtils.getMenuItem(ActionUtils.getButton(action));
+			} else {
+				menuItem = SwingUtils.getMenuItem(action);
+			}
+			popupMenu.add(menuItem);
+		}
+	}
+
+	/**
+	 * Check if the popup menu is empty.
+	 * 
+	 * @param popupMenu The popup menu.
+	 * @return A boolean.
+	 */
+	public static boolean isEmtpy(JPopupMenu popupMenu) {
+		return popupMenu.getComponentCount() == 0;
+	}
+
+	/**
+	 * Returns the menu item.
+	 * 
+	 * @param action The source action.
+	 * @return The menu iem.
+	 */
+	public static JMenuItem getMenuItem(Action action) {
+		JMenuItem menuItem = new JMenuItem();
+		menuItem.addActionListener(action);
+		if (ActionUtils.getSmallIcon(action) != null) {
+			menuItem.setIcon(ActionUtils.getSmallIcon(action));
+		}
+		menuItem.setText(ActionUtils.getName(action));
+		menuItem.setToolTipText(ActionUtils.getShortDescription(action));
+		menuItem.setEnabled(action.isEnabled());
+		return menuItem;
+	}
+
+	/**
+	 * Returns the menu item.
+	 * 
+	 * @param button The source button.
+	 * @return The menu iem.
+	 */
+	public static JMenuItem getMenuItem(JButton button) {
+		JMenuItem menuItem = new JMenuItem();
+		Action action = button.getAction();
+		menuItem.addActionListener(action);
+		menuItem.setIcon(button.getIcon());
+		menuItem.setText(button.getText());
+		menuItem.setToolTipText(button.getToolTipText());
+		menuItem.setVisible(button.isVisible());
+		menuItem.setEnabled(button.isEnabled());
+		return menuItem;
+	}
 
 	/**
 	 * Returns the list of edit fields in the top component.
@@ -217,6 +294,16 @@ public class SwingUtils {
 		Dimension size = label.getPreferredSize();
 		label.setText(text);
 		return size;
+	}
+
+	/**
+	 * Returns a suitabel screen font metrics for the font.
+	 * 
+	 * @param font The font.
+	 * @return The font megtrics.
+	 */
+	public static FontMetrics getFontMetrics(Font font) {
+		return new JLabel().getFontMetrics(font);
 	}
 
 	/**
@@ -966,12 +1053,37 @@ public class SwingUtils {
 	 */
 	public static void installKeyListener(Component cmp, KeyListener keyListener, boolean removePrevious) {
 		Component parent = getFirstParentFrameOrDialog(cmp);
+		if (parent == null) {
+			parent = cmp;
+		}
 		List<Component> components = getAllComponents(parent);
 		for (Component component : components) {
 			if (removePrevious) {
 				removeKeyListeners(component);
 			}
 			component.addKeyListener(keyListener);
+		}
+	}
+
+	/**
+	 * Installs the key listener in the tree of components where the argument component is included, starting in the
+	 * first parent <i>JFrame</i> or <i>JDialog</i> parent.
+	 * 
+	 * @param cmp The starting components in the tree.
+	 * @param keyListener The key listener to install.
+	 * @param removePrevious A boolean indicating whether previous key listeners should be removed.
+	 */
+	public static void installMenuKeyListener(Component cmp, MenuKeyListener keyListener) {
+		List<Component> components = getAllComponents(cmp);
+		for (Component component : components) {
+			if ((component instanceof JPopupMenu)) {
+				JPopupMenu popupMenu = (JPopupMenu) component;
+				popupMenu.addMenuKeyListener(keyListener);
+			}
+			if ((component instanceof JMenuItem)) {
+				JMenuItem menuItem = (JMenuItem) component;
+				menuItem.addMenuKeyListener(keyListener);
+			}
 		}
 	}
 
@@ -996,6 +1108,9 @@ public class SwingUtils {
 	 */
 	public static void installMouseListener(Component cmp, MouseListener mouseListener, boolean removePrevious) {
 		Component parent = getFirstParentFrameOrDialog(cmp);
+		if (parent == null) {
+			parent = cmp;
+		}
 		List<Component> components = getAllComponents(parent);
 		for (Component component : components) {
 			if (removePrevious) {

@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Action;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,15 +31,19 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.statistics.Statistics;
-import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
+import com.qtplaf.library.trading.chart.plotter.LinePlotter;
+import com.qtplaf.library.trading.data.DataList;
+import com.qtplaf.library.trading.data.DelegateDataList;
+import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.PipValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.statistics.Manager;
+import com.qtplaf.platform.statistics.TickerStatistics;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.statistics.averages.configuration.Configuration;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
@@ -51,17 +57,10 @@ import com.qtplaf.platform.util.PersistorUtils;
  *
  * @author Miquel Sas
  */
-public abstract class Averages extends Statistics {
+public abstract class Averages extends TickerStatistics {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-
-	/** The server. */
-	private Server server;
-	/** The instrument. */
-	private Instrument instrument;
-	/** The period. */
-	private Period period;
 
 	/** The configuration. */
 	private Configuration configuration;
@@ -92,57 +91,13 @@ public abstract class Averages extends Statistics {
 	}
 
 	/**
-	 * Returns the server.
+	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
+	 * be selected for instance from a popup menu.
 	 * 
-	 * @return The server.
+	 * @return The list of actions.
 	 */
-	public Server getServer() {
-		return server;
-	}
-
-	/**
-	 * Set the server.
-	 * 
-	 * @param server The server
-	 */
-	public void setServer(Server server) {
-		this.server = server;
-	}
-
-	/**
-	 * Returns the instrument.
-	 * 
-	 * @return The instrument.
-	 */
-	public Instrument getInstrument() {
-		return instrument;
-	}
-
-	/**
-	 * Set the instrument.
-	 * 
-	 * @param instrument The instrument.
-	 */
-	public void setInstrument(Instrument instrument) {
-		this.instrument = instrument;
-	}
-
-	/**
-	 * Returns the period.
-	 * 
-	 * @return The period.
-	 */
-	public Period getPeriod() {
-		return period;
-	}
-
-	/**
-	 * Set the period.
-	 * 
-	 * @param period The period.
-	 */
-	public void setPeriod(Period period) {
-		this.period = period;
+	public List<Action> getActions() {
+		return null;
 	}
 
 	/**
@@ -506,7 +461,7 @@ public abstract class Averages extends Statistics {
 
 		// Averages fields.
 		table.addFields(getFieldListAverages());
-		
+
 		// Deltas high, low, close, raw values.
 		table.addFields(getFieldListDeltasRaw());
 
@@ -515,7 +470,7 @@ public abstract class Averages extends Statistics {
 
 		// Speed (tangent) of averages, raw values
 		table.addFields(getFieldListSpeedsRaw());
-		
+
 		// Deltas high, low, close, normalized values continuous.
 		table.addFields(getFieldListDeltasNormalizedContinuous());
 
@@ -1013,7 +968,7 @@ public abstract class Averages extends Statistics {
 		}
 		return field;
 	}
-	
+
 	/**
 	 * Returns the field definition for the delta high (normalized continuous).
 	 * 
@@ -1314,5 +1269,97 @@ public abstract class Averages extends Statistics {
 			logger.catching(exc);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the main plot data for the price and averages.
+	 * 
+	 * @param dataList The source list.
+	 * @return The plot data.
+	 */
+	protected PlotData getPlotDataMain(PersistorDataList dataList) {
+
+		// First data list: price and indicators.
+		DataInfo info = dataList.getDataInfo();
+		info.setInstrument(getInstrument());
+		info.setName("OHLC");
+		info.setDescription("OHLC values");
+		info.setPeriod(getPeriod());
+
+		// Candlestick on price: info
+		info.addOutput("Open", "O", dataList.getDataIndex(getFieldDefOpen().getName()), "Open data value");
+		info.addOutput("High", "H", dataList.getDataIndex(getFieldDefHigh().getName()), "High data value");
+		info.addOutput("Low", "L", dataList.getDataIndex(getFieldDefLow().getName()), "Low data value");
+		info.addOutput("Close", "C", dataList.getDataIndex(getFieldDefClose().getName()), "Close data value");
+
+		// Candlestick on price: plotter.
+		CandlestickPlotter plotterCandle = new CandlestickPlotter();
+		plotterCandle.setIndexes(new int[] {
+			dataList.getDataIndex(getFieldDefOpen().getName()),
+			dataList.getDataIndex(getFieldDefHigh().getName()),
+			dataList.getDataIndex(getFieldDefLow().getName()),
+			dataList.getDataIndex(getFieldDefClose().getName()) });
+		dataList.addDataPlotter(plotterCandle);
+
+		// Line plotter for each average.
+		List<Field> averageFields = getFieldListAverages();
+		for (Field field : averageFields) {
+			String name = field.getName();
+			String label = field.getLabel();
+			String header = field.getHeader();
+			int index = dataList.getDataIndex(name);
+
+			// Output info.
+			info.addOutput(name, header, index, label);
+
+			// Plotter.
+			LinePlotter plotterAvg = new LinePlotter();
+			plotterAvg.setIndex(index);
+			dataList.addDataPlotter(plotterAvg);
+		}
+
+		PlotData plotData = new PlotData();
+		plotData.add(dataList);
+		return plotData;
+	}
+
+	/**
+	 * Returns the plot data for the list of fields.
+	 * 
+	 * @param sourceList The source list.
+	 * @param fields The list of fields.
+	 * @return The plot data.
+	 */
+	protected PlotData getPlotData(PersistorDataList sourceList, List<Field> fields) {
+
+		// Data info.
+		DataInfo info = new DataInfo(getSession());
+		info.setInstrument(getInstrument());
+		info.setName(getInstrument().getId());
+		info.setDescription(getInstrument().getDescription());
+		info.setPeriod(getPeriod());
+
+		// Data list.
+		DataList dataList = new DelegateDataList(getSession(), info, sourceList);
+
+		for (Field field : fields) {
+			String name = field.getName();
+			String header = field.getHeader();
+			String label = field.getLabel();
+			int index = sourceList.getDataIndex(name);
+
+			// Output info.
+			info.addOutput(name, header, index, label);
+
+			// Plotter.
+			LinePlotter plotter = new LinePlotter();
+			plotter.setIndex(index);
+			dataList.addDataPlotter(plotter);
+		}
+
+		PlotData plotData = new PlotData();
+		plotData.add(dataList);
+
+		return plotData;
 	}
 }

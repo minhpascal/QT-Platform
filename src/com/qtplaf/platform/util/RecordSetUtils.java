@@ -22,6 +22,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.tables.Instruments;
 import com.qtplaf.platform.database.tables.StatisticsDefs;
 import com.qtplaf.platform.database.tables.Tickers;
@@ -58,8 +59,10 @@ public class RecordSetUtils {
 		}
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			record.getValue(Instruments.Fields.InstrumentPipValue).setDecimals(maxPipScale);
-			record.getValue(Instruments.Fields.InstrumentTickValue).setDecimals(maxTickScale);
+			record.getField(Instruments.Fields.InstrumentPipValue).setFormatter(
+				new DataValue(session, maxPipScale));
+			record.getField(Instruments.Fields.InstrumentTickValue).setFormatter(
+				new DataValue(session, maxTickScale));
 		}
 
 		return recordSet;

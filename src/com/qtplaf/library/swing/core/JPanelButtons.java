@@ -20,7 +20,6 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -179,6 +178,7 @@ public class JPanelButtons extends JPanel {
 		separator.setPreferredSize(size);
 		return separator;
 	}
+
 	/**
 	 * Returns the popup menu.
 	 * 
@@ -187,30 +187,8 @@ public class JPanelButtons extends JPanel {
 	public JPopupMenu getPopupMenu() {
 		List<Action> menuActions = actions.getActionsVisibleInPopupMenu();
 		JPopupMenu popupMenu = new JPopupMenu();
-		for (int i = 0; i < menuActions.size(); i++) {
-			Action action = menuActions.get(i);
-			popupMenu.add(getMenuItem(actions.getButton(action)));
-		}
+		SwingUtils.addMenuItems(popupMenu, menuActions);
 		return popupMenu;
-	}
-	
-	/**
-	 * Returns the menu item.
-	 * 
-	 * @param button The source button.
-	 * @return The menu iem.
-	 */
-	private JMenuItem getMenuItem(JButton button) {
-		JMenuItem menuItem = new JMenuItem();
-		Action action = button.getAction();
-		menuItem.addActionListener(action);
-		menuItem.setIcon(button.getIcon());
-		menuItem.setText(button.getText());
-		menuItem.setToolTipText(button.getToolTipText());
-		menuItem.setVisible(button.isVisible());
-		menuItem.setEnabled(button.isEnabled());
-//		menuItem.setBackground(Color.WHITE);
-		return menuItem;
 	}
 
 	/**
@@ -250,9 +228,9 @@ public class JPanelButtons extends JPanel {
 			super.add(currentButton);
 		}
 		SwingUtils.setMnemonics(buttons);
-		
+
 		// Repaint the component.
 		repaint();
 	}
-	
+
 }

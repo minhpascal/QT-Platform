@@ -122,7 +122,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentPipValue(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Pip value", "Instrument pip value");
+		return DomainUtils.getDouble(session, name, "Pip value", "Instrument pip value");
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentTickValue(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Tick value", "Instrument tick value");
+		return DomainUtils.getDouble(session, name, "Tick value", "Instrument tick value");
 	}
 
 	/**
