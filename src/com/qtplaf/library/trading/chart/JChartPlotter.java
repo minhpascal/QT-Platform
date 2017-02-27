@@ -27,10 +27,10 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.drawings.CrossCursor;
 import com.qtplaf.library.trading.chart.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
+import com.qtplaf.library.trading.chart.plotter.cursor.CrossCursor;
 import com.qtplaf.library.trading.chart.plotter.cursor.CrossCursorPlotter;
 import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
 import com.qtplaf.library.trading.data.DataList;
@@ -177,9 +177,6 @@ public class JChartPlotter extends JPanel {
 		// The graphics object.
 		Graphics2D g2 = (Graphics2D) g;
 
-		// Set plotters.
-		setPlotterContext();
-
 		// Plot chart data.
 		plotChartData(g2, chartContainer.getPlotData());
 
@@ -198,6 +195,10 @@ public class JChartPlotter extends JPanel {
 	 * @param g2 The graphics object.
 	 */
 	private void plotChartData(Graphics2D g2, PlotData plotData) {
+
+		// Set plotter context and calculate frame.
+		plotData.setPlotterContext(chartContainer.getChart(), getSize());
+		plotData.calculateFrame();
 
 		// Retrieve a plotter to calculate start and end indexes depending on the clip bounds.
 		Plotter plotter = plotData.get(0).getDataPlotters().get(0);
@@ -292,19 +293,6 @@ public class JChartPlotter extends JPanel {
 			if (dataPlotter.isPlot()) {
 				dataPlotter.plotDataIndex(g2, dataList, index);
 			}
-		}
-	}
-
-	/**
-	 * Sets the plotter context to all lists.
-	 */
-	private void setPlotterContext() {
-		JChart chart = chartContainer.getChart();
-		Dimension chartSize = getSize();
-		PlotData plotData = chartContainer.getPlotData();
-		PlotterContext context = new PlotterContext(chart, plotData, chartSize);
-		for (int i = 0; i < plotData.size(); i++) {
-			plotData.get(i).setPlotterContext(context);
 		}
 	}
 

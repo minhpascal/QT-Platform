@@ -84,7 +84,7 @@ public class LinePlotter extends DrawingPlotter {
 		if (getLine().getIndex1() < startIndex && getLine().getIndex2() < startIndex) {
 			return;
 		}
-		if (getLine().getIndex1() < startIndex && getLine().getIndex2() < startIndex) {
+		if (getLine().getIndex1() > endIndex && getLine().getIndex2() > endIndex) {
 			return;
 		}
 

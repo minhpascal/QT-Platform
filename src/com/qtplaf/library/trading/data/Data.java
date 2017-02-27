@@ -385,7 +385,7 @@ public class Data {
 	public void setValid(boolean valid) {
 		this.valid = valid;
 	}
-
+	
 	/**
 	 * Returns a string representation of this data object.
 	 * 

@@ -70,7 +70,6 @@ public class JChartNavigate extends JFrameSession {
 					int index = getIndexer().getIndex(record);
 					PlotData plotData = getChart().getChartContainer(0).getPlotData();
 					plotData.moveTo(index);
-					plotData.calculateFrame();
 					getChart().propagateFrameChanges(plotData);
 				}				
 			}
@@ -109,7 +108,7 @@ public class JChartNavigate extends JFrameSession {
 	public JChartNavigate(Session session) {
 		super(session);
 		getContentPane().setLayout(new GridBagLayout());
-		SwingUtils.setSizeAndCenterOnSreen(this, 0.8, 0.8);
+		SwingUtils.setSizeAndCenterOnSreen(this, 1.0, 1.0);
 
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);

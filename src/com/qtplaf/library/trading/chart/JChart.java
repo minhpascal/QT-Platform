@@ -195,7 +195,6 @@ public class JChart extends JPanel {
 				}
 				plotData.setStartIndex(startIndex);
 				plotData.setEndIndex(endIndex);
-				plotData.calculateFrame();
 			}
 		} else {
 			// Propagate.
@@ -206,7 +205,6 @@ public class JChart extends JPanel {
 			for (int i = 1; i < chartContainers.size(); i++) {
 				chartContainers.get(i).getPlotData().setStartIndex(startIndex);
 				chartContainers.get(i).getPlotData().setEndIndex(endIndex);
-				chartContainers.get(i).getPlotData().calculateFrame();
 			}
 		}
 	}
@@ -516,7 +514,6 @@ public class JChart extends JPanel {
 			}
 			chartContainer.getPlotData().setStartIndex(plotData.getStartIndex());
 			chartContainer.getPlotData().setEndIndex(plotData.getEndIndex());
-			chartContainer.getPlotData().calculateFrame();
 		}
 		repaint();
 	}

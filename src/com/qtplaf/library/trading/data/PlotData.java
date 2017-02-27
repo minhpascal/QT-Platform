@@ -13,10 +13,14 @@
  */
 package com.qtplaf.library.trading.data;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.qtplaf.library.trading.chart.JChart;
+import com.qtplaf.library.trading.chart.drawings.Drawing;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
 
 /**
@@ -35,6 +39,10 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * A list of data lists.
 	 */
 	private List<DataList> dataLists = new ArrayList<>();
+	/**
+	 * List drawings.
+	 */
+	private List<Drawing> drawings = new ArrayList<>();
 	/**
 	 * The start index to plot.
 	 */
@@ -55,12 +63,46 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * The scale to plot the data.
 	 */
 	private PlotScale plotScale = PlotScale.Linear;
+	/**
+	 * The plotter context.
+	 */
+	private PlotterContext plotterContext;
 
 	/**
 	 * Default constructor.
 	 */
 	public PlotData() {
 		super();
+	}
+
+	/**
+	 * Return the plotter context (set by the chart plotter).
+	 * 
+	 * @return The plotter context.
+	 */
+	public PlotterContext getPlotterContext() {
+		return plotterContext;
+	}
+
+	/**
+	 * Set the plotter context (set by the chart plotter.
+	 * 
+	 * @param plotterContext The plotter context.
+	 */
+	public void setPlotterContext(JChart chart, Dimension chartSize) {
+		plotterContext = new PlotterContext(chart, this, chartSize);
+		for (int i = 0; i < size(); i++) {
+			get(i).setPlotterContext(plotterContext);
+		}
+	}
+
+	/**
+	 * Add a drawing to the list of drawings.
+	 * 
+	 * @param drawing The drawing.
+	 */
+	public void addDrawing(Drawing drawing) {
+		drawings.add(drawing);
 	}
 
 	/**
@@ -494,9 +536,10 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		minimumValue = minValue;
 		maximumValue = maxValue;
 	}
-	
+
 	/**
 	 * Mode to the index or period, centering it on screen, with the current number of shown bars.
+	 * 
 	 * @param index
 	 */
 	public void moveTo(int index) {

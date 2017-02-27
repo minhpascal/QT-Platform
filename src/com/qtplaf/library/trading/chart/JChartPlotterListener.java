@@ -192,7 +192,6 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 						} else {
 							plotData.scroll(-indexScroll);
 						}
-						plotData.calculateFrame();
 						mouseDraggingX = x;
 
 						// Set the mouse point to the chart plotter to paint the cursor as required.
@@ -272,9 +271,6 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 		if (Mask.check(e, 0)) {
 			plotData.scroll(barsToScrollOrZoom);
 		}
-
-		// Calculate frame and paint.
-		plotData.calculateFrame();
 
 		// Set the mouse point to the chart plotter to paint the cursor as required.
 		chartPlotter.setMousePoint(e.getPoint(), false);

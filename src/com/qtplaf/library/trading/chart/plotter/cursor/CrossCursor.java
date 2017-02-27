@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.drawings;
+package com.qtplaf.library.trading.chart.plotter.cursor;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,8 +28,12 @@ import com.qtplaf.library.trading.chart.plotter.PlotterContext;
  * 
  * @author Miquel Sas
  */
-public class CrossCursor extends Drawing {
+public class CrossCursor {
 
+	/**
+	 * The name.
+	 */
+	private String name;
 	/**
 	 * The cursor point.
 	 */
@@ -64,6 +68,24 @@ public class CrossCursor extends Drawing {
 	public CrossCursor(Point point) {
 		this.point = point;
 		setName("Cross cursor");
+	}
+
+	/**
+	 * Returns the name.
+	 * 
+	 * @return The name.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name The name.
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

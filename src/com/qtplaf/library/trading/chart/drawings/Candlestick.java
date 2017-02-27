@@ -111,4 +111,44 @@ public class Candlestick extends DataDrawing {
 
 		return shape;
 	}
+
+	/**
+	 * Returns the maximum value of the drawing.
+	 * 
+	 * @return The maximum value.
+	 */
+	@Override
+	public double getMaximumValue() {
+		return Data.getHigh(getData());
+	}
+
+	/**
+	 * Returns the minimum value of the drawing.
+	 * 
+	 * @return The minimum value.
+	 */
+	@Override
+	public double getMinimumValue() {
+		return Data.getLow(getData());
+	}
+
+	/**
+	 * Returns the maximum index of the drawing.
+	 * 
+	 * @return The maximum index.
+	 */
+	@Override
+	public int getMaximumIndex() {
+		return getIndex();
+	}
+
+	/**
+	 * Returns the minimum index of the drawing.
+	 * 
+	 * @return The minimum index.
+	 */
+	@Override
+	public int getMinimumIndex() {
+		return getIndex();
+	}
 }

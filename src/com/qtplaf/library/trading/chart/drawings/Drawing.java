@@ -61,4 +61,32 @@ public abstract class Drawing {
 	 * @return The shape.
 	 */
 	public abstract Shape getShape(PlotterContext context);
+
+	/**
+	 * Returns the maximum value of the drawing.
+	 * 
+	 * @return The maximum value.
+	 */
+	public abstract double getMaximumValue();
+
+	/**
+	 * Returns the minimum value of the drawing.
+	 * 
+	 * @return The minimum value.
+	 */
+	public abstract double getMinimumValue();
+
+	/**
+	 * Returns the maximum index of the drawing.
+	 * 
+	 * @return The maximum index.
+	 */
+	public abstract int getMaximumIndex();
+
+	/**
+	 * Returns the minimum index of the drawing.
+	 * 
+	 * @return The minimum index.
+	 */
+	public abstract int getMinimumIndex();
 }

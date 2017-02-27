@@ -161,4 +161,44 @@ public class Line extends Drawing {
 
 		return shape;
 	}
+
+	/**
+	 * Returns the maximum value of the drawing.
+	 * 
+	 * @return The maximum value.
+	 */
+	@Override
+	public double getMaximumValue() {
+		return Math.max(v1, v2);
+	}
+
+	/**
+	 * Returns the minimum value of the drawing.
+	 * 
+	 * @return The minimum value.
+	 */
+	@Override
+	public double getMinimumValue() {
+		return Math.min(v1, v2);
+	}
+
+	/**
+	 * Returns the maximum index of the drawing.
+	 * 
+	 * @return The maximum index.
+	 */
+	@Override
+	public int getMaximumIndex() {
+		return Math.max(index1, index2);
+	}
+
+	/**
+	 * Returns the minimum index of the drawing.
+	 * 
+	 * @return The minimum index.
+	 */
+	@Override
+	public int getMinimumIndex() {
+		return Math.min(index1, index2);
+	}
 }

@@ -148,7 +148,7 @@ public class PlotterContext {
 		int endIndex = plotData.getEndIndex();
 		// Check the index is in the start-end range.
 		if (index < startIndex || index > endIndex) {
-			throw new IllegalStateException();
+//			throw new IllegalStateException();
 		}
 		// The index factor: relation between index and the difference endIndex - startIndex.
 		double indexFactor = (((double) index) - ((double) startIndex)) / (((double) endIndex) - ((double) startIndex));

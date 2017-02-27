@@ -202,6 +202,9 @@ public class HorizontalAxisPlotter extends Plotter {
 		if (endTimeIndex >= dataList.size()) {
 			endTimeIndex = dataList.size() - 1;
 		}
+		if (startTimeIndex >= endTimeIndex) {
+			return;
+		}
 
 		// Calculate the available width to plot.
 		int startX = getContext().getCoordinateX(startTimeIndex);
