@@ -14,8 +14,6 @@
 
 package com.qtplaf.platform.statistics.action;
 
-import java.awt.event.ActionEvent;
-
 import javax.swing.AbstractAction;
 
 import com.qtplaf.library.app.Session;
@@ -30,7 +28,7 @@ import com.qtplaf.platform.statistics.TickerStatistics;
  *
  * @author Miquel Sas
  */
-public class ActionTickerStatistics extends AbstractAction {
+public abstract class ActionTickerStatistics extends AbstractAction {
 
 	/** Source statistics. */
 	private TickerStatistics statistics;
@@ -91,12 +89,4 @@ public class ActionTickerStatistics extends AbstractAction {
 	public Period getPeriod() {
 		return statistics.getPeriod();
 	}
-
-	/**
-	 * Perform the action.
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	}
-
 }

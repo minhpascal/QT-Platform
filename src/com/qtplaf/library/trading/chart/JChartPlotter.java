@@ -27,12 +27,12 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.CrossCursorPlotter;
-import com.qtplaf.library.trading.chart.plotter.DataPlotter;
+import com.qtplaf.library.trading.chart.drawings.CrossCursor;
+import com.qtplaf.library.trading.chart.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
-import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
-import com.qtplaf.library.trading.chart.plotter.parameters.CursorPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.cursor.CrossCursorPlotter;
+import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 

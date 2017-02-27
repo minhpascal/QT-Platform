@@ -11,12 +11,12 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter.drawings;
+package com.qtplaf.library.trading.chart.drawings;
 
 import com.qtplaf.library.trading.data.Data;
 
 /**
- * Base class of a bar or candlestick drawing.
+ * Base class of a bar or candlestick drawing and drawings that perform on a data item.
  * 
  * @author Miquel Sas
  */

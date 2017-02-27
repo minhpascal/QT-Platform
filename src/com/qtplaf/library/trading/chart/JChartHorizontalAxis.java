@@ -24,9 +24,10 @@ import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
-import com.qtplaf.library.trading.chart.plotter.HorizontalAxisPlotter;
+import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.trading.chart.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
-import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.axis.HorizontalAxisPlotter;
 import com.qtplaf.library.trading.data.PlotData;
 
 /**
@@ -55,9 +56,8 @@ public class JChartHorizontalAxis extends JPanel {
 		setBorder(new LineBorderSides(Color.BLACK, 1, true, false, false, false));
 
 		// A grafics object and textFont metrics necessary to calculate the text width.
-		Graphics g = chart.getGraphics();
 		HorizontalAxisPlotParameters parameters = chart.getHorizontalAxisPlotParameters();
-		FontMetrics fm = g.getFontMetrics(parameters.getHorizontalAxisTextFont());
+		FontMetrics fm = SwingUtils.getFontMetrics(parameters.getHorizontalAxisTextFont());
 
 		// Text insets and axis height.
 		Insets insets = parameters.getHorizontalAxisTextInsets();

@@ -29,11 +29,11 @@ import javax.swing.JSplitPane;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.swing.core.SwingUtils;
-import com.qtplaf.library.trading.chart.plotter.parameters.ChartPlotParameters;
-import com.qtplaf.library.trading.chart.plotter.parameters.CursorPlotParameters;
-import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
-import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
-import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.ChartPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.CursorPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.HorizontalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.InformationPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 
 /**
@@ -52,15 +52,17 @@ import com.qtplaf.library.trading.data.PlotData;
  *
  */
 public class JChart extends JPanel {
-	
+
 	/**
 	 * Runnable to invoke later adding plot data.
 	 */
 	class AddPlotData implements Runnable {
 		private PlotData plotData;
+
 		AddPlotData(PlotData ploData) {
 			this.plotData = ploData;
 		}
+
 		@Override
 		public void run() {
 			JChartContainer chartContainer = new JChartContainer(JChart.this);
@@ -72,7 +74,7 @@ public class JChart extends JPanel {
 			setOrPropagatePlotDataIndexes();
 			layoutPanels();
 		}
-		
+
 	}
 
 	/**
@@ -116,8 +118,8 @@ public class JChart extends JPanel {
 	 */
 	private ChartPlotParameters chartPlotParameters = new ChartPlotParameters();
 	/**
-	 * The data item (bar) width factor that is used to calculate the width of a bar or candle depending on the available
-	 * width per data (bar).
+	 * The data item (bar) width factor that is used to calculate the width of a bar or candle depending on the
+	 * available width per data (bar).
 	 */
 	private double dataItemWidthFactor = 0.75;
 	/**
@@ -158,6 +160,17 @@ public class JChart extends JPanel {
 	 */
 	public void addPlotData(PlotData plotData) {
 		SwingUtils.invokeLater(new AddPlotData(plotData));
+	}
+
+	/**
+	 * Add a list of plot datas.
+	 * 
+	 * @param plotDataList The plot data list.
+	 */
+	public void addPlotDataList(List<PlotData> plotDataList) {
+		for (PlotData plotData : plotDataList) {
+			addPlotData(plotData);
+		}
 	}
 
 	/**

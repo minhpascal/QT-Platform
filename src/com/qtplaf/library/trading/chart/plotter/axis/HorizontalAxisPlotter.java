@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter;
+package com.qtplaf.library.trading.chart.plotter.axis;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -20,7 +20,9 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Stroke;
 
-import com.qtplaf.library.trading.chart.plotter.parameters.HorizontalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.HorizontalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Calendar;
@@ -201,7 +203,7 @@ public class HorizontalAxisPlotter extends Plotter {
 			endTimeIndex = dataList.size() - 1;
 		}
 
-		// Calculate the avilable width to plot.
+		// Calculate the available width to plot.
 		int startX = getContext().getCoordinateX(startTimeIndex);
 		int endX = getContext().getCoordinateX(endTimeIndex);
 		int availableWidth = endX - startX + 1;

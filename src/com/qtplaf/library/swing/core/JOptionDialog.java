@@ -87,7 +87,7 @@ public class JOptionDialog extends JDialogSession {
 			if (e.isPopupTrigger()) {
 				JPopupMenu popupMenu = getPanelButtons().getPopupMenu();
 				SwingUtils.installMenuKeyListener(popupMenu, new MenuKeyAdapter());
-				if (!SwingUtils.isEmtpy(popupMenu)) {
+				if (!SwingUtils.isEmpty(popupMenu)) {
 					popupMenu.show(e.getComponent(),e.getX(),e.getY());
 				}
 			}

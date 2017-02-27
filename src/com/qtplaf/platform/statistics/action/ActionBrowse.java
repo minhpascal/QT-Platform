@@ -20,11 +20,14 @@ import javax.swing.ListSelectionModel;
 
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.action.ActionCloseFrame;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
+import com.qtplaf.library.util.Icons;
+import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.statistics.TickerStatistics;
 
 /**
@@ -46,6 +49,7 @@ public class ActionBrowse extends ActionTickerStatistics {
 	public ActionBrowse(TickerStatistics statistics, RecordSet recordSet) {
 		super(statistics);
 		this.recordSet = recordSet;
+		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_browse));
 	}
 
 	/**
@@ -67,10 +71,10 @@ public class ActionBrowse extends ActionTickerStatistics {
 		JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 		TableModelRecord tableModelRecord = new TableModelRecord(getSession(), masterRecord);
-		for (int i = 0; i < recordSet.getFieldCount(); i++) {
-			tableModelRecord.addColumn(recordSet.getField(i).getAlias());
+		for (int i = 0; i < getRecordSet().getFieldCount(); i++) {
+			tableModelRecord.addColumn(getRecordSet().getField(i).getAlias());
 		}
-		tableModelRecord.setRecordSet(recordSet);
+		tableModelRecord.setRecordSet(getRecordSet());
 		tableRecord.setModel(tableModelRecord);
 
 		JOptionFrame frame = new JOptionFrame(getSession());

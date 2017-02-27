@@ -23,7 +23,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import com.qtplaf.library.swing.event.Mask;
-import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.InformationPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.ColorUtils;
 

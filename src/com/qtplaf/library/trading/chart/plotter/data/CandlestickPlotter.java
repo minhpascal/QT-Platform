@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter;
+package com.qtplaf.library.trading.chart.plotter.data;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -21,7 +21,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
 
-import com.qtplaf.library.trading.chart.plotter.drawings.Candlestick;
+import com.qtplaf.library.trading.chart.drawings.Candlestick;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.util.ColorUtils;

@@ -25,6 +25,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -79,13 +80,10 @@ public class SwingUtils {
 	public static void addMenuItems(JPopupMenu popupMenu, List<Action> actions) {
 		for (int i = 0; i < actions.size(); i++) {
 			Action action = actions.get(i);
-			if (i > 0) {
-				Action actionPrev = actions.get(i - 1);
-				ActionGroup groupCurr = ActionUtils.getActionGroup(action);
-				ActionGroup groupPrev = ActionUtils.getActionGroup(actionPrev);
-				if (groupCurr != null && groupPrev != null && !groupCurr.equals(groupPrev)) {
-					popupMenu.addSeparator();
-				}
+			ActionGroup groupCurr = ActionUtils.getActionGroup(action);
+			ActionGroup groupPrev = getLastActionGroup(popupMenu);
+			if (groupCurr != null && groupPrev != null && !groupCurr.equals(groupPrev)) {
+				popupMenu.addSeparator();
 			}
 			JMenuItem menuItem = null;
 			if (ActionUtils.getButton(action) != null) {
@@ -98,13 +96,44 @@ public class SwingUtils {
 	}
 
 	/**
-	 * Check if the popup menu is empty.
+	 * Returns the last action group of a <tt>JComponent</tt> that is either a <tt>JPopupMenu</tt> or a
+	 * <tt>JMenuItem</tt>.
 	 * 
-	 * @param popupMenu The popup menu.
+	 * @return The las action group or null.
+	 */
+	private static ActionGroup getLastActionGroup(JComponent component) {
+		if (!(component instanceof JPopupMenu) && !(component instanceof JMenuItem)) {
+			throw new IllegalArgumentException();
+		}
+		if (isEmpty(component)) {
+			return null;
+		}
+		Component last = component.getComponent(component.getComponentCount() - 1);
+		if (!(last instanceof JMenuItem)) {
+			return null;
+		}
+		JMenuItem menuItem = (JMenuItem) last;
+		ActionListener[] actionListeners = menuItem.getActionListeners();
+		for (ActionListener actionListener : actionListeners) {
+			if (actionListener instanceof Action) {
+				Action action = (Action) actionListener;
+				ActionGroup actionGroup = ActionUtils.getActionGroup(action);
+				if (actionGroup != null) {
+					return actionGroup;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Check if the container is empty.
+	 * 
+	 * @param container The container.
 	 * @return A boolean.
 	 */
-	public static boolean isEmtpy(JPopupMenu popupMenu) {
-		return popupMenu.getComponentCount() == 0;
+	public static boolean isEmpty(Container container) {
+		return container.getComponentCount() == 0;
 	}
 
 	/**

@@ -18,7 +18,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowEvent;
-import java.util.Locale;
 
 import javax.swing.JFrame;
 
@@ -70,7 +69,7 @@ public class JFrameChart extends JFrameSession {
 		constraintsChartPanel.gridy = 1;
 		constraintsChartPanel.insets = new Insets(1, 1, 1, 1);
 
-		chart = new JChart(new Session(Locale.UK));
+		chart = new JChart(getSession());
 		getContentPane().add(chart, constraintsChartPanel);
 
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

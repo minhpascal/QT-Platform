@@ -20,12 +20,11 @@ import java.util.List;
 import javax.swing.Action;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.OptionDialog;
-import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
@@ -33,8 +32,11 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
+import com.qtplaf.platform.statistics.action.ActionChart;
+import com.qtplaf.platform.statistics.action.ActionChartNavigate;
 import com.qtplaf.platform.statistics.averages.task.TaskNormalizes;
 import com.qtplaf.platform.statistics.averages.task.TaskStates;
+import com.qtplaf.platform.statistics.chart.JChartNavigate;
 
 /**
  * States based on averages.
@@ -42,6 +44,16 @@ import com.qtplaf.platform.statistics.averages.task.TaskStates;
  * @author Miquel Sas
  */
 public class States extends Averages {
+
+	/**
+	 * Indexer to retrieve the index from a standard record.
+	 */
+	class StdIndexer implements JChartNavigate.Indexer {
+		@Override
+		public int getIndex(Record record) {
+			return record.getValue(getFieldDefIndex().getName()).getInteger();
+		}
+	}
 
 	/**
 	 * Constructor.
@@ -59,23 +71,23 @@ public class States extends Averages {
 	 * @return The list of actions.
 	 */
 	public List<Action> getActions() {
-		
+
 		List<Action> actions = new ArrayList<>();
-		
+
 		// Standard browse of data.
 		ActionBrowse actionBrowse = new ActionBrowse(this, getRecordSet());
 		ActionUtils.setName(actionBrowse, "Browse data");
 		ActionUtils.setShortDescription(actionBrowse, "Browse calculated data");
 		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
 		actions.add(actionBrowse);
-		
+
 		// Calculate states.
 		ActionCalculate actionCalcStates = new ActionCalculate(this, new TaskStates(this));
 		ActionUtils.setName(actionCalcStates, "Calculate states");
 		ActionUtils.setShortDescription(actionCalcStates, "Calculate states from scratch");
 		ActionUtils.setActionGroup(actionCalcStates, new ActionGroup("Calculate", 10100));
 		actions.add(actionCalcStates);
-		
+
 		// Normalize values.
 		ActionCalculate actionCalcNorm = new ActionCalculate(this, new TaskNormalizes(this));
 		ActionUtils.setName(actionCalcNorm, "Normalize values");
@@ -83,7 +95,40 @@ public class States extends Averages {
 		ActionUtils.setActionGroup(actionCalcNorm, new ActionGroup("Calculate", 10100));
 		actions.add(actionCalcNorm);
 		
+		// Chart standard
+		ActionChart actionChartStd = new ActionChart(this, getListPlotDataStandard());
+		ActionUtils.setName(actionChartStd, "Standard chart");
+		ActionUtils.setShortDescription(actionChartStd, "Show a standard chart with averages and normalized values");
+		ActionUtils.setActionGroup(actionChartStd, new ActionGroup("Chart", 10200));
+		actions.add(actionChartStd);
+		
+		// Chart navigate.
+		ActionChartNavigate actionChartNav = new ActionChartNavigate(this);
+		actionChartNav.getChartNavigate().setTitle("Navigate chart on result data");
+		actionChartNav.getChartNavigate().setIndexer(new StdIndexer());
+		actionChartNav.setPlotDataList(getListPlotDataStandard());
+		actionChartNav.setRecordSet(getRecordSet());
+		ActionUtils.setName(actionChartNav, "Navigate chart on result data");
+		ActionUtils.setShortDescription(actionChartStd, "Show a standard chart with averages and normalized values");
+		ActionUtils.setActionGroup(actionChartNav, new ActionGroup("Chart", 10200));
+		actions.add(actionChartNav);
+
 		return actions;
+	}
+
+	/**
+	 * Returns the list of plot data for standard chart diaplay.
+	 * 
+	 * @return The list of plot data.
+	 */
+	private List<PlotData> getListPlotDataStandard() {
+		List<PlotData> plotDataList = new ArrayList<>();
+		PersistorDataList dataList = getDataList();
+		dataList.setCacheSize(5000);
+		plotDataList.add(getPlotDataMain(dataList));
+		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedContinuous()));
+		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedContinuous()));
+		return plotDataList;
 	}
 
 	/**
@@ -106,32 +151,6 @@ public class States extends Averages {
 	}
 
 	/**
-	 * Returns the task that calculates the statistic.
-	 * 
-	 * @return The calculator task.
-	 */
-	@Override
-	public Task getTask() {
-		
-		OptionDialog dialog = new OptionDialog(getSession());
-		dialog.setTitle("Task selection");
-		dialog.setMessage("Select the task to execute");
-		dialog.addOption("Calculate states");
-		dialog.addOption("Normalize values");
-		dialog.addOption("Cancel", true);
-		
-		String option = dialog.showDialog();
-		if (option.equals("Calculate states")) {
-			return new TaskStates(this);
-		}
-		if (option.equals("Normalize values")) {
-			return new TaskNormalizes(this);
-		}
-		
-		return null;
-	}
-
-	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
@@ -147,20 +166,8 @@ public class States extends Averages {
 	 * 
 	 * @return The recordset to browse the statistic results.
 	 */
-	@Override
-	public RecordSet getRecordSet() {
+	private RecordSet getRecordSet() {
 		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
 		return new DataRecordSet(persistor);
 	}
-
-	/**
-	 * Returns the list of plot datas to configure a chart and show the statistics results.
-	 * 
-	 * @return The list of plot datas.
-	 */
-	@Override
-	public List<PlotData> getPlotDataList() {
-		return null;
-	}
-
 }

@@ -28,12 +28,10 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
-import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.MessageBox;
-import com.qtplaf.library.swing.ProgressManager;
 import com.qtplaf.library.swing.action.ActionTableOption;
 import com.qtplaf.library.swing.core.JOptionFrame;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
@@ -41,11 +39,8 @@ import com.qtplaf.library.swing.core.JPopupMenuConfigurator;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.swing.core.TableModelRecord;
-import com.qtplaf.library.task.Task;
-import com.qtplaf.library.trading.chart.JFrameChart;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
@@ -96,7 +91,6 @@ public class ActionStatistics extends AbstractAction {
 			TickerStatistics statistics = getStatistics(record);
 			List<Action> actions = statistics.getActions();
 			if (actions != null && !actions.isEmpty()) {
-				popupMenu.addSeparator();
 				SwingUtils.addMenuItems(popupMenu, actions);
 			}
 		}
@@ -239,186 +233,6 @@ public class ActionStatistics extends AbstractAction {
 	}
 
 	/**
-	 * Action to calculate a statistics.
-	 */
-	class ActionCalculate extends ActionTableOption {
-		/**
-		 * Constructor.
-		 * 
-		 * @param session The working session.
-		 */
-		public ActionCalculate(Session session) {
-			super();
-			ActionUtils.configureCalculate(session, this);
-		}
-
-		/**
-		 * Perform the action.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				Session session = ActionUtils.getSession(ActionStatistics.this);
-				Server server = LaunchArgs.getServer(ActionStatistics.this);
-				Record record = getSelectedRecord();
-				if (record == null) {
-					return;
-				}
-				String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
-				String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
-				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
-				Period period = Period.parseId(periodId);
-				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Manager manager = new Manager(session);
-				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
-				Task task = statistics.getTask();
-				if (task == null) {
-					return;
-				}
-				ProgressManager progress = new ProgressManager(session);
-				progress.setSize(0.4, 0.4);
-				progress.addTask(task);
-				progress.showFrame();
-
-			} catch (Exception exc) {
-				logger.catching(exc);
-			}
-		}
-	}
-
-	/**
-	 * Action to browse the current ticker.
-	 */
-	class ActionBrowse extends ActionTableOption {
-		/**
-		 * Constructor.
-		 * 
-		 * @param session The working session.
-		 */
-		public ActionBrowse(Session session) {
-			super();
-			ActionUtils.configureBrowse(session, this);
-		}
-
-		/**
-		 * Perform the action.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				Record record = getSelectedRecord();
-				if (record == null) {
-					return;
-				}
-				TickerStatistics statistics = getStatistics(record);
-				RecordSet recordSet = statistics.getRecordSet();
-				if (recordSet == null) {
-					MessageBox.warning(getSession(), "No recordset configurated");
-					return;
-				}
-
-				Record masterRecord = recordSet.getFieldList().getDefaultRecord();
-
-				JTableRecord tableRecord =
-					new JTableRecord(getSession(), ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
-				TableModelRecord tableModelRecord = new TableModelRecord(getSession(), masterRecord);
-				for (int i = 0; i < recordSet.getFieldCount(); i++) {
-					tableModelRecord.addColumn(recordSet.getField(i).getAlias());
-				}
-
-				tableModelRecord.setRecordSet(recordSet);
-				tableRecord.setModel(tableModelRecord);
-
-				JOptionFrame frame = new JOptionFrame(getSession());
-
-				StringBuilder title = new StringBuilder();
-				title.append(getServer().getName());
-				title.append(", ");
-				title.append(getInstrument(record).getId());
-				title.append(" ");
-				title.append(getPeriod(record));
-				title.append(" [");
-				title.append(statistics.getTable().getName());
-				title.append("]");
-				frame.setTitle(title.toString());
-
-				frame.setComponent(panelTableRecord);
-
-				frame.addAction(new ActionClose(getSession()));
-				frame.setSize(0.6, 0.8);
-				frame.showFrame();
-
-			} catch (Exception exc) {
-				logger.catching(exc);
-			}
-		}
-	}
-
-	/**
-	 * Action to show the current ticker chart.
-	 */
-	class ActionChart extends ActionTableOption {
-		/**
-		 * Constructor.
-		 * 
-		 * @param session The working session.
-		 */
-		public ActionChart(Session session) {
-			super();
-			ActionUtils.configureChart(session, this);
-		}
-
-		/**
-		 * Perform the action.
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				Session session = ActionUtils.getSession(ActionStatistics.this);
-				Server server = LaunchArgs.getServer(ActionStatistics.this);
-				Record record = getSelectedRecord();
-				if (record == null) {
-					return;
-				}
-				String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
-				String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
-				Instrument instrument = InstrumentUtils.getInstrument(session, server.getId(), instrId);
-				Period period = Period.parseId(periodId);
-				String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
-				Manager manager = new Manager(session);
-				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
-				List<PlotData> plotDataList = statistics.getPlotDataList();
-				if (plotDataList == null || plotDataList.isEmpty()) {
-					MessageBox.warning(session, "No plot data defined for the current statistics");
-					return;
-				}
-
-				// Chart title.
-				StringBuilder title = new StringBuilder();
-				title.append(server.getName());
-				title.append(", ");
-				title.append(instrument.getId());
-				title.append(" ");
-				title.append(period);
-				title.append(" [");
-				title.append(statistics.getTable().getName());
-				title.append("]");
-
-				// The chart frame.
-				JFrameChart frame = new JFrameChart(session);
-				frame.setTitle(title.toString());
-				for (PlotData plotData : plotDataList) {
-					frame.getChart().addPlotData(plotData);
-				}
-
-			} catch (Exception exc) {
-				logger.catching(exc);
-			}
-		}
-	}
-
-	/**
 	 * Constructor.
 	 */
 	public ActionStatistics() {
@@ -476,18 +290,6 @@ public class ActionStatistics extends AbstractAction {
 			ActionDelete actionDelete = new ActionDelete(getSession());
 			ActionUtils.setSortIndex(actionDelete, 1);
 			frame.addAction(actionDelete);
-
-			ActionBrowse actionBrowse = new ActionBrowse(getSession());
-			ActionUtils.setSortIndex(actionBrowse, 2);
-			frame.addAction(actionBrowse);
-
-			ActionChart actionChart = new ActionChart(getSession());
-			ActionUtils.setSortIndex(actionChart, 3);
-			frame.addAction(actionChart);
-
-			ActionCalculate actionCalculate = new ActionCalculate(getSession());
-			ActionUtils.setSortIndex(actionCalculate, 4);
-			frame.addAction(actionCalculate);
 
 			frame.addAction(new ActionClose(getSession()));
 			

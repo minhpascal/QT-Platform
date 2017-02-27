@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.qtplaf.library.trading.chart.plotter.DataPlotter;
+import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
 
 /**
  * A container for the data to plot in a <i>JChartContainer</i>.
@@ -493,6 +493,27 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		// Assign calculated min and max values.
 		minimumValue = minValue;
 		maximumValue = maxValue;
+	}
+	
+	/**
+	 * Mode to the index or period, centering it on screen, with the current number of shown bars.
+	 * @param index
+	 */
+	public void moveTo(int index) {
+		int minIndex = 0;
+		int maxIndex = get(0).size() - 1;
+		if (index < 0 || index > maxIndex) {
+			return;
+		}
+		int indexes = endIndex - startIndex + 1;
+		startIndex = index - indexes / 2;
+		if (startIndex < minIndex) {
+			startIndex = minIndex;
+		}
+		endIndex = index + indexes / 2;
+		if (endIndex > maxIndex) {
+			endIndex = maxIndex;
+		}
 	}
 
 	/**

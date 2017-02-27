@@ -33,7 +33,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.trading.chart.plotter.parameters.InformationPlotParameters;
+import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.trading.chart.parameters.InformationPlotParameters;
 import com.qtplaf.library.util.Icons;
 
 /**
@@ -448,8 +449,7 @@ public class JChartInfo extends JPanel {
 
 		// Calculate the size based on the desired font and insets. The graphics context needs to be that of the upper
 		// level chart, because it is the only one displayed at this time.
-		Graphics g = getChartContainer().getChart().getGraphics();
-		FontMetrics fm = g.getFontMetrics(plotParameters.getInfoTextFont());
+		FontMetrics fm = SwingUtils.getFontMetrics(plotParameters.getInfoTextFont());
 		int size =
 			plotParameters.getInfoTextInsets().top +
 				fm.getMaxAscent() +

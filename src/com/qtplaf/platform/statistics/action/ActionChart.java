@@ -15,47 +15,54 @@
 package com.qtplaf.platform.statistics.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
-import com.qtplaf.library.app.Session;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.swing.ProgressManager;
-import com.qtplaf.library.task.Task;
+import com.qtplaf.library.trading.chart.JFrameChart;
+import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.statistics.TickerStatistics;
 
 /**
- * Perform calculations.
+ * Default action to show a chart.
  *
  * @author Miquel Sas
  */
-public class ActionCalculate extends ActionTickerStatistics {
+public class ActionChart extends ActionTickerStatistics {
 	
-	/** The task to perform calculations. */
-	private Task task;
+	/** Plot data list. */
+	private List<PlotData> plotDataList;
 
 	/**
-	 * Constructor.
-	 * 
-	 * @param statistics The source statistics.
-	 * @param task The task to perform calculations.
+	 * @param statistics
 	 */
-	public ActionCalculate(TickerStatistics statistics, Task task) {
+	public ActionChart(TickerStatistics statistics, List<PlotData> plotDataList) {
 		super(statistics);
-		this.task = task;
-		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_execute));
+		this.plotDataList = plotDataList;
+		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_chart));
 	}
 
 	/**
-	 * Perform calculations.
+	 * Perform the action.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Session session = ActionUtils.getSession(this);
-		ProgressManager progress = new ProgressManager(session);
-		progress.setSize(0.4, 0.4);
-		progress.addTask(task);
-		progress.showFrame();
+		// Chart title.
+		StringBuilder title = new StringBuilder();
+		title.append(getServer().getName());
+		title.append(", ");
+		title.append(getInstrument().getId());
+		title.append(" ");
+		title.append(getPeriod());
+		title.append(" [");
+		title.append(getStatistics().getTable().getName());
+		title.append("]");
+
+		// The chart frame.
+		JFrameChart frame = new JFrameChart(getSession());
+		frame.setTitle(title.toString());
+		frame.getChart().addPlotDataList(plotDataList);
 	}
 
 }

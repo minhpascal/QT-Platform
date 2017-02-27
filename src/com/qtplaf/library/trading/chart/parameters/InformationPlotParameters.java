@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.trading.chart.plotter.parameters;
+package com.qtplaf.library.trading.chart.parameters;
 
 import java.awt.Color;
 import java.awt.Font;

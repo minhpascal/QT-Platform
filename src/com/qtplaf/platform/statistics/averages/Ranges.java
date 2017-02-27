@@ -37,9 +37,8 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.task.Task;
-import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
+import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.averages.task.TaskRanges;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -98,16 +97,6 @@ public class Ranges extends Averages {
 	 */
 	public Ranges(Session session) {
 		super(session);
-	}
-
-	/**
-	 * Returns the task that calculates the statistic.
-	 * 
-	 * @return The calculator task.
-	 */
-	@Override
-	public Task getTask() {
-		return new TaskRanges(this);
 	}
 
 	/**
@@ -172,9 +161,16 @@ public class Ranges extends Averages {
 		// Standard browse of data.
 		ActionBrowse actionBrowse = new ActionBrowse(this, getRecordSet());
 		ActionUtils.setName(actionBrowse, "Browse min/max values");
-		ActionUtils.setShortDescription(actionBrowse, "Browse min/max, average and standard deviation values");
+		ActionUtils.setShortDescription(actionBrowse, "Browse min/max, average and standard deviation values.");
 		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
 		actions.add(actionBrowse);
+		
+		// Calculate ranges.
+		ActionCalculate actionCalculate = new ActionCalculate(this, new TaskRanges(this));
+		ActionUtils.setName(actionCalculate, "Calculate min/max ranges");
+		ActionUtils.setShortDescription(actionCalculate, "Calculate min/max ranges for state fields to normalize.");
+		ActionUtils.setActionGroup(actionCalculate, new ActionGroup("Calculate", 10000));
+		actions.add(actionCalculate);
 		
 		return actions;
 	}
@@ -185,8 +181,7 @@ public class Ranges extends Averages {
 	 * 
 	 * @return The recordset to browse the statistic results.
 	 */
-	@Override
-	public RecordSet getRecordSet() {
+	private RecordSet getRecordSet() {
 		return getRecordSet(true);
 	}
 
@@ -261,17 +256,6 @@ public class Ranges extends Averages {
 		}
 
 		return recordSet;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.qtplaf.library.statistics.Statistics#getPlotDataList()
-	 */
-	@Override
-	public List<PlotData> getPlotDataList() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

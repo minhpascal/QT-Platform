@@ -20,10 +20,7 @@ import java.util.List;
 import javax.swing.Action;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.task.Task;
-import com.qtplaf.library.trading.data.PlotData;
 
 /**
  * Statistics descriptor.
@@ -163,13 +160,6 @@ public abstract class Statistics {
 	}
 
 	/**
-	 * Returns the task that calculates the statistic.
-	 * 
-	 * @return The calculator task.
-	 */
-	public abstract Task getTask();
-
-	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
@@ -184,18 +174,4 @@ public abstract class Statistics {
 	 * @return The list of actions.
 	 */
 	public abstract List<Action> getActions();
-
-	/**
-	 * Returns the recordset to browse the statistic results.
-	 * 
-	 * @return The recordset to browse the statistic results.
-	 */
-	public abstract RecordSet getRecordSet();
-
-	/**
-	 * Returns the list of plot datas to configure a chart and show the statistics results.
-	 * 
-	 * @return The list of plot datas.
-	 */
-	public abstract List<PlotData> getPlotDataList();
 }

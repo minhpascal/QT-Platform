@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter.drawings;
+package com.qtplaf.library.trading.chart.drawings;
 
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
@@ -20,11 +20,11 @@ import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.Data;
 
 /**
- * A candlestick drawing.
+ * A bar drawing.
  * 
  * @author Miquel Sas
  */
-public class Candlestick extends DataDrawing {
+public class Bar extends DataDrawing {
 	
 	/** Indexes to retrieve data. */
 	private int[] indexes;
@@ -36,17 +36,17 @@ public class Candlestick extends DataDrawing {
 	 * @param data The data.
 	 * @param indexes The indexes to retrieve values.
 	 */
-	public Candlestick(int index, Data data, int[] indexes) {
+	public Bar(int index, Data data, int[] indexes) {
 		super(index, data);
 		this.indexes = indexes;
-		setName("Candlestick");
+		setName("Bar");
 	}
 
 	/**
-	 * Returns the candlestick shape.
+	 * Returns the bar shape.
 	 * 
 	 * @param context The plotter context.
-	 * @return The candlestick shape.
+	 * @return The bar shape.
 	 */
 	public Shape getShape(PlotterContext context) {
 		// The values to plot.
@@ -66,49 +66,22 @@ public class Candlestick extends DataDrawing {
 		int closeY = context.getCoordinateY(close);
 
 		// The X coordinate of the vertical line, either the candle.
-		int candlestickWidth = context.getDataItemWidth();
+		int barWidth = context.getDataItemWidth();
 		int verticalLineX = context.getDrawingCenterCoordinateX(x);
 
-		// The bar candle is bullish/bearish.
-		boolean bullish = Data.isBullish(data);
-
-		// The candlestick shape.
-		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
-		// If bar width is 1...
-		if (candlestickWidth == 1) {
-			// The vertical line only.
-			shape.moveTo(verticalLineX, highY);
-			shape.lineTo(verticalLineX, lowY);
-		} else {
-			if (bullish) {
-				// Upper shadow.
-				shape.moveTo(verticalLineX, highY);
-				shape.lineTo(verticalLineX, closeY - 1);
-				// Body.
-				shape.moveTo(x, closeY);
-				shape.lineTo(x + candlestickWidth - 1, closeY);
-				shape.lineTo(x + candlestickWidth - 1, openY);
-				shape.lineTo(x, openY);
-				shape.lineTo(x, closeY);
-				// Lower shadow.
-				shape.moveTo(verticalLineX, openY + 1);
-				shape.lineTo(verticalLineX, lowY);
-			} else {
-				// Upper shadow.
-				shape.moveTo(verticalLineX, highY);
-				shape.lineTo(verticalLineX, openY - 1);
-				// Body.
-				shape.moveTo(x, openY);
-				shape.lineTo(x + candlestickWidth - 1, openY);
-				shape.lineTo(x + candlestickWidth - 1, closeY);
-				shape.lineTo(x, closeY);
-				shape.lineTo(x, openY);
-				// Lower shadow.
-				shape.moveTo(verticalLineX, closeY + 1);
-				shape.lineTo(verticalLineX, lowY);
-			}
+		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3);
+		// The vertical bar line.
+		shape.moveTo(verticalLineX, highY);
+		shape.lineTo(verticalLineX, lowY);
+		// Open and close horizontal lines if the bar width is greater than 1.
+		if (barWidth > 1) {
+			// Open horizontal line.
+			shape.moveTo(x, openY);
+			shape.lineTo(verticalLineX - 1, openY);
+			// Close horizontal line
+			shape.moveTo(verticalLineX + 1, closeY);
+			shape.lineTo(x + barWidth - 1, closeY);
 		}
-
 		return shape;
 	}
 }

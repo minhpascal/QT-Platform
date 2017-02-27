@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter;
+package com.qtplaf.library.trading.chart.plotter.data;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -21,7 +21,7 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qtplaf.library.trading.chart.plotter.drawings.Line;
+import com.qtplaf.library.trading.chart.drawings.Line;
 import com.qtplaf.library.trading.data.DataList;
 
 /**
@@ -29,7 +29,7 @@ import com.qtplaf.library.trading.data.DataList;
  * 
  * @author Miquel Sas
  */
-public class LinePlotter extends DataPlotter {
+public class DataLinePlotter extends DataPlotter {
 
 	/**
 	 * The line buffer.
@@ -43,7 +43,7 @@ public class LinePlotter extends DataPlotter {
 	/**
 	 * Constructor.
 	 */
-	public LinePlotter() {
+	public DataLinePlotter() {
 		super();
 		setName("Line");
 		setColorBearishEven(Color.BLACK);

@@ -22,9 +22,10 @@ import java.awt.Point;
 import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.core.SwingUtils;
+import com.qtplaf.library.trading.chart.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
-import com.qtplaf.library.trading.chart.plotter.VerticalAxisPlotter;
-import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.axis.VerticalAxisPlotter;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.FormatUtils;
 
@@ -92,8 +93,7 @@ public class JChartVerticalAxis extends JPanel {
 		VerticalAxisPlotParameters plotParameters = chartContainer.getChart().getVerticalAxisPlotParameters();
 
 		// A grafics object and textFont metrics necessary to calculate the text width.
-		Graphics g = chartContainer.getChart().getGraphics();
-		FontMetrics fm = g.getFontMetrics(plotParameters.getVerticalAxisTextFont());
+		FontMetrics fm = SwingUtils.getFontMetrics(plotParameters.getVerticalAxisTextFont());
 		int textWidth = Math.max(fm.stringWidth(smaximumValue), fm.stringWidth(sminimumValue));
 
 		// Calculate the total width.

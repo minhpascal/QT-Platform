@@ -29,12 +29,12 @@ import com.qtplaf.library.swing.event.WindowHandler;
 public class JFrameSession extends JFrame {
 
 	/**
-	 * Swing later show.
+	 * Invoke later set visible.
 	 */
-	class Show implements Runnable {
+	class SetVisible implements Runnable {
 		private boolean b;
 
-		Show(boolean b) {
+		SetVisible(boolean b) {
 			this.b = b;
 		}
 
@@ -112,7 +112,7 @@ public class JFrameSession extends JFrame {
 		} else {
 			WindowManager.remove(this);
 		}
-		SwingUtils.invokeLater(new Show(b));
+		SwingUtils.invokeLater(new SetVisible(b));
 	}
 
 	/**

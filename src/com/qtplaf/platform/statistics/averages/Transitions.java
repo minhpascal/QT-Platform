@@ -14,13 +14,16 @@
 
 package com.qtplaf.platform.statistics.averages;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Action;
+
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.task.Task;
-import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.swing.ActionGroup;
+import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.averages.task.TaskTransitions;
 
 /**
@@ -36,15 +39,25 @@ public class Transitions extends Averages {
 	public Transitions(Session session) {
 		super(session);
 	}
-
+	
 	/**
-	 * Returns the task that calculates the statistic.
+	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
+	 * be selected for instance from a popup menu.
 	 * 
-	 * @return The calculator task.
+	 * @return The list of actions.
 	 */
-	@Override
-	public Task getTask() {
-		return new TaskTransitions(this);
+	public List<Action> getActions() {
+		
+		List<Action> actions = new ArrayList<>();
+		
+		// Calculate ranges.
+		ActionCalculate actionCalculate = new ActionCalculate(this, new TaskTransitions(this));
+		ActionUtils.setName(actionCalculate, "Calculate states transitions");
+		ActionUtils.setShortDescription(actionCalculate, "Calculate states transitions.");
+		ActionUtils.setActionGroup(actionCalculate, new ActionGroup("Calculate", 10000));
+		actions.add(actionCalculate);
+		
+		return actions;
 	}
 
 	/**
@@ -56,27 +69,6 @@ public class Transitions extends Averages {
 	@Override
 	public Table getTable() {
 		return getTableTransitions();
-	}
-
-	/**
-	 * Returns the recordset to browse the statistic results.
-	 * 
-	 * @return The recordset to browse the statistic results.
-	 */
-	@Override
-	public RecordSet getRecordSet() {
-		return null;
-	}
-
-	/**
-	 * Returns the list of plot datas to configure a chart and show the statistics results.
-	 * 
-	 * @return The list of plot datas.
-	 */
-	@Override
-	public List<PlotData> getPlotDataList() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

@@ -11,14 +11,16 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter;
+package com.qtplaf.library.trading.chart.plotter.cursor;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 
-import com.qtplaf.library.trading.chart.plotter.drawings.CrossCursor;
+import com.qtplaf.library.trading.chart.drawings.CrossCursor;
+import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
  * A cursor plotter.

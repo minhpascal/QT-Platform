@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.BarPlotter;
-import com.qtplaf.library.trading.chart.plotter.CandlestickPlotter;
-import com.qtplaf.library.trading.chart.plotter.DataPlotter;
-import com.qtplaf.library.trading.chart.plotter.LinePlotter;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
+import com.qtplaf.library.trading.chart.plotter.data.BarPlotter;
+import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
+import com.qtplaf.library.trading.chart.plotter.data.DataLinePlotter;
+import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.util.Calendar;
 import com.qtplaf.library.util.NumberUtils;
@@ -350,13 +350,13 @@ public abstract class DataList {
 				break;
 			case Histogram:
 				// TODO: implement histogram plotter.
-				dataPlotter = new LinePlotter();
+				dataPlotter = new DataLinePlotter();
 				break;
 			case Line:
-				dataPlotter = new LinePlotter();
+				dataPlotter = new DataLinePlotter();
 				break;
 			default:
-				dataPlotter = new LinePlotter();
+				dataPlotter = new DataLinePlotter();
 				break;
 			}
 			dataPlotters.add(dataPlotter);
@@ -384,8 +384,8 @@ public abstract class DataList {
 	 */
 	public boolean isPlotFromScratch() {
 		for (DataPlotter dataPlotter : dataPlotters) {
-			if (dataPlotter instanceof LinePlotter) {
-				LinePlotter linePlotter = (LinePlotter) dataPlotter;
+			if (dataPlotter instanceof DataLinePlotter) {
+				DataLinePlotter linePlotter = (DataLinePlotter) dataPlotter;
 				BasicStroke stroke = (BasicStroke) linePlotter.getStroke();
 				if (stroke.getDashArray() != null) {
 					return true;

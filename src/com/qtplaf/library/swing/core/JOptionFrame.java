@@ -88,7 +88,7 @@ public class JOptionFrame extends JFrameSession {
 					getPopupConfigurator().configure(popupMenu);
 				}
 				SwingUtils.installMenuKeyListener(popupMenu, new MenuKeyAdapter());
-				if (!SwingUtils.isEmtpy(popupMenu)) {
+				if (!SwingUtils.isEmpty(popupMenu)) {
 					popupMenu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}

@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter;
+package com.qtplaf.library.trading.chart.plotter.axis;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -23,7 +23,9 @@ import java.awt.Stroke;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.qtplaf.library.trading.chart.plotter.parameters.VerticalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.VerticalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.plotter.Plotter;
+import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotScale;
 import com.qtplaf.library.util.ColorUtils;
