@@ -86,7 +86,7 @@ public class JChartContainer extends JPanel {
 		chartInfo = new JChartInfo(this);
 		add(chartInfo, constraintsInfo);
 
-		// PlotterOld constraints.
+		// Plotter constraints.
 		GridBagConstraints constraintsPlotter = new GridBagConstraints();
 		constraintsPlotter.anchor = GridBagConstraints.EAST;
 		constraintsPlotter.fill = GridBagConstraints.BOTH;
@@ -372,6 +372,6 @@ public class JChartContainer extends JPanel {
 	 * @return A plotter context.
 	 */
 	private PlotterContext getPlotterContext() {
-		return new PlotterContext(getChart(), getPlotData(), getChartPlotter().getSize());
+		return new PlotterContext(getChartPlotter(), getPlotData());
 	}
 }

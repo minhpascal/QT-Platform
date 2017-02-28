@@ -13,12 +13,11 @@
  */
 package com.qtplaf.library.trading.data;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.qtplaf.library.trading.chart.JChart;
+import com.qtplaf.library.trading.chart.JChartPlotter;
 import com.qtplaf.library.trading.chart.drawings.Drawing;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
@@ -87,10 +86,10 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	/**
 	 * Set the plotter context (set by the chart plotter.
 	 * 
-	 * @param plotterContext The plotter context.
+	 * @param chartPlotter The chart plotter.
 	 */
-	public void setPlotterContext(JChart chart, Dimension chartSize) {
-		plotterContext = new PlotterContext(chart, this, chartSize);
+	public void setPlotterContext(JChartPlotter chartPlotter) {
+		plotterContext = new PlotterContext(chartPlotter, this);
 		for (int i = 0; i < size(); i++) {
 			get(i).setPlotterContext(plotterContext);
 		}
@@ -103,6 +102,15 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 */
 	public void addDrawing(Drawing drawing) {
 		drawings.add(drawing);
+	}
+
+	/**
+	 * Returns the list of drawings.
+	 * 
+	 * @return The list of drawings.
+	 */
+	public List<Drawing> getDrawings() {
+		return drawings;
 	}
 
 	/**

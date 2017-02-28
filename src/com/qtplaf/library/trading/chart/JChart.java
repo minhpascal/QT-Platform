@@ -86,10 +86,6 @@ public class JChart extends JPanel {
 	 */
 	private JChartHorizontalAxis horizontalAxis;
 	/**
-	 * Horizontal axis height.
-	 */
-	private int horizontalAxisHeight = 40;
-	/**
 	 * The default background color.
 	 */
 	private Color defaultBackgroundColor = Color.WHITE;
@@ -117,11 +113,6 @@ public class JChart extends JPanel {
 	 * Chart plot parameters.
 	 */
 	private ChartPlotParameters chartPlotParameters = new ChartPlotParameters();
-	/**
-	 * The data item (bar) width factor that is used to calculate the width of a bar or candle depending on the
-	 * available width per data (bar).
-	 */
-	private double dataItemWidthFactor = 0.75;
 	/**
 	 * The working session.
 	 */
@@ -255,30 +246,6 @@ public class JChart extends JPanel {
 	}
 
 	/**
-	 * Returns the factor to calculate the width of a bar. As a general rule, it can be 75% of the available width per
-	 * bar, as an odd number, and if the result is less than 2, plot just a vertical line of 1 pixel width. Default is
-	 * 0.75.
-	 * 
-	 * @return The factor to calculate the width of a bar.
-	 */
-	public double getDataItemWidthFactor() {
-		return dataItemWidthFactor;
-	}
-
-	/**
-	 * Sets the factor to calculate the width of a bar. As a general rule, it can be 75% of the available width per bar,
-	 * as an odd number, and if the result is less than 2, plot just a vertical line of 1 pixel width. Default is 0.75.
-	 * 
-	 * @param dataWidthFactor The factor to calculate the width of a bar.
-	 */
-	public void setDataItemWidthFactor(double dataWidthFactor) {
-		if (dataWidthFactor <= 0 || dataWidthFactor > 1) {
-			throw new IllegalArgumentException("Data width factor must be between 0 and 1.");
-		}
-		this.dataItemWidthFactor = dataWidthFactor;
-	}
-
-	/**
 	 * Returns the split pane divider size.
 	 * 
 	 * @return The split pane divider size.
@@ -294,24 +261,6 @@ public class JChart extends JPanel {
 	 */
 	public void setSplitPaneDividerSize(int splitPaneDividerSize) {
 		this.splitPaneDividerSize = splitPaneDividerSize;
-	}
-
-	/**
-	 * Returns the horizontal axis height.
-	 * 
-	 * @return The horizontal axis height.
-	 */
-	public int getHorizontalAxisHeight() {
-		return horizontalAxisHeight;
-	}
-
-	/**
-	 * Sets the horizontal axis height.
-	 * 
-	 * @param horizontalAxisHeight The horizontal axis height.
-	 */
-	public void setHorizontalAxisHeight(int horizontalAxisHeight) {
-		this.horizontalAxisHeight = horizontalAxisHeight;
 	}
 
 	/**
@@ -447,7 +396,7 @@ public class JChart extends JPanel {
 
 		// Add panels in the order of the list.
 		int splitPanels = chartContainers.size() - 1;
-		double height = getSize().getHeight() - getHorizontalAxisHeight();
+		double height = getSize().getHeight() - getHorizontalAxisPlotParameters().getHorizontalAxisHeight();
 		double panelHeight = height * 0.15;
 		int index = chartContainers.size() - 1;
 		for (int i = 0; i < splitPanels; i++) {

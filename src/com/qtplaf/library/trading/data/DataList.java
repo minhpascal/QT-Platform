@@ -21,7 +21,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.chart.plotter.data.BarPlotter;
 import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
-import com.qtplaf.library.trading.chart.plotter.data.DataLinePlotter;
+import com.qtplaf.library.trading.chart.plotter.data.BufferedLinePlotter;
 import com.qtplaf.library.trading.chart.plotter.data.DataPlotter;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.util.Calendar;
@@ -350,13 +350,13 @@ public abstract class DataList {
 				break;
 			case Histogram:
 				// TODO: implement histogram plotter.
-				dataPlotter = new DataLinePlotter();
+				dataPlotter = new BufferedLinePlotter();
 				break;
 			case Line:
-				dataPlotter = new DataLinePlotter();
+				dataPlotter = new BufferedLinePlotter();
 				break;
 			default:
-				dataPlotter = new DataLinePlotter();
+				dataPlotter = new BufferedLinePlotter();
 				break;
 			}
 			dataPlotters.add(dataPlotter);
@@ -384,8 +384,8 @@ public abstract class DataList {
 	 */
 	public boolean isPlotFromScratch() {
 		for (DataPlotter dataPlotter : dataPlotters) {
-			if (dataPlotter instanceof DataLinePlotter) {
-				DataLinePlotter linePlotter = (DataLinePlotter) dataPlotter;
+			if (dataPlotter instanceof BufferedLinePlotter) {
+				BufferedLinePlotter linePlotter = (BufferedLinePlotter) dataPlotter;
 				BasicStroke stroke = (BasicStroke) linePlotter.getStroke();
 				if (stroke.getDashArray() != null) {
 					return true;

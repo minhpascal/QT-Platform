@@ -166,10 +166,8 @@ public class JChartVerticalAxis extends JPanel {
 	 * @return The vertical axis plotter.
 	 */
 	private VerticalAxisPlotter getVerticalAxisPlotter() {
-		JChart chart = chartContainer.getChart();
-		Dimension chartSize = chartContainer.getChartPlotter().getSize();
-		PlotData plotData = chartContainer.getPlotData();
-		return new VerticalAxisPlotter(new PlotterContext(chart, plotData, chartSize));
+		return new VerticalAxisPlotter(
+			new PlotterContext(chartContainer.getChartPlotter(), chartContainer.getPlotData()));
 	}
 
 }

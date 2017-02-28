@@ -175,7 +175,7 @@ public class VerticalAxisPlotter extends Plotter {
 	 * @return The vertical axis plot parameters.
 	 */
 	private VerticalAxisPlotParameters getPlotParameters() {
-		return getContext().getChart().getVerticalAxisPlotParameters();
+		return getContext().getVerticalAxisPlotParameters();
 	}
 
 	/**

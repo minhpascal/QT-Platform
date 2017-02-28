@@ -13,6 +13,7 @@
  */
 package com.qtplaf.library.trading.chart.drawings;
 
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 
@@ -86,42 +87,12 @@ public class Bar extends DataDrawing {
 	}
 
 	/**
-	 * Returns the maximum value of the drawing.
+	 * Draw the candlestick.
 	 * 
-	 * @return The maximum value.
+	 * @param g2 The graphics object.
+	 * @param context The plotter context.
 	 */
 	@Override
-	public double getMaximumValue() {
-		return Data.getHigh(getData());
-	}
-
-	/**
-	 * Returns the minimum value of the drawing.
-	 * 
-	 * @return The minimum value.
-	 */
-	@Override
-	public double getMinimumValue() {
-		return Data.getLow(getData());
-	}
-
-	/**
-	 * Returns the maximum index of the drawing.
-	 * 
-	 * @return The maximum index.
-	 */
-	@Override
-	public int getMaximumIndex() {
-		return getIndex();
-	}
-
-	/**
-	 * Returns the minimum index of the drawing.
-	 * 
-	 * @return The minimum index.
-	 */
-	@Override
-	public int getMinimumIndex() {
-		return getIndex();
+	public void draw(Graphics2D g2, PlotterContext context) {
 	}
 }

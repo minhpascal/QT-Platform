@@ -11,10 +11,11 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.trading.chart.plotter.cursor;
+package com.qtplaf.library.trading.chart.drawings;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -28,7 +29,7 @@ import com.qtplaf.library.trading.chart.plotter.PlotterContext;
  * 
  * @author Miquel Sas
  */
-public class CrossCursor {
+public class CrossCursor extends Drawing {
 
 	/**
 	 * The name.
@@ -238,5 +239,15 @@ public class CrossCursor {
 			shape.append(circle, false);
 		}
 		return shape;
+	}
+
+	/**
+	 * Draw the candlestick.
+	 * 
+	 * @param g2 The graphics object.
+	 * @param context The plotter context.
+	 */
+	@Override
+	public void draw(Graphics2D g2, PlotterContext context) {
 	}
 }

@@ -13,13 +13,18 @@
  */
 package com.qtplaf.library.trading.chart.drawings;
 
+import java.awt.Graphics2D;
 import java.awt.Shape;
 
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
- * Base class of all drawings. As a general rule a drawing should store the variables that define it, like indexes and
- * values, and return the shapes using a <i>Plotter</i> the retrieve their points coordinates.
+ * Base class of all drawings.
+ * <p>
+ * Drawings are responsible to return its shape given a plotter context that enables them to calculate their
+ * coordinates. The shape can be used by the drawer to check, for instance, intersections.
+ * <p>
+ * Additionally, the drawing is responsible to draw itself in a graphics device.
  * 
  * @author Miquel Sas
  */
@@ -63,30 +68,10 @@ public abstract class Drawing {
 	public abstract Shape getShape(PlotterContext context);
 
 	/**
-	 * Returns the maximum value of the drawing.
+	 * Draw the candlestick.
 	 * 
-	 * @return The maximum value.
+	 * @param g2 The graphics object.
+	 * @param context The plotter context.
 	 */
-	public abstract double getMaximumValue();
-
-	/**
-	 * Returns the minimum value of the drawing.
-	 * 
-	 * @return The minimum value.
-	 */
-	public abstract double getMinimumValue();
-
-	/**
-	 * Returns the maximum index of the drawing.
-	 * 
-	 * @return The maximum index.
-	 */
-	public abstract int getMaximumIndex();
-
-	/**
-	 * Returns the minimum index of the drawing.
-	 * 
-	 * @return The minimum index.
-	 */
-	public abstract int getMinimumIndex();
+	public abstract void draw(Graphics2D g2, PlotterContext context);
 }

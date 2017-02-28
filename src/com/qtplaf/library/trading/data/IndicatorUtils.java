@@ -18,7 +18,7 @@ import java.awt.Color;
 import java.util.List;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.plotter.data.DataLinePlotter;
+import com.qtplaf.library.trading.chart.plotter.data.BufferedLinePlotter;
 import com.qtplaf.library.trading.data.indicators.ExponentialMovingAverage;
 import com.qtplaf.library.trading.data.indicators.MeanSquaredTranslation;
 import com.qtplaf.library.trading.data.indicators.PeriodIndicator;
@@ -52,7 +52,7 @@ public class IndicatorUtils {
 		ema.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList =	new IndicatorDataList(session, ema, ListUtils.asList(source));
-		DataLinePlotter plotter = new DataLinePlotter();
+		BufferedLinePlotter plotter = new BufferedLinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
 		plotter.setColorBullishOdd(color);
@@ -81,7 +81,7 @@ public class IndicatorUtils {
 		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList =	new IndicatorDataList(session, sma, ListUtils.asList(source));
-		DataLinePlotter plotter = new DataLinePlotter();
+		BufferedLinePlotter plotter = new BufferedLinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
 		plotter.setColorBullishOdd(color);
@@ -110,7 +110,7 @@ public class IndicatorUtils {
 		sma.getIndicatorInfo().getParameter(PeriodIndicator.ParamPeriodIndex).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList avgList =	new IndicatorDataList(session, sma, ListUtils.asList(source));
-		DataLinePlotter plotter = new DataLinePlotter();
+		BufferedLinePlotter plotter = new BufferedLinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
 		plotter.setColorBullishOdd(color);
@@ -158,7 +158,7 @@ public class IndicatorUtils {
 		sma.getIndicatorInfo().getParameter(indexPeriod).getValue().setInteger(period);
 		IndicatorSource source = new IndicatorSource(dataList, index);
 		IndicatorDataList lst = new IndicatorDataList(session, sma, ListUtils.asList(source));
-		DataLinePlotter plotter = new DataLinePlotter();
+		BufferedLinePlotter plotter = new BufferedLinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
 		plotter.setColorBullishOdd(color);
@@ -172,7 +172,7 @@ public class IndicatorUtils {
 			smoothedSma.getIndicatorInfo().getParameter(indexPeriod).getValue().setInteger(smooth);
 			source = new IndicatorSource(lst, indexSma);
 			lst = new IndicatorDataList(session, smoothedSma, ListUtils.asList(source));
-			plotter = new DataLinePlotter();
+			plotter = new BufferedLinePlotter();
 			plotter.setColorBullishEven(color);
 			plotter.setColorBearishEven(color);
 			plotter.setColorBullishOdd(color);
@@ -211,7 +211,7 @@ public class IndicatorUtils {
 		IndicatorSource inputSource = new IndicatorSource(inputList, inputIndex);
 		List<IndicatorSource> sources = ListUtils.asList(outputSource, inputSource);
 		IndicatorDataList msList = new IndicatorDataList(session, ms, sources);
-		DataLinePlotter plotter = new DataLinePlotter();
+		BufferedLinePlotter plotter = new BufferedLinePlotter();
 		plotter.setColorBullishEven(color);
 		plotter.setColorBearishEven(color);
 		plotter.setColorBullishOdd(color);

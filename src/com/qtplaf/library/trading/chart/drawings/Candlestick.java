@@ -13,11 +13,18 @@
  */
 package com.qtplaf.library.trading.chart.drawings;
 
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 
+import com.qtplaf.library.trading.chart.parameters.CandlestickPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.util.ColorUtils;
 
 /**
  * A candlestick drawing.
@@ -25,9 +32,13 @@ import com.qtplaf.library.trading.data.Data;
  * @author Miquel Sas
  */
 public class Candlestick extends DataDrawing {
-	
+
+	/** Plot parameters. */
+	private CandlestickPlotParameters parameters;
 	/** Indexes to retrieve data. */
 	private int[] indexes;
+	/** Cached shape. */
+	private Shape shape;
 
 	/**
 	 * Constructor assigning the values.
@@ -35,11 +46,22 @@ public class Candlestick extends DataDrawing {
 	 * @param index The data index.
 	 * @param data The data.
 	 * @param indexes The indexes to retrieve values.
+	 * @param parameters Plot parameters.
 	 */
-	public Candlestick(int index, Data data, int[] indexes) {
+	public Candlestick(int index, Data data, int[] indexes, CandlestickPlotParameters parameters) {
 		super(index, data);
 		this.indexes = indexes;
+		this.parameters = parameters;
 		setName("Candlestick");
+	}
+
+	/**
+	 * Returns the plot parameters.
+	 * 
+	 * @return The plot parameters.
+	 */
+	public CandlestickPlotParameters getParameters() {
+		return parameters;
 	}
 
 	/**
@@ -49,106 +71,134 @@ public class Candlestick extends DataDrawing {
 	 * @return The candlestick shape.
 	 */
 	public Shape getShape(PlotterContext context) {
-		// The values to plot.
-		Data data = getData();
-		double open = data.getValue(indexes[0]);
-		double high = data.getValue(indexes[1]);
-		double low = data.getValue(indexes[2]);
-		double close = data.getValue(indexes[3]);
+		if (shape == null) {
+			// The values to plot.
+			Data data = getData();
+			double open = data.getValue(indexes[0]);
+			double high = data.getValue(indexes[1]);
+			double low = data.getValue(indexes[2]);
+			double close = data.getValue(indexes[3]);
 
-		// The X coordinate to start painting.
-		int x = context.getCoordinateX(getIndex());
+			// The X coordinate to start painting.
+			int x = context.getCoordinateX(getIndex());
 
-		// And the Y coordinate for each value.
-		int openY = context.getCoordinateY(open);
-		int highY = context.getCoordinateY(high);
-		int lowY = context.getCoordinateY(low);
-		int closeY = context.getCoordinateY(close);
+			// And the Y coordinate for each value.
+			int openY = context.getCoordinateY(open);
+			int highY = context.getCoordinateY(high);
+			int lowY = context.getCoordinateY(low);
+			int closeY = context.getCoordinateY(close);
 
-		// The X coordinate of the vertical line, either the candle.
-		int candlestickWidth = context.getDataItemWidth();
-		int verticalLineX = context.getDrawingCenterCoordinateX(x);
+			// The X coordinate of the vertical line, either the candle.
+			int candlestickWidth = context.getDataItemWidth();
+			int verticalLineX = context.getDrawingCenterCoordinateX(x);
 
-		// The bar candle is bullish/bearish.
-		boolean bullish = Data.isBullish(data);
+			// The bar candle is bullish/bearish.
+			boolean bullish = Data.isBullish(data);
 
-		// The candlestick shape.
-		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
-		// If bar width is 1...
-		if (candlestickWidth == 1) {
-			// The vertical line only.
-			shape.moveTo(verticalLineX, highY);
-			shape.lineTo(verticalLineX, lowY);
-		} else {
-			if (bullish) {
-				// Upper shadow.
+			// The candlestick shape.
+			GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
+			// If bar width is 1...
+			if (candlestickWidth == 1) {
+				// The vertical line only.
 				shape.moveTo(verticalLineX, highY);
-				shape.lineTo(verticalLineX, closeY - 1);
-				// Body.
-				shape.moveTo(x, closeY);
-				shape.lineTo(x + candlestickWidth - 1, closeY);
-				shape.lineTo(x + candlestickWidth - 1, openY);
-				shape.lineTo(x, openY);
-				shape.lineTo(x, closeY);
-				// Lower shadow.
-				shape.moveTo(verticalLineX, openY + 1);
 				shape.lineTo(verticalLineX, lowY);
 			} else {
-				// Upper shadow.
-				shape.moveTo(verticalLineX, highY);
-				shape.lineTo(verticalLineX, openY - 1);
-				// Body.
-				shape.moveTo(x, openY);
-				shape.lineTo(x + candlestickWidth - 1, openY);
-				shape.lineTo(x + candlestickWidth - 1, closeY);
-				shape.lineTo(x, closeY);
-				shape.lineTo(x, openY);
-				// Lower shadow.
-				shape.moveTo(verticalLineX, closeY + 1);
-				shape.lineTo(verticalLineX, lowY);
+				if (bullish) {
+					// Upper shadow.
+					shape.moveTo(verticalLineX, highY);
+					shape.lineTo(verticalLineX, closeY - 1);
+					// Body.
+					shape.moveTo(x, closeY);
+					shape.lineTo(x + candlestickWidth - 1, closeY);
+					shape.lineTo(x + candlestickWidth - 1, openY);
+					shape.lineTo(x, openY);
+					shape.lineTo(x, closeY);
+					// Lower shadow.
+					shape.moveTo(verticalLineX, openY + 1);
+					shape.lineTo(verticalLineX, lowY);
+				} else {
+					// Upper shadow.
+					shape.moveTo(verticalLineX, highY);
+					shape.lineTo(verticalLineX, openY - 1);
+					// Body.
+					shape.moveTo(x, openY);
+					shape.lineTo(x + candlestickWidth - 1, openY);
+					shape.lineTo(x + candlestickWidth - 1, closeY);
+					shape.lineTo(x, closeY);
+					shape.lineTo(x, openY);
+					// Lower shadow.
+					shape.moveTo(verticalLineX, closeY + 1);
+					shape.lineTo(verticalLineX, lowY);
+				}
 			}
+			this.shape = shape;
 		}
 
 		return shape;
 	}
 
 	/**
-	 * Returns the maximum value of the drawing.
+	 * Draw the candlestick.
 	 * 
-	 * @return The maximum value.
+	 * @param g2 The graphics object.
+	 * @param context The plotter context.
 	 */
 	@Override
-	public double getMaximumValue() {
-		return Data.getHigh(getData());
-	}
+	public void draw(Graphics2D g2, PlotterContext context) {
+		
+		// The shape.
+		Shape shape = getShape(context);
 
-	/**
-	 * Returns the minimum value of the drawing.
-	 * 
-	 * @return The minimum value.
-	 */
-	@Override
-	public double getMinimumValue() {
-		return Data.getLow(getData());
-	}
+		// Save color and stroke.
+		Color saveColor = g2.getColor();
+		Stroke saveStroke = g2.getStroke();
 
-	/**
-	 * Returns the maximum index of the drawing.
-	 * 
-	 * @return The maximum index.
-	 */
-	@Override
-	public int getMaximumIndex() {
-		return getIndex();
-	}
+		// Set the stroke.
+		g2.setStroke(getParameters().getStroke());
 
-	/**
-	 * Returns the minimum index of the drawing.
-	 * 
-	 * @return The minimum index.
-	 */
-	@Override
-	public int getMinimumIndex() {
-		return getIndex();
+		// Once defined the path the paint strategy will depend on whether the border if painted or not, and whether
+		// the color is raised or not.
+		Color color = getParameters().getFillColor();
+		if (getParameters().isPaintBorder()) {
+			if (getParameters().isColorRaised()) {
+				// Create a raised color.
+				Data data = getData();
+				double open = Data.getOpen(data);
+				double close = Data.getClose(data);
+				int candlestickWidth = context.getDataItemWidth();
+				int x = context.getCoordinateX(getIndex());
+				int yOpen = context.getCoordinateY(open);
+				int yClose = context.getCoordinateY(close);
+				Color colorRaised = ColorUtils.brighter(color, getParameters().getBrightnessFactor());
+				Point2D pt1;
+				Point2D pt2;
+				if (isBullish()) {
+					pt1 = new Point2D.Float(x, yClose);
+					pt2 = new Point2D.Float(x + candlestickWidth - 1, yClose);
+				} else {
+					pt1 = new Point2D.Float(x, yOpen);
+					pt2 = new Point2D.Float(x + candlestickWidth - 1, yOpen);
+				}
+				GradientPaint raisedPaint = new GradientPaint(pt1, colorRaised, pt2, color, true);
+				g2.setPaint(raisedPaint);
+				g2.fill(shape);
+			} else {
+				// Set the fill color and do fill.
+				g2.setColor(color);
+				g2.fill(shape);
+			}
+			// Set the border color and draw the path.
+			g2.setPaint(getParameters().getBorderColor());
+			g2.draw(shape);
+		} else {
+			// Set the fill color and do fill.
+			g2.setColor(color);
+			g2.fill(shape);
+			g2.draw(shape);
+		}
+
+		// Restore color and stroke.
+		g2.setColor(saveColor);
+		g2.setStroke(saveStroke);
 	}
 }

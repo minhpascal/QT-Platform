@@ -29,7 +29,7 @@ import com.qtplaf.library.trading.data.DataList;
  * 
  * @author Miquel Sas
  */
-public class DataLinePlotter extends DataPlotter {
+public class BufferedLinePlotter extends DataPlotter {
 
 	/**
 	 * The line buffer.
@@ -43,7 +43,7 @@ public class DataLinePlotter extends DataPlotter {
 	/**
 	 * Constructor.
 	 */
-	public DataLinePlotter() {
+	public BufferedLinePlotter() {
 		super();
 		setName("Line");
 		setColorBearishEven(Color.BLACK);

@@ -13,7 +13,9 @@
  */
 package com.qtplaf.library.trading.chart.drawings;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
@@ -40,7 +42,7 @@ public class Line extends Drawing {
 	private double v1;
 	/**
 	 * Value 2 (end).
-	 * */
+	 */
 	private double v2;
 	/**
 	 * The stroke.
@@ -52,12 +54,26 @@ public class Line extends Drawing {
 	private Color color;
 
 	/**
+	 * Constructor assigning the values, with a default stroke and color.
+	 * 
+	 * @param index1 Index 1 (start).
+	 * @param index2 Index 2 (end).
+	 * @param v1 Value 1.
+	 * @param v2 Value 2.
+	 */
+	public Line(int index1, int index2, double v1, double v2) {
+		this(index1, index2, v1, v2, new BasicStroke(), Color.BLACK);
+	}
+
+	/**
 	 * Constructor assigning the values.
 	 * 
 	 * @param index1 Index 1 (start).
 	 * @param index2 Index 2 (end).
 	 * @param v1 Value 1.
 	 * @param v2 Value 2.
+	 * @param stroke The stroke.
+	 * @param The color.
 	 */
 	public Line(int index1, int index2, double v1, double v2, Stroke stroke, Color color) {
 		this.index1 = index1;
@@ -148,57 +164,64 @@ public class Line extends Drawing {
 	 * @return The line shape.
 	 */
 	public Shape getShape(PlotterContext context) {
-		
+
+		int index1 = this.index1;
+		int index2 = this.index2;
+		double v1 = this.v1;
+		double v2 = this.v2;
+
+		// Vertical line.
+		if (index1 == index2) {
+			if (v1 == Double.MAX_VALUE) {
+				v1 = context.getPlotData().getMaximumValue();
+			}
+			if (v1 == Double.MIN_VALUE) {
+				v1 = context.getPlotData().getMinimumValue();
+			}
+			if (v2 == Double.MAX_VALUE) {
+				v2 = context.getPlotData().getMaximumValue();
+			}
+			if (v2 == Double.MIN_VALUE) {
+				v2 = context.getPlotData().getMinimumValue();
+			}
+		}
+
+		// Horizontal line.
+		if (v1 == v2) {
+			if (index1 == Integer.MAX_VALUE) {
+				index1 = context.getPlotData().getEndIndex();
+			}
+			if (index1 == Integer.MIN_VALUE) {
+				index1 = context.getPlotData().getStartIndex();
+			}
+			if (index2 == Integer.MAX_VALUE) {
+				index2 = context.getPlotData().getEndIndex();
+			}
+			if (index2 == Integer.MIN_VALUE) {
+				index2 = context.getPlotData().getStartIndex();
+			}
+		}
+
 		// Coordinates.
-		int coordinateXCurrent = context.getDrawingCenterCoordinateX(context.getCoordinateX(index2));
-		int coordinateXPrevious = context.getDrawingCenterCoordinateX(context.getCoordinateX(index1));
-		int coordinateYCurrent = context.getCoordinateY(v2);
-		int coordinateYPrevious = context.getCoordinateY(v1);
+		int x2 = context.getDrawingCenterCoordinateX(context.getCoordinateX(index2));
+		int x1 = context.getDrawingCenterCoordinateX(context.getCoordinateX(index1));
+		int y2 = context.getCoordinateY(v2);
+		int y1 = context.getCoordinateY(v1);
 
 		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 1);
-		shape.moveTo(coordinateXPrevious, coordinateYPrevious);
-		shape.lineTo(coordinateXCurrent, coordinateYCurrent);
+		shape.moveTo(x1, y1);
+		shape.lineTo(x2, y2);
 
 		return shape;
 	}
 
 	/**
-	 * Returns the maximum value of the drawing.
+	 * Draw the candlestick.
 	 * 
-	 * @return The maximum value.
+	 * @param g2 The graphics object.
+	 * @param context The plotter context.
 	 */
 	@Override
-	public double getMaximumValue() {
-		return Math.max(v1, v2);
-	}
-
-	/**
-	 * Returns the minimum value of the drawing.
-	 * 
-	 * @return The minimum value.
-	 */
-	@Override
-	public double getMinimumValue() {
-		return Math.min(v1, v2);
-	}
-
-	/**
-	 * Returns the maximum index of the drawing.
-	 * 
-	 * @return The maximum index.
-	 */
-	@Override
-	public int getMaximumIndex() {
-		return Math.max(index1, index2);
-	}
-
-	/**
-	 * Returns the minimum index of the drawing.
-	 * 
-	 * @return The minimum index.
-	 */
-	@Override
-	public int getMinimumIndex() {
-		return Math.min(index1, index2);
+	public void draw(Graphics2D g2, PlotterContext context) {
 	}
 }

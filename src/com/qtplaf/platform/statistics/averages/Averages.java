@@ -32,7 +32,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
-import com.qtplaf.library.trading.chart.plotter.data.DataLinePlotter;
+import com.qtplaf.library.trading.chart.plotter.data.BufferedLinePlotter;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
@@ -1313,7 +1313,7 @@ public abstract class Averages extends TickerStatistics {
 			info.addOutput(name, header, index, label);
 
 			// Plotter.
-			DataLinePlotter plotterAvg = new DataLinePlotter();
+			BufferedLinePlotter plotterAvg = new BufferedLinePlotter();
 			plotterAvg.setIndex(index);
 			dataList.addDataPlotter(plotterAvg);
 		}
@@ -1352,7 +1352,7 @@ public abstract class Averages extends TickerStatistics {
 			info.addOutput(name, header, index, label);
 
 			// Plotter.
-			DataLinePlotter plotter = new DataLinePlotter();
+			BufferedLinePlotter plotter = new BufferedLinePlotter();
 			plotter.setIndex(index);
 			dataList.addDataPlotter(plotter);
 		}

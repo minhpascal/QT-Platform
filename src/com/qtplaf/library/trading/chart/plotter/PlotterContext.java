@@ -18,7 +18,10 @@ import java.awt.Dimension;
 import java.awt.Insets;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.trading.chart.JChart;
+import com.qtplaf.library.trading.chart.JChartPlotter;
+import com.qtplaf.library.trading.chart.parameters.ChartPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.HorizontalAxisPlotParameters;
+import com.qtplaf.library.trading.chart.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.PlotScale;
 import com.qtplaf.library.util.NumberUtils;
@@ -31,13 +34,13 @@ import com.qtplaf.library.util.NumberUtils;
 public class PlotterContext {
 
 	/**
+	 * Chart plotter.
+	 */
+	private JChartPlotter chartPlotter;
+	/**
 	 * The plot data.
 	 */
 	private PlotData plotData;
-	/**
-	 * Chart area size.
-	 */
-	private Dimension chartSize;
 	/**
 	 * Calculated chart insets.
 	 */
@@ -58,30 +61,24 @@ public class PlotterContext {
 	 * The calculated data item (candlestick or bar) width.
 	 */
 	private int dataItemWidth;
-	/**
-	 * The parent chart.
-	 */
-	private JChart chart;
 
 	/**
 	 * Constructor assinging the context values.
 	 * 
-	 * @param chart The parent chart.
+	 * @param chartPlotter The parent chart plotter.
 	 * @param plotData The plot data.
-	 * @param chartSize The chart plotter size.
 	 */
-	public PlotterContext(JChart chart, PlotData plotData, Dimension chartSize) {
+	public PlotterContext(JChartPlotter chartPlotter, PlotData plotData) {
 		super();
 
 		// Assign members.
-		this.chart = chart;
+		this.chartPlotter = chartPlotter;
 		this.plotData = plotData;
-		this.chartSize = chartSize;
 
 		// Calculate chart insets, width and height.
-		chartInsets = chart.getChartPlotParameters().getChartPlotInsets(chartSize);
-		chartWidth = chartSize.width - chartInsets.left - chartInsets.right;
-		chartHeight = chartSize.height - chartInsets.top - chartInsets.bottom;
+		chartInsets = getChartPlotParameters().getChartPlotInsets(getChartSize());
+		chartWidth = getChartSize().width - chartInsets.left - chartInsets.right;
+		chartHeight = getChartSize().height - chartInsets.top - chartInsets.bottom;
 
 		// Calculate the available width per data item.
 		int startIndex = plotData.getStartIndex();
@@ -100,20 +97,11 @@ public class PlotterContext {
 			dataItemWidth = 3;
 		} else {
 			dataItemWidth =
-				(int) NumberUtils.round(((double) widthPerItem) * chart.getDataItemWidthFactor(), 0);
+				(int) NumberUtils.round(((double) widthPerItem) * getChartPlotParameters().getDataItemWidthFactor(), 0);
 			if (NumberUtils.isLeap(dataItemWidth)) {
 				dataItemWidth -= 1;
 			}
 		}
-	}
-
-	/**
-	 * Returns the parent chart.
-	 * 
-	 * @return The parent chart.
-	 */
-	public JChart getChart() {
-		return chart;
 	}
 
 	/**
@@ -122,7 +110,7 @@ public class PlotterContext {
 	 * @return The chart plotter size.
 	 */
 	public Dimension getChartSize() {
-		return chartSize;
+		return getChartPlotter().getSize();
 	}
 
 	/**
@@ -148,7 +136,7 @@ public class PlotterContext {
 		int endIndex = plotData.getEndIndex();
 		// Check the index is in the start-end range.
 		if (index < startIndex || index > endIndex) {
-//			throw new IllegalStateException();
+			// throw new IllegalStateException();
 		}
 		// The index factor: relation between index and the difference endIndex - startIndex.
 		double indexFactor = (((double) index) - ((double) startIndex)) / (((double) endIndex) - ((double) startIndex));
@@ -300,12 +288,48 @@ public class PlotterContext {
 	}
 
 	/**
+	 * Returns the horizontal axis plot parameters.
+	 * 
+	 * @return The horizontal axis plot parameters.
+	 */
+	public HorizontalAxisPlotParameters getHorizontalAxisPlotParameters() {
+		return getChartPlotter().getChartContainer().getChart().getHorizontalAxisPlotParameters();
+	}
+
+	/**
+	 * Returns the axis plot parameters.
+	 * 
+	 * @return The axis plot parameters.
+	 */
+	public VerticalAxisPlotParameters getVerticalAxisPlotParameters() {
+		return getChartPlotter().getChartContainer().getChart().getVerticalAxisPlotParameters();
+	}
+
+	/**
+	 * Returns the chart plot parameters.
+	 * 
+	 * @return The chart plot parameters.
+	 */
+	public ChartPlotParameters getChartPlotParameters() {
+		return getChartPlotter().getChartContainer().getChart().getChartPlotParameters();
+	}
+
+	/**
+	 * Returns the parent chart plotter.
+	 * 
+	 * @return The chart plotter.
+	 */
+	public JChartPlotter getChartPlotter() {
+		return chartPlotter;
+	}
+
+	/**
 	 * Returns the working session.
 	 * 
 	 * @return The working session.
 	 */
 	public Session getSession() {
-		return chart.getSession();
+		return getChartPlotter().getSession();
 	}
 
 }

@@ -29,6 +29,11 @@ public class ChartPlotParameters {
 	 * the available width is 1400 pixels, a left inset of 0.02 will leave 28 pixels free of any paint to the left.
 	 */
 	private double[] chartPlotInsets = new double[] { 0.02, 0.01, 0.01, 0.02 };
+	/**
+	 * The data item (bar) width factor that is used to calculate the width of a bar or candle depending on the
+	 * available width per data (bar).
+	 */
+	private double dataItemWidthFactor = 0.75;
 
 	/**
 	 * Constructor.
@@ -105,4 +110,27 @@ public class ChartPlotParameters {
 		chartPlotInsets[3] = right;
 	}
 
+	/**
+	 * Returns the factor to calculate the width of a bar. As a general rule, it can be 75% of the available width per
+	 * bar, as an odd number, and if the result is less than 2, plot just a vertical line of 1 pixel width. Default is
+	 * 0.75.
+	 * 
+	 * @return The factor to calculate the width of a bar.
+	 */
+	public double getDataItemWidthFactor() {
+		return dataItemWidthFactor;
+	}
+
+	/**
+	 * Sets the factor to calculate the width of a bar. As a general rule, it can be 75% of the available width per bar,
+	 * as an odd number, and if the result is less than 2, plot just a vertical line of 1 pixel width. Default is 0.75.
+	 * 
+	 * @param dataWidthFactor The factor to calculate the width of a bar.
+	 */
+	public void setDataItemWidthFactor(double dataWidthFactor) {
+		if (dataWidthFactor <= 0 || dataWidthFactor > 1) {
+			throw new IllegalArgumentException("Data width factor must be between 0 and 1.");
+		}
+		this.dataItemWidthFactor = dataWidthFactor;
+	}
 }

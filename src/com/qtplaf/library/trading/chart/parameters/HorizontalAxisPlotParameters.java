@@ -43,6 +43,10 @@ public class HorizontalAxisPlotParameters {
 	 * Horizontal axis: insets of the text.
 	 */
 	private Insets horizontalAxisTextInsets = new Insets(3, 2, 3, 2);
+	/**
+	 * Horizontal axis height.
+	 */
+	private int horizontalAxisHeight = 40;
 
 	/**
 	 * Constructor assigning ther parent chart.
@@ -121,6 +125,24 @@ public class HorizontalAxisPlotParameters {
 	 */
 	public void setHorizontalAxisTextInsets(Insets horizontalAxisTextInsets) {
 		this.horizontalAxisTextInsets = horizontalAxisTextInsets;
+	}
+
+	/**
+	 * Returns the horizontal axis height.
+	 * 
+	 * @return The horizontal axis height.
+	 */
+	public int getHorizontalAxisHeight() {
+		return horizontalAxisHeight;
+	}
+
+	/**
+	 * Sets the horizontal axis height.
+	 * 
+	 * @param horizontalAxisHeight The horizontal axis height.
+	 */
+	public void setHorizontalAxisHeight(int horizontalAxisHeight) {
+		this.horizontalAxisHeight = horizontalAxisHeight;
 	}
 
 }

@@ -415,7 +415,7 @@ public class HorizontalAxisPlotter extends Plotter {
 	 * @return The horizontal axis plot parameters.
 	 */
 	private HorizontalAxisPlotParameters getPlotParameters() {
-		return getContext().getChart().getHorizontalAxisPlotParameters();
+		return getContext().getHorizontalAxisPlotParameters();
 	}
 
 	/**
