@@ -20,6 +20,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 
+import com.qtplaf.library.trading.chart.parameters.LinePlotParameters;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
@@ -28,30 +29,17 @@ import com.qtplaf.library.trading.chart.plotter.PlotterContext;
  * @author Miquel Sas
  */
 public class Line extends Drawing {
-	/**
-	 * Index 1 (start).
-	 */
+
+	/** Index 1 (start). */
 	private int index1;
-	/**
-	 * Index 2 (end).
-	 */
+	/** Index 2 (end). */
 	private int index2;
-	/**
-	 * Value 1 (start).
-	 */
+	/** Value 1 (start). */
 	private double v1;
-	/**
-	 * Value 2 (end).
-	 */
+	/** Value 2 (end). */
 	private double v2;
-	/**
-	 * The stroke.
-	 */
-	private Stroke stroke;
-	/**
-	 * The color.
-	 */
-	private Color color;
+	/** Plot parameters. */
+	private LinePlotParameters parameters = new LinePlotParameters();
 
 	/**
 	 * Constructor assigning the values, with a default stroke and color.
@@ -80,8 +68,8 @@ public class Line extends Drawing {
 		this.index2 = index2;
 		this.v1 = v1;
 		this.v2 = v2;
-		this.stroke = stroke;
-		this.color = color;
+		getParameters().setStroke(stroke);
+		getParameters().setColor(color);
 		setName("Line");
 	}
 
@@ -122,21 +110,21 @@ public class Line extends Drawing {
 	}
 
 	/**
-	 * Returns the stroke.
+	 * Returns the plot parameters.
 	 * 
-	 * @return The stroke
+	 * @return The plot parameters.
 	 */
-	public Stroke getStroke() {
-		return stroke;
+	public LinePlotParameters getParameters() {
+		return parameters;
 	}
 
 	/**
-	 * Returns the color.
+	 * Set the plot parameters.
 	 * 
-	 * @return The color
+	 * @param parameters The plot parameters.
 	 */
-	public Color getColor() {
-		return color;
+	public void setParameters(LinePlotParameters parameters) {
+		this.parameters = parameters;
 	}
 
 	/**
@@ -223,5 +211,20 @@ public class Line extends Drawing {
 	 */
 	@Override
 	public void draw(Graphics2D g2, PlotterContext context) {
+
+		// Save color and stroke.
+		Color saveColor = g2.getColor();
+		Stroke saveStroke = g2.getStroke();
+
+		// Set the stroke and color.
+		g2.setStroke(getParameters().getStroke());
+		g2.setColor(getParameters().getColor());
+
+		// Draw
+		g2.draw(getShape(context));
+
+		// Restore color and stroke.
+		g2.setColor(saveColor);
+		g2.setStroke(saveStroke);
 	}
 }

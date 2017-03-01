@@ -43,11 +43,11 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 */
 	private List<Drawing> drawings = new ArrayList<>();
 	/**
-	 * The start index to plot.
+	 * The start index to plot, can be negative, less that the min index.
 	 */
 	private int startIndex = Integer.MIN_VALUE;
 	/**
-	 * The end index to plot, can greater than the dataBag size.
+	 * The end index to plot, can greater than the max index.
 	 */
 	private int endIndex = Integer.MIN_VALUE;
 	/**
@@ -329,6 +329,34 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	}
 
 	/**
+	 * Set the initial start and end indexes to show the argument number of periods.
+	 * 
+	 * @param periods The number of periods to show.
+	 */
+	public void setInitialStartAndEndIndexes(int periods) {
+		if (!isEmpty()) {
+			int size = get(0).size();
+			int endIndex = size - 1;
+			int startIndex = endIndex - periods + 1;
+			if (startIndex < 0) {
+				startIndex = 0;
+			}
+			setStartIndex(startIndex);
+			setEndIndex(endIndex);
+		}
+	}
+
+	/**
+	 * Set the start and end indexes from the argument plot data.
+	 * 
+	 * @param plotData The source plot data.
+	 */
+	public void setStartAndEndIndexesFrom(PlotData plotData) {
+		setStartIndex(plotData.getStartIndex());
+		setEndIndex(plotData.getEndIndex());
+	}
+
+	/**
 	 * Returns the start index to plot.
 	 * 
 	 * @return The start index.
@@ -342,7 +370,7 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * 
 	 * @param startIndex The start index t plot.
 	 */
-	public void setStartIndex(int startIndex) {
+	private void setStartIndex(int startIndex) {
 		this.startIndex = startIndex;
 	}
 
@@ -360,7 +388,7 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * 
 	 * @param endIndex The end index.
 	 */
-	public void setEndIndex(int endIndex) {
+	private void setEndIndex(int endIndex) {
 		this.endIndex = endIndex;
 	}
 

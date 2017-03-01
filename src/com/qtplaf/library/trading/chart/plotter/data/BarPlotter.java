@@ -13,13 +13,11 @@
  */
 package com.qtplaf.library.trading.chart.plotter.data;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.Stroke;
 
 import com.qtplaf.library.trading.chart.drawings.Bar;
+import com.qtplaf.library.trading.chart.parameters.BarPlotParameters;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 
@@ -31,47 +29,35 @@ import com.qtplaf.library.trading.data.DataList;
 public class BarPlotter extends DataPlotter {
 
 	/**
-	 * Default bar stroke.
+	 * Plot parameters.
 	 */
-	private BasicStroke stroke = new BasicStroke();
+	private BarPlotParameters parameters = new BarPlotParameters();
 
 	/**
 	 * Constructor.
 	 */
 	public BarPlotter() {
 		super();
-		setIndexes(new int[]{ 0, 1, 2, 3 });
+		setIndexes(new int[] { 0, 1, 2, 3 });
 		setName("Bar");
 	}
 
 	/**
-	 * Returns the bar stroke.
+	 * Returns the bar plot parameters.
 	 * 
-	 * @return The bar stroke.
+	 * @return The bar plot parameters.
 	 */
-	public BasicStroke getStroke() {
-		return stroke;
+	public BarPlotParameters getParameters() {
+		return parameters;
 	}
 
 	/**
-	 * Setrs the bar stroke.
+	 * Set the bar plot parameters.
 	 * 
-	 * @param barStroke The bar stroke.
+	 * @param parameters The bar plot parameters.
 	 */
-	public void setStroke(BasicStroke barStroke) {
-		this.stroke = barStroke;
-	}
-
-	/**
-	 * Returns the bar drawing for a given data list and index in the range.
-	 * 
-	 * @param dataList The data list to plot.
-	 * @param index The index to plot.
-	 * @return The bar drawing.
-	 */
-	public Bar getBar(DataList dataList, int index) {
-		Data data = dataList.get(index);
-		return new Bar(index, data, getIndexes(data));
+	public void setParameters(BarPlotParameters parameters) {
+		this.parameters = parameters;
 	}
 
 	/**
@@ -85,7 +71,8 @@ public class BarPlotter extends DataPlotter {
 	public void plotDataIndex(Graphics2D g2, DataList dataList, int index) {
 
 		// The bar.
-		Bar bar = getBar(dataList, index);
+		Data data = dataList.get(index);
+		Bar bar = new Bar(index, data, getIndexes(data), getParameters());;
 		Shape shape = bar.getShape(getContext());
 
 		// Check intersection with clip bounds.
@@ -93,41 +80,22 @@ public class BarPlotter extends DataPlotter {
 			return;
 		}
 
-		// Bullish/bearish.
-		boolean bullish = bar.isBullish();
-
-		// Odd/even period.
-		boolean odd = dataList.isOdd(index);
-
-		// Save color and stroke.
-		Color saveColor = g2.getColor();
-		Stroke saveStroke = g2.getStroke();
-
-		// Set the stroke.
-		g2.setStroke(getStroke());
-
 		// The color to apply.
-		Color color;
-		if (odd) {
-			if (bullish) {
-				color = getColorBullishOdd();
+		if (dataList.isOdd(index)) {
+			if (bar.isBullish()) {
+				bar.getParameters().setColor(getColorBullishOdd());
 			} else {
-				color = getColorBearishOdd();
+				bar.getParameters().setColor(getColorBearishOdd());
 			}
 		} else {
-			if (bullish) {
-				color = getColorBullishEven();
+			if (bar.isBullish()) {
+				bar.getParameters().setColor(getColorBullishEven());
 			} else {
-				color = getColorBearishEven();
+				bar.getParameters().setColor(getColorBearishEven());
 			}
 		}
 
-		// Set color and paint.
-		g2.setColor(color);
-		g2.draw(shape);
-
-		// Restore color and stroke.
-		g2.setColor(saveColor);
-		g2.setStroke(saveStroke);
+		// Draw the bar.
+		bar.draw(g2, getContext());
 	}
 }

@@ -24,16 +24,16 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.util.NumberUtils;
 
 /**
- * A formatter for data pip value that adapts to the pip scale.
+ * A formatter for data tick value that adapts to the tick scale.
  * 
  * @author Miquel Sas
  */
-public class PipValue extends AbstractFormatter {
+public class TickValue extends AbstractFormatter {
 	
 	/** Session. */
 	private Session session;
-	/** Pip scale. */
-	private int pipScale;
+	/** Tick scale. */
+	private int tickScale;
 	
 	/**
 	 * Constructor.
@@ -41,10 +41,10 @@ public class PipValue extends AbstractFormatter {
 	 * @param session Working session.
 	 * @param period The period.
 	 */
-	public PipValue(Session session, Instrument instrument) {
+	public TickValue(Session session, Instrument instrument) {
 		super();
 		this.session = session;
-		this.pipScale = instrument.getPipScale();
+		this.tickScale = instrument.getTickScale();
 	}
 
 
@@ -57,7 +57,7 @@ public class PipValue extends AbstractFormatter {
 	public String valueToString(Object value) throws ParseException {
 		if (value instanceof Value) {
 			Value pip = (Value) value;
-			Value fmt = new Value(NumberUtils.getBigDecimal(pip.getDouble(), pipScale));
+			Value fmt = new Value(NumberUtils.getBigDecimal(pip.getDouble(), tickScale));
 			return fmt.toStringFormatted(session.getLocale());
 		}
 		return value.toString();

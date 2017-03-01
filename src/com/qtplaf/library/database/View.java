@@ -75,6 +75,10 @@ public class View implements Comparable<Object> {
 	 */
 	private Order orderBy = null;
 	/**
+	 * Having clause for group by views.
+	 */
+	private String having;
+	/**
 	 * The persistor that provides persistence to this table.
 	 */
 	private Persistor persistor;
@@ -368,6 +372,24 @@ public class View implements Comparable<Object> {
 	 */
 	public int getGroupByCount() {
 		return groupBy.size();
+	}
+
+	/**
+	 * Returns the having clause (only valid on group by views)
+	 * 
+	 * @return The having clause.
+	 */
+	public String getHaving() {
+		return having;
+	}
+
+	/**
+	 * Set the having clause (only valid on group by views)
+	 * 
+	 * @param having The having clause.
+	 */
+	public void setHaving(String having) {
+		this.having = having;
 	}
 
 	/**

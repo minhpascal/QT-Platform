@@ -20,7 +20,7 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.platform.database.formatters.PipValue;
+import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.database.formatters.VolumeValue;
 import com.qtplaf.platform.database.tables.DataPrice;
@@ -59,10 +59,10 @@ public class Formatters {
 
 		Record recordInstr = RecordUtils.getRecordInstrument(session, serverId, instrId);
 		Instrument instrument = InstrumentUtils.getInstrumentFromRecordInstruments(recordInstr);
-		persistor.getField(DataPrice.Fields.Open).setFormatter(new PipValue(session, instrument));
-		persistor.getField(DataPrice.Fields.High).setFormatter(new PipValue(session, instrument));
-		persistor.getField(DataPrice.Fields.Low).setFormatter(new PipValue(session, instrument));
-		persistor.getField(DataPrice.Fields.Close).setFormatter(new PipValue(session, instrument));
+		persistor.getField(DataPrice.Fields.Open).setFormatter(new TickValue(session, instrument));
+		persistor.getField(DataPrice.Fields.High).setFormatter(new TickValue(session, instrument));
+		persistor.getField(DataPrice.Fields.Low).setFormatter(new TickValue(session, instrument));
+		persistor.getField(DataPrice.Fields.Close).setFormatter(new TickValue(session, instrument));
 		persistor.getField(DataPrice.Fields.Volume).setFormatter(new VolumeValue(session, instrument));
 	}
 	

@@ -40,7 +40,7 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
-import com.qtplaf.platform.database.formatters.PipValue;
+import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
@@ -65,8 +65,8 @@ public abstract class Averages extends TickerStatistics {
 	/** The configuration. */
 	private Configuration configuration;
 
-	/** Pip value formatter. */
-	private PipValue pipFormatter;
+	/** Tick value formatter. */
+	private TickValue tickFormatter;
 	/** Time formatter and calculator. */
 	private TimeFmtValue timeFormatter;
 	/** Value formatter for raw spread and speed values. */
@@ -119,15 +119,15 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
-	 * Returns the pip value formatter.
+	 * Returns the tick value formatter.
 	 * 
-	 * @return The pip value formatter.
+	 * @return The tick value formatter.
 	 */
-	protected PipValue getPipFormatter() {
-		if (pipFormatter == null) {
-			pipFormatter = new PipValue(getSession(), getInstrument());
+	protected TickValue getTickFormatter() {
+		if (tickFormatter == null) {
+			tickFormatter = new TickValue(getSession(), getInstrument());
 		}
-		return pipFormatter;
+		return tickFormatter;
 	}
 
 	/**
@@ -188,7 +188,7 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Average average : getConfiguration().getAverages()) {
-				getFieldDefAverage(average).setFormatter(getPipFormatter());
+				getFieldDefAverage(average).setFormatter(getTickFormatter());
 				fields.add(getFieldDefAverage(average));
 			}
 			mapFieldLists.put("averages", fields);
@@ -576,7 +576,7 @@ public abstract class Averages extends TickerStatistics {
 		Field field = mapFields.get(name);
 		if (field == null) {
 			field = FieldUtils.getClose(getSession(), name);
-			field.setFormatter(getPipFormatter());
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -710,7 +710,7 @@ public abstract class Averages extends TickerStatistics {
 		Field field = mapFields.get(name);
 		if (field == null) {
 			field = FieldUtils.getHigh(getSession(), name);
-			field.setFormatter(getPipFormatter());
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -849,7 +849,7 @@ public abstract class Averages extends TickerStatistics {
 		Field field = mapFields.get(name);
 		if (field == null) {
 			field = FieldUtils.getLow(getSession(), name);
-			field.setFormatter(getPipFormatter());
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -920,7 +920,7 @@ public abstract class Averages extends TickerStatistics {
 			String header = "Open";
 			String label = "Open price";
 			field = DomainUtils.getDouble(getSession(), name, header, label);
-			field.setFormatter(getPipFormatter());
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;

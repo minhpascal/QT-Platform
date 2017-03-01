@@ -17,12 +17,12 @@ package com.qtplaf.platform.statistics.action;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.statistics.TickerStatistics;
+import com.qtplaf.platform.statistics.chart.ActionChartNavigate;
 import com.qtplaf.platform.statistics.chart.JChartNavigate;
 
 /**
@@ -30,21 +30,48 @@ import com.qtplaf.platform.statistics.chart.JChartNavigate;
  *
  * @author Miquel Sas
  */
-public class ActionChartNavigate extends ActionTickerStatistics {
+public class ActionNavigateChart extends ActionTickerStatistics {
 
 	/** Chart navigate frame. */
 	private JChartNavigate chartNavigate;
 	/** Plot data list. */
 	private List<PlotData> plotDataList;
-	/** Record set. */
-	private RecordSet recordSet;
+	/** Recordset privider. */
+	private RecordSetProvider recordSetProvider;
 
 	/**
 	 * @param statistics
 	 */
-	public ActionChartNavigate(TickerStatistics statistics) {
+	public ActionNavigateChart(TickerStatistics statistics) {
 		super(statistics);
 		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_chart));
+	}
+
+	/**
+	 * Add an action.
+	 * 
+	 * @param action The action.
+	 */
+	public void addAction(ActionChartNavigate action) {
+		getChartNavigate().addAction(action);
+	}
+
+	/**
+	 * Returns the recordset provider.
+	 * 
+	 * @return The recordset provider.
+	 */
+	public RecordSetProvider getRecordSetProvider() {
+		return recordSetProvider;
+	}
+
+	/**
+	 * Set the recordset provider.
+	 * 
+	 * @param recordSetProvider The recordset provider.
+	 */
+	public void setRecordSetProvider(RecordSetProvider recordSetProvider) {
+		this.recordSetProvider = recordSetProvider;
 	}
 
 	/**
@@ -66,24 +93,6 @@ public class ActionChartNavigate extends ActionTickerStatistics {
 	}
 
 	/**
-	 * Return the recordset.
-	 * 
-	 * @return The recordset.
-	 */
-	public RecordSet getRecordSet() {
-		return recordSet;
-	}
-
-	/**
-	 * Set the recordset.
-	 * 
-	 * @param recordSet The recordset.
-	 */
-	public void setRecordSet(RecordSet recordSet) {
-		this.recordSet = recordSet;
-	}
-
-	/**
 	 * Returns the chart navigate to be configurated prior to perform the action.
 	 * 
 	 * @return
@@ -100,11 +109,11 @@ public class ActionChartNavigate extends ActionTickerStatistics {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (getPlotDataList() == null || getRecordSet() == null) {
+		if (getPlotDataList() == null || getRecordSetProvider() == null) {
 			throw new IllegalStateException();
 		}
 		getChartNavigate().setVisible(true);
-		getChartNavigate().setRecordSet(getRecordSet());
+		getChartNavigate().setRecordSet(getRecordSetProvider().getRecordSet());
 		getChartNavigate().getChart().addPlotDataList(getPlotDataList());
 	}
 

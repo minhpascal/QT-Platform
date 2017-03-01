@@ -234,6 +234,7 @@ public class JChartContainer extends JPanel {
 		// The cursor value.
 		if (y >= 0) {
 			chartInfo.setInfo("Cursor-Value", getInfoValue(y), Color.RED, false);
+			chartInfo.setInfo("Cursor", "(" + x + ", " + y + ")", Color.BLACK, false);
 		} else {
 			chartInfo.deactivateInfo("Cursor-Value");
 		}

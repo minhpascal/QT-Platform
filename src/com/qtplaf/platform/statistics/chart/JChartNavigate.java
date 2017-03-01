@@ -19,7 +19,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 
@@ -34,7 +38,6 @@ import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
 import com.qtplaf.library.trading.chart.JChart;
-import com.qtplaf.library.trading.data.PlotData;
 
 /**
  * A frame with a chart and a table record useful to navigate the chart. The table record contains information about
@@ -46,35 +49,30 @@ import com.qtplaf.library.trading.data.PlotData;
 public class JChartNavigate extends JFrameSession {
 
 	/**
-	 * Indexer interface.
+	 * Mouse adapter to show the popup menu if available.
 	 */
-	public interface Indexer {
-		/**
-		 * Returns the index given the record.
-		 * 
-		 * @param record The record.
-		 * @return The indexes.
-		 */
-		int getIndex(Record record);
-	}
-
-	/**
-	 * Mouse handler to handle double click.
-	 */
-	class SelectionMouseHandler extends MouseHandler {
+	class PopupTrigger extends MouseHandler {
 		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (getIndexer() != null) {
-				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-					Record record = getTableRecord().getSelectedRecord();
-					int index = getIndexer().getIndex(record);
-					PlotData plotData = getChart().getChartContainer(0).getPlotData();
-					plotData.moveTo(index);
-					getChart().propagateFrameChanges(plotData);
-				}				
+		public void mousePressed(MouseEvent e) {
+			showPopup(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			showPopup(e);
+		}
+
+		private void showPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				JPopupMenu popupMenu = new JPopupMenu();
+				SwingUtils.addMenuItems(popupMenu, actions);
+				if (!SwingUtils.isEmpty(popupMenu)) {
+					popupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
 			}
 		}
 	}
+
 
 	/**
 	 * Window adapter to handle the close operation.
@@ -87,18 +85,12 @@ public class JChartNavigate extends JFrameSession {
 		}
 	}
 
-	/**
-	 * The chart panel.
-	 */
+	/** The chart panel. */
 	private JChart chart;
-	/**
-	 * The table record panel.
-	 */
+	/** The table record panel. */
 	private JPanelTableRecord panelTableRecord;
-	/**
-	 * Indexer to retrieve chart indexes from the recordset.
-	 */
-	private Indexer indexer;
+	/** List of actions. */
+	private List<Action> actions = new ArrayList<>();
 
 	/**
 	 * Constructor.
@@ -107,12 +99,13 @@ public class JChartNavigate extends JFrameSession {
 	 */
 	public JChartNavigate(Session session) {
 		super(session);
+		setExtendedState(MAXIMIZED_BOTH);
+		SwingUtils.setSizeAndCenterOnSreen(this, 0.8, 0.8);
 		getContentPane().setLayout(new GridBagLayout());
-		SwingUtils.setSizeAndCenterOnSreen(this, 1.0, 1.0);
 
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setDividerLocation(getWidth() * 2 / 3);
+		splitPane.setDividerLocation(getWidth() * 3 / 4);
 		splitPane.setLeftComponent(getChart());
 		splitPane.setRightComponent(getTableRecordPanel());
 
@@ -133,21 +126,14 @@ public class JChartNavigate extends JFrameSession {
 	}
 
 	/**
-	 * Returns the indexer to retrieve chart indexes from the recordset.
+	 * Add an action.
 	 * 
-	 * @return The indexer to retrieve chart indexes from the recordset.
+	 * @param action The action.
 	 */
-	public Indexer getIndexer() {
-		return indexer;
-	}
-
-	/**
-	 * Set the indexer to retrieve chart indexes from the recordset.
-	 * 
-	 * @param indexer The indexer to retrieve chart indexes from the recordset.
-	 */
-	public void setIndexer(Indexer indexer) {
-		this.indexer = indexer;
+	public void addAction(ActionChartNavigate action) {
+		action.setChart(getChart());
+		action.setTableRecord(getTableRecord());
+		actions.add(action);
 	}
 
 	/**
@@ -171,7 +157,7 @@ public class JChartNavigate extends JFrameSession {
 		if (panelTableRecord == null) {
 			JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.SINGLE_SELECTION);
 			panelTableRecord = new JPanelTableRecord(tableRecord);
-			SwingUtils.installMouseListener(panelTableRecord, new SelectionMouseHandler());
+			SwingUtils.installMouseListener(panelTableRecord, new PopupTrigger());
 		}
 		return panelTableRecord;
 	}

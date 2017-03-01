@@ -37,28 +37,35 @@ import com.qtplaf.platform.statistics.TickerStatistics;
  */
 public class ActionBrowse extends ActionTickerStatistics {
 
-	/** The recordset to browse. */
-	private RecordSet recordSet;
+	/** Recordset provider. */
+	private RecordSetProvider recordSetProvider;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param statistics The source statistics.
-	 * @param recordSet The recordset to browse.
 	 */
-	public ActionBrowse(TickerStatistics statistics, RecordSet recordSet) {
+	public ActionBrowse(TickerStatistics statistics) {
 		super(statistics);
-		this.recordSet = recordSet;
 		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_browse));
 	}
 
 	/**
-	 * Returns the recordset.
+	 * Returns the recordset provider.
 	 * 
-	 * @return The recordwet.
+	 * @return The recordset provider.
 	 */
-	public RecordSet getRecordSet() {
-		return recordSet;
+	public RecordSetProvider getRecordSetProvider() {
+		return recordSetProvider;
+	}
+
+	/**
+	 * Set the recordset provider.
+	 * 
+	 * @param recordSetProvider The recordset provider.
+	 */
+	public void setRecordSetProvider(RecordSetProvider recordSetProvider) {
+		this.recordSetProvider = recordSetProvider;
 	}
 
 	/**
@@ -66,15 +73,16 @@ public class ActionBrowse extends ActionTickerStatistics {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Record masterRecord = getRecordSet().getFieldList().getDefaultRecord();
+		RecordSet recordSet = getRecordSetProvider().getRecordSet();
+		Record masterRecord = recordSet.getFieldList().getDefaultRecord();
 
 		JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 		TableModelRecord tableModelRecord = new TableModelRecord(getSession(), masterRecord);
-		for (int i = 0; i < getRecordSet().getFieldCount(); i++) {
-			tableModelRecord.addColumn(getRecordSet().getField(i).getAlias());
+		for (int i = 0; i < recordSet.getFieldCount(); i++) {
+			tableModelRecord.addColumn(recordSet.getField(i).getAlias());
 		}
-		tableModelRecord.setRecordSet(getRecordSet());
+		tableModelRecord.setRecordSet(recordSet);
 		tableRecord.setModel(tableModelRecord);
 
 		JOptionFrame frame = new JOptionFrame(getSession());

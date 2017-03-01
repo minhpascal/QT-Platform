@@ -14,6 +14,8 @@
 
 package com.qtplaf.platform.statistics.averages;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,8 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.trading.chart.drawings.Line;
+import com.qtplaf.library.trading.chart.drawings.VerticalLine;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
@@ -33,10 +37,11 @@ import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionChart;
-import com.qtplaf.platform.statistics.action.ActionChartNavigate;
+import com.qtplaf.platform.statistics.action.ActionNavigateChart;
+import com.qtplaf.platform.statistics.action.RecordSetProvider;
 import com.qtplaf.platform.statistics.averages.task.TaskNormalizes;
 import com.qtplaf.platform.statistics.averages.task.TaskStates;
-import com.qtplaf.platform.statistics.chart.JChartNavigate;
+import com.qtplaf.platform.statistics.chart.ActionChartNavigate;
 
 /**
  * States based on averages.
@@ -46,12 +51,34 @@ import com.qtplaf.platform.statistics.chart.JChartNavigate;
 public class States extends Averages {
 
 	/**
-	 * Indexer to retrieve the index from a standard record.
+	 * Move the chart to the index of the selected record, adding a vertical line to it.
 	 */
-	class StdIndexer implements JChartNavigate.Indexer {
+	class ActionMove extends ActionChartNavigate {
 		@Override
-		public int getIndex(Record record) {
-			return record.getValue(getFieldDefIndex().getName()).getInteger();
+		public void actionPerformed(ActionEvent e) {
+			Record record = getTableRecord().getSelectedRecord();
+			if (record == null) {
+				return;
+			}
+			int index = record.getValue(getFieldDefIndex().getName()).getInteger();
+			for (int i = 0; i < getChart().getChartCount(); i++) {
+				Line line = new VerticalLine(index);
+				line.getParameters().setColor(Color.RED);
+				getChart().getChartContainer(i).getPlotData().addDrawing(line);
+			}
+			PlotData plotData = getChart().getChartContainer(0).getPlotData();
+			plotData.moveTo(index);
+			getChart().propagateFrameChanges(plotData);
+		}
+	}
+	
+	/**
+	 * Recordset provider.
+	 */
+	class StdRecordSet implements RecordSetProvider {
+		@Override
+		public RecordSet getRecordSet() {
+			return States.this.getRecordSet();
 		}
 	}
 
@@ -75,7 +102,8 @@ public class States extends Averages {
 		List<Action> actions = new ArrayList<>();
 
 		// Standard browse of data.
-		ActionBrowse actionBrowse = new ActionBrowse(this, getRecordSet());
+		ActionBrowse actionBrowse = new ActionBrowse(this);
+		actionBrowse.setRecordSetProvider(new StdRecordSet());
 		ActionUtils.setName(actionBrowse, "Browse data");
 		ActionUtils.setShortDescription(actionBrowse, "Browse calculated data");
 		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
@@ -94,23 +122,36 @@ public class States extends Averages {
 		ActionUtils.setShortDescription(actionCalcNorm, "Calculate normalized values");
 		ActionUtils.setActionGroup(actionCalcNorm, new ActionGroup("Calculate", 10100));
 		actions.add(actionCalcNorm);
-		
+
 		// Chart standard
 		ActionChart actionChartStd = new ActionChart(this, getListPlotDataStandard());
 		ActionUtils.setName(actionChartStd, "Standard chart");
 		ActionUtils.setShortDescription(actionChartStd, "Show a standard chart with averages and normalized values");
 		ActionUtils.setActionGroup(actionChartStd, new ActionGroup("Chart", 10200));
 		actions.add(actionChartStd);
-		
+
+		// Chart continuous and discrete
+		ActionChart actionChartAll = new ActionChart(this, getListPlotDataContinuousAndDiscrete());
+		ActionUtils.setName(actionChartAll, "Chart with continuous and discrete spreads and speeds.");
+		ActionUtils.setShortDescription(
+			actionChartAll, "Show a chart with continuous and discrete spreads and speeds.");
+		ActionUtils.setActionGroup(actionChartAll, new ActionGroup("Chart", 10200));
+		actions.add(actionChartAll);
+
 		// Chart navigate.
-		ActionChartNavigate actionChartNav = new ActionChartNavigate(this);
+		ActionNavigateChart actionChartNav = new ActionNavigateChart(this);
 		actionChartNav.getChartNavigate().setTitle("Navigate chart on result data");
-		actionChartNav.getChartNavigate().setIndexer(new StdIndexer());
 		actionChartNav.setPlotDataList(getListPlotDataStandard());
-		actionChartNav.setRecordSet(getRecordSet());
+		actionChartNav.setRecordSetProvider(new StdRecordSet());
 		ActionUtils.setName(actionChartNav, "Navigate chart on result data");
 		ActionUtils.setShortDescription(actionChartStd, "Show a standard chart with averages and normalized values");
 		ActionUtils.setActionGroup(actionChartNav, new ActionGroup("Chart", 10200));
+		
+		ActionMove actionMove = new ActionMove();
+		ActionUtils.setName(actionMove, "Move to selected index");
+		ActionUtils.setShortDescription(actionMove, "Move the chart to the selected index.");
+		actionChartNav.addAction(actionMove);
+		
 		actions.add(actionChartNav);
 
 		return actions;
@@ -124,10 +165,27 @@ public class States extends Averages {
 	private List<PlotData> getListPlotDataStandard() {
 		List<PlotData> plotDataList = new ArrayList<>();
 		PersistorDataList dataList = getDataList();
-		dataList.setCacheSize(5000);
+		dataList.setCacheSize(-1);
 		plotDataList.add(getPlotDataMain(dataList));
 		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedContinuous()));
 		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedContinuous()));
+		return plotDataList;
+	}
+
+	/**
+	 * Returns the list of plot data for standard chart diaplay.
+	 * 
+	 * @return The list of plot data.
+	 */
+	private List<PlotData> getListPlotDataContinuousAndDiscrete() {
+		List<PlotData> plotDataList = new ArrayList<>();
+		PersistorDataList dataList = getDataList();
+		dataList.setCacheSize(-1);
+		plotDataList.add(getPlotDataMain(dataList));
+		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedContinuous()));
+		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedDiscrete()));
+		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedContinuous()));
+		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedDiscrete()));
 		return plotDataList;
 	}
 

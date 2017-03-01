@@ -95,7 +95,8 @@ public class BufferedLinePlotter extends DataPlotter {
 			return true;
 		}
 		Line check = lineBuffer.get(0);
-		if (check.getStroke().equals(line.getStroke()) && check.getColor().equals(line.getColor())) {
+		if (check.getParameters().getStroke().equals(line.getParameters().getStroke()) &&
+			check.getParameters().getColor().equals(line.getParameters().getColor())) {
 			return true;
 		}
 		return false;
@@ -139,8 +140,8 @@ public class BufferedLinePlotter extends DataPlotter {
 		Stroke saveStroke = g2.getStroke();
 
 		// Set color and stroke.
-		g2.setColor(lineBuffer.get(0).getColor());
-		g2.setStroke(lineBuffer.get(0).getStroke());
+		g2.setColor(lineBuffer.get(0).getParameters().getColor());
+		g2.setStroke(lineBuffer.get(0).getParameters().getStroke());
 
 		// Do plot.
 		g2.draw(shape);

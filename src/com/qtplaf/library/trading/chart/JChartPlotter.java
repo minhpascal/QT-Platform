@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.trading.chart.drawings.CrossCursor;
+import com.qtplaf.library.trading.chart.drawings.Drawing;
 import com.qtplaf.library.trading.chart.parameters.CursorPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.Plotter;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
@@ -99,15 +100,6 @@ public class JChartPlotter extends JPanel {
 	 */
 	public JChartContainer getChartContainer() {
 		return chartContainer;
-	}
-
-	/**
-	 * Returns the cursor type.
-	 * 
-	 * @return The cursor type.
-	 */
-	public CursorType getCursorType() {
-		return cursorType;
 	}
 
 	/**
@@ -200,27 +192,9 @@ public class JChartPlotter extends JPanel {
 		plotData.setPlotterContext(this);
 		plotData.calculateFrame();
 
-		// Retrieve a plotter to calculate start and end indexes depending on the clip bounds.
-		Plotter plotter = plotData.get(0).getDataPlotters().get(0);
-		int x1 = g2.getClipBounds().x;
-		int x2 = x1 + g2.getClipBounds().width;
-		int startIndexCheck = plotter.getContext().getDataIndex(x1);
-		int endIndexCheck = plotter.getContext().getDataIndex(x2);
-
 		// Start and end indexes from plot data.
 		int startIndex = plotData.getStartIndex();
 		int endIndex = plotData.getEndIndex();
-		int startIndexClip = startIndex;
-		int endIndexClip = endIndex;
-
-		// Set start and end indexes applying clip bounds with a margin.
-		int margin = Math.max((endIndex - startIndex + 1) / 50, 2);
-		if (startIndexCheck > startIndex + margin) {
-			startIndexClip = startIndexCheck - margin;
-		}
-		if (endIndexCheck < endIndex - margin) {
-			endIndexClip = endIndexCheck + margin;
-		}
 
 		// Plot first non indicator data lists.
 		List<DataList> nonIndicator = plotData.getDataListsNonIndicator();
@@ -229,7 +203,7 @@ public class JChartPlotter extends JPanel {
 
 		// Do plot.
 		if (!nonIndicator.isEmpty()) {
-			for (int index = startIndexClip; index < endIndexClip; index++) {
+			for (int index = startIndex; index <= endIndex; index++) {
 				for (DataList dataList : nonIndicator) {
 					if (dataList.isPlot()) {
 						plotChartData(g2, dataList, index);
@@ -238,7 +212,7 @@ public class JChartPlotter extends JPanel {
 			}
 		}
 		if (!fromClip.isEmpty()) {
-			for (int index = startIndexClip; index < endIndexClip; index++) {
+			for (int index = startIndex; index <= endIndex; index++) {
 				for (DataList dataList : fromClip) {
 					if (dataList.isPlot()) {
 						plotChartData(g2, dataList, index);
@@ -266,7 +240,10 @@ public class JChartPlotter extends JPanel {
 		}
 		
 		// Plot drawings.
-//		List<Drawing> drawings = plotData.getDrawings();
+		List<Drawing> drawings = plotData.getDrawings();
+		for (Drawing drawing : drawings) {
+			drawing.draw(g2, plotData.getPlotterContext());
+		}
 	}
 
 	/**

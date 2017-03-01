@@ -39,6 +39,7 @@ import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
+import com.qtplaf.platform.statistics.action.RecordSetProvider;
 import com.qtplaf.platform.statistics.averages.task.TaskRanges;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -90,6 +91,16 @@ public class Ranges extends Averages {
 			return normalIndex;
 		}
 
+	}
+	
+	/**
+	 * Recordset provider.
+	 */
+	class StdRecordSet implements RecordSetProvider {
+		@Override
+		public RecordSet getRecordSet() {
+			return Ranges.this.getRecordSet();
+		}
 	}
 
 	/**
@@ -159,7 +170,8 @@ public class Ranges extends Averages {
 		List<Action> actions = new ArrayList<>();
 		
 		// Standard browse of data.
-		ActionBrowse actionBrowse = new ActionBrowse(this, getRecordSet());
+		ActionBrowse actionBrowse = new ActionBrowse(this);
+		actionBrowse.setRecordSetProvider(new StdRecordSet());
 		ActionUtils.setName(actionBrowse, "Browse min/max values");
 		ActionUtils.setShortDescription(actionBrowse, "Browse min/max, average and standard deviation values.");
 		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
@@ -257,5 +269,4 @@ public class Ranges extends Averages {
 
 		return recordSet;
 	}
-
 }

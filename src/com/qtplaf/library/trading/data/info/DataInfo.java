@@ -395,7 +395,7 @@ public class DataInfo {
 					b.append(": ");
 				}
 				b.append(
-					FormatUtils.formattedFromDouble(data.getValue(index), getPipScale(), getSession().getLocale()));
+					FormatUtils.formattedFromDouble(data.getValue(index), getTickScale(), getSession().getLocale()));
 			}
 		}
 		return b.toString();

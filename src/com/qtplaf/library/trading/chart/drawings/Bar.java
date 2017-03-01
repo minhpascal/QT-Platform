@@ -13,10 +13,13 @@
  */
 package com.qtplaf.library.trading.chart.drawings;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 
+import com.qtplaf.library.trading.chart.parameters.BarPlotParameters;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 import com.qtplaf.library.trading.data.Data;
 
@@ -26,7 +29,9 @@ import com.qtplaf.library.trading.data.Data;
  * @author Miquel Sas
  */
 public class Bar extends DataDrawing {
-	
+
+	/** Plot parameters. */
+	private BarPlotParameters parameters;
 	/** Indexes to retrieve data. */
 	private int[] indexes;
 
@@ -36,11 +41,40 @@ public class Bar extends DataDrawing {
 	 * @param index The data index.
 	 * @param data The data.
 	 * @param indexes The indexes to retrieve values.
+	 * @param parameters Plot parameters.
 	 */
-	public Bar(int index, Data data, int[] indexes) {
+	public Bar(int index, Data data, int[] indexes, BarPlotParameters parameters) {
 		super(index, data);
 		this.indexes = indexes;
+		this.parameters = parameters;
 		setName("Bar");
+	}
+
+	/**
+	 * Returns the bar plot parameters.
+	 * 
+	 * @return The bar plot parameters.
+	 */
+	public BarPlotParameters getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * Check if this bar or candlestick is bullish.
+	 * 
+	 * @return A boolean indicating if this bar or candlestick is bullish.
+	 */
+	public boolean isBullish() {
+		return Data.isBullish(getData());
+	}
+
+	/**
+	 * Check if this bar or candlestick is bearish.
+	 * 
+	 * @return A boolean indicating if this bar or candlestick is bearish.
+	 */
+	public boolean isBearish() {
+		return Data.isBearish(getData());
 	}
 
 	/**
@@ -94,5 +128,20 @@ public class Bar extends DataDrawing {
 	 */
 	@Override
 	public void draw(Graphics2D g2, PlotterContext context) {
+
+		// Save color and stroke.
+		Color saveColor = g2.getColor();
+		Stroke saveStroke = g2.getStroke();
+
+		// Set the stroke and color.
+		g2.setStroke(getParameters().getStroke());
+		g2.setColor(getParameters().getColor());
+
+		// Draw
+		g2.draw(getShape(context));
+
+		// Restore color and stroke.
+		g2.setColor(saveColor);
+		g2.setStroke(saveStroke);
 	}
 }

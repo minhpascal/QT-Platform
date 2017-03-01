@@ -156,6 +156,7 @@ public class PlotterContext {
 	 * @throws IllegalStateException If the value is not in the maximum-minimum value range.
 	 */
 	public int getCoordinateY(double value) throws IllegalStateException {
+		
 		// Maximum and minimum values.
 		double maximumValue = plotData.getMaximumValue();
 		double minimumValue = plotData.getMinimumValue();
@@ -203,19 +204,21 @@ public class PlotterContext {
 		}
 
 		// The x coordinate relative to the plot area width.
-		int xRelative = x - chartInsets.left;
+		double xRelative = x - chartInsets.left;
 
 		// Start and end index.
 		int startIndex = plotData.getStartIndex();
 		int endIndex = plotData.getEndIndex();
 
 		// The index.
-		double factor = (double) xRelative / (double) chartWidth;
+		double factor = xRelative / Double.valueOf(chartWidth);
 		if (!Double.isFinite(factor)) {
 			return 0;
 		}
-		int periods = (int) NumberUtils.round((double) (endIndex - startIndex) * factor, 0);
-		int index = startIndex + periods;
+		double indexes = endIndex - startIndex + 1;
+		double numPeriods = indexes * factor;
+		int periods = Double.valueOf(NumberUtils.round(numPeriods, 0)).intValue();
+		int index = startIndex + periods - 1;
 		return index;
 	}
 
@@ -236,9 +239,9 @@ public class PlotterContext {
 	 * @return The data value.
 	 */
 	public double getDataValue(int y) {
-
+		
 		// The y coordinate relaive to the plot area.
-		int yRelative = y - chartInsets.top;
+		double yRelative = y - chartInsets.top;
 
 		// Minimum and maximum values.
 		double minimumValue = plotData.getMinimumValue();
@@ -251,7 +254,8 @@ public class PlotterContext {
 		}
 
 		// The value. Note that y is top-down.
-		double factor = (double) (chartHeight - yRelative) / (double) chartHeight;
+		double height = chartHeight;
+		double factor = (height - yRelative) / height;
 		double value = minimumValue + ((maximumValue - minimumValue) * factor);
 
 		// Apply the inverse scale if necessary.

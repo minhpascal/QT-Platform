@@ -223,6 +223,10 @@ public class Select extends Statement {
 		if (getView().getGroupByCount() > 0) {
 			b.append(" GROUP BY ");
 			b.append(groupBy());
+			if (getView().getHaving() != null) {
+				b.append(" HAVING ");
+				b.append(getView().getHaving());
+			}
 		}
 
 		// ORDER BY clause if necessary

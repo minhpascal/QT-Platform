@@ -172,30 +172,17 @@ public class JChart extends JPanel {
 			return;
 		}
 		if (chartContainers.size() == 1) {
+			// Give a minimum of 4 pixels per bar.
 			int width = getSize().width - chartContainers.get(0).getChartVerticalAxis().getSize().width;
 			JChartContainer chartContainer = chartContainers.get(0);
-			// Give a minimum of 4 pixels per bar.
 			int periods = width / 4;
-			PlotData plotData = chartContainer.getPlotData();
-			if (!plotData.isEmpty()) {
-				int size = plotData.get(0).size();
-				int endIndex = size - 1;
-				int startIndex = endIndex - periods + 1;
-				if (startIndex < 0) {
-					startIndex = 0;
-				}
-				plotData.setStartIndex(startIndex);
-				plotData.setEndIndex(endIndex);
-			}
+			chartContainer.getPlotData().setInitialStartAndEndIndexes(periods);
 		} else {
 			// Propagate.
 			JChartContainer chartContainer = chartContainers.get(0);
 			PlotData plotData = chartContainer.getPlotData();
-			int startIndex = plotData.getStartIndex();
-			int endIndex = plotData.getEndIndex();
 			for (int i = 1; i < chartContainers.size(); i++) {
-				chartContainers.get(i).getPlotData().setStartIndex(startIndex);
-				chartContainers.get(i).getPlotData().setEndIndex(endIndex);
+				chartContainers.get(i).getPlotData().setStartAndEndIndexesFrom(plotData);
 			}
 		}
 	}
@@ -461,8 +448,7 @@ public class JChart extends JPanel {
 			if (chartContainer.getPlotData().equals(plotData)) {
 				continue;
 			}
-			chartContainer.getPlotData().setStartIndex(plotData.getStartIndex());
-			chartContainer.getPlotData().setEndIndex(plotData.getEndIndex());
+			chartContainer.getPlotData().setStartAndEndIndexesFrom(plotData);
 		}
 		repaint();
 	}

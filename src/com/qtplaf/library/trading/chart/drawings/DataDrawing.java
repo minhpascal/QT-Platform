@@ -16,7 +16,7 @@ package com.qtplaf.library.trading.chart.drawings;
 import com.qtplaf.library.trading.data.Data;
 
 /**
- * Base class of a bar or candlestick drawing and drawings that perform on a data item.
+ * Base class for drawings that perform on a data item.
  * 
  * @author Miquel Sas
  */
@@ -58,23 +58,5 @@ public abstract class DataDrawing extends Drawing {
 	 */
 	public Data getData() {
 		return data;
-	}
-
-	/**
-	 * Check if this bar or candlestick is bullish.
-	 * 
-	 * @return A boolean indicating if this bar or candlestick is bullish.
-	 */
-	public boolean isBullish() {
-		return Data.isBullish(data);
-	}
-
-	/**
-	 * Check if this bar or candlestick is bearish.
-	 * 
-	 * @return A boolean indicating if this bar or candlestick is bearish.
-	 */
-	public boolean isBearish() {
-		return Data.isBearish(data);
 	}
 }

@@ -66,7 +66,7 @@ public class DataPersistor implements Persistor {
 		for (int i = 2; i < persistor.getFieldCount(); i++) {
 			Field field = persistor.getField(i);
 			if (field.isDouble() && field.isPersistent()) {
-				dataInfo.addOutput(field.getName(), field.getTitle(), index++);
+				dataInfo.addOutput(field.getName(), field.getHeader(), index++);
 			}
 		}
 	}

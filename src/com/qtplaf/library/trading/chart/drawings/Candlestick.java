@@ -37,8 +37,6 @@ public class Candlestick extends DataDrawing {
 	private CandlestickPlotParameters parameters;
 	/** Indexes to retrieve data. */
 	private int[] indexes;
-	/** Cached shape. */
-	private Shape shape;
 
 	/**
 	 * Constructor assigning the values.
@@ -65,73 +63,88 @@ public class Candlestick extends DataDrawing {
 	}
 
 	/**
+	 * Check if this bar or candlestick is bullish.
+	 * 
+	 * @return A boolean indicating if this bar or candlestick is bullish.
+	 */
+	public boolean isBullish() {
+		return Data.isBullish(getData());
+	}
+
+	/**
+	 * Check if this bar or candlestick is bearish.
+	 * 
+	 * @return A boolean indicating if this bar or candlestick is bearish.
+	 */
+	public boolean isBearish() {
+		return Data.isBearish(getData());
+	}
+
+	/**
 	 * Returns the candlestick shape.
 	 * 
 	 * @param context The plotter context.
 	 * @return The candlestick shape.
 	 */
 	public Shape getShape(PlotterContext context) {
-		if (shape == null) {
-			// The values to plot.
-			Data data = getData();
-			double open = data.getValue(indexes[0]);
-			double high = data.getValue(indexes[1]);
-			double low = data.getValue(indexes[2]);
-			double close = data.getValue(indexes[3]);
+		// The values to plot.
+		Data data = getData();
+		double open = data.getValue(indexes[0]);
+		double high = data.getValue(indexes[1]);
+		double low = data.getValue(indexes[2]);
+		double close = data.getValue(indexes[3]);
 
-			// The X coordinate to start painting.
-			int x = context.getCoordinateX(getIndex());
+		// The X coordinate to start painting.
+		int x = context.getCoordinateX(getIndex());
 
-			// And the Y coordinate for each value.
-			int openY = context.getCoordinateY(open);
-			int highY = context.getCoordinateY(high);
-			int lowY = context.getCoordinateY(low);
-			int closeY = context.getCoordinateY(close);
+		// And the Y coordinate for each value.
+		int openY = context.getCoordinateY(open);
+		int highY = context.getCoordinateY(high);
+		int lowY = context.getCoordinateY(low);
+		int closeY = context.getCoordinateY(close);
 
-			// The X coordinate of the vertical line, either the candle.
-			int candlestickWidth = context.getDataItemWidth();
-			int verticalLineX = context.getDrawingCenterCoordinateX(x);
+		// The X coordinate of the vertical line, either the candle.
+		int candlestickWidth = context.getDataItemWidth();
+		int verticalLineX = context.getDrawingCenterCoordinateX(x);
 
-			// The bar candle is bullish/bearish.
-			boolean bullish = Data.isBullish(data);
+		// The bar candle is bullish/bearish.
+		boolean bullish = Data.isBullish(data);
 
-			// The candlestick shape.
-			GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
-			// If bar width is 1...
-			if (candlestickWidth == 1) {
-				// The vertical line only.
+		// The candlestick shape.
+		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 6);
+		// If bar width is 1...
+		if (candlestickWidth == 1) {
+			// The vertical line only.
+			shape.moveTo(verticalLineX, highY);
+			shape.lineTo(verticalLineX, lowY);
+		} else {
+			if (bullish) {
+				// Upper shadow.
 				shape.moveTo(verticalLineX, highY);
+				shape.lineTo(verticalLineX, closeY - 1);
+				// Body.
+				shape.moveTo(x, closeY);
+				shape.lineTo(x + candlestickWidth - 1, closeY);
+				shape.lineTo(x + candlestickWidth - 1, openY);
+				shape.lineTo(x, openY);
+				shape.lineTo(x, closeY);
+				// Lower shadow.
+				shape.moveTo(verticalLineX, openY + 1);
 				shape.lineTo(verticalLineX, lowY);
 			} else {
-				if (bullish) {
-					// Upper shadow.
-					shape.moveTo(verticalLineX, highY);
-					shape.lineTo(verticalLineX, closeY - 1);
-					// Body.
-					shape.moveTo(x, closeY);
-					shape.lineTo(x + candlestickWidth - 1, closeY);
-					shape.lineTo(x + candlestickWidth - 1, openY);
-					shape.lineTo(x, openY);
-					shape.lineTo(x, closeY);
-					// Lower shadow.
-					shape.moveTo(verticalLineX, openY + 1);
-					shape.lineTo(verticalLineX, lowY);
-				} else {
-					// Upper shadow.
-					shape.moveTo(verticalLineX, highY);
-					shape.lineTo(verticalLineX, openY - 1);
-					// Body.
-					shape.moveTo(x, openY);
-					shape.lineTo(x + candlestickWidth - 1, openY);
-					shape.lineTo(x + candlestickWidth - 1, closeY);
-					shape.lineTo(x, closeY);
-					shape.lineTo(x, openY);
-					// Lower shadow.
-					shape.moveTo(verticalLineX, closeY + 1);
-					shape.lineTo(verticalLineX, lowY);
-				}
+				// Upper shadow.
+				shape.moveTo(verticalLineX, highY);
+				shape.lineTo(verticalLineX, openY - 1);
+				// Body.
+				shape.moveTo(x, openY);
+				shape.lineTo(x + candlestickWidth - 1, openY);
+				shape.lineTo(x + candlestickWidth - 1, closeY);
+				shape.lineTo(x, closeY);
+				shape.lineTo(x, openY);
+				// Lower shadow.
+				shape.moveTo(verticalLineX, closeY + 1);
+				shape.lineTo(verticalLineX, lowY);
 			}
-			this.shape = shape;
 		}
 
 		return shape;
