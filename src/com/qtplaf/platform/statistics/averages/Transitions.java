@@ -30,7 +30,9 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
+import com.qtplaf.platform.statistics.action.RecordSetProvider;
 import com.qtplaf.platform.statistics.averages.task.TaskTransitions;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -44,6 +46,16 @@ public class Transitions extends Averages {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
+	
+	/**
+	 * Recordset provider.
+	 */
+	class RecordSetCorrelativeTransitions implements RecordSetProvider {
+		@Override
+		public RecordSet getRecordSet() {
+			return Transitions.this.getRecordSetCorrelativeTransitions();
+		}
+	}
 
 	/**
 	 * @param session
@@ -62,12 +74,21 @@ public class Transitions extends Averages {
 
 		List<Action> actions = new ArrayList<>();
 
-		// Calculate ranges.
+		// Calculate transitions.
 		ActionCalculate actionCalculate = new ActionCalculate(this, new TaskTransitions(this));
 		ActionUtils.setName(actionCalculate, "Calculate states transitions");
 		ActionUtils.setShortDescription(actionCalculate, "Calculate states transitions.");
 		ActionUtils.setActionGroup(actionCalculate, new ActionGroup("Calculate", 10000));
 		actions.add(actionCalculate);
+		
+		// Browse correlative transitions (check resultset)
+		ActionBrowse actionBrowse = new ActionBrowse(this);
+		actionBrowse.setRecordSetProvider(new RecordSetCorrelativeTransitions());
+		ActionUtils.setName(actionBrowse, "Browse correlative transitions");
+		ActionUtils.setShortDescription(actionBrowse, "Browse correlative transitions");
+		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
+		actions.add(actionBrowse);
+		
 
 		return actions;
 	}
@@ -133,18 +154,18 @@ public class Transitions extends Averages {
 		// Group by.
 		view.addGroupBy(getFieldDefStateInput());
 		view.addGroupBy(getFieldDefStateOutput());
-		view.addField(getFieldDefIndexGroup());
+		view.addGroupBy(getFieldDefIndexGroup());
 
 		// Having count(*) > 2
 		view.setHaving(count.getFunction() + " > 2");
-
-		// Persistor.
-		view.setPersistor(PersistorUtils.getPersistor(view));
 		
 		// Order by.
 		view.addOrderBy(getFieldDefIndexGroup());
 		view.addOrderBy(getFieldDefStateInput());
 		view.addOrderBy(getFieldDefStateOutput());
+
+		// Persistor.
+		view.setPersistor(PersistorUtils.getPersistor(view));
 
 		// RecordSet
 		RecordSet recordSet = null;

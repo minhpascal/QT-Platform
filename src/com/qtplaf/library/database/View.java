@@ -137,6 +137,7 @@ public class View implements Comparable<Object> {
 		this.fields.getFields().addAll(view.fields.getFields());
 		this.groupBy.addAll(view.groupBy);
 		this.orderBy = view.orderBy;
+		this.having = view.having;
 	}
 
 	/**

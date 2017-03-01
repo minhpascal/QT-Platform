@@ -329,7 +329,7 @@ public class JChartPlotter extends JPanel {
 		g.setColor(Color.GRAY);
 		g.drawLine(0, y, width, y);
 		g.drawLine(x, 0, x, height);
-		return Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(0, 0), "Transparent cursor");
+		return Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(x, y), "Transparent cursor");
 	}
 
 	/**
@@ -345,8 +345,6 @@ public class JChartPlotter extends JPanel {
 			setCursor(getCustomCursor());
 			break;
 		case ChartCross:
-			// Set the transparent cursor.
-			// setCursor(getTransparentCursor());
 			setCursor(Cursor.getPredefinedCursor(plotParameters.getChartCursorTypePredefined()));
 			break;
 		default:
