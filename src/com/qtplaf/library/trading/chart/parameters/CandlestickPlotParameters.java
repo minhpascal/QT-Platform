@@ -36,7 +36,7 @@ public class CandlestickPlotParameters {
 	 * A boolean that indicates if the border with the specified border color, that applies only to candlesticks and
 	 * histograms, should be painted. Explicitly set although it could be deduced if the border color is null.
 	 */
-	private boolean paintBorder = true;
+	private boolean paintBorder = false;
 	/**
 	 * A boolean that indicates if the color in candlesticks and histograms should be raised.
 	 */

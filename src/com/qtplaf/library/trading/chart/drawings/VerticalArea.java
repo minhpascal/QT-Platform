@@ -15,19 +15,20 @@
 package com.qtplaf.library.trading.chart.drawings;
 
 /**
- * A vertical line drawing.
+ * A vertical area.
  *
  * @author Miquel Sas
  */
-public class VerticalLine extends Line {
+public class VerticalArea extends Rectangle {
 
 	/**
-	 * Constructor assigning the values.
+	 * Constructor.
 	 * 
-	 * @param index The index.
+	 * @param index1
+	 * @param index2
 	 */
-	public VerticalLine(int index) {
-		super(index, Double.MAX_VALUE, index, Double.MIN_VALUE);
-		setName("Vertical line");
+	public VerticalArea(int index1, int index2) {
+		super(index1, Double.MAX_VALUE, index2, Double.MIN_VALUE);
+		setName("Vertical area");
 	}
 }

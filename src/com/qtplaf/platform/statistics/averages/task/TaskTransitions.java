@@ -105,12 +105,30 @@ public class TaskTransitions extends TaskAverages {
 		valueHighName = transitions.getFieldDefTransitionValueHigh().getName();
 		valueLowName = transitions.getFieldDefTransitionValueLow().getName();
 		valueCloseName = transitions.getFieldDefTransitionValueClose().getName();
-		
+
 		deltaHighName = states.getFieldDefDeltaHight().getName();
 		deltaLowName = states.getFieldDefDeltaLow().getName();
 		deltaCloseName = states.getFieldDefDeltaClose().getName();
 
 		setNameAndDescription(transitions, "Transitions values");
+	}
+
+	/**
+	 * Returns the states source statistics.
+	 * 
+	 * @return The states source statistics.
+	 */
+	private States getStates() {
+		return states;
+	}
+
+	/**
+	 * Returns the transitions source statistics.
+	 * 
+	 * @return The transitions source statistics.
+	 */
+	private Transitions getTransitions() {
+		return transitions;
 	}
 
 	/**
@@ -151,17 +169,17 @@ public class TaskTransitions extends TaskAverages {
 			countSteps();
 
 			// Drop and create the table.
-			if (transitionsPersistor.getDDL().existsTable(transitions.getTable())) {
-				transitionsPersistor.getDDL().dropTable(transitions.getTable());
+			if (transitionsPersistor.getDDL().existsTable(getTransitions().getTable())) {
+				transitionsPersistor.getDDL().dropTable(getTransitions().getTable());
 			}
-			transitionsPersistor.getDDL().buildTable(transitions.getTable());
+			transitionsPersistor.getDDL().buildTable(getTransitions().getTable());
 
 			// Map of processed keys
 			Map<String, String> processedKeys = new HashMap<>();
 
 			// Source (states) iterator.
 			Order order = new Order();
-			order.add(states.getFieldDefIndex());
+			order.add(getStates().getFieldDefIndex());
 			iterator = statesPersistor.iterator(null, order);
 
 			// Step and steps.
@@ -240,12 +258,12 @@ public class TaskTransitions extends TaskAverages {
 					stateOutput = recordSet.get(i + 1);
 				}
 			}
-			
+
 			// Not correlative.
 			if (stateOutput == null) {
 				stateOutput = statesPersistor.getRecord(Long.valueOf(indexOutput));
 			}
-			
+
 			// Transition available.
 			if (stateOutput != null) {
 				String keyOutput = stateOutput.getValue(keyName).getString();
@@ -266,6 +284,29 @@ public class TaskTransitions extends TaskAverages {
 					transition.setValue(valueHighName, stateOutput.getValue(deltaHighName));
 					transition.setValue(valueLowName, stateOutput.getValue(deltaLowName));
 					transition.setValue(valueCloseName, stateOutput.getValue(deltaCloseName));
+
+					 List<Field> spreads = getStates().getFieldListSpreadsNormalizedDiscrete();
+					 List<Field> spreadsIn = getTransitions().getFieldListSpreadsDiscreteInput();
+					 List<Field> spreadsOut = getTransitions().getFieldListSpreadsDiscreteOutput();
+					 for (int j = 0; j < spreads.size(); j++) {
+						 Field spread = spreads.get(j);
+						 Field spreadIn = spreadsIn.get(j);
+						 Field spreadOut = spreadsOut.get(j);
+						 transition.setValue(spreadIn.getName(), stateInput.getValue(spread.getName()));
+						 transition.setValue(spreadOut.getName(), stateOutput.getValue(spread.getName()));
+					 }
+					 
+					 List<Field> speeds = getStates().getFieldListSpeedsNormalizedDiscrete();
+					 List<Field> speedsIn = getTransitions().getFieldListSpeedsDiscreteInput();
+					 List<Field> speedsOut = getTransitions().getFieldListSpeedsDiscreteOutput();
+					 for (int j = 0; j < speeds.size(); j++) {
+						 Field speed = speeds.get(j);
+						 Field speedIn = speedsIn.get(j);
+						 Field speedOut = speedsOut.get(j);
+						 transition.setValue(speedIn.getName(), stateInput.getValue(speed.getName()));
+						 transition.setValue(speedOut.getName(), stateOutput.getValue(speed.getName()));
+					 }
+
 					transitions.add(transition);
 					map.put(indexInput, indexOutput);
 				}

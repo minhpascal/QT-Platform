@@ -236,6 +236,66 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
+	 * Returns the list of spread fields, discrete values input.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListSpreadsDiscreteInput() {
+		List<Field> fields = getFieldListSpreads("in");
+		for (Field field : fields) {
+			field.setFormatter(getValueFormatterNormDisc());
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of spread fields, discrete values input.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListSpreadsDiscreteOutput() {
+		List<Field> fields = getFieldListSpreads("out");
+		for (Field field : fields) {
+			field.setFormatter(getValueFormatterNormDisc());
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of speeds fields, discrete values input.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListSpeedsDiscreteInput() {
+		List<Field> fields = mapFieldLists.get("speeds_in");
+		if (fields == null) {
+			fields = getFieldListSpeeds("in");
+			for (Field field : fields) {
+				field.setFormatter(getValueFormatterRaw());
+			}
+			mapFieldLists.put("speeds_in", fields);
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of speeds fields, discrete values output.
+	 * 
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListSpeedsDiscreteOutput() {
+		List<Field> fields = mapFieldLists.get("speeds_out");
+		if (fields == null) {
+			fields = getFieldListSpeeds("out");
+			for (Field field : fields) {
+				field.setFormatter(getValueFormatterRaw());
+			}
+			mapFieldLists.put("speeds_out", fields);
+		}
+		return fields;
+	}
+
+	/**
 	 * Returns the list of delta fields, raw values.
 	 * 
 	 * @return The list of fields.
@@ -531,6 +591,14 @@ public abstract class Averages extends TickerStatistics {
 
 		// Index group (groups consecutive transitions of the same state).
 		table.addField(getFieldDefIndexGroup());
+		
+		// Input spreads and deltas.
+		table.addFields(getFieldListSpreadsDiscreteInput());
+		table.addFields(getFieldListSpeedsDiscreteInput());
+		
+		// Output spreads and deltas.
+		table.addFields(getFieldListSpreadsDiscreteOutput());
+		table.addFields(getFieldListSpeedsDiscreteOutput());
 
 		// Estimaded function value high, low and close.
 		table.addField(getFieldDefTransitionValueHigh());

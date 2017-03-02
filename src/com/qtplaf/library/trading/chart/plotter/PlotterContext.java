@@ -130,16 +130,16 @@ public class PlotterContext {
 	 * @return The X coordinate.
 	 * @throws IllegalStateException If the data index is not between the start and the end indexes.
 	 */
-	public int getCoordinateX(int index) throws IllegalStateException {
+	public int getCoordinateX(double index) throws IllegalStateException {
 		// Start and end indexes.
-		int startIndex = plotData.getStartIndex();
-		int endIndex = plotData.getEndIndex();
+		double startIndex = plotData.getStartIndex();
+		double endIndex = plotData.getEndIndex();
 		// Check the index is in the start-end range.
 		if (index < startIndex || index > endIndex) {
 			// throw new IllegalStateException();
 		}
 		// The index factor: relation between index and the difference endIndex - startIndex.
-		double indexFactor = (((double) index) - ((double) startIndex)) / (((double) endIndex) - ((double) startIndex));
+		double indexFactor = (index - startIndex) / (endIndex - startIndex);
 		// The relative X coordinate counted from the left of the plot area.
 		int relativeX = (int) NumberUtils.round(indexFactor * chartWidth, 0);
 		// Final X coordinate counted from the left of the paint area.

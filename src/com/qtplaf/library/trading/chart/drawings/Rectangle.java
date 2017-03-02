@@ -13,32 +13,32 @@
  */
 package com.qtplaf.library.trading.chart.drawings;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 
-import com.qtplaf.library.trading.chart.parameters.LinePlotParameters;
+import com.qtplaf.library.trading.chart.parameters.RectanglePlotParameters;
 import com.qtplaf.library.trading.chart.plotter.PlotterContext;
 
 /**
- * A line drawing.
+ * A rectangle drawing.
  * 
  * @author Miquel Sas
  */
-public class Line extends Drawing {
+public class Rectangle extends Drawing {
 
 	/** Index 1 (start). */
 	private int index1;
-	/** Index 2 (end). */
-	private int index2;
 	/** Value 1 (start). */
 	private double v1;
+	/** Index 2 (end). */
+	private int index2;
 	/** Value 2 (end). */
 	private double v2;
 	/** Plot parameters. */
-	private LinePlotParameters parameters = new LinePlotParameters();
+	private RectanglePlotParameters parameters = new RectanglePlotParameters();
 
 	/**
 	 * Constructor assigning the values, with a default stroke and color.
@@ -48,13 +48,13 @@ public class Line extends Drawing {
 	 * @param index2 Index 2 (end).
 	 * @param v2 Value 2.
 	 */
-	public Line(int index1, double v1, int index2, double v2) {
+	public Rectangle(int index1, double v1, int index2, double v2) {
 		super();
 		this.index1 = index1;
 		this.v1 = v1;
 		this.index2 = index2;
 		this.v2 = v2;
-		setName("Line");
+		setName("Rectangle");
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Line extends Drawing {
 	 * 
 	 * @return The plot parameters.
 	 */
-	public LinePlotParameters getParameters() {
+	public RectanglePlotParameters getParameters() {
 		return parameters;
 	}
 
@@ -107,26 +107,8 @@ public class Line extends Drawing {
 	 * 
 	 * @param parameters The plot parameters.
 	 */
-	public void setParameters(LinePlotParameters parameters) {
+	public void setParameters(RectanglePlotParameters parameters) {
 		this.parameters = parameters;
-	}
-
-	/**
-	 * Check if this shape is bullish.
-	 * 
-	 * @return A boolean indicating if this shape is bullish.
-	 */
-	public boolean isBullish() {
-		return v2 > v1;
-	}
-
-	/**
-	 * Check if this shape is bearish.
-	 * 
-	 * @return A boolean indicating if this shape is bearish.
-	 */
-	public boolean isBearish() {
-		return v2 < v1;
 	}
 
 	/**
@@ -142,36 +124,32 @@ public class Line extends Drawing {
 		double v1 = this.v1;
 		double v2 = this.v2;
 
-		// Vertical line.
-		if (index1 == index2) {
-			if (v1 == Double.MAX_VALUE) {
-				v1 = context.getPlotData().getMaximumValue();
-			}
-			if (v1 == Double.MIN_VALUE) {
-				v1 = context.getPlotData().getMinimumValue();
-			}
-			if (v2 == Double.MAX_VALUE) {
-				v2 = context.getPlotData().getMaximumValue();
-			}
-			if (v2 == Double.MIN_VALUE) {
-				v2 = context.getPlotData().getMinimumValue();
-			}
+		// Vertical band.
+		if (v1 == Double.MAX_VALUE) {
+			v1 = context.getPlotData().getMaximumValue();
+		}
+		if (v1 == Double.MIN_VALUE) {
+			v1 = context.getPlotData().getMinimumValue();
+		}
+		if (v2 == Double.MAX_VALUE) {
+			v2 = context.getPlotData().getMaximumValue();
+		}
+		if (v2 == Double.MIN_VALUE) {
+			v2 = context.getPlotData().getMinimumValue();
 		}
 
-		// Horizontal line.
-		if (v1 == v2) {
-			if (index1 == Integer.MAX_VALUE) {
-				index1 = context.getPlotData().getEndIndex();
-			}
-			if (index1 == Integer.MIN_VALUE) {
-				index1 = context.getPlotData().getStartIndex();
-			}
-			if (index2 == Integer.MAX_VALUE) {
-				index2 = context.getPlotData().getEndIndex();
-			}
-			if (index2 == Integer.MIN_VALUE) {
-				index2 = context.getPlotData().getStartIndex();
-			}
+		// Horizontal band.
+		if (index1 == Integer.MAX_VALUE) {
+			index1 = context.getPlotData().getEndIndex();
+		}
+		if (index1 == Integer.MIN_VALUE) {
+			index1 = context.getPlotData().getStartIndex();
+		}
+		if (index2 == Integer.MAX_VALUE) {
+			index2 = context.getPlotData().getEndIndex();
+		}
+		if (index2 == Integer.MIN_VALUE) {
+			index2 = context.getPlotData().getStartIndex();
 		}
 
 		// Coordinates.
@@ -180,9 +158,12 @@ public class Line extends Drawing {
 		int y2 = context.getCoordinateY(v2);
 		int y1 = context.getCoordinateY(v1);
 
-		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 1);
+		GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 4);
 		shape.moveTo(x1, y1);
+		shape.lineTo(x2, y1);
 		shape.lineTo(x2, y2);
+		shape.lineTo(x1, y2);
+		shape.lineTo(x1, y1);
 
 		return shape;
 	}
@@ -197,18 +178,23 @@ public class Line extends Drawing {
 	public void draw(Graphics2D g2, PlotterContext context) {
 
 		// Save color and stroke.
-		Color saveColor = g2.getColor();
+		Paint savePaint = g2.getPaint();
 		Stroke saveStroke = g2.getStroke();
 
-		// Set the stroke and color.
-		g2.setStroke(getParameters().getStroke());
-		g2.setColor(getParameters().getColor());
-
-		// Draw
-		g2.draw(getShape(context));
+		// Draw.
+		Shape shape = getShape(context);
+		if (getParameters().isFillShape()) {
+			g2.setPaint(getParameters().getPaint());
+			g2.fill(shape);
+		}
+		if (getParameters().isPaintBorder()) {
+			g2.setPaint(getParameters().getColor());
+			g2.setStroke(getParameters().getStroke());
+			g2.draw(shape);
+		}
 
 		// Restore color and stroke.
-		g2.setColor(saveColor);
+		g2.setPaint(savePaint);
 		g2.setStroke(saveStroke);
 	}
 }

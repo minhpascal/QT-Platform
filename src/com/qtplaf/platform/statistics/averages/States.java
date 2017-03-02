@@ -101,27 +101,27 @@ public class States extends Averages {
 
 		List<Action> actions = new ArrayList<>();
 
-		// Standard browse of data.
-		ActionBrowse actionBrowse = new ActionBrowse(this);
-		actionBrowse.setRecordSetProvider(new StdRecordSet());
-		ActionUtils.setName(actionBrowse, "Browse data");
-		ActionUtils.setShortDescription(actionBrowse, "Browse calculated data");
-		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10000));
-		actions.add(actionBrowse);
-
 		// Calculate states.
 		ActionCalculate actionCalcStates = new ActionCalculate(this, new TaskStates(this));
 		ActionUtils.setName(actionCalcStates, "Calculate states");
 		ActionUtils.setShortDescription(actionCalcStates, "Calculate states from scratch");
-		ActionUtils.setActionGroup(actionCalcStates, new ActionGroup("Calculate", 10100));
+		ActionUtils.setActionGroup(actionCalcStates, new ActionGroup("Calculate", 10000));
 		actions.add(actionCalcStates);
 
 		// Normalize values.
 		ActionCalculate actionCalcNorm = new ActionCalculate(this, new TaskNormalizes(this));
 		ActionUtils.setName(actionCalcNorm, "Normalize values");
 		ActionUtils.setShortDescription(actionCalcNorm, "Calculate normalized values");
-		ActionUtils.setActionGroup(actionCalcNorm, new ActionGroup("Calculate", 10100));
+		ActionUtils.setActionGroup(actionCalcNorm, new ActionGroup("Calculate", 10000));
 		actions.add(actionCalcNorm);
+
+		// Standard browse of data.
+		ActionBrowse actionBrowse = new ActionBrowse(this);
+		actionBrowse.setRecordSetProvider(new StdRecordSet());
+		ActionUtils.setName(actionBrowse, "Browse data");
+		ActionUtils.setShortDescription(actionBrowse, "Browse calculated data");
+		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10100));
+		actions.add(actionBrowse);
 
 		// Chart standard
 		ActionChart actionChartStd = new ActionChart(this, getListPlotDataStandard());
@@ -144,7 +144,7 @@ public class States extends Averages {
 		actionChartNav.setPlotDataList(getListPlotDataStandard());
 		actionChartNav.setRecordSetProvider(new StdRecordSet());
 		ActionUtils.setName(actionChartNav, "Navigate chart on result data");
-		ActionUtils.setShortDescription(actionChartStd, "Show a standard chart with averages and normalized values");
+		ActionUtils.setShortDescription(actionChartNav, "Show a standard chart with averages and normalized values");
 		ActionUtils.setActionGroup(actionChartNav, new ActionGroup("Chart", 10200));
 		
 		ActionMove actionMove = new ActionMove();

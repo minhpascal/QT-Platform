@@ -38,7 +38,7 @@ public class BufferedLinePlotter extends DataPlotter {
 	/**
 	 * The stroke that applies to lines, bars and candlesticks and histograms borders.
 	 */
-	private Stroke stroke = new BasicStroke();
+	private Stroke stroke = new BasicStroke(0f);
 
 	/**
 	 * Constructor.
@@ -165,16 +165,16 @@ public class BufferedLinePlotter extends DataPlotter {
 
 		// Current and previous indexes. The previous index must the first previous valid. If no one found, skip
 		// plotting.
-		int indexCurrent = index;
-		int indexPrevious = index - 1;
-		while (!dataList.get(indexPrevious).isValid()) {
-			indexPrevious--;
-			if (indexPrevious < 0) {
+		int index1 = index - 1;
+		int index2 = index;
+		while (!dataList.get(index1).isValid()) {
+			index1--;
+			if (index1 < 0) {
 				break;
 			}
 		}
 		// Index previous is less than 0, not foound.
-		if (indexPrevious < 0) {
+		if (index1 < 0) {
 			return null;
 		}
 
@@ -193,18 +193,20 @@ public class BufferedLinePlotter extends DataPlotter {
 		}
 
 		// Current and previous values to plot, depending on the data type of the list.
-		double valueCurrent = dataList.get(indexCurrent).getValue(getIndex());
-		double valuePrevious = dataList.get(indexPrevious).getValue(getIndex());
+		double value1 = dataList.get(index1).getValue(getIndex());
+		double value2 = dataList.get(index2).getValue(getIndex());
 		
 		// Bullish/bearish.
-		boolean bullish = (valueCurrent >= valuePrevious);
+		boolean bullish = (value2 >= value1);
 		Color color = (bullish ? colorBullish : colorBearish);
 		
 		// Stroke.
 		Stroke stroke = getStroke();
 
 		// The line.
-		Line line = new Line(indexPrevious, indexCurrent, valuePrevious, valueCurrent, stroke, color);
+		Line line = new Line(index1, value1, index2, value2);
+		line.getParameters().setStroke(stroke);
+		line.getParameters().setColor(color);
 
 		return line;
 	}

@@ -197,7 +197,7 @@ public class Candlestick extends DataDrawing {
 				g2.fill(shape);
 			} else {
 				// Set the fill color and do fill.
-				g2.setColor(color);
+				g2.setPaint(color);
 				g2.fill(shape);
 			}
 			// Set the border color and draw the path.
@@ -205,7 +205,7 @@ public class Candlestick extends DataDrawing {
 			g2.draw(shape);
 		} else {
 			// Set the fill color and do fill.
-			g2.setColor(color);
+			g2.setPaint(color);
 			g2.fill(shape);
 			g2.draw(shape);
 		}
