@@ -17,6 +17,7 @@ package com.qtplaf.platform.statistics.averages.task;
 import java.util.List;
 
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.database.FieldCalculator;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.Data;
@@ -26,6 +27,8 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.platform.indicators.StatesIndicator;
 import com.qtplaf.platform.statistics.averages.States;
+import com.qtplaf.platform.statistics.averages.Suffix;
+import com.qtplaf.platform.statistics.averages.configuration.Calculation;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
@@ -167,7 +170,7 @@ public class TaskStates extends TaskAverages {
 			{
 				if (index > 0) {
 					Data prev = indicatorList.get(index - 1);
-					List<Field> fields = states.getFieldListDeltasRaw();
+					List<Field> fields = states.getFieldListDeltas(Suffix.raw);
 					for (Field field : fields) {
 						String srcName = states.getPropertySourceField(field).getName();
 						double valuePrev = prev.getValue(info.getOutputIndex(srcName));
@@ -180,7 +183,7 @@ public class TaskStates extends TaskAverages {
 
 			// Raw spreads between averages.
 			{
-				List<Field> fields = states.getFieldListSpreadsRaw();
+				List<Field> fields = states.getFieldListSpreads(Suffix.raw);
 				for (Field field : fields) {
 					Spread spread = states.getPropertySpread(field);
 					String avgFastName = spread.getFastAverage().getName();
@@ -196,7 +199,7 @@ public class TaskStates extends TaskAverages {
 			{
 				if (index > 0) {
 					Data prev = indicatorList.get(index - 1);
-					List<Field> fields = states.getFieldListSpeedsRaw();
+					List<Field> fields = states.getFieldListSpeeds(Suffix.raw);
 					for (Field field : fields) {
 						Speed speed = states.getPropertySpeed(field);
 						String avgName = speed.getAverage().getName();
@@ -206,6 +209,16 @@ public class TaskStates extends TaskAverages {
 						record.getValue(field.getName()).setDouble(valueSpeed);
 					}
 				}
+			}
+			
+			// Raw sums of spreads and speeds.
+			{
+				List<Field> fields = states.getFieldListCalculations(Suffix.raw);
+				for (Field field : fields) {
+					Calculation calculation = states.getPropertyCalculation(field);
+					FieldCalculator calculator = calculation.getCalculator();
+					record.setValue(field.getName(), calculator.getValue(record));
+				}				
 			}
 			
 			// Insert.

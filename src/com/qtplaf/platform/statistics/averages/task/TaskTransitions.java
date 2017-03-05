@@ -31,6 +31,7 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.averages.States;
+import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.statistics.averages.Transitions;
 
 /**
@@ -285,9 +286,9 @@ public class TaskTransitions extends TaskAverages {
 					transition.setValue(valueLowName, stateOutput.getValue(deltaLowName));
 					transition.setValue(valueCloseName, stateOutput.getValue(deltaCloseName));
 
-					 List<Field> spreads = getStates().getFieldListSpreadsNormalizedDiscrete();
-					 List<Field> spreadsIn = getTransitions().getFieldListSpreadsDiscreteInput();
-					 List<Field> spreadsOut = getTransitions().getFieldListSpreadsDiscreteOutput();
+					 List<Field> spreads = getStates().getFieldListSpreads(Suffix.dsc);
+					 List<Field> spreadsIn = getTransitions().getFieldListSpreads(Suffix.in);
+					 List<Field> spreadsOut = getTransitions().getFieldListSpreads(Suffix.out);
 					 for (int j = 0; j < spreads.size(); j++) {
 						 Field spread = spreads.get(j);
 						 Field spreadIn = spreadsIn.get(j);
@@ -296,15 +297,28 @@ public class TaskTransitions extends TaskAverages {
 						 transition.setValue(spreadOut.getName(), stateOutput.getValue(spread.getName()));
 					 }
 					 
-					 List<Field> speeds = getStates().getFieldListSpeedsNormalizedDiscrete();
-					 List<Field> speedsIn = getTransitions().getFieldListSpeedsDiscreteInput();
-					 List<Field> speedsOut = getTransitions().getFieldListSpeedsDiscreteOutput();
+					 List<Field> speeds = getStates().getFieldListSpeeds(Suffix.dsc);
+					 List<Field> speedsIn = getTransitions().getFieldListSpeeds(Suffix.in);
+					 List<Field> speedsOut = getTransitions().getFieldListSpeeds(Suffix.out);
 					 for (int j = 0; j < speeds.size(); j++) {
 						 Field speed = speeds.get(j);
 						 Field speedIn = speedsIn.get(j);
 						 Field speedOut = speedsOut.get(j);
 						 transition.setValue(speedIn.getName(), stateInput.getValue(speed.getName()));
 						 transition.setValue(speedOut.getName(), stateOutput.getValue(speed.getName()));
+					 }
+					 
+					 List<Field> calcs = getStates().getFieldListCalculations(Suffix.dsc);
+					 List<Field> calcsIn = getTransitions().getFieldListCalculations(Suffix.in);
+					 List<Field> calcsOut = getTransitions().getFieldListCalculations(Suffix.out);
+					 for (int j = 0; j < calcs.size(); j++) {
+						 Field calc = calcs.get(j);
+						 Field calcIn = calcsIn.get(j);
+						 Field calcOut = calcsOut.get(j);
+						 Value in = stateInput.getValue(calc.getName());
+						 Value out = stateOutput.getValue(calc.getName());
+						 transition.setValue(calcIn.getName(), in);
+						 transition.setValue(calcOut.getName(), out);
 					 }
 
 					transitions.add(transition);

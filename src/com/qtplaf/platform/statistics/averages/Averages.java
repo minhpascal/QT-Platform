@@ -46,6 +46,7 @@ import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.statistics.averages.configuration.Configuration;
+import com.qtplaf.platform.statistics.averages.configuration.Calculation;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
 import com.qtplaf.platform.util.DomainUtils;
@@ -61,7 +62,7 @@ public abstract class Averages extends TickerStatistics {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-
+	
 	/** The configuration. */
 	private Configuration configuration;
 
@@ -179,6 +180,31 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
+	 * Returnas the appropriate value formatter.
+	 * 
+	 * @param suffix The type suffix.
+	 * @return The formatter.
+	 */
+	protected DataValue getValueFormatter(Suffix suffix) {
+		if (suffix.equals(Suffix.raw)) {
+			return getValueFormatterRaw();
+		}
+		if (suffix.equals(Suffix.nrm)) {
+			return getValueFormatterNormCont();
+		}
+		if (suffix.equals(Suffix.dsc)) {
+			return getValueFormatterNormDisc();
+		}
+		if (suffix.equals(Suffix.in)) {
+			return getValueFormatterNormDisc();
+		}
+		if (suffix.equals(Suffix.out)) {
+			return getValueFormatterNormDisc();
+		}
+		throw new IllegalArgumentException();
+	}
+
+	/**
 	 * Returns the list of average fields.
 	 * 
 	 * @return The list of fields.
@@ -188,143 +214,9 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Average average : getConfiguration().getAverages()) {
-				getFieldDefAverage(average).setFormatter(getTickFormatter());
 				fields.add(getFieldDefAverage(average));
 			}
 			mapFieldLists.put("averages", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of spread fields, raw values
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsRaw() {
-		List<Field> fields = getFieldListSpreads("raw");
-		for (Field field : fields) {
-			field.setFormatter(getValueFormatterRaw());
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of spread fields, normalized continuous values
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsNormalizedContinuous() {
-		List<Field> fields = getFieldListSpreads("nrm");
-		for (Field field : fields) {
-			field.setFormatter(getValueFormatterNormCont());
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of spread fields, normalized discrete values
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsNormalizedDiscrete() {
-		List<Field> fields = getFieldListSpreads("dsc");
-		for (Field field : fields) {
-			field.setFormatter(getValueFormatterNormDisc());
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of spread fields, discrete values input.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsDiscreteInput() {
-		List<Field> fields = getFieldListSpreads("in");
-		for (Field field : fields) {
-			field.setFormatter(getValueFormatterNormDisc());
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of spread fields, discrete values input.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpreadsDiscreteOutput() {
-		List<Field> fields = getFieldListSpreads("out");
-		for (Field field : fields) {
-			field.setFormatter(getValueFormatterNormDisc());
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of speeds fields, discrete values input.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpeedsDiscreteInput() {
-		List<Field> fields = mapFieldLists.get("speeds_in");
-		if (fields == null) {
-			fields = getFieldListSpeeds("in");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterRaw());
-			}
-			mapFieldLists.put("speeds_in", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of speeds fields, discrete values output.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpeedsDiscreteOutput() {
-		List<Field> fields = mapFieldLists.get("speeds_out");
-		if (fields == null) {
-			fields = getFieldListSpeeds("out");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterRaw());
-			}
-			mapFieldLists.put("speeds_out", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of delta fields, raw values.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListDeltasRaw() {
-		List<Field> fields = mapFieldLists.get("deltas_raw");
-		if (fields == null) {
-			fields = getFieldListDeltas("raw");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterRaw());
-			}
-			mapFieldLists.put("deltas_raw", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of delta fields, normalized continuous.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListDeltasNormalizedContinuous() {
-		List<Field> fields = mapFieldLists.get("deltas_nrm");
-		if (fields == null) {
-			fields = getFieldListDeltas("nrm");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterRaw());
-			}
-			mapFieldLists.put("deltas_nrm", fields);
 		}
 		return fields;
 	}
@@ -335,11 +227,16 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
 	 */
-	private List<Field> getFieldListDeltas(String suffix) {
-		List<Field> fields = new ArrayList<>();
-		fields.add(getFieldDefDelta(getFieldDefHigh(), suffix));
-		fields.add(getFieldDefDelta(getFieldDefLow(), suffix));
-		fields.add(getFieldDefDelta(getFieldDefClose(), suffix));
+	public List<Field> getFieldListDeltas(Suffix suffix) {
+		String name = "deltas_" + suffix;
+		List<Field> fields = mapFieldLists.get(name);
+		if (fields == null) {
+			fields = new ArrayList<>();
+			fields.add(getFieldDefDelta(getFieldDefHigh(), suffix));
+			fields.add(getFieldDefDelta(getFieldDefLow(), suffix));
+			fields.add(getFieldDefDelta(getFieldDefClose(), suffix));
+			mapFieldLists.put(name,  fields);
+		}
 		return fields;
 	}
 
@@ -349,61 +246,34 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
 	 */
-	private List<Field> getFieldListSpreads(String suffix) {
-		List<Field> fields = new ArrayList<>();
-		for (Spread spread : getConfiguration().getSpreads()) {
-			fields.add(getFieldDefSpread(spread, suffix));
+	public List<Field> getFieldListSpreads(Suffix suffix) {
+		String name = "spreads_" + suffix;
+		List<Field>  fields = mapFieldLists.get(name);
+		if (fields == null) {
+			fields = new ArrayList<>();
+			for (Spread spread : getConfiguration().getSpreads()) {
+				fields.add(getFieldDefSpread(spread, suffix));
+			}
+			mapFieldLists.put(name, fields);
 		}
 		return fields;
 	}
 
 	/**
-	 * Returns the list of speed fields, raw values
+	 * Returns the list of calculations fields.
 	 * 
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
 	 */
-	public List<Field> getFieldListSpeedsRaw() {
-		List<Field> fields = mapFieldLists.get("speeds_raw");
+	public List<Field> getFieldListCalculations(Suffix suffix) {
+		String name = "calculations_" + suffix;
+		List<Field> fields = mapFieldLists.get(name);
 		if (fields == null) {
-			fields = getFieldListSpeeds("raw");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterRaw());
+			fields = new ArrayList<>();
+			for (Calculation calculation : getConfiguration().getCalculations()) {
+				fields.add(getFieldDefCalculation(calculation, suffix));
 			}
-			mapFieldLists.put("speeds_raw", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of speed fields, normalized continuous values
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpeedsNormalizedContinuous() {
-		List<Field> fields = mapFieldLists.get("speeds_nrm");
-		if (fields == null) {
-			fields = getFieldListSpeeds("nrm");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterNormCont());
-			}
-			mapFieldLists.put("speeds_nrm", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of speed fields, normalized discrete values
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListSpeedsNormalizedDiscrete() {
-		List<Field> fields = mapFieldLists.get("speeds_dsc");
-		if (fields == null) {
-			fields = getFieldListSpeeds("dsc");
-			for (Field field : fields) {
-				field.setFormatter(getValueFormatterNormDisc());
-			}
-			mapFieldLists.put("speeds_dsc", fields);
+			mapFieldLists.put(name, fields);
 		}
 		return fields;
 	}
@@ -414,10 +284,15 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
 	 */
-	private List<Field> getFieldListSpeeds(String suffix) {
-		List<Field> fields = new ArrayList<>();
-		for (Speed speed : getConfiguration().getSpeeds()) {
-			fields.add(getFieldDefSpeed(speed, suffix));
+	public List<Field> getFieldListSpeeds(Suffix suffix) {
+		String name = "speeds_" + suffix;
+		List<Field> fields = mapFieldLists.get(name);
+		if (fields == null) {
+			fields = new ArrayList<>();
+			for (Speed speed : getConfiguration().getSpeeds()) {
+				fields.add(getFieldDefSpeed(speed, suffix));
+			}
+			mapFieldLists.put(name, fields);
 		}
 		return fields;
 	}
@@ -429,9 +304,9 @@ public abstract class Averages extends TickerStatistics {
 	 */
 	public List<Field> getFieldListStateKey() {
 		List<Field> spreadFields = new ArrayList<>();
-		spreadFields.addAll(getFieldListSpreadsNormalizedDiscrete());
+		spreadFields.addAll(getFieldListSpreads(Suffix.dsc));
 		List<Field> speedFields = new ArrayList<>();
-		speedFields.addAll(getFieldListSpeedsNormalizedDiscrete());
+		speedFields.addAll(getFieldListSpeeds(Suffix.dsc));
 		List<Field> keyFields = new ArrayList<>();
 		for (Field field : spreadFields) {
 			Spread spread = getPropertySpread(field);
@@ -453,11 +328,12 @@ public abstract class Averages extends TickerStatistics {
 	 * 
 	 * @return The list of fields.
 	 */
-	public List<Field> getFieldListToCalculateRangesRaw() {
+	public List<Field> getFieldListToCalculateRanges() {
 		List<Field> fields = new ArrayList<>();
-		fields.addAll(getFieldListDeltasRaw());
-		fields.addAll(getFieldListSpreadsRaw());
-		fields.addAll(getFieldListSpeedsRaw());
+		fields.addAll(getFieldListDeltas(Suffix.raw));
+		fields.addAll(getFieldListSpreads(Suffix.raw));
+		fields.addAll(getFieldListSpeeds(Suffix.raw));
+		fields.addAll(getFieldListCalculations(Suffix.raw));
 		return fields;
 	}
 
@@ -523,28 +399,37 @@ public abstract class Averages extends TickerStatistics {
 		table.addFields(getFieldListAverages());
 
 		// Deltas high, low, close, raw values.
-		table.addFields(getFieldListDeltasRaw());
+		table.addFields(getFieldListDeltas(Suffix.raw));
 
 		// Spreads between averages, raw values.
-		table.addFields(getFieldListSpreadsRaw());
+		table.addFields(getFieldListSpreads(Suffix.raw));
 
 		// Speed (tangent) of averages, raw values
-		table.addFields(getFieldListSpeedsRaw());
+		table.addFields(getFieldListSpeeds(Suffix.raw));
+
+		// Sum of spreads and sum of speeds, raw values.
+		table.addFields(getFieldListCalculations(Suffix.raw));
 
 		// Deltas high, low, close, normalized values continuous.
-		table.addFields(getFieldListDeltasNormalizedContinuous());
+		table.addFields(getFieldListDeltas(Suffix.nrm));
 
 		// Spreads between averages, normalized values continuous.
-		table.addFields(getFieldListSpreadsNormalizedContinuous());
+		table.addFields(getFieldListSpreads(Suffix.nrm));
 
 		// Speed (tangent) of averages, normalized values continuous.
-		table.addFields(getFieldListSpeedsNormalizedContinuous());
+		table.addFields(getFieldListSpeeds(Suffix.nrm));
+
+		// Sum of spreads and sum of speeds, normalizes continuous.
+		table.addFields(getFieldListCalculations(Suffix.nrm));
 
 		// Spreads between averages, normalized values discrete.
-		table.addFields(getFieldListSpreadsNormalizedDiscrete());
+		table.addFields(getFieldListSpreads(Suffix.dsc));
 
 		// Speed (tangent) of averages, normalized values discrete.
-		table.addFields(getFieldListSpeedsNormalizedDiscrete());
+		table.addFields(getFieldListSpeeds(Suffix.dsc));
+
+		// Sum of spreads and sum of speeds, normalizes continuous.
+		table.addFields(getFieldListCalculations(Suffix.dsc));
 
 		// The state key.
 		table.addField(getFieldDefState());
@@ -591,14 +476,16 @@ public abstract class Averages extends TickerStatistics {
 
 		// Index group (groups consecutive transitions of the same state).
 		table.addField(getFieldDefIndexGroup());
-		
-		// Input spreads and deltas.
-		table.addFields(getFieldListSpreadsDiscreteInput());
-		table.addFields(getFieldListSpeedsDiscreteInput());
-		
-		// Output spreads and deltas.
-		table.addFields(getFieldListSpreadsDiscreteOutput());
-		table.addFields(getFieldListSpeedsDiscreteOutput());
+
+		// Input spreads, speeds and calculations.
+		table.addFields(getFieldListSpreads(Suffix.in));
+		table.addFields(getFieldListSpeeds(Suffix.in));
+		table.addFields(getFieldListCalculations(Suffix.in));
+
+		// Output spreads, speeds and calculations.
+		table.addFields(getFieldListSpreads(Suffix.out));
+		table.addFields(getFieldListSpeeds(Suffix.out));
+		table.addFields(getFieldListCalculations(Suffix.out));
 
 		// Estimaded function value high, low and close.
 		table.addField(getFieldDefTransitionValueHigh());
@@ -628,6 +515,7 @@ public abstract class Averages extends TickerStatistics {
 			String header = average.getHeader();
 			String label = average.getLabel();
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getTickFormatter());
 			setPropertyAverage(field, average);
 			mapFields.put(name, field);
 		}
@@ -1001,14 +889,14 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The field.
 	 */
-	public Field getFieldDefSpeed(Speed speed, String suffix) {
-		Average average = speed.getAverage();
-		String name = "speed_" + average.getPeriod() + "_" + suffix;
+	public Field getFieldDefSpeed(Speed speed, Suffix suffix) {
+		String name = speed.getName() + "_" + suffix;
 		Field field = mapFields.get(name);
 		if (field == null) {
-			String header = "Speed-" + average.getPeriod() + "-" + suffix;
-			String label = "Speed " + average.getPeriod() + " - " + suffix;
+			String header = speed.getHeader() + "-" + suffix;
+			String label = speed.getLabel() + " - " + suffix;
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getValueFormatter(suffix));
 			setPropertySpeed(field, speed);
 			mapFields.put(name, field);
 		}
@@ -1022,16 +910,36 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The field.
 	 */
-	public Field getFieldDefSpread(Spread spread, String suffix) {
-		Average averageFast = spread.getFastAverage();
-		Average averageSlow = spread.getSlowAverage();
-		String name = "spread_" + averageFast.getPeriod() + "_" + averageSlow.getPeriod() + "_" + suffix;
+	public Field getFieldDefSpread(Spread spread, Suffix suffix) {
+		String name = spread.getName() + "_" + suffix;
 		Field field = mapFields.get(name);
 		if (field == null) {
-			String header = "Spread-" + averageFast.getPeriod() + "-" + averageSlow.getPeriod() + "-" + suffix;
-			String label = "Spread " + averageFast.getPeriod() + " - " + averageSlow.getPeriod() + " - " + suffix;
+			String header = spread.getHeader() + "-" + suffix;
+			String label = spread.getLabel() + " - " + suffix;
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getValueFormatter(suffix));
 			setPropertySpread(field, spread);
+			mapFields.put(name, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the calculation field.
+	 * 
+	 * @param calculation The calculation
+	 * @param suffix The suffix.
+	 * @return The field.
+	 */
+	public Field getFieldDefCalculation(Calculation calculation, Suffix suffix) {
+		String name = calculation.getName() + "_" + suffix;
+		Field field = mapFields.get(name);
+		if (field == null) {
+			String header = calculation.getHeader() + "-" + suffix;
+			String label = calculation.getLabel() + " - " + suffix;
+			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getValueFormatter(suffix));
+			setPropertyCalculation(field, calculation);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1043,7 +951,7 @@ public abstract class Averages extends TickerStatistics {
 	 * @return The field definition.
 	 */
 	public Field getFieldDefDeltaHight() {
-		return getFieldDefDelta(getFieldDefHigh(), "nrm");
+		return getFieldDefDelta(getFieldDefHigh(), Suffix.nrm);
 	}
 
 	/**
@@ -1052,7 +960,7 @@ public abstract class Averages extends TickerStatistics {
 	 * @return The field definition.
 	 */
 	public Field getFieldDefDeltaLow() {
-		return getFieldDefDelta(getFieldDefLow(), "nrm");
+		return getFieldDefDelta(getFieldDefLow(), Suffix.nrm);
 	}
 
 	/**
@@ -1061,7 +969,7 @@ public abstract class Averages extends TickerStatistics {
 	 * @return The field definition.
 	 */
 	public Field getFieldDefDeltaClose() {
-		return getFieldDefDelta(getFieldDefClose(), "nrm");
+		return getFieldDefDelta(getFieldDefClose(), Suffix.nrm);
 	}
 
 	/**
@@ -1071,36 +979,15 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix (raw, nrm)
 	 * @return The field definition.
 	 */
-	public Field getFieldDefDelta(Field source, String suffix) {
+	public Field getFieldDefDelta(Field source, Suffix suffix) {
 		String name = "delta_" + source.getName() + "_" + suffix;
 		Field field = mapFields.get(name);
 		if (field == null) {
 			String header = "Delta-" + source.getName() + "-" + suffix;
 			String label = "Delta " + source.getName() + " - " + suffix;
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getTickFormatter());
 			setPropertySourceField(field, source);
-			mapFields.put(name, field);
-		}
-		return field;
-	}
-
-	/**
-	 * Returns the spread field between a source field (high, low, close) and an average (normally the fast one).
-	 * 
-	 * @param source Source field.
-	 * @param average The average.
-	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
-	 * @return The field.
-	 */
-	public Field getFieldDefSpread(Field source, Average average, String suffix) {
-		String name = "spread_" + source.getName() + "_" + average.getPeriod() + "_" + suffix;
-		Field field = mapFields.get(name);
-		if (field == null) {
-			String header = "Spread-" + source.getName() + "-" + average.getPeriod() + "-" + suffix;
-			String label = "Spread " + source.getName() + " - " + average.getPeriod() + " - " + suffix;
-			field = DomainUtils.getDouble(getSession(), name, header, label);
-			setPropertySourceField(field, source);
-			setPropertyAverage(field, average);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1150,6 +1037,7 @@ public abstract class Averages extends TickerStatistics {
 			String header = "Value close";
 			String label = "Transition value close";
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1167,6 +1055,7 @@ public abstract class Averages extends TickerStatistics {
 			String header = "Value high";
 			String label = "Transition value high";
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1184,6 +1073,7 @@ public abstract class Averages extends TickerStatistics {
 			String header = "Value low";
 			String label = "Transition value low";
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getTickFormatter());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1201,6 +1091,7 @@ public abstract class Averages extends TickerStatistics {
 			String header = "Value";
 			String label = "Value";
 			field = DomainUtils.getDouble(getSession(), name, header, label);
+			field.setFormatter(getValueFormatterRaw());
 			mapFields.put(name, field);
 		}
 		return field;
@@ -1293,6 +1184,26 @@ public abstract class Averages extends TickerStatistics {
 	 */
 	private void setPropertySourceField(Field field, Field source) {
 		field.setProperty("source-field", source);
+	}
+
+	/**
+	 * Returns the calculation property of a field.
+	 * 
+	 * @param field The field.
+	 * @return The normalizer.
+	 */
+	public Calculation getPropertyCalculation(Field field) {
+		return (Calculation) field.getProperty("calculation");
+	}
+
+	/**
+	 * Set the calculation property of the field.
+	 * 
+	 * @param field The field.
+	 * @param normalizer The normalizer.
+	 */
+	private void setPropertyCalculation(Field field, Calculation calculation) {
+		field.setProperty("calculation", calculation);
 	}
 
 	/**
@@ -1394,16 +1305,20 @@ public abstract class Averages extends TickerStatistics {
 	/**
 	 * Returns the plot data for the list of fields.
 	 * 
+	 * @param dataName The name of the data list.
 	 * @param sourceList The source list.
 	 * @param fields The list of fields.
 	 * @return The plot data.
 	 */
-	protected PlotData getPlotData(PersistorDataList sourceList, List<Field> fields) {
+	protected PlotData getPlotData(String dataName, PersistorDataList sourceList, List<Field> fields) {
 
 		// Data info.
 		DataInfo info = new DataInfo(getSession());
 		info.setInstrument(getInstrument());
-		info.setName(getInstrument().getId());
+		if (dataName == null) {
+			dataName = getInstrument().getId();
+		}
+		info.setName(dataName);
 		info.setDescription(getInstrument().getDescription());
 		info.setPeriod(getPeriod());
 

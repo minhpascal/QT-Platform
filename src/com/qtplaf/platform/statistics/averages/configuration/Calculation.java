@@ -15,67 +15,89 @@
 package com.qtplaf.platform.statistics.averages.configuration;
 
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
+import com.qtplaf.library.database.FieldCalculator;
 
 /**
- * A pair of averages, fast and slow, to calculate the spread, and its normalizer.
+ * Generic field calculation, has a field calculator and a normalizer.
  *
  * @author Miquel Sas
  */
-public class Spread {
-	/** Fast average. */
-	private Average fastAverage;
-	/** Slow average. */
-	private Average slowAverage;
-	/** The normalizer to use when calculating discretional values. */
+public class Calculation {
+
+	/** Result field name. */
+	private String name;
+	/** Header. */
+	private String header;
+	/** Label. */
+	private String label;
+	/** Field calculator. */
+	private FieldCalculator calculator;
+	/** Normalizer. */
 	private Normalizer normalizer;
-	/** A boolean that indicates if the spread should be inclided in the state key. */
+	/** A boolean that indicates if the calculation should be inclided in the state key. */
 	private boolean stateKey = false;
 
 	/**
 	 * Constructor.
+	 * 
+	 * @param name The field name.
+	 * @param header The header.
+	 * @param label The label.
 	 */
-	public Spread() {
+	public Calculation(String name, String header, String label) {
 		super();
+		this.name = name;
+		this.header = header;
+		this.label = label;
 	}
 
 	/**
-	 * Returns the fast average.
+	 * Returns the result field name.
 	 * 
-	 * @return The fast average.
+	 * @return The result field name.
 	 */
-	public Average getFastAverage() {
-		return fastAverage;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * Set the fast average.
+	 * Returns the header.
 	 * 
-	 * @param fastAverage The fast average.
+	 * @return The header.
 	 */
-	public void setFastAverage(Average fastAverage) {
-		this.fastAverage = fastAverage;
+	public String getHeader() {
+		return header;
 	}
 
 	/**
-	 * Returns the slow average.
+	 * Returns the label.
 	 * 
-	 * @return The slow average.
+	 * @return The label.
 	 */
-	public Average getSlowAverage() {
-		return slowAverage;
+	public String getLabel() {
+		return label;
 	}
 
 	/**
-	 * Set the slow averate.
+	 * Returns the calculator.
 	 * 
-	 * @param slowAverage The slow average.
+	 * @return The calculator.
 	 */
-	public void setSlowAverage(Average slowAverage) {
-		this.slowAverage = slowAverage;
+	public FieldCalculator getCalculator() {
+		return calculator;
 	}
 
 	/**
-	 * Returns the normalizer to use when calculating discretional values.
+	 * Set the calculator.
+	 * 
+	 * @param calculator The calculator.
+	 */
+	public void setCalculator(FieldCalculator calculator) {
+		this.calculator = calculator;
+	}
+
+	/**
+	 * Returns the normalizer.
 	 * 
 	 * @return The normalizer.
 	 */
@@ -84,7 +106,7 @@ public class Spread {
 	}
 
 	/**
-	 * set the normalizer.
+	 * Set the normalizer.
 	 * 
 	 * @param normalizer The normalizer.
 	 */
@@ -108,32 +130,5 @@ public class Spread {
 	 */
 	public void setStateKey(boolean stateKey) {
 		this.stateKey = stateKey;
-	}
-
-	/**
-	 * Returns the spread name.
-	 * 
-	 * @return The name.
-	 */
-	public String getName() {
-		return "spread_" + getFastAverage().getPeriod() + "_" + getSlowAverage().getPeriod();
-	}
-
-	/**
-	 * Returns the spread header.
-	 * 
-	 * @return The header.
-	 */
-	public String getHeader() {
-		return "Spread-" + getFastAverage().getPeriod() + "-" + getSlowAverage().getPeriod();
-	}
-
-	/**
-	 * Returns the spread label.
-	 * 
-	 * @return The label.
-	 */
-	public String getLabel() {
-		return "Spread " + getFastAverage().getPeriod() + "-" + getSlowAverage().getPeriod();
 	}
 }

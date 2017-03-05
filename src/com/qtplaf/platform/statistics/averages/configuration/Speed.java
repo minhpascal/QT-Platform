@@ -90,4 +90,31 @@ public class Speed {
 	public void setStateKey(boolean stateKey) {
 		this.stateKey = stateKey;
 	}
+
+	/**
+	 * Returns the name.
+	 * 
+	 * @return The name.
+	 */
+	public String getName() {
+		return "speed_" + getAverage().getPeriod();
+	}
+
+	/**
+	 * Returns the header.
+	 * 
+	 * @return The header.
+	 */
+	public String getHeader() {
+		return "Speed-" + getAverage().getPeriod();
+	}
+
+	/**
+	 * Returns the label.
+	 * 
+	 * @return The label.
+	 */
+	public String getLabel() {
+		return "Speed " + getAverage().getPeriod();
+	}
 }

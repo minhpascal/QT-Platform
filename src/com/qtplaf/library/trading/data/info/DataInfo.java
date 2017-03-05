@@ -32,46 +32,29 @@ import com.qtplaf.library.util.StringUtils;
  */
 public class DataInfo {
 
-	/**
-	 * Name, like for instance <b>SMA<b>. Once an indicator with a gien identifier is regisrated in the visual
-	 * environment, no other indicator can be registrated with he same identifier.
-	 */
+	/** Name. */
 	private String name;
-	/**
-	 * A title to use in list or tool tips.
-	 */
+	/** A title to use in list or tool tips. */
 	private String title;
-	/**
-	 * An optional long description that completely describes the data.
-	 */
+	/** An optional long description that completely describes the data. */
 	private String description;
-	/**
-	 * Instrument of data if applicable.
-	 */
+	
+	/** Instrument of data if applicable. */
 	private Instrument instrument;
-	/**
-	 * Period.
-	 */
+	/** Period. */
 	private Period period;
-	/**
-	 * The pip scale used for the data in this data list. If -1, take it from the instrument.
-	 */
+	
+	/** The pip scale used for the data in this data list. If -1, take it from the instrument. */
 	private int pipScale = -1;
-	/**
-	 * The tick scale used for the data in this data list. If -1, take it from the instrument.
-	 */
+	/** The tick scale used for the data in this data list. If -1, take it from the instrument. */
 	private int tickScale = -1;
-	/**
-	 * The list of informations about outputs.
-	 */
+	
+	/** The list of informations about outputs. */
 	private List<OutputInfo> outputs = new ArrayList<>();
-	/**
-	 * Map of output indexes.
-	 */
+	/** Map of output indexes. */
 	private Map<String, Integer> mapIndexes = new HashMap<>();
-	/**
-	 * The working session.
-	 */
+	
+	/** The working session. */
 	private Session session;
 
 	/**

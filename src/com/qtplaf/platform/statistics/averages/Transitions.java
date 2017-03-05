@@ -209,8 +209,8 @@ public class Transitions extends Averages {
 		PersistorDataList dataList = getStates().getDataList();
 		dataList.setCacheSize(-1);
 		plotDataList.add(getPlotDataMain(dataList));
-		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedContinuous()));
-		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedContinuous()));
+		plotDataList.add(getPlotData("Spreads-nrm", dataList, getFieldListSpreads(Suffix.nrm)));
+		plotDataList.add(getPlotData("Speeds-nrm", dataList, getFieldListSpeeds(Suffix.nrm)));
 		return plotDataList;
 	}
 

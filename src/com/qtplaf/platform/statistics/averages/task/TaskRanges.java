@@ -141,7 +141,7 @@ public class TaskRanges extends TaskAverages {
 		statesList.setCacheSize(cacheSize * 10);
 
 		// Fields to calculate ranges.
-		List<Field> fields = ranges.getFieldListToCalculateRangesRaw();
+		List<Field> fields = ranges.getFieldListToCalculateRanges();
 
 		// The current index to calculate.
 		int index = 0;

@@ -26,8 +26,10 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.statistics.averages.Ranges;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Transitions;
+import com.qtplaf.platform.statistics.averages.calculators.FieldCalcSum;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.statistics.averages.configuration.Configuration;
+import com.qtplaf.platform.statistics.averages.configuration.Calculation;
 import com.qtplaf.platform.statistics.averages.configuration.Range;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
@@ -186,8 +188,91 @@ public class Manager {
 	public List<Configuration> getConfigurations() {
 		List<Configuration> configurations = new ArrayList<>();
 		configurations.add(getConfigurationSF());
-		configurations.add(getConfigurationTF());
 		return configurations;
+	}
+
+	/**
+	 * Returns a standard normalizer (-1,1) with the given number of segments.
+	 * 
+	 * @param segments The number of segments.
+	 * @return The normalizer.
+	 */
+	private Normalizer getNormalizer(int segments) {
+		Normalizer norm = new Normalizer();
+		norm.setMaximum(1.0);
+		norm.setMinimum(-1.0);
+		norm.setSegments(segments);
+		return norm;
+	}
+
+	/**
+	 * Returns the spread for the averages with a normalizer of segments.
+	 * 
+	 * @param fast Fast average.
+	 * @param slow Slow average.
+	 * @param segments Segments of the normalizer.
+	 * @return The spread.
+	 */
+	private Spread getSpread(Average fast, Average slow, int segments) {
+		Spread spread = new Spread();
+		spread.setFastAverage(fast);
+		spread.setSlowAverage(slow);
+		spread.setStateKey(true);
+		spread.setNormalizer(getNormalizer(segments));
+		return spread;
+	}
+
+	/**
+	 * Returns the speed of the average with a normalizer of segments.
+	 * 
+	 * @param avg The average.
+	 * @param segments Segments of the normalizer.
+	 * @return The speed.
+	 */
+	private Speed getSpeed(Average avg, int segments) {
+		Speed speed = new Speed();
+		speed.setAverage(avg);
+		speed.setStateKey(true);
+		speed.setNormalizer(getNormalizer(segments));
+		return speed;
+	}
+
+	/**
+	 * Returns the calculation to sum spreads.
+	 * 
+	 * @param spreads The spreads.
+	 * @param segments Segments of the normalizer.
+	 * @return The calculation.
+	 */
+	private Calculation getCalculationSumSpreads(List<Spread> spreads, int segments) {
+		Calculation calculation = new Calculation("spread_sum", "Spread sum", "Sum of spreads");
+		FieldCalcSum calcSum = new FieldCalcSum();
+		for (Spread spread : spreads) {
+			calcSum.add(spread.getName() + "_raw");
+		}
+		calculation.setCalculator(calcSum);
+		calculation.setNormalizer(getNormalizer(segments));
+		calculation.setStateKey(true);
+		return calculation;
+	}
+
+	/**
+	 * Returns the calculation to sum speeds.
+	 * 
+	 * @param spreads The speeds.
+	 * @param segments Segments of the normalizer.
+	 * @return The calculation.
+	 */
+	private Calculation getCalculationSumSpeeds(List<Speed> speeds, int segments) {
+		Calculation calculation = new Calculation("speed_sum", "Speed sum", "Sum of speeds");
+		FieldCalcSum calcSum = new FieldCalcSum();
+		for (Speed speed : speeds) {
+			calcSum.add(speed.getName() + "_raw");
+		}
+		calculation.setCalculator(calcSum);
+		calculation.setNormalizer(getNormalizer(segments));
+		calculation.setStateKey(true);
+		return calculation;
 	}
 
 	/**
@@ -206,85 +291,6 @@ public class Manager {
 		Average avg_21 = new Average(21, 13, 3);
 		Average avg_89 = new Average(89, 21, 13);
 		Average avg_377 = new Average(377, 34, 21);
-		cfg.addAverage(avg_5);
-		cfg.addAverage(avg_21);
-		cfg.addAverage(avg_89);
-		cfg.addAverage(avg_377);
-
-		// Spread 5-21 and normalizer with 40 segments.
-		Normalizer norm_5_21 = new Normalizer();
-		norm_5_21.setMaximum(1.0);
-		norm_5_21.setMinimum(-1.0);
-		norm_5_21.setSegments(40);
-		Spread spread_5_21 = new Spread();
-		spread_5_21.setFastAverage(avg_5);
-		spread_5_21.setSlowAverage(avg_21);
-		spread_5_21.setStateKey(true);
-		spread_5_21.setNormalizer(norm_5_21);
-		cfg.addSpread(spread_5_21);
-
-		// Spread 21-89 and normalizer with 20 segments.
-		Normalizer norm_21_89 = new Normalizer();
-		norm_21_89.setMaximum(1.0);
-		norm_21_89.setMinimum(-1.0);
-		norm_21_89.setSegments(20);
-		Spread spread_21_89 = new Spread();
-		spread_21_89.setFastAverage(avg_21);
-		spread_21_89.setSlowAverage(avg_89);
-		spread_21_89.setStateKey(true);
-		spread_21_89.setNormalizer(norm_21_89);
-		cfg.addSpread(spread_21_89);
-
-		// Spread 89-377 and normalizer with 20 segments.
-		Normalizer norm_89_377 = new Normalizer();
-		norm_89_377.setMaximum(1.0);
-		norm_89_377.setMinimum(-1.0);
-		norm_89_377.setSegments(20);
-		Spread spread_89_377 = new Spread();
-		spread_89_377.setFastAverage(avg_89);
-		spread_89_377.setSlowAverage(avg_377);
-		spread_89_377.setStateKey(true);
-		spread_89_377.setNormalizer(norm_89_377);
-		cfg.addSpread(spread_89_377);
-
-		// Speed 89 and normalizer with 10 segments.
-		Normalizer norm_89 = new Normalizer();
-		norm_89.setMaximum(1.0);
-		norm_89.setMinimum(-1.0);
-		norm_89.setSegments(10);
-		Speed speed_89 = new Speed();
-		speed_89.setAverage(avg_89);
-		speed_89.setStateKey(true);
-		speed_89.setNormalizer(norm_89);
-		cfg.addSpeed(speed_89);
-
-		// Speed 377 and normalizer with 20 segments.
-		Normalizer norm_377 = new Normalizer();
-		norm_377.setMaximum(1.0);
-		norm_377.setMinimum(-1.0);
-		norm_377.setSegments(20);
-		Speed speed_377 = new Speed();
-		speed_377.setAverage(avg_377);
-		speed_377.setStateKey(true);
-		speed_377.setNormalizer(norm_377);
-		cfg.addSpeed(speed_377);
-
-		// Ranges for min-max values.
-		cfg.addRange(new Range(89));
-		cfg.addRange(new Range(377));
-
-		return cfg;
-	}
-	private Configuration getConfigurationTF() {
-		Configuration cfg = new Configuration(getSession());
-		cfg.setId("tf");
-		cfg.setScale(3);
-
-		// Averages.
-		Average avg_5 = new Average(5, 5, 3);
-		Average avg_21 = new Average(21, 13, 3);
-		Average avg_89 = new Average(89, 21, 13);
-		Average avg_377 = new Average(377, 34, 21);
 		Average avg_610 = new Average(610, 55, 34);
 		cfg.addAverage(avg_5);
 		cfg.addAverage(avg_21);
@@ -292,86 +298,20 @@ public class Manager {
 		cfg.addAverage(avg_377);
 		cfg.addAverage(avg_610);
 
-		// Spread 5-21 and normalizer with 40 segments.
-		Normalizer norm_5_21 = new Normalizer();
-		norm_5_21.setMaximum(1.0);
-		norm_5_21.setMinimum(-1.0);
-		norm_5_21.setSegments(20);
-		Spread spread_5_21 = new Spread();
-		spread_5_21.setFastAverage(avg_5);
-		spread_5_21.setSlowAverage(avg_21);
-		spread_5_21.setStateKey(true);
-		spread_5_21.setNormalizer(norm_5_21);
-		cfg.addSpread(spread_5_21);
+		// Spreads.
+		cfg.addSpread(getSpread(avg_5, avg_21, 10));
+		cfg.addSpread(getSpread(avg_21, avg_89, 10));
+		cfg.addSpread(getSpread(avg_89, avg_377, 10));
+		cfg.addSpread(getSpread(avg_377, avg_610, 10));
 
-		// Spread 21-89 and normalizer with 20 segments.
-		Normalizer norm_21_89 = new Normalizer();
-		norm_21_89.setMaximum(1.0);
-		norm_21_89.setMinimum(-1.0);
-		norm_21_89.setSegments(10);
-		Spread spread_21_89 = new Spread();
-		spread_21_89.setFastAverage(avg_21);
-		spread_21_89.setSlowAverage(avg_89);
-		spread_21_89.setStateKey(true);
-		spread_21_89.setNormalizer(norm_21_89);
-		cfg.addSpread(spread_21_89);
-
-		// Spread 89-377 and normalizer with 20 segments.
-		Normalizer norm_89_377 = new Normalizer();
-		norm_89_377.setMaximum(1.0);
-		norm_89_377.setMinimum(-1.0);
-		norm_89_377.setSegments(10);
-		Spread spread_89_377 = new Spread();
-		spread_89_377.setFastAverage(avg_89);
-		spread_89_377.setSlowAverage(avg_377);
-		spread_89_377.setStateKey(true);
-		spread_89_377.setNormalizer(norm_89_377);
-		cfg.addSpread(spread_89_377);
-
-		// Spread 377-610 and normalizer with 20 segments.
-		Normalizer norm_377_610 = new Normalizer();
-		norm_377_610.setMaximum(1.0);
-		norm_377_610.setMinimum(-1.0);
-		norm_377_610.setSegments(10);
-		Spread spread_377_610 = new Spread();
-		spread_377_610.setFastAverage(avg_377);
-		spread_377_610.setSlowAverage(avg_610);
-		spread_377_610.setStateKey(true);
-		spread_377_610.setNormalizer(norm_377_610);
-		cfg.addSpread(spread_377_610);
-
-		// Speed 89 and normalizer with 10 segments.
-		Normalizer norm_89 = new Normalizer();
-		norm_89.setMaximum(1.0);
-		norm_89.setMinimum(-1.0);
-		norm_89.setSegments(10);
-		Speed speed_89 = new Speed();
-		speed_89.setAverage(avg_89);
-		speed_89.setStateKey(true);
-		speed_89.setNormalizer(norm_89);
-		cfg.addSpeed(speed_89);
-
-		// Speed 377 and normalizer with 20 segments.
-		Normalizer norm_377 = new Normalizer();
-		norm_377.setMaximum(1.0);
-		norm_377.setMinimum(-1.0);
-		norm_377.setSegments(10);
-		Speed speed_377 = new Speed();
-		speed_377.setAverage(avg_377);
-		speed_377.setStateKey(true);
-		speed_377.setNormalizer(norm_377);
-		cfg.addSpeed(speed_377);
-
-		// Speed 610 and normalizer with 20 segments.
-		Normalizer norm_610 = new Normalizer();
-		norm_610.setMaximum(1.0);
-		norm_610.setMinimum(-1.0);
-		norm_610.setSegments(10);
-		Speed speed_610 = new Speed();
-		speed_610.setAverage(avg_610);
-		speed_610.setStateKey(true);
-		speed_610.setNormalizer(norm_610);
-		cfg.addSpeed(speed_610);
+		// Speeds.
+		cfg.addSpeed(getSpeed(avg_89, 10));
+		cfg.addSpeed(getSpeed(avg_377, 10));
+		cfg.addSpeed(getSpeed(avg_610, 10));
+		
+		// Sum of spreads and speeds.
+		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
+		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
 
 		// Ranges for min-max values.
 		cfg.addRange(new Range(89));
@@ -379,4 +319,5 @@ public class Manager {
 
 		return cfg;
 	}
+
 }

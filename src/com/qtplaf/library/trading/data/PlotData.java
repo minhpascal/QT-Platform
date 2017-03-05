@@ -34,44 +34,54 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 */
 	private static final int startNumberOfBars = 2000;
 
-	/**
-	 * A list of data lists.
-	 */
+	/** A list of data lists. */
 	private List<DataList> dataLists = new ArrayList<>();
-	/**
-	 * List drawings.
-	 */
+	/** List of drawings. */
 	private List<Drawing> drawings = new ArrayList<>();
-	/**
-	 * The start index to plot, can be negative, less that the min index.
-	 */
+
+	/** The start index to plot, can be negative, less that the min index. */
 	private int startIndex = Integer.MIN_VALUE;
-	/**
-	 * The end index to plot, can greater than the max index.
-	 */
+	/** The end index to plot, can greater than the max index. */
 	private int endIndex = Integer.MIN_VALUE;
-	/**
-	 * The maximum value to plot (retrieving dataBag from start index to end index).
-	 */
+	/** The maximum value to plot (retrieving dataBag from start index to end index). */
 	private double maximumValue = Double.MIN_VALUE;
-	/**
-	 * The minimum value to plot (retrieving dataBag from start index to end index).
-	 */
+	/** The minimum value to plot (retrieving dataBag from start index to end index). */
 	private double minimumValue = Double.MAX_VALUE;
-	/**
-	 * The scale to plot the data.
-	 */
+
+	/** The scale to plot the data. */
 	private PlotScale plotScale = PlotScale.Linear;
-	/**
-	 * The plotter context.
-	 */
+	/** The plotter context. */
 	private PlotterContext plotterContext;
+
+	/** Optional name of this plot data. */
+	private String name;
 
 	/**
 	 * Default constructor.
 	 */
 	public PlotData() {
 		super();
+	}
+
+	/**
+	 * Returns the name.
+	 * 
+	 * @return The name.
+	 */
+	public String getName() {
+		if (name == null) {
+			return toString();
+		}
+		return name;
+	}
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name The name.
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -773,5 +783,35 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * @param e The data list event.
 	 */
 	public void dataListChanged(DataListEvent e) {
+	}
+
+	/**
+	 * Returns a string representation of this plota data.
+	 * 
+	 * @return A string representation.
+	 */
+	@Override
+	public String toString() {
+		Instrument instrument = null;
+		Period period = null;
+		List<String> names = new ArrayList<>();
+		for (DataList dataList : dataLists) {
+			if (instrument == null) {
+				instrument = dataList.getDataInfo().getInstrument();
+			}
+			if (period == null) {
+				period = dataList.getDataInfo().getPeriod();
+			}
+			names.add(dataList.getDataInfo().getName());
+		}
+		StringBuilder b = new StringBuilder();
+		b.append(instrument);
+		b.append(", ");
+		b.append(period);
+		for (String name : names) {
+			b.append(", ");
+			b.append(name);
+		}
+		return b.toString();
 	}
 }

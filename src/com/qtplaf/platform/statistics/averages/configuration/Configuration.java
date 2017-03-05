@@ -37,6 +37,8 @@ public class Configuration {
 	private List<Speed> speeds = new ArrayList<>();
 	/** List of ranges for min-max calculations. */
 	private List<Range> ranges = new ArrayList<>();
+	/** List of generic field calculations. */
+	private List<Calculation> calculations = new ArrayList<>();
 
 	/** The scale to calculate the key. */
 	private int scale = 4;
@@ -154,6 +156,15 @@ public class Configuration {
 	}
 
 	/**
+	 * Add a field calculation.
+	 * 
+	 * @param calculation The calculation to add.
+	 */
+	public void addCalculation(Calculation calculation) {
+		calculations.add(calculation);
+	}
+
+	/**
 	 * Returns the list of averages.
 	 * 
 	 * @return The list of averages.
@@ -187,6 +198,15 @@ public class Configuration {
 	 */
 	public List<Speed> getSpeeds() {
 		return speeds;
+	}
+
+	/**
+	 * Returns the field calculations.
+	 * 
+	 * @return The field calculations.
+	 */
+	public List<Calculation> getCalculations() {
+		return calculations;
 	}
 
 	/**

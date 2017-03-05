@@ -98,6 +98,10 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 	 * @param e The mouse event.
 	 */
 	public void mousePressed(MouseEvent e) {
+		// Check popup menu.
+		if (triggerPopupMenu(e)) {
+			return;
+		}
 	}
 
 	/**
@@ -106,11 +110,29 @@ public class JChartPlotterListener implements MouseListener, MouseMotionListener
 	 * @param e The mouse event.
 	 */
 	public void mouseReleased(MouseEvent e) {
+		// Check popup menu.
+		if (triggerPopupMenu(e)) {
+			return;
+		}
 		// Release dragging (left button) if applicable
 		if (e.getButton() == MouseEvent.BUTTON1 && mouseDragging) {
 			mouseDragging = false;
 			mouseDraggingX = -1;
 		}
+	}
+
+	/**
+	 * Check and trigger the popup menu.
+	 * 
+	 * @param e The mouse event.
+	 * @return A boolean that indicates if processing the event should stop.
+	 */
+	private boolean triggerPopupMenu(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			chartPlotter.getChartContainer().getChart().triggerPopupMenu(chartPlotter, e.getPoint());
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -19,14 +19,20 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.ActionGroup;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.core.LineBorderSides;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.trading.chart.parameters.ChartPlotParameters;
@@ -35,6 +41,8 @@ import com.qtplaf.library.trading.chart.parameters.HorizontalAxisPlotParameters;
 import com.qtplaf.library.trading.chart.parameters.InformationPlotParameters;
 import com.qtplaf.library.trading.chart.parameters.VerticalAxisPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.util.Icons;
+import com.qtplaf.library.util.ImageIconUtils;
 
 /**
  * A top panel aimed to contain all the panels involved in the display of a trading chart. From top to down the panels
@@ -52,6 +60,27 @@ import com.qtplaf.library.trading.data.PlotData;
  *
  */
 public class JChart extends JPanel {
+
+	/**
+	 * Action to popup plot datas not visible.
+	 */
+	class ActionPlotData extends ActionChart {
+
+		private PlotData plotData;
+
+		ActionPlotData(PlotData plotData) {
+			this.plotData = plotData;
+			ActionUtils.setName(this, plotData.getName());
+			ActionUtils.setActionGroup(this, new ActionGroup("PlotData", 99));
+			ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_chart));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SwingUtils.invokeLater(new AddPlotData(plotData));
+		}
+
+	}
 
 	/**
 	 * Runnable to invoke later adding plot data.
@@ -77,45 +106,32 @@ public class JChart extends JPanel {
 
 	}
 
-	/**
-	 * The list with chart containers added to this chart.
-	 */
+	/** The list with chart containers added to this chart. */
 	private List<JChartContainer> chartContainers = new ArrayList<>();
-	/**
-	 * The horizontal axis.
-	 */
+	/** The horizontal axis. */
 	private JChartHorizontalAxis horizontalAxis;
-	/**
-	 * The default background color.
-	 */
+	/** The default background color. */
 	private Color defaultBackgroundColor = Color.WHITE;
-	/**
-	 * The split panel divider size.
-	 */
+	/** The split panel divider size. */
 	private int splitPaneDividerSize = 8;
-	/**
-	 * Cursor plot parameters.
-	 */
+
+	/** Cursor plot parameters. */
 	private CursorPlotParameters cursorPlotParameters = new CursorPlotParameters();
-	/**
-	 * Horizontal axis plot parameters.
-	 */
+	/** Horizontal axis plot parameters. */
 	private HorizontalAxisPlotParameters horizontalAxisPlotParameters = new HorizontalAxisPlotParameters();
-	/**
-	 * Vertical axis plot parameters.
-	 */
+	/** Vertical axis plot parameters. */
 	private VerticalAxisPlotParameters verticalAxisPlotParameters = new VerticalAxisPlotParameters();
-	/**
-	 * Information plot parameters.
-	 */
+	/** Information plot parameters. */
 	private InformationPlotParameters infoPlotParameters = new InformationPlotParameters();
-	/**
-	 * Chart plot parameters.
-	 */
+	/** Chart plot parameters. */
 	private ChartPlotParameters chartPlotParameters = new ChartPlotParameters();
-	/**
-	 * The working session.
-	 */
+
+	/** List of plot datas installed int the chart. */
+	private List<PlotData> plotDatas = new ArrayList<>();
+	/** List of chart actions. */
+	private List<ActionChart> actions = new ArrayList<>();
+
+	/** The working session. */
 	private Session session;
 
 	/**
@@ -145,11 +161,22 @@ public class JChart extends JPanel {
 	}
 
 	/**
+	 * Add an action to the list of chart actions.
+	 * 
+	 * @param action The action to add.
+	 */
+	public void addAction(ActionChart action) {
+		action.setChart(this);
+		actions.add(action);
+	}
+
+	/**
 	 * Adds a plot data to this chart, configurating and adding the appropriate <i>JChartContainer</i>.
 	 * 
 	 * @param plotData The plot data.
 	 */
 	public void addPlotData(PlotData plotData) {
+		plotDatas.add(plotData);
 		SwingUtils.invokeLater(new AddPlotData(plotData));
 	}
 
@@ -453,4 +480,67 @@ public class JChart extends JPanel {
 		repaint();
 	}
 
+	/**
+	 * Trigger the popup menu, launched by the <tt>JChartPlotterListener</tt>
+	 * 
+	 * @param chartPlotter The source chart plotter.
+	 * @param mousePoint The mouse point.
+	 */
+	void triggerPopupMenu(JChartPlotter chartPlotter, Point mousePoint) {
+		List<ActionChart> actionsToPopup = getActionsToPopup();
+		if (actionsToPopup.isEmpty()) {
+			return;
+		}
+		for (ActionChart action : actionsToPopup) {
+			action.setChart(this);
+			action.setChartPlotter(chartPlotter);
+			action.setMousePoint(mousePoint);
+		}
+		List<Action> menuActions = new ArrayList<>();
+		for (ActionChart action : actionsToPopup) {
+			menuActions.add(action);
+		}
+		
+		JPopupMenu popupMenu = new JPopupMenu();
+		SwingUtils.addMenuItems(popupMenu, menuActions);
+		if (!SwingUtils.isEmpty(popupMenu)) {
+			popupMenu.show(chartPlotter, mousePoint.x, mousePoint.y);
+		}
+	}
+
+	/**
+	 * Returns the list of actions to popup.
+	 * 
+	 * @return The list of actions to popup.
+	 */
+	private List<ActionChart> getActionsToPopup() {
+		List<ActionChart> actionsToPopup = new ArrayList<>(actions);
+		List<PlotData> plotDataList = getPlotDataListNotVisible();
+		for (PlotData plotData : plotDataList) {
+			actionsToPopup.add(new ActionPlotData(plotData));
+		}
+		return actionsToPopup;
+	}
+
+	/**
+	 * Returns the list of plot datas not visible.
+	 * 
+	 * @return The list of plot datas not visible.
+	 */
+	private List<PlotData> getPlotDataListNotVisible() {
+		List<PlotData> plotDataListNotVisible = new ArrayList<>();
+		for (PlotData plotData : plotDatas) {
+			boolean visible = false;
+			for (JChartContainer chartContainer : chartContainers) {
+				if (chartContainer.getPlotData().equals(plotData)) {
+					visible = true;
+					break;
+				}
+			}
+			if (!visible) {
+				plotDataListNotVisible.add(plotData);
+			}
+		}
+		return plotDataListNotVisible;
+	}
 }

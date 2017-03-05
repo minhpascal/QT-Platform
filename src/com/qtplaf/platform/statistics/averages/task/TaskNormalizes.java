@@ -28,6 +28,8 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.statistics.averages.States;
+import com.qtplaf.platform.statistics.averages.Suffix;
+import com.qtplaf.platform.statistics.averages.configuration.Calculation;
 
 /**
  * Calculates normalized states values.
@@ -167,8 +169,8 @@ public class TaskNormalizes extends TaskAverages {
 				
 				// Deltas high, low, close.
 				{
-					List<Field> fieldsRaw = states.getFieldListDeltasRaw();
-					List<Field> fieldsCont = states.getFieldListDeltasNormalizedContinuous();
+					List<Field> fieldsRaw = states.getFieldListDeltas(Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListDeltas(Suffix.nrm);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
@@ -181,9 +183,9 @@ public class TaskNormalizes extends TaskAverages {
 
 				// Spreads between averages.
 				{
-					List<Field> fieldsRaw = states.getFieldListSpreadsRaw();
-					List<Field> fieldsCont = states.getFieldListSpreadsNormalizedContinuous();
-					List<Field> fieldsDisc = states.getFieldListSpreadsNormalizedDiscrete();
+					List<Field> fieldsRaw = states.getFieldListSpreads(Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListSpreads(Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListSpreads(Suffix.dsc);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
@@ -200,15 +202,35 @@ public class TaskNormalizes extends TaskAverages {
 
 				// Speeds.
 				{
-					List<Field> fieldsRaw = states.getFieldListSpeedsRaw();
-					List<Field> fieldsCont = states.getFieldListSpeedsNormalizedContinuous();
-					List<Field> fieldsDisc = states.getFieldListSpeedsNormalizedDiscrete();
+					List<Field> fieldsRaw = states.getFieldListSpeeds(Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListSpeeds(Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListSpeeds(Suffix.dsc);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
 						Normalizer normDisc = states.getPropertySpeed(fieldDisc).getNormalizer();
+						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
+						double valueCont = normCont.getValue(valueRaw);
+						double valueDisc = normDisc.getValue(valueCont);
+						record.getValue(fieldCont.getName()).setDouble(valueCont);
+						record.getValue(fieldDisc.getName()).setDouble(valueDisc);
+					}
+				}
+				
+				// Calculations
+				{
+					List<Field> fieldsRaw = states.getFieldListCalculations(Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListCalculations(Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListCalculations(Suffix.dsc);
+					for (int i = 0; i < fieldsRaw.size(); i++) {
+						Field fieldRaw = fieldsRaw.get(i);
+						Field fieldCont = fieldsCont.get(i);
+						Field fieldDisc = fieldsDisc.get(i);
+						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
+						Calculation calculation = states.getPropertyCalculation(fieldDisc);
+						Normalizer normDisc = calculation.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);

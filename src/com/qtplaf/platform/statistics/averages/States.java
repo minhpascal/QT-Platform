@@ -167,8 +167,8 @@ public class States extends Averages {
 		PersistorDataList dataList = getDataList();
 		dataList.setCacheSize(-1);
 		plotDataList.add(getPlotDataMain(dataList));
-		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedContinuous()));
-		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedContinuous()));
+		plotDataList.add(getPlotData("Spreads", dataList, getFieldListSpreads(Suffix.nrm)));
+		plotDataList.add(getPlotData("Speeds", dataList, getFieldListSpeeds(Suffix.nrm)));
 		return plotDataList;
 	}
 
@@ -182,10 +182,10 @@ public class States extends Averages {
 		PersistorDataList dataList = getDataList();
 		dataList.setCacheSize(-1);
 		plotDataList.add(getPlotDataMain(dataList));
-		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedContinuous()));
-		plotDataList.add(getPlotData(dataList, getFieldListSpreadsNormalizedDiscrete()));
-		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedContinuous()));
-		plotDataList.add(getPlotData(dataList, getFieldListSpeedsNormalizedDiscrete()));
+		plotDataList.add(getPlotData("Spreads-nrm", dataList, getFieldListSpreads(Suffix.nrm)));
+		plotDataList.add(getPlotData("Spreads-dsc", dataList, getFieldListSpreads(Suffix.dsc)));
+		plotDataList.add(getPlotData("Speeds-nrm", dataList, getFieldListSpeeds(Suffix.nrm)));
+		plotDataList.add(getPlotData("Speeds-dsc", dataList, getFieldListSpeeds(Suffix.dsc)));
 		return plotDataList;
 	}
 
