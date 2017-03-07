@@ -21,9 +21,7 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.PersistorDataList;
-import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.averages.Ranges;
-import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.configuration.Range;
 
 /**
@@ -46,14 +44,7 @@ public class TaskRanges extends TaskAverages {
 	public TaskRanges(Ranges ranges) {
 		super(ranges.getSession());
 		this.ranges = ranges;
-
-		Manager manager = new Manager(getSession());
-		States states = manager.getStates(
-			ranges.getServer(),
-			ranges.getInstrument(),
-			ranges.getPeriod(),
-			ranges.getConfiguration());
-		this.statesList = states.getDataList();
+		this.statesList = ranges.getDataListStates();
 
 		setNameAndDescription(ranges, "Ranges (min-max) values");
 	}

@@ -12,67 +12,40 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.chart;
+package com.qtplaf.library.trading.chart;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.core.JFrameSession;
 import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.swing.core.TableModelRecord;
-import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.swing.event.WindowHandler;
-import com.qtplaf.library.trading.chart.JChart;
 
 /**
  * A frame with a chart and a table record useful to navigate the chart. The table record contains information about
  * indexes or data time and can be used to move the chart there. Necessary to verify that statistic values perform as
  * expected.
+ * <p>
+ * Actions can be added to the chart or to the table. When an action is added to the chart, the
+ * <tt>JPanelTableRecord</tt> that contains the table is also passed to the action. When an action is added to the
+ * table, the chart is also passed to it.
  *
  * @author Miquel Sas
  */
 public class JChartNavigate extends JFrameSession {
-
-	/**
-	 * Mouse adapter to show the popup menu if available.
-	 */
-	class PopupTrigger extends MouseHandler {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			showPopup(e);
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			showPopup(e);
-		}
-
-		private void showPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				JPopupMenu popupMenu = new JPopupMenu();
-				SwingUtils.addMenuItems(popupMenu, actions);
-				if (!SwingUtils.isEmpty(popupMenu)) {
-					popupMenu.show(e.getComponent(), e.getX(), e.getY());
-				}
-			}
-		}
-	}
-
 
 	/**
 	 * Window adapter to handle the close operation.
@@ -89,8 +62,6 @@ public class JChartNavigate extends JFrameSession {
 	private JChart chart;
 	/** The table record panel. */
 	private JPanelTableRecord panelTableRecord;
-	/** List of actions. */
-	private List<Action> actions = new ArrayList<>();
 
 	/**
 	 * Constructor.
@@ -126,14 +97,23 @@ public class JChartNavigate extends JFrameSession {
 	}
 
 	/**
-	 * Add an action.
+	 * Add an action to the chart. The panel table record is also set to the action.
 	 * 
-	 * @param action The action.
+	 * @param action The action to add.
 	 */
-	public void addAction(ActionChartNavigate action) {
-		action.setChart(getChart());
-		action.setTableRecord(getTableRecord());
-		actions.add(action);
+	public void addActionToChart(Action action) {
+		ActionUtils.setTableRecordPanel(action, getTableRecordPanel());
+		getChart().addAction(action);
+	}
+
+	/**
+	 * Add an action to the table record panel. The chart is also set to the action.
+	 * 
+	 * @param action The action to add.
+	 */
+	public void addActionToTable(Action action) {
+		ActionUtils.setChart(action, getChart());
+		getTableRecordPanel().addAction(action);
 	}
 
 	/**
@@ -155,9 +135,8 @@ public class JChartNavigate extends JFrameSession {
 	 */
 	public JPanelTableRecord getTableRecordPanel() {
 		if (panelTableRecord == null) {
-			JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.SINGLE_SELECTION);
+			JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			panelTableRecord = new JPanelTableRecord(tableRecord);
-			SwingUtils.installMouseListener(panelTableRecord, new PopupTrigger());
 		}
 		return panelTableRecord;
 	}

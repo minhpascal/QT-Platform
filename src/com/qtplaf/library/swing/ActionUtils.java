@@ -14,6 +14,7 @@
 
 package com.qtplaf.library.swing;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Locale;
@@ -27,9 +28,12 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.core.JFormRecord;
+import com.qtplaf.library.swing.core.JPanelTableRecord;
 import com.qtplaf.library.swing.core.StatusBar;
 import com.qtplaf.library.swing.core.SwingUtils;
 import com.qtplaf.library.task.Task;
+import com.qtplaf.library.trading.chart.JChart;
+import com.qtplaf.library.trading.chart.JChartPlotter;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.library.util.Properties;
@@ -88,6 +92,15 @@ public class ActionUtils {
 	private static final Integer KeyLauchArgs = Integer.valueOf(index++);
 	/** A list of tasks, used in the progress manager to pass the tasks to actions. */
 	private static final Integer KeyTasks = Integer.valueOf(index++);
+	/** A reference to a JChart. */
+	private static final Integer KeyChart = Integer.valueOf(index++);
+	/** A reference to a JChartPlotter. */
+	private static final Integer KeyChartPlotter = Integer.valueOf(index++);
+	/** The mouse point. */
+	private static final Integer KeyMousePoint = Integer.valueOf(index++);
+	/** The panel table record for actions installed in such a panel. */
+	private static final Integer KeyPanelTableRecord = Integer.valueOf(index++);
+
 	/**
 	 * A status bar, normally installed in a frame or menu frame, useful to monitor fast tasks, passed to the lauched
 	 * action.
@@ -689,6 +702,86 @@ public class ActionUtils {
 	 */
 	public static void setActionName(Action action) {
 		setName(action, getActionName(action));
+	}
+
+	/**
+	 * Returns the chart.
+	 * 
+	 * @param action The action where the chart should be installed.
+	 * @return The chart.
+	 */
+	public static JChart getChart(Action action) {
+		return (JChart) getProperties(action).getObject(KeyChart);
+	}
+
+	/**
+	 * Set the chart.
+	 * 
+	 * @param action The action.
+	 * @param chart The chart object.
+	 */
+	public static void setChart(Action action, JChart chart) {
+		getProperties(action).setObject(KeyChart, chart);
+	}
+
+	/**
+	 * Returns the chart plotter.
+	 * 
+	 * @param action The action where the chart should be installed.
+	 * @return The chart plotteer.
+	 */
+	public static JChartPlotter getChartPlotter(Action action) {
+		return (JChartPlotter) getProperties(action).getObject(KeyChartPlotter);
+	}
+
+	/**
+	 * Set the chart plotter.
+	 * 
+	 * @param action The action.
+	 * @param chartPlotter The chart plotter object.
+	 */
+	public static void setChartPlotter(Action action, JChartPlotter chartPlotter) {
+		getProperties(action).setObject(KeyChartPlotter, chartPlotter);
+	}
+
+	/**
+	 * Return the mouse point.
+	 * 
+	 * @param action The action.
+	 * @return The mouse point.
+	 */
+	public static Point getMousePoint(Action action) {
+		return (Point) getProperties(action).getObject(KeyMousePoint);
+	}
+
+	/**
+	 * Set the mouse point.
+	 * 
+	 * @param action The action.
+	 * @param point The point.
+	 */
+	public static void setMousePoint(Action action, Point point) {
+		getProperties(action).setObject(KeyMousePoint, point);
+	}
+
+	/**
+	 * Returns the table record panel.
+	 * 
+	 * @param action The action.
+	 * @return The table record panel.
+	 */
+	public static JPanelTableRecord getTableRecordPanel(Action action) {
+		return (JPanelTableRecord) getProperties(action).getObject(KeyPanelTableRecord);
+	}
+
+	/**
+	 * Set the table record panel.
+	 * 
+	 * @param action The action.
+	 * @param panelTableRecord The table record panel.
+	 */
+	public static void setTableRecordPanel(Action action, JPanelTableRecord panelTableRecord) {
+		getProperties(action).setObject(KeyPanelTableRecord, panelTableRecord);
 	}
 
 	/**

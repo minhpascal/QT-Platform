@@ -62,7 +62,9 @@ public class ActionChart extends ActionTickerStatistics {
 		// The chart frame.
 		JFrameChart frame = new JFrameChart(getSession());
 		frame.setTitle(title.toString());
-		frame.getChart().addPlotDataList(plotDataList);
+		for (PlotData plotData : plotDataList) {
+			frame.getChart().addPlotData(plotData);
+		}
 	}
 
 }

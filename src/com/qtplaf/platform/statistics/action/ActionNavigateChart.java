@@ -15,15 +15,14 @@
 package com.qtplaf.platform.statistics.action;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
+
+import javax.swing.Action;
 
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.chart.JChartNavigate;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.statistics.TickerStatistics;
-import com.qtplaf.platform.statistics.chart.ActionChartNavigate;
-import com.qtplaf.platform.statistics.chart.JChartNavigate;
 
 /**
  * Navigate a chart.
@@ -34,9 +33,9 @@ public class ActionNavigateChart extends ActionTickerStatistics {
 
 	/** Chart navigate frame. */
 	private JChartNavigate chartNavigate;
-	/** Plot data list. */
-	private List<PlotData> plotDataList;
-	/** Recordset privider. */
+	/** Plot data list provider. */
+	private PlotDataConfigurator plotDataConfigurator;
+	/** Recordset provider. */
 	private RecordSetProvider recordSetProvider;
 
 	/**
@@ -52,8 +51,8 @@ public class ActionNavigateChart extends ActionTickerStatistics {
 	 * 
 	 * @param action The action.
 	 */
-	public void addAction(ActionChartNavigate action) {
-		getChartNavigate().addAction(action);
+	public void addAction(Action action) {
+		getChartNavigate().addActionToTable(action);
 	}
 
 	/**
@@ -75,21 +74,21 @@ public class ActionNavigateChart extends ActionTickerStatistics {
 	}
 
 	/**
-	 * Return the plot data list.
+	 * Returns the plot data list provider.
 	 * 
-	 * @return The plot data list.
+	 * @return The plot data list provider.
 	 */
-	public List<PlotData> getPlotDataList() {
-		return plotDataList;
+	public PlotDataConfigurator getPlotDataConfigurator() {
+		return plotDataConfigurator;
 	}
 
 	/**
-	 * Set the plot data list.
+	 * Set the plot data list provider.
 	 * 
-	 * @param plotDataList The plot data list.
+	 * @param plotDataListProvider The plot data list provider.
 	 */
-	public void setPlotDataList(List<PlotData> plotDataList) {
-		this.plotDataList = plotDataList;
+	public void setPlotDataConfigurator(PlotDataConfigurator plotDataListProvider) {
+		this.plotDataConfigurator = plotDataListProvider;
 	}
 
 	/**
@@ -109,12 +108,12 @@ public class ActionNavigateChart extends ActionTickerStatistics {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (getPlotDataList() == null || getRecordSetProvider() == null) {
+		if (getPlotDataConfigurator() == null || getRecordSetProvider() == null) {
 			throw new IllegalStateException();
 		}
 		getChartNavigate().setVisible(true);
 		getChartNavigate().setRecordSet(getRecordSetProvider().getRecordSet());
-		getChartNavigate().getChart().addPlotDataList(getPlotDataList());
+		getPlotDataConfigurator().configureChart(getChartNavigate().getChart());
 	}
 
 }

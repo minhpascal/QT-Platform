@@ -14,11 +14,14 @@
 
 package com.qtplaf.platform.statistics.averages;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,9 +34,17 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
+import com.qtplaf.library.swing.ActionGroup;
+import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.core.JTableRecord;
+import com.qtplaf.library.trading.chart.JChart;
+import com.qtplaf.library.trading.chart.drawings.Line;
+import com.qtplaf.library.trading.chart.drawings.VerticalLine;
 import com.qtplaf.library.trading.chart.plotter.data.BufferedLinePlotter;
+import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
 import com.qtplaf.library.trading.data.DataList;
+import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
@@ -44,9 +55,12 @@ import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
+import com.qtplaf.platform.statistics.action.ActionNavigateChart;
+import com.qtplaf.platform.statistics.action.PlotDataConfigurator;
+import com.qtplaf.platform.statistics.action.RecordSetProvider;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
-import com.qtplaf.platform.statistics.averages.configuration.Configuration;
 import com.qtplaf.platform.statistics.averages.configuration.Calculation;
+import com.qtplaf.platform.statistics.averages.configuration.Configuration;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
 import com.qtplaf.platform.util.DomainUtils;
@@ -62,7 +76,69 @@ public abstract class Averages extends TickerStatistics {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
-	
+
+	/**
+	 * Move the chart to the index of the selected record, adding a vertical line to it.
+	 */
+	class ActionMove extends AbstractAction {
+
+		ActionMove() {
+			ActionUtils.setName(this, "Move to selected index");
+			ActionUtils.setShortDescription(this, "Move the chart to the selected index.");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JTableRecord tableRecord = ActionUtils.getTableRecordPanel(this).getTableRecord();
+			Record record = tableRecord.getSelectedRecord();
+			if (record == null) {
+				return;
+			}
+			int index = record.getValue(getFieldDefIndex().getName()).getInteger();
+			JChart chart = ActionUtils.getChart(this);
+			for (int i = 0; i < chart.getChartCount(); i++) {
+				Line line = new VerticalLine(index);
+				line.getParameters().setColor(Color.RED);
+				chart.getChartContainer(i).getPlotData().addDrawing(line);
+			}
+			PlotData plotData = chart.getChartContainer(0).getPlotData();
+			plotData.move(index);
+			chart.propagateFrameChanges(plotData);
+		}
+	}
+
+	/**
+	 * Recordset provider for standard navigation initial data throw the states table.
+	 */
+	class StdRecordSet implements RecordSetProvider {
+		@Override
+		public RecordSet getRecordSet() {
+			DataPersistor persistor = new DataPersistor(getTableStates().getPersistor());
+			return new DataRecordSet(persistor);
+		}
+	}
+
+	/**
+	 * Std plot data list provider.
+	 */
+	class StdPlotDataList implements PlotDataConfigurator {
+		@Override
+		public void configureChart(JChart chart) {
+			PersistorDataList dataList = getDataListStates();
+			dataList.setCacheSize(-1);
+			dataList.setPageSize(1000);
+			
+			chart.addPlotData(getPlotDataMain(dataList), true);
+			chart.addPlotData(getPlotData("Spreads normalized", dataList, getFieldListSpreads(Suffix.nrm)), false);
+			chart.addPlotData(getPlotData("Speeds normalized", dataList, getFieldListSpeeds(Suffix.nrm)), false);
+			chart.addPlotData(getPlotData("Spreads discrete", dataList, getFieldListSpreads(Suffix.dsc)), false);
+			chart.addPlotData(getPlotData("Speeds discrete", dataList, getFieldListSpeeds(Suffix.dsc)), false);
+			chart.addPlotData(getPlotData("Spreads raw", dataList, getFieldListSpreads(Suffix.raw)), false);
+			chart.addPlotData(getPlotData("Speeds raw", dataList, getFieldListSpeeds(Suffix.raw)), false);
+		}
+
+	}
+
 	/** The configuration. */
 	private Configuration configuration;
 
@@ -235,7 +311,7 @@ public abstract class Averages extends TickerStatistics {
 			fields.add(getFieldDefDelta(getFieldDefHigh(), suffix));
 			fields.add(getFieldDefDelta(getFieldDefLow(), suffix));
 			fields.add(getFieldDefDelta(getFieldDefClose(), suffix));
-			mapFieldLists.put(name,  fields);
+			mapFieldLists.put(name, fields);
 		}
 		return fields;
 	}
@@ -248,7 +324,7 @@ public abstract class Averages extends TickerStatistics {
 	 */
 	public List<Field> getFieldListSpreads(Suffix suffix) {
 		String name = "spreads_" + suffix;
-		List<Field>  fields = mapFieldLists.get(name);
+		List<Field> fields = mapFieldLists.get(name);
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Spread spread : getConfiguration().getSpreads()) {
@@ -1344,5 +1420,43 @@ public abstract class Averages extends TickerStatistics {
 		plotData.add(dataList);
 
 		return plotData;
+	}
+
+	/**
+	 * Returns the persistor data list for this states statistics.
+	 * 
+	 * @return The persistor data list.
+	 */
+	public PersistorDataList getDataListStates() {
+
+		DataPersistor persistor = new DataPersistor(getTableStates().getPersistor());
+
+		DataInfo info = new DataInfo(getSession());
+		info.setName("States");
+		info.setDescription("States data info");
+		info.setInstrument(getInstrument());
+		info.setPeriod(getPeriod());
+		DataPersistor.setDataInfoOutput(info, persistor);
+
+		return new PersistorDataList(getSession(), info, persistor);
+	}
+
+	/**
+	 * Returns the standard action to navigate the chart starting with a default data list.
+	 * 
+	 * @return The navigate action.
+	 */
+	public ActionNavigateChart getActionNavigateChart() {
+		ActionNavigateChart actionChartNav = new ActionNavigateChart(this);
+		actionChartNav.getChartNavigate().setTitle("Navigate chart on result data");
+		actionChartNav.setPlotDataConfigurator(new StdPlotDataList());
+		actionChartNav.setRecordSetProvider(new StdRecordSet());
+		ActionUtils.setName(actionChartNav, "Navigate chart on result data");
+		ActionUtils.setShortDescription(actionChartNav, "Show a standard chart with averages and normalized values");
+		ActionUtils.setActionGroup(actionChartNav, new ActionGroup("Chart", 10200));
+
+		actionChartNav.addAction(new ActionMove());
+
+		return actionChartNav;
 	}
 }

@@ -588,10 +588,10 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 * 
 	 * @param index
 	 */
-	public void moveTo(int index) {
+	public void move(int index) {
 		int minIndex = 0;
 		int maxIndex = get(0).size() - 1;
-		if (index < 0 || index > maxIndex) {
+		if (index < minIndex || index > maxIndex) {
 			return;
 		}
 		int indexes = endIndex - startIndex + 1;
@@ -603,6 +603,53 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 		if (endIndex > maxIndex) {
 			endIndex = maxIndex;
 		}
+	}
+
+	/**
+	 * Center start and end indexes.
+	 * 
+	 * @param start
+	 * @param end
+	 */
+	public void center(int start, int end) {
+
+		// Check ranges.
+		int minIndex = 0;
+		int maxIndex = get(0).size() - 1;
+
+		// Start and end out to the left.
+		if (start < minIndex && end < minIndex) {
+			return;
+		}
+
+		// Start and end out to the right.
+		if (start > maxIndex && end > maxIndex) {
+			return;
+		}
+
+		// Ensure range.
+		if (start < 0) {
+			start = 0;
+		}
+		if (end > maxIndex) {
+			end = maxIndex;
+		}
+
+		// Ensure visible moving start and end indexes.
+		if (start < startIndex) {
+			startIndex = start;
+		}
+		if (end > endIndex) {
+			endIndex = end;
+		}
+
+		// Do center.
+		int remainder = (endIndex - startIndex + 1) - (end - start + 1);
+		if (remainder > 0) {
+			startIndex = start - (remainder / 2);
+			endIndex = end + (remainder / 2);
+		}
+
 	}
 
 	/**

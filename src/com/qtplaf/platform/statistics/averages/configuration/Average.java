@@ -20,7 +20,7 @@ package com.qtplaf.platform.statistics.averages.configuration;
  * @author Miquel Sas
  */
 public class Average implements Comparable<Average> {
-
+	
 	/** Average period. */
 	private int period;
 	/** Smoothing periods. */

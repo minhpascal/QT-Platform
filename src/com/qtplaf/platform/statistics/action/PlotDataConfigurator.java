@@ -14,18 +14,18 @@
 
 package com.qtplaf.platform.statistics.action;
 
-import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.trading.chart.JChart;
 
 /**
- * Recordset provider to later retrieve the recordset.
+ * Plot data list provider to later retrieve the list of plot datas.
  *
  * @author Miquel Sas
  */
-public interface RecordSetProvider {
+public interface PlotDataConfigurator {
 	/**
-	 * Returns the recordset.
+	 * ^ Configure the chart adding the plot data.
 	 * 
-	 * @return The recordset.
+	 * @param chart The chart to configure.
 	 */
-	RecordSet getRecordSet();
+	void configureChart(JChart chart);
 }

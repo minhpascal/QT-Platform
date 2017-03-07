@@ -179,7 +179,71 @@ public class IndicatorUtils {
 			plotter.setColorBearishOdd(color);
 			plotter.setIndex(0);
 			lst.addDataPlotter(plotter);
-			sma = smoothedSma;
+		}
+
+		return lst;
+	}
+
+	/**
+	 * Returns a smoothed WMA indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the WMA.
+	 * @param index The index in the data of the source to calculate the average.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getSmoothedWeightedMovingAverage(
+		DataList dataList,
+		int index,
+		int period,
+		int... smoothingPeriods) {
+		return getSmoothedWeightedMovingAverage(dataList, index, Color.BLACK, period, smoothingPeriods);
+	}
+	
+	/**
+	 * Returns a smoothed WMA indicator data list.
+	 * 
+	 * @param dataList The source data list.
+	 * @param period The period of the WMA.
+	 * @param index The index in the data of the source to calculate the average.
+	 * @param color Plot color.
+	 * @return The indicator data list.
+	 */
+	public static IndicatorDataList getSmoothedWeightedMovingAverage(
+		DataList dataList,
+		int index,
+		Color color,
+		int period,
+		int... smoothingPeriods) {
+
+		Session session = dataList.getSession();
+		int indexPeriod = PeriodIndicator.ParamPeriodIndex;
+
+		WeightedMovingAverage wma = new WeightedMovingAverage(session);
+		wma.getIndicatorInfo().getParameter(indexPeriod).getValue().setInteger(period);
+		IndicatorSource source = new IndicatorSource(dataList, index);
+		IndicatorDataList lst = new IndicatorDataList(session, wma, ListUtils.asList(source));
+		BufferedLinePlotter plotter = new BufferedLinePlotter();
+		plotter.setColorBullishEven(color);
+		plotter.setColorBearishEven(color);
+		plotter.setColorBullishOdd(color);
+		plotter.setColorBearishOdd(color);
+		plotter.setIndex(0);
+		lst.addDataPlotter(plotter);
+
+		int indexSma = 0;
+		for (int smooth : smoothingPeriods) {
+			WeightedMovingAverage smoothedWma = new WeightedMovingAverage(session);
+			smoothedWma.getIndicatorInfo().getParameter(indexPeriod).getValue().setInteger(smooth);
+			source = new IndicatorSource(lst, indexSma);
+			lst = new IndicatorDataList(session, smoothedWma, ListUtils.asList(source));
+			plotter = new BufferedLinePlotter();
+			plotter.setColorBullishEven(color);
+			plotter.setColorBearishEven(color);
+			plotter.setColorBullishOdd(color);
+			plotter.setColorBearishOdd(color);
+			plotter.setIndex(0);
+			lst.addDataPlotter(plotter);
 		}
 
 		return lst;

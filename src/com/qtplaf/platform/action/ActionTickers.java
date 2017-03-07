@@ -423,6 +423,7 @@ public class ActionTickers extends AbstractAction {
 				plotData.add(price);
 
 				// By default in this view add two SMA of 50 and 200 periods.
+				IndicatorUtils.getSmoothedWeightedMovingAverage(price, Data.IndexClose, Color.RED, 5, 5, 3);
 				IndicatorDataList sma50 =
 					IndicatorUtils.getSimpleMovingAverage(price, Data.IndexClose, Color.GRAY, 50);
 				IndicatorDataList sma200 =

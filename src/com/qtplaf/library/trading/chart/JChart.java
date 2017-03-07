@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -64,7 +65,7 @@ public class JChart extends JPanel {
 	/**
 	 * Action to popup plot datas not visible.
 	 */
-	class ActionPlotData extends ActionChart {
+	class ActionPlotData extends AbstractAction {
 
 		private PlotData plotData;
 
@@ -127,9 +128,9 @@ public class JChart extends JPanel {
 	private ChartPlotParameters chartPlotParameters = new ChartPlotParameters();
 
 	/** List of plot datas installed int the chart. */
-	private List<PlotData> plotDatas = new ArrayList<>();
+	private List<PlotData> plotDataList = new ArrayList<>();
 	/** List of chart actions. */
-	private List<ActionChart> actions = new ArrayList<>();
+	private List<Action> actions = new ArrayList<>();
 
 	/** The working session. */
 	private Session session;
@@ -161,12 +162,12 @@ public class JChart extends JPanel {
 	}
 
 	/**
-	 * Add an action to the list of chart actions.
+	 * Add an action to the list of cactions.
 	 * 
 	 * @param action The action to add.
 	 */
-	public void addAction(ActionChart action) {
-		action.setChart(this);
+	public void addAction(Action action) {
+		ActionUtils.setChart(action, this);
 		actions.add(action);
 	}
 
@@ -176,18 +177,19 @@ public class JChart extends JPanel {
 	 * @param plotData The plot data.
 	 */
 	public void addPlotData(PlotData plotData) {
-		plotDatas.add(plotData);
-		SwingUtils.invokeLater(new AddPlotData(plotData));
+		addPlotData(plotData, true);
 	}
 
 	/**
-	 * Add a list of plot datas.
+	 * Adds a plot data to this chart, configurating and adding the appropriate <i>JChartContainer</i>.
 	 * 
-	 * @param plotDataList The plot data list.
+	 * @param plotData The plot data.
+	 * @param visible A boolean.
 	 */
-	public void addPlotDataList(List<PlotData> plotDataList) {
-		for (PlotData plotData : plotDataList) {
-			addPlotData(plotData);
+	public void addPlotData(PlotData plotData, boolean visible) {
+		plotDataList.add(plotData);
+		if (visible) {
+			SwingUtils.invokeLater(new AddPlotData(plotData));
 		}
 	}
 
@@ -487,22 +489,18 @@ public class JChart extends JPanel {
 	 * @param mousePoint The mouse point.
 	 */
 	void triggerPopupMenu(JChartPlotter chartPlotter, Point mousePoint) {
-		List<ActionChart> actionsToPopup = getActionsToPopup();
+		List<Action> actionsToPopup = getActionsToPopup();
 		if (actionsToPopup.isEmpty()) {
 			return;
 		}
-		for (ActionChart action : actionsToPopup) {
-			action.setChart(this);
-			action.setChartPlotter(chartPlotter);
-			action.setMousePoint(mousePoint);
-		}
-		List<Action> menuActions = new ArrayList<>();
-		for (ActionChart action : actionsToPopup) {
-			menuActions.add(action);
+		for (Action action : actionsToPopup) {
+			ActionUtils.setChart(action, this);
+			ActionUtils.setChartPlotter(action, chartPlotter);
+			ActionUtils.setMousePoint(action, mousePoint);
 		}
 		
 		JPopupMenu popupMenu = new JPopupMenu();
-		SwingUtils.addMenuItems(popupMenu, menuActions);
+		SwingUtils.addMenuItems(popupMenu, actionsToPopup);
 		if (!SwingUtils.isEmpty(popupMenu)) {
 			popupMenu.show(chartPlotter, mousePoint.x, mousePoint.y);
 		}
@@ -513,8 +511,8 @@ public class JChart extends JPanel {
 	 * 
 	 * @return The list of actions to popup.
 	 */
-	private List<ActionChart> getActionsToPopup() {
-		List<ActionChart> actionsToPopup = new ArrayList<>(actions);
+	private List<Action> getActionsToPopup() {
+		List<Action> actionsToPopup = new ArrayList<>(actions);
 		List<PlotData> plotDataList = getPlotDataListNotVisible();
 		for (PlotData plotData : plotDataList) {
 			actionsToPopup.add(new ActionPlotData(plotData));
@@ -529,7 +527,7 @@ public class JChart extends JPanel {
 	 */
 	private List<PlotData> getPlotDataListNotVisible() {
 		List<PlotData> plotDataListNotVisible = new ArrayList<>();
-		for (PlotData plotData : plotDatas) {
+		for (PlotData plotData : plotDataList) {
 			boolean visible = false;
 			for (JChartContainer chartContainer : chartContainers) {
 				if (chartContainer.getPlotData().equals(plotData)) {

@@ -94,7 +94,7 @@ public class TaskTransitions extends TaskAverages {
 			transitions.getInstrument(),
 			transitions.getPeriod(),
 			transitions.getConfiguration());
-		this.statesPersistor = states.getDataList().getDataPersistor();
+		this.statesPersistor = transitions.getDataListStates().getDataPersistor();
 
 		keyName = transitions.getFieldDefState().getName();
 		keyInputName = transitions.getFieldDefStateInput().getName();

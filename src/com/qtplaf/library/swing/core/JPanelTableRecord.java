@@ -17,14 +17,21 @@ package com.qtplaf.library.swing.core;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.event.MouseHandler;
 
 /**
  * A panel that holds a <code>JTableRecord</code>.
@@ -34,12 +41,63 @@ import com.qtplaf.library.app.Session;
 public class JPanelTableRecord extends JPanel {
 
 	/**
+	 * Mouse adapter.
+	 */
+	class MouseAdapter extends MouseHandler {
+		/**
+		 * Invoked when a mouse button has been pressed on a component.
+		 * 
+		 * @param e The mouse event.
+		 */
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (triggerPopupMenu(e)) {
+				return;
+			}
+		}
+
+		/**
+		 * Invoked when a mouse button has been released on a component.
+		 * 
+		 * @param e The mouse event.
+		 */
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (triggerPopupMenu(e)) {
+				return;
+			}
+		}
+
+		/**
+		 * Check and trigger the popup menu.
+		 * 
+		 * @param e The mouse event.
+		 * @return A boolean that indicates if processing the event should stop.
+		 */
+		private boolean triggerPopupMenu(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				for (Action action : actions) {
+					ActionUtils.setTableRecordPanel(action, JPanelTableRecord.this);
+					ActionUtils.setMousePoint(action, e.getPoint());
+				}
+				JPopupMenu popupMenu = new JPopupMenu();
+				SwingUtils.addMenuItems(popupMenu, actions);
+				if (!SwingUtils.isEmpty(popupMenu)) {
+					int x = e.getX();
+					int y = e.getY();
+					popupMenu.show(getTableRecord(), x, y);
+				}
+				return true;
+			}
+			return false;
+		}
+	}
+
+	/**
 	 * The listener to handle selection events.
 	 */
 	class SelectionAdapter implements ListSelectionListener {
-		/**
-		 * The "Line of lines" message.
-		 */
+		/** The "Line of lines" message. */
 		private String lineOfLinesMessage;
 
 		/**
@@ -62,22 +120,17 @@ public class JPanelTableRecord extends JPanel {
 		}
 	}
 
-	/**
-	 * The <code>JTableRecord</code>.
-	 */
+	/** The <code>JTableRecord</code>. */
 	private JTableRecord tableRecord;
-	/**
-	 * The <code>JTableRecordStatusPanel</code>.
-	 */
+	/** The <code>JTableRecordStatusPanel</code>. */
 	private JTableRecordStatusPanel tableRecordStatusPanel = new JTableRecordStatusPanel();
-	/**
-	 * The working session.
-	 */
-	private Session session;
-	/**
-	 * A boolean that indicates if the status panel should be included.
-	 */
+	/** A boolean that indicates if the status panel should be included. */
 	private boolean includeStatusPanel = true;
+	/** List of table actions. */
+	private List<Action> actions = new ArrayList<>();
+
+	/** The working session. */
+	private Session session;
 
 	/**
 	 * Constructor assigning the table.
@@ -85,9 +138,7 @@ public class JPanelTableRecord extends JPanel {
 	 * @param tableRecord The <code>JTableRecord</code>.
 	 */
 	public JPanelTableRecord(JTableRecord tableRecord) {
-		super(new GridBagLayout());
-		this.session = tableRecord.getSession();
-		setTableRecord(tableRecord);
+		this(tableRecord, true);
 	}
 
 	/**
@@ -101,6 +152,7 @@ public class JPanelTableRecord extends JPanel {
 		this.session = tableRecord.getSession();
 		this.includeStatusPanel = includeStatusPanel;
 		setTableRecord(tableRecord);
+		SwingUtils.installMouseListener(this, new MouseAdapter());
 	}
 
 	/**
@@ -110,6 +162,16 @@ public class JPanelTableRecord extends JPanel {
 	 */
 	public Session getSession() {
 		return session;
+	}
+
+	/**
+	 * Add an action to the list of actions.
+	 * 
+	 * @param action The action to add.
+	 */
+	public void addAction(Action action) {
+		ActionUtils.setTableRecordPanel(action, this);
+		actions.add(action);
 	}
 
 	/**

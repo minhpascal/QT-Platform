@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,16 +39,17 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.core.JTableRecord;
+import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.drawings.VerticalArea;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
-import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateChart;
+import com.qtplaf.platform.statistics.action.PlotDataConfigurator;
 import com.qtplaf.platform.statistics.action.RecordSetProvider;
 import com.qtplaf.platform.statistics.averages.task.TaskTransitions;
-import com.qtplaf.platform.statistics.chart.ActionChartNavigate;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -72,29 +74,41 @@ public class Transitions extends Averages {
 	}
 
 	/**
+	 * Std plot data list provider.
+	 */
+	class StdPlotDataList implements PlotDataConfigurator {
+		@Override
+		public void configureChart(JChart chart) {
+			List<PlotData> plotDataList = getPlotDataListStandard();
+			for (PlotData plotData : plotDataList) {
+				chart.addPlotData(plotData);
+			}
+		}
+	}
+
+	/**
 	 * Move the chart to the index of the selected record, adding a vertical line to it.
 	 */
-	class ActionMove extends ActionChartNavigate {
+	class ActionMove extends AbstractAction {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Record record = getTableRecord().getSelectedRecord();
+			JTableRecord tableRecord = ActionUtils.getTableRecordPanel(this).getTableRecord();
+			Record record = tableRecord.getSelectedRecord();
 			if (record == null) {
 				return;
 			}
 			List<Record> transitions = getTransitions(record);
 			int startIndex = transitions.get(0).getValue(getFieldDefIndexInput().getName()).getInteger();
-			int endIndex = 
+			int endIndex =
 				transitions.get(transitions.size() - 1).getValue(getFieldDefIndexInput().getName()).getInteger();
 			VerticalArea vertBand = new VerticalArea(startIndex, endIndex);
-			PlotData plotData = getChart().getChartContainer(0).getPlotData();
+			JChart chart = ActionUtils.getChart(this);
+			PlotData plotData = chart.getChartContainer(0).getPlotData();
 			plotData.addDrawing(vertBand);
-			plotData.moveTo(startIndex);
-			getChart().propagateFrameChanges(plotData);
+			plotData.move(startIndex);
+			chart.propagateFrameChanges(plotData);
 		}
 	}
-
-	/** States related statistics. */
-	private States states;
 
 	/**
 	 * @param session
@@ -130,7 +144,7 @@ public class Transitions extends Averages {
 
 		ActionNavigateChart actionChartNav = new ActionNavigateChart(this);
 		actionChartNav.getChartNavigate().setTitle("Navigate chart on result data");
-		actionChartNav.setPlotDataList(getListPlotDataStandard());
+		actionChartNav.setPlotDataConfigurator(new StdPlotDataList());
 		actionChartNav.setRecordSetProvider(new RecordSetCorrelativeTransitions());
 		ActionUtils.setName(actionChartNav, "Navigate chart on transitions");
 		ActionUtils.setShortDescription(actionChartNav, "Navigate a standard chart locating transitions");
@@ -154,25 +168,25 @@ public class Transitions extends Averages {
 	 */
 	private List<Record> getTransitions(Record record) {
 		List<Record> transitions = new ArrayList<>();
-		
+
 		Persistor persistor = getTable().getPersistor();
-		
+
 		Field fStateInput = persistor.getField(getFieldDefStateInput().getName());
 		Field fStateOutput = persistor.getField(getFieldDefStateOutput().getName());
 		Field fIndexGroup = persistor.getField(getFieldDefIndexGroup().getName());
-		
+
 		Value vStateInput = record.getValue(getFieldDefStateInput().getName());
 		Value vStateOutput = record.getValue(getFieldDefStateOutput().getName());
 		Value vIndexGroup = record.getValue(getFieldDefIndexGroup().getName());
-		
+
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fStateInput, vStateInput));
 		criteria.add(Condition.fieldEQ(fStateOutput, vStateOutput));
 		criteria.add(Condition.fieldEQ(fIndexGroup, vIndexGroup));
-		
+
 		Order order = new Order();
 		order.add(persistor.getField(getFieldDefIndexInput().getName()));
-		
+
 		try {
 			RecordIterator iterator = persistor.iterator(criteria, order);
 			while (iterator.hasNext()) {
@@ -182,21 +196,8 @@ public class Transitions extends Averages {
 		} catch (Exception exc) {
 			logger.catching(exc);
 		}
-		
-		return transitions;
-	}
 
-	/**
-	 * Returns the states related statistics.
-	 * 
-	 * @return The states related statistics.
-	 */
-	private States getStates() {
-		if (states == null) {
-			Manager manager = new Manager(getSession());
-			states = manager.getStates(getServer(), getInstrument(), getPeriod(), getConfiguration());
-		}
-		return states;
+		return transitions;
 	}
 
 	/**
@@ -204,10 +205,12 @@ public class Transitions extends Averages {
 	 * 
 	 * @return The list of plot data.
 	 */
-	private List<PlotData> getListPlotDataStandard() {
+	private List<PlotData> getPlotDataListStandard() {
 		List<PlotData> plotDataList = new ArrayList<>();
-		PersistorDataList dataList = getStates().getDataList();
+		PersistorDataList dataList = getDataListStates();
 		dataList.setCacheSize(-1);
+		dataList.setPageSize(1000);
+		;
 		plotDataList.add(getPlotDataMain(dataList));
 		plotDataList.add(getPlotData("Spreads-nrm", dataList, getFieldListSpreads(Suffix.nrm)));
 		plotDataList.add(getPlotData("Speeds-nrm", dataList, getFieldListSpeeds(Suffix.nrm)));

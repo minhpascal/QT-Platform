@@ -17,12 +17,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 
 import com.qtplaf.library.swing.event.Mask;
+import com.qtplaf.library.swing.event.MouseHandler;
 import com.qtplaf.library.trading.chart.parameters.InformationPlotParameters;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.ColorUtils;
@@ -32,7 +30,7 @@ import com.qtplaf.library.util.ColorUtils;
  * 
  * @author Miquel Sas
  */
-public class JChartPlotterListener implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class JChartPlotterListener extends MouseHandler {
 
 	/**
 	 * The parent <i>JChartPlotter</i>.
