@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.Action;
 
 import com.qtplaf.library.app.Session;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.swing.ActionGroup;
@@ -28,12 +29,15 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.library.trading.data.info.DataInfo;
+import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionChart;
 import com.qtplaf.platform.statistics.action.RecordSetProvider;
 import com.qtplaf.platform.statistics.averages.task.TaskNormalizes;
 import com.qtplaf.platform.statistics.averages.task.TaskStates;
+import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * States based on averages.
@@ -60,6 +64,25 @@ public class States extends Averages {
 	public States(Session session) {
 		super(session);
 	}
+	/**
+	 * Returns the persistor data list for this states statistics.
+	 * 
+	 * @return The persistor data list.
+	 */
+	public PersistorDataList getDataListStates() {
+
+		DataPersistor persistor = new DataPersistor(getTable().getPersistor());
+
+		DataInfo info = new DataInfo(getSession());
+		info.setName("States");
+		info.setDescription("States data info");
+		info.setInstrument(getInstrument());
+		info.setPeriod(getPeriod());
+		DataPersistor.setDataInfoOutput(info, persistor);
+
+		return new PersistorDataList(getSession(), info, persistor);
+	}
+
 
 	/**
 	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
@@ -155,7 +178,81 @@ public class States extends Averages {
 	 */
 	@Override
 	public Table getTable() {
-		return getTableStates();
+
+		Table table = new Table();
+
+		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setSchema(Names.getSchema(getServer()));
+
+		// Index and time.
+		table.addField(getFieldDefIndex());
+		table.addField(getFieldDefTime());
+
+		// Time formatted.
+		table.addField(getFieldDefTimeFmt());
+
+		// Open, high, low, close.
+		table.addField(getFieldDefOpen());
+		table.addField(getFieldDefHigh());
+		table.addField(getFieldDefLow());
+		table.addField(getFieldDefClose());
+
+		// Averages fields.
+		table.addFields(getFieldListAverages());
+
+		// Deltas high, low, close, raw values.
+		table.addFields(getFieldListDeltas(Suffix.raw));
+
+		// Spreads between averages, raw values.
+		table.addFields(getFieldListSpreads(Suffix.raw));
+
+		// Speed (tangent) of averages, raw values
+		table.addFields(getFieldListSpeeds(Suffix.raw));
+
+		// Sum of spreads and sum of speeds, raw values.
+		table.addFields(getFieldListCalculations(Suffix.raw));
+
+		// Deltas high, low, close, normalized values continuous.
+		table.addFields(getFieldListDeltas(Suffix.nrm));
+
+		// Spreads between averages, normalized values continuous.
+		table.addFields(getFieldListSpreads(Suffix.nrm));
+
+		// Speed (tangent) of averages, normalized values continuous.
+		table.addFields(getFieldListSpeeds(Suffix.nrm));
+
+		// Sum of spreads and sum of speeds, normalizes continuous.
+		table.addFields(getFieldListCalculations(Suffix.nrm));
+
+		// Spreads between averages, normalized values discrete.
+		table.addFields(getFieldListSpreads(Suffix.dsc));
+
+		// Speed (tangent) of averages, normalized values discrete.
+		table.addFields(getFieldListSpeeds(Suffix.dsc));
+
+		// Sum of spreads and sum of speeds, normalizes continuous.
+		table.addFields(getFieldListCalculations(Suffix.dsc));
+
+		// The state key.
+		table.addField(getFieldDefState());
+
+		// Primary key on Time.
+		getFieldDefIndex().setPrimaryKey(true);
+
+		// Unique index on Index.
+		Index indexOnIndex = new Index();
+		indexOnIndex.add(getFieldDefIndex());
+		indexOnIndex.setUnique(true);
+		table.addIndex(indexOnIndex);
+
+		// Non unique index on the state key.
+		Index indexOnKeyState = new Index();
+		indexOnKeyState.add(getFieldDefState());
+		indexOnKeyState.setUnique(false);
+		table.addIndex(indexOnKeyState);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
 	}
 
 	/**

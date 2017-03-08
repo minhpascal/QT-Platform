@@ -14,7 +14,6 @@
 
 package com.qtplaf.platform.statistics.averages;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,16 +29,13 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
-import com.qtplaf.library.database.Table;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.trading.chart.JChart;
-import com.qtplaf.library.trading.chart.drawings.Line;
-import com.qtplaf.library.trading.chart.drawings.VerticalLine;
+import com.qtplaf.library.trading.chart.drawings.VerticalArea;
 import com.qtplaf.library.trading.chart.plotter.data.BufferedLinePlotter;
 import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
 import com.qtplaf.library.trading.data.DataList;
@@ -49,7 +45,6 @@ import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
@@ -65,7 +60,6 @@ import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.FieldUtils;
-import com.qtplaf.platform.util.PersistorUtils;
 
 /**
  * Root class for states statistics based on averages.
@@ -78,31 +72,52 @@ public abstract class Averages extends TickerStatistics {
 	private static final Logger logger = LogManager.getLogger();
 
 	/**
-	 * Move the chart to the index of the selected record, adding a vertical line to it.
+	 * Move the chart to the center the selection.
 	 */
-	class ActionMove extends AbstractAction {
+	class ActionClearDrawings extends AbstractAction {
 
-		ActionMove() {
-			ActionUtils.setName(this, "Move to selected index");
-			ActionUtils.setShortDescription(this, "Move the chart to the selected index.");
+		ActionClearDrawings() {
+			ActionUtils.setName(this, "Clear drawings");
+			ActionUtils.setShortDescription(this, "Clear all added drawings.");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JChart chart = ActionUtils.getChart(this);
+			for (int i = 0; i < chart.getChartCount(); i++) {
+				chart.getChartContainer(i).getPlotData().getDrawings().clear();
+			}
+			chart.repaint();
+		}
+	}
+
+
+	/**
+	 * Move the chart to the center the selection.
+	 */
+	class ActionSelection extends AbstractAction {
+
+		ActionSelection() {
+			ActionUtils.setName(this, "Move and center to selected indexes");
+			ActionUtils.setShortDescription(this, "Move the chart and center it to the selected indexes.");
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTableRecord tableRecord = ActionUtils.getTableRecordPanel(this).getTableRecord();
-			Record record = tableRecord.getSelectedRecord();
-			if (record == null) {
+			List<Record> records = tableRecord.getSelectedRecords();
+			if (records.isEmpty()) {
 				return;
 			}
-			int index = record.getValue(getFieldDefIndex().getName()).getInteger();
+			int startIndex = records.get(0).getValue(getFieldDefIndex().getName()).getInteger();
+			int endIndex = records.get(records.size() - 1).getValue(getFieldDefIndex().getName()).getInteger();
 			JChart chart = ActionUtils.getChart(this);
 			for (int i = 0; i < chart.getChartCount(); i++) {
-				Line line = new VerticalLine(index);
-				line.getParameters().setColor(Color.RED);
-				chart.getChartContainer(i).getPlotData().addDrawing(line);
+				VerticalArea vertBand = new VerticalArea(startIndex, endIndex);
+				chart.getChartContainer(i).getPlotData().addDrawing(vertBand);
 			}
 			PlotData plotData = chart.getChartContainer(0).getPlotData();
-			plotData.move(index);
+			plotData.center(startIndex, endIndex);
 			chart.propagateFrameChanges(plotData);
 		}
 	}
@@ -113,7 +128,7 @@ public abstract class Averages extends TickerStatistics {
 	class StdRecordSet implements RecordSetProvider {
 		@Override
 		public RecordSet getRecordSet() {
-			DataPersistor persistor = new DataPersistor(getTableStates().getPersistor());
+			DataPersistor persistor = new DataPersistor(getStates().getTable().getPersistor());
 			return new DataRecordSet(persistor);
 		}
 	}
@@ -124,10 +139,10 @@ public abstract class Averages extends TickerStatistics {
 	class StdPlotDataList implements PlotDataConfigurator {
 		@Override
 		public void configureChart(JChart chart) {
-			PersistorDataList dataList = getDataListStates();
+			PersistorDataList dataList = getStates().getDataListStates();
 			dataList.setCacheSize(-1);
 			dataList.setPageSize(1000);
-			
+
 			chart.addPlotData(getPlotDataMain(dataList), true);
 			chart.addPlotData(getPlotData("Spreads normalized", dataList, getFieldListSpreads(Suffix.nrm)), false);
 			chart.addPlotData(getPlotData("Speeds normalized", dataList, getFieldListSpeeds(Suffix.nrm)), false);
@@ -414,168 +429,33 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
-	 * Returns the table definition to calculate ranges for minimums and maximums.
+	 * Returns a states.
 	 * 
-	 * @return The table definition.
+	 * @return A states.
 	 */
-	protected Table getTableRanges() {
-		validateState();
-
-		Table table = new Table();
-
-		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Names.getSchema(getServer()));
-
-		table.addField(getFieldDefName());
-		table.addField(getFieldDefMinMax());
-		table.addField(getFieldDefPeriod());
-		table.addField(getFieldDefValue());
-		table.addField(getFieldDefIndex());
-		table.addField(getFieldDefTime());
-
-		// Non unique index on name, minmax, period.
-		Index index = new Index();
-		index.add(getFieldDefName());
-		index.add(getFieldDefMinMax());
-		index.add(getFieldDefPeriod());
-		index.setUnique(false);
-		table.addIndex(index);
-
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
-		return table;
+	public States getStates() {
+		Manager manager = new Manager(getSession());
+		return manager.getStates(getServer(), getInstrument(), getPeriod(), getConfiguration());
 	}
 
 	/**
-	 * Returns the table definition for states values.
+	 * Returns a ranges.
 	 * 
-	 * @return The table definition.
+	 * @return A ranges.
 	 */
-	protected Table getTableStates() {
-		validateState();
-
-		Table table = new Table();
-
-		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Names.getSchema(getServer()));
-
-		// Index and time.
-		table.addField(getFieldDefIndex());
-		table.addField(getFieldDefTime());
-
-		// Time formatted.
-		table.addField(getFieldDefTimeFmt());
-
-		// Open, high, low, close.
-		table.addField(getFieldDefOpen());
-		table.addField(getFieldDefHigh());
-		table.addField(getFieldDefLow());
-		table.addField(getFieldDefClose());
-
-		// Averages fields.
-		table.addFields(getFieldListAverages());
-
-		// Deltas high, low, close, raw values.
-		table.addFields(getFieldListDeltas(Suffix.raw));
-
-		// Spreads between averages, raw values.
-		table.addFields(getFieldListSpreads(Suffix.raw));
-
-		// Speed (tangent) of averages, raw values
-		table.addFields(getFieldListSpeeds(Suffix.raw));
-
-		// Sum of spreads and sum of speeds, raw values.
-		table.addFields(getFieldListCalculations(Suffix.raw));
-
-		// Deltas high, low, close, normalized values continuous.
-		table.addFields(getFieldListDeltas(Suffix.nrm));
-
-		// Spreads between averages, normalized values continuous.
-		table.addFields(getFieldListSpreads(Suffix.nrm));
-
-		// Speed (tangent) of averages, normalized values continuous.
-		table.addFields(getFieldListSpeeds(Suffix.nrm));
-
-		// Sum of spreads and sum of speeds, normalizes continuous.
-		table.addFields(getFieldListCalculations(Suffix.nrm));
-
-		// Spreads between averages, normalized values discrete.
-		table.addFields(getFieldListSpreads(Suffix.dsc));
-
-		// Speed (tangent) of averages, normalized values discrete.
-		table.addFields(getFieldListSpeeds(Suffix.dsc));
-
-		// Sum of spreads and sum of speeds, normalizes continuous.
-		table.addFields(getFieldListCalculations(Suffix.dsc));
-
-		// The state key.
-		table.addField(getFieldDefState());
-
-		// Primary key on Time.
-		getFieldDefIndex().setPrimaryKey(true);
-
-		// Unique index on Index.
-		Index indexOnIndex = new Index();
-		indexOnIndex.add(getFieldDefIndex());
-		indexOnIndex.setUnique(true);
-		table.addIndex(indexOnIndex);
-
-		// Non unique index on the state key.
-		Index indexOnKeyState = new Index();
-		indexOnKeyState.add(getFieldDefState());
-		indexOnKeyState.setUnique(false);
-		table.addIndex(indexOnKeyState);
-
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
-		return table;
+	public Ranges getRanges() {
+		Manager manager = new Manager(getSession());
+		return manager.getRanges(getServer(), getInstrument(), getPeriod(), getConfiguration());
 	}
 
 	/**
-	 * Returns the table definition for states transitions.
+	 * Returns a transitions.
 	 * 
-	 * @return The table definition.
+	 * @return A transitions.
 	 */
-	protected Table getTableTransitions() {
-		validateState();
-
-		Table table = new Table();
-
-		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Names.getSchema(getServer()));
-
-		// Input and output states (keys)
-		table.addField(getFieldDefStateInput());
-		table.addField(getFieldDefStateOutput());
-
-		// Input and output indexes of source states.
-		table.addField(getFieldDefIndexInput());
-		table.addField(getFieldDefIndexOutput());
-
-		// Index group (groups consecutive transitions of the same state).
-		table.addField(getFieldDefIndexGroup());
-
-		// Input spreads, speeds and calculations.
-		table.addFields(getFieldListSpreads(Suffix.in));
-		table.addFields(getFieldListSpeeds(Suffix.in));
-		table.addFields(getFieldListCalculations(Suffix.in));
-
-		// Output spreads, speeds and calculations.
-		table.addFields(getFieldListSpreads(Suffix.out));
-		table.addFields(getFieldListSpeeds(Suffix.out));
-		table.addFields(getFieldListCalculations(Suffix.out));
-
-		// Estimaded function value high, low and close.
-		table.addField(getFieldDefTransitionValueHigh());
-		table.addField(getFieldDefTransitionValueLow());
-		table.addField(getFieldDefTransitionValueClose());
-
-		// Primary key.
-		getFieldDefStateInput().setPrimaryKey(true);
-		getFieldDefStateOutput().setPrimaryKey(true);
-		getFieldDefIndexInput().setPrimaryKey(true);
-		getFieldDefIndexOutput().setPrimaryKey(true);
-
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
-		return table;
+	public Transitions getTransitions() {
+		Manager manager = new Manager(getSession());
+		return manager.getTransitions(getServer(), getInstrument(), getPeriod(), getConfiguration());
 	}
 
 	/**
@@ -1174,15 +1054,6 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
-	 * Validate that server, instrument, period and configuration are set.
-	 */
-	private void validateState() {
-		if (getServer() == null || getInstrument() == null || getPeriod() == null || getConfiguration() == null) {
-			throw new IllegalStateException();
-		}
-	}
-
-	/**
 	 * Returns the average property of the field.
 	 * 
 	 * @param field The source field.
@@ -1423,25 +1294,6 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
-	 * Returns the persistor data list for this states statistics.
-	 * 
-	 * @return The persistor data list.
-	 */
-	public PersistorDataList getDataListStates() {
-
-		DataPersistor persistor = new DataPersistor(getTableStates().getPersistor());
-
-		DataInfo info = new DataInfo(getSession());
-		info.setName("States");
-		info.setDescription("States data info");
-		info.setInstrument(getInstrument());
-		info.setPeriod(getPeriod());
-		DataPersistor.setDataInfoOutput(info, persistor);
-
-		return new PersistorDataList(getSession(), info, persistor);
-	}
-
-	/**
 	 * Returns the standard action to navigate the chart starting with a default data list.
 	 * 
 	 * @return The navigate action.
@@ -1455,7 +1307,8 @@ public abstract class Averages extends TickerStatistics {
 		ActionUtils.setShortDescription(actionChartNav, "Show a standard chart with averages and normalized values");
 		ActionUtils.setActionGroup(actionChartNav, new ActionGroup("Chart", 10200));
 
-		actionChartNav.addAction(new ActionMove());
+		actionChartNav.addAction(new ActionClearDrawings());
+		actionChartNav.addAction(new ActionSelection());
 
 		return actionChartNav;
 	}

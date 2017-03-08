@@ -189,6 +189,8 @@ public class Manager {
 		List<Configuration> configurations = new ArrayList<>();
 		configurations.add(getConfigurationMF());
 		configurations.add(getConfigurationSF());
+		configurations.add(getConfigurationWF());
+		configurations.add(getConfigurationWM());
 		return configurations;
 	}
 
@@ -327,6 +329,56 @@ public class Manager {
 	 * 
 	 * @return The configuration.
 	 */
+	private Configuration getConfigurationWF() {
+		Configuration cfg = new Configuration(getSession());
+		cfg.setId("wf");
+		cfg.setScale(3);
+
+		// Averages.
+		Average avg_5 = new Average(5, 5, 3);
+		Average avg_21 = new Average(21, 13, 3);
+		Average avg_89 = new Average(89, 21, 13);
+		Average avg_377 = new Average(377, 34, 21);
+		Average avg_610 = new Average(610, 55, 34);
+		avg_5.setType(Average.Type.WMA);
+		avg_21.setType(Average.Type.WMA);
+		avg_89.setType(Average.Type.WMA);
+		avg_377.setType(Average.Type.WMA);
+		avg_610.setType(Average.Type.WMA);
+		cfg.addAverage(avg_5);
+		cfg.addAverage(avg_21);
+		cfg.addAverage(avg_89);
+		cfg.addAverage(avg_377);
+		cfg.addAverage(avg_610);
+
+		// Spreads.
+		cfg.addSpread(getSpread(avg_5, avg_21, 10));
+		cfg.addSpread(getSpread(avg_21, avg_89, 10));
+		cfg.addSpread(getSpread(avg_89, avg_377, 10));
+		cfg.addSpread(getSpread(avg_377, avg_610, 10));
+
+		// Speeds.
+		cfg.addSpeed(getSpeed(avg_89, 10));
+		cfg.addSpeed(getSpeed(avg_377, 10));
+		cfg.addSpeed(getSpeed(avg_610, 10));
+		
+		// Sum of spreads and speeds.
+		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
+		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
+
+		// Ranges for min-max values.
+		cfg.addRange(new Range(89));
+		cfg.addRange(new Range(377));
+
+		return cfg;
+	}
+
+	/**
+	 * Returns the configuration with 5-21-89-377 averages. Normalizers are discrete normalizers over values that have
+	 * already been normalized continuous.
+	 * 
+	 * @return The configuration.
+	 */
 	private Configuration getConfigurationMF() {
 		Configuration cfg = new Configuration(getSession());
 		cfg.setId("mf");
@@ -337,6 +389,51 @@ public class Manager {
 		Average avg_21 = new Average(21, 13, 3);
 		Average avg_89 = new Average(89, 21, 13);
 		Average avg_377 = new Average(377, 34, 21);
+		cfg.addAverage(avg_5);
+		cfg.addAverage(avg_21);
+		cfg.addAverage(avg_89);
+		cfg.addAverage(avg_377);
+
+		// Spreads.
+		cfg.addSpread(getSpread(avg_5, avg_21, 10));
+		cfg.addSpread(getSpread(avg_21, avg_89, 10));
+		cfg.addSpread(getSpread(avg_89, avg_377, 10));
+
+		// Speeds.
+		cfg.addSpeed(getSpeed(avg_89, 10));
+		cfg.addSpeed(getSpeed(avg_377, 10));
+	
+		// Sum of spreads and speeds.
+		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
+		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
+
+		// Ranges for min-max values.
+		cfg.addRange(new Range(89));
+		cfg.addRange(new Range(377));
+
+		return cfg;
+	}
+
+	/**
+	 * Returns the configuration with 5-21-89-377 averages. Normalizers are discrete normalizers over values that have
+	 * already been normalized continuous.
+	 * 
+	 * @return The configuration.
+	 */
+	private Configuration getConfigurationWM() {
+		Configuration cfg = new Configuration(getSession());
+		cfg.setId("wm");
+		cfg.setScale(3);
+
+		// Averages.
+		Average avg_5 = new Average(5, 5, 3);
+		Average avg_21 = new Average(21, 13, 3);
+		Average avg_89 = new Average(89, 21, 13);
+		Average avg_377 = new Average(377, 34, 21);
+		avg_5.setType(Average.Type.WMA);
+		avg_21.setType(Average.Type.WMA);
+		avg_89.setType(Average.Type.WMA);
+		avg_377.setType(Average.Type.WMA);
 		cfg.addAverage(avg_5);
 		cfg.addAverage(avg_21);
 		cfg.addAverage(avg_89);

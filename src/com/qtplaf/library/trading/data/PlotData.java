@@ -613,43 +613,41 @@ public class PlotData implements Iterable<DataList>, DataListListener {
 	 */
 	public void center(int start, int end) {
 
-		// Check ranges.
+		// Min/max indexes.
 		int minIndex = 0;
 		int maxIndex = get(0).size() - 1;
 
-		// Start and end out to the left.
-		if (start < minIndex && end < minIndex) {
-			return;
-		}
+		// Current start and end indexes.
+		int startIndex = this.startIndex;
+		int endIndex = this.endIndex;
 
-		// Start and end out to the right.
-		if (start > maxIndex && end > maxIndex) {
-			return;
-		}
-
-		// Ensure range.
-		if (start < 0) {
-			start = 0;
-		}
-		if (end > maxIndex) {
-			end = maxIndex;
-		}
-
-		// Ensure visible moving start and end indexes.
-		if (start < startIndex) {
-			startIndex = start;
-		}
-		if (end > endIndex) {
-			endIndex = end;
-		}
-
-		// Do center.
+		// Remainder.
 		int remainder = (endIndex - startIndex + 1) - (end - start + 1);
-		if (remainder > 0) {
-			startIndex = start - (remainder / 2);
-			endIndex = end + (remainder / 2);
-		}
 
+		// If remainder is greater than zero, just center.
+		if (remainder > 0) {
+			startIndex = start - remainder / 2;
+			if (startIndex < minIndex) {
+				startIndex = minIndex;
+			}
+			endIndex = end + remainder / 2;
+			if (endIndex > maxIndex) {
+				endIndex = maxIndex;
+			}
+		} else {
+			startIndex = start;
+			if (startIndex < minIndex) {
+				startIndex = minIndex;
+			}
+			endIndex = end;
+			if (endIndex > maxIndex) {
+				endIndex = maxIndex;
+			}
+		}
+		
+		// Assign.
+		this.startIndex = startIndex;
+		this.endIndex = endIndex;
 	}
 
 	/**

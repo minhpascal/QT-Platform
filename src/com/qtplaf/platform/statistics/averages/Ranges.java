@@ -27,6 +27,7 @@ import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.FieldCalculator;
+import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -37,6 +38,7 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.RecordSetProvider;
@@ -118,7 +120,29 @@ public class Ranges extends Averages {
 	 */
 	@Override
 	public Table getTable() {
-		return getTableRanges();
+
+		Table table = new Table();
+
+		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setSchema(Names.getSchema(getServer()));
+
+		table.addField(getFieldDefName());
+		table.addField(getFieldDefMinMax());
+		table.addField(getFieldDefPeriod());
+		table.addField(getFieldDefValue());
+		table.addField(getFieldDefIndex());
+		table.addField(getFieldDefTime());
+
+		// Non unique index on name, minmax, period.
+		Index index = new Index();
+		index.add(getFieldDefName());
+		index.add(getFieldDefMinMax());
+		index.add(getFieldDefPeriod());
+		index.setUnique(false);
+		table.addIndex(index);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
 	}
 
 	/**

@@ -44,6 +44,7 @@ import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.drawings.VerticalArea;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
+import com.qtplaf.platform.database.Names;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateChart;
@@ -207,7 +208,7 @@ public class Transitions extends Averages {
 	 */
 	private List<PlotData> getPlotDataListStandard() {
 		List<PlotData> plotDataList = new ArrayList<>();
-		PersistorDataList dataList = getDataListStates();
+		PersistorDataList dataList = getStates().getDataListStates();
 		dataList.setCacheSize(-1);
 		dataList.setPageSize(1000);
 		;
@@ -225,7 +226,46 @@ public class Transitions extends Averages {
 	 */
 	@Override
 	public Table getTable() {
-		return getTableTransitions();
+
+		Table table = new Table();
+
+		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setSchema(Names.getSchema(getServer()));
+
+		// Input and output states (keys)
+		table.addField(getFieldDefStateInput());
+		table.addField(getFieldDefStateOutput());
+
+		// Input and output indexes of source states.
+		table.addField(getFieldDefIndexInput());
+		table.addField(getFieldDefIndexOutput());
+
+		// Index group (groups consecutive transitions of the same state).
+		table.addField(getFieldDefIndexGroup());
+
+		// Input spreads, speeds and calculations.
+		table.addFields(getFieldListSpreads(Suffix.in));
+		table.addFields(getFieldListSpeeds(Suffix.in));
+		table.addFields(getFieldListCalculations(Suffix.in));
+
+		// Output spreads, speeds and calculations.
+		table.addFields(getFieldListSpreads(Suffix.out));
+		table.addFields(getFieldListSpeeds(Suffix.out));
+		table.addFields(getFieldListCalculations(Suffix.out));
+
+		// Estimaded function value high, low and close.
+		table.addField(getFieldDefTransitionValueHigh());
+		table.addField(getFieldDefTransitionValueLow());
+		table.addField(getFieldDefTransitionValueClose());
+
+		// Primary key.
+		getFieldDefStateInput().setPrimaryKey(true);
+		getFieldDefStateOutput().setPrimaryKey(true);
+		getFieldDefIndexInput().setPrimaryKey(true);
+		getFieldDefIndexOutput().setPrimaryKey(true);
+
+		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		return table;
 	}
 
 	/**

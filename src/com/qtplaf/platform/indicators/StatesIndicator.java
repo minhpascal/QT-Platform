@@ -175,11 +175,20 @@ public class StatesIndicator extends Indicator {
 		DataList dataList = mapDataLists.get(averageField.getName());
 		if (dataList == null) {
 			Average average = states.getPropertyAverage(averageField);
-			dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
-				getDataListPrice(),
-				Data.IndexClose,
-				average.getPeriod(),
-				average.getSmooths());
+			if (average.getType().equals(Average.Type.SMA)) {
+				dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
+					getDataListPrice(),
+					Data.IndexClose,
+					average.getPeriod(),
+					average.getSmooths());
+			}
+			if (average.getType().equals(Average.Type.WMA)) {
+				dataList = IndicatorUtils.getSmoothedWeightedMovingAverage(
+					getDataListPrice(),
+					Data.IndexClose,
+					average.getPeriod(),
+					average.getSmooths());
+			}
 			mapDataLists.put(averageField.getName(), dataList);
 		}
 		return (IndicatorDataList) dataList;

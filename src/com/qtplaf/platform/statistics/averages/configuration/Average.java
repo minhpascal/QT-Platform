@@ -20,11 +20,18 @@ package com.qtplaf.platform.statistics.averages.configuration;
  * @author Miquel Sas
  */
 public class Average implements Comparable<Average> {
-	
+
+	public enum Type {
+		SMA,
+		WMA
+	}
+
 	/** Average period. */
 	private int period;
 	/** Smoothing periods. */
 	private int[] smooths;
+	/** Average type. */
+	private Type type = Type.SMA;
 
 	/**
 	 * Constructor.
@@ -89,6 +96,24 @@ public class Average implements Comparable<Average> {
 	 */
 	public int[] getSmooths() {
 		return smooths;
+	}
+
+	/**
+	 * Returns the type.
+	 * 
+	 * @return The type.
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * Set the type.
+	 * 
+	 * @param type The average type.
+	 */
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 	/**

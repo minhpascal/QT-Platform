@@ -44,7 +44,7 @@ public class TaskRanges extends TaskAverages {
 	public TaskRanges(Ranges ranges) {
 		super(ranges.getSession());
 		this.ranges = ranges;
-		this.statesList = ranges.getDataListStates();
+		this.statesList = ranges.getStates().getDataListStates();
 
 		setNameAndDescription(ranges, "Ranges (min-max) values");
 	}
@@ -123,7 +123,7 @@ public class TaskRanges extends TaskAverages {
 
 		// List of ranges.
 		List<Range> rangeList = ranges.getConfiguration().getRanges();
-		
+
 		// Set the states list cache size.
 		int cacheSize = -1;
 		for (Range range : rangeList) {
