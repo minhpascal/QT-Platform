@@ -219,7 +219,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 * @return The table.
 	 */
 	private Table getTable() {
-		String tableName = Names.getName(instrument, period);
+		String tableName = Names.getTable(instrument, period);
 		return TableUtils.getTableDataPrice(getSession(), server, tableName);
 	}
 

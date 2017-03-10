@@ -20,10 +20,12 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.database.formatters.VolumeValue;
 import com.qtplaf.platform.database.tables.DataPrice;
+import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -33,6 +35,53 @@ import com.qtplaf.platform.util.RecordUtils;
  * @author Miquel Sas
  */
 public class Formatters {
+
+	/**
+	 * Returns the time formatter.
+	 * 
+	 * @param period The period.
+	 * @return The formatter.
+	 */
+	public static TimeFmtValue getTimeFmtValue(Period period) {
+		return new TimeFmtValue(period.getUnit());
+	}
+
+	/**
+	 * Returns the tick value formatter.
+	 * 
+	 * @param session The session.
+	 * @param instrument The instrument.
+	 * @return The formatter.
+	 */
+	public static TickValue getTickValue(Session session, Instrument instrument) {
+		return new TickValue(session, instrument);
+	}
+
+	/**
+	 * Returnas the appropriate value formatter.
+	 * 
+	 * @param suffix The type suffix.
+	 * @return The formatter.
+	 */
+	public static DataValue getValueFormatter(Session session, String suffix) {
+		if (suffix.equals(Suffix.raw)) {
+			return new DataValue(session, 10);
+		}
+		if (suffix.equals(Suffix.nrm)) {
+			return new DataValue(session, 4);
+		}
+		if (suffix.equals(Suffix.dsc)) {
+			return new DataValue(session, 4);
+		}
+		if (suffix.equals(Suffix.in)) {
+			return new DataValue(session, 4);
+		}
+		if (suffix.equals(Suffix.out)) {
+			return new DataValue(session, 4);
+		}
+		throw new IllegalArgumentException();
+	}
+
 	/**
 	 * Set formatters to the data price persistor.
 	 *
@@ -65,5 +114,5 @@ public class Formatters {
 		persistor.getField(DataPrice.Fields.Close).setFormatter(new TickValue(session, instrument));
 		persistor.getField(DataPrice.Fields.Volume).setFormatter(new VolumeValue(session, instrument));
 	}
-	
+
 }

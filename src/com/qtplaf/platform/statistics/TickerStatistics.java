@@ -33,6 +33,8 @@ public abstract class TickerStatistics extends Statistics {
 	private Instrument instrument;
 	/** The period. */
 	private Period period;
+	/** Fields manager. */
+	private Fields fields;
 
 	/**
 	 * Constructor.
@@ -41,6 +43,18 @@ public abstract class TickerStatistics extends Statistics {
 	 */
 	public TickerStatistics(Session session) {
 		super(session);
+	}
+
+	/**
+	 * Returns the fields manager.
+	 * 
+	 * @return The fields manager.
+	 */
+	public Fields getFields() {
+		if (fields == null) {
+			fields = new Fields(getSession(), getInstrument(), getPeriod());
+		}
+		return fields;
 	}
 
 	/**

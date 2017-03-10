@@ -42,14 +42,12 @@ import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.drawings.VerticalArea;
-import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
-import com.qtplaf.platform.statistics.action.ActionNavigateChart;
-import com.qtplaf.platform.statistics.action.PlotDataConfigurator;
-import com.qtplaf.platform.statistics.action.RecordSetProvider;
+import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
 import com.qtplaf.platform.statistics.averages.task.TaskTransitions;
 import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -65,25 +63,16 @@ public class Transitions extends Averages {
 	private static final Logger logger = LogManager.getLogger();
 
 	/**
-	 * Recordset provider.
+	 * Browse transitions.
 	 */
-	class RecordSetCorrelativeTransitions implements RecordSetProvider {
+	class ActionBrowseTransitions extends ActionBrowse {
+		ActionBrowseTransitions(Transitions transitions) {
+			super(transitions);
+		}
+
 		@Override
 		public RecordSet getRecordSet() {
-			return Transitions.this.getRecordSetCorrelativeTransitions();
-		}
-	}
-
-	/**
-	 * Std plot data list provider.
-	 */
-	class StdPlotDataList implements PlotDataConfigurator {
-		@Override
-		public void configureChart(JChart chart) {
-			List<PlotData> plotDataList = getPlotDataListStandard();
-			for (PlotData plotData : plotDataList) {
-				chart.addPlotData(plotData);
-			}
+			return getRecordSetCorrelativeTransitions();
 		}
 	}
 
@@ -99,9 +88,9 @@ public class Transitions extends Averages {
 				return;
 			}
 			List<Record> transitions = getTransitions(record);
-			int startIndex = transitions.get(0).getValue(getFieldDefIndexInput().getName()).getInteger();
+			int startIndex = transitions.get(0).getValue(getFields().getIndexInput().getName()).getInteger();
 			int endIndex =
-				transitions.get(transitions.size() - 1).getValue(getFieldDefIndexInput().getName()).getInteger();
+				transitions.get(transitions.size() - 1).getValue(getFields().getIndexInput().getName()).getInteger();
 			VerticalArea vertBand = new VerticalArea(startIndex, endIndex);
 			JChart chart = ActionUtils.getChart(this);
 			PlotData plotData = chart.getChartContainer(0).getPlotData();
@@ -136,28 +125,13 @@ public class Transitions extends Averages {
 		actions.add(actionCalculate);
 
 		// Browse correlative transitions (check resultset)
-		ActionBrowse actionBrowse = new ActionBrowse(this);
-		actionBrowse.setRecordSetProvider(new RecordSetCorrelativeTransitions());
+		ActionBrowseTransitions actionBrowse = new ActionBrowseTransitions(this);
 		ActionUtils.setName(actionBrowse, "Browse correlative transitions");
 		ActionUtils.setShortDescription(actionBrowse, "Browse correlative transitions");
 		ActionUtils.setActionGroup(actionBrowse, new ActionGroup("Browse", 10100));
 		actions.add(actionBrowse);
 
-		ActionNavigateChart actionChartNav = new ActionNavigateChart(this);
-		actionChartNav.getChartNavigate().setTitle("Navigate chart on result data");
-		actionChartNav.setPlotDataConfigurator(new StdPlotDataList());
-		actionChartNav.setRecordSetProvider(new RecordSetCorrelativeTransitions());
-		ActionUtils.setName(actionChartNav, "Navigate chart on transitions");
-		ActionUtils.setShortDescription(actionChartNav, "Navigate a standard chart locating transitions");
-		ActionUtils.setActionGroup(actionChartNav, new ActionGroup("Chart", 10200));
-
-		ActionMove actionMove = new ActionMove();
-		ActionUtils.setName(actionMove, "Move to selected transitions");
-		ActionUtils.setShortDescription(actionMove, "Move the chart to the selected transitions group.");
-		actionChartNav.addAction(actionMove);
-
-		actions.add(actionChartNav);
-
+		actions.add(new ActionNavigateStatistics(this));
 		return actions;
 	}
 
@@ -172,13 +146,13 @@ public class Transitions extends Averages {
 
 		Persistor persistor = getTable().getPersistor();
 
-		Field fStateInput = persistor.getField(getFieldDefStateInput().getName());
-		Field fStateOutput = persistor.getField(getFieldDefStateOutput().getName());
-		Field fIndexGroup = persistor.getField(getFieldDefIndexGroup().getName());
+		Field fStateInput = persistor.getField(getFields().getStateInput().getName());
+		Field fStateOutput = persistor.getField(getFields().getStateOutput().getName());
+		Field fIndexGroup = persistor.getField(getFields().getIndexGroup().getName());
 
-		Value vStateInput = record.getValue(getFieldDefStateInput().getName());
-		Value vStateOutput = record.getValue(getFieldDefStateOutput().getName());
-		Value vIndexGroup = record.getValue(getFieldDefIndexGroup().getName());
+		Value vStateInput = record.getValue(getFields().getStateInput().getName());
+		Value vStateOutput = record.getValue(getFields().getStateOutput().getName());
+		Value vIndexGroup = record.getValue(getFields().getIndexGroup().getName());
 
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fStateInput, vStateInput));
@@ -186,7 +160,7 @@ public class Transitions extends Averages {
 		criteria.add(Condition.fieldEQ(fIndexGroup, vIndexGroup));
 
 		Order order = new Order();
-		order.add(persistor.getField(getFieldDefIndexInput().getName()));
+		order.add(persistor.getField(getFields().getIndexInput().getName()));
 
 		try {
 			RecordIterator iterator = persistor.iterator(criteria, order);
@@ -202,23 +176,6 @@ public class Transitions extends Averages {
 	}
 
 	/**
-	 * Returns the list of plot data for standard chart diaplay.
-	 * 
-	 * @return The list of plot data.
-	 */
-	private List<PlotData> getPlotDataListStandard() {
-		List<PlotData> plotDataList = new ArrayList<>();
-		PersistorDataList dataList = getStates().getDataListStates();
-		dataList.setCacheSize(-1);
-		dataList.setPageSize(1000);
-		;
-		plotDataList.add(getPlotDataMain(dataList));
-		plotDataList.add(getPlotData("Spreads-nrm", dataList, getFieldListSpreads(Suffix.nrm)));
-		plotDataList.add(getPlotData("Speeds-nrm", dataList, getFieldListSpeeds(Suffix.nrm)));
-		return plotDataList;
-	}
-
-	/**
 	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
 	 * expected to have at least fields to hold the output values.
 	 * 
@@ -229,19 +186,19 @@ public class Transitions extends Averages {
 
 		Table table = new Table();
 
-		table.setName(Names.getName(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setName(Names.getTable(getInstrument(), getPeriod(), getId().toLowerCase()));
 		table.setSchema(Names.getSchema(getServer()));
 
 		// Input and output states (keys)
-		table.addField(getFieldDefStateInput());
-		table.addField(getFieldDefStateOutput());
+		table.addField(getFields().getStateInput());
+		table.addField(getFields().getStateOutput());
 
 		// Input and output indexes of source states.
-		table.addField(getFieldDefIndexInput());
-		table.addField(getFieldDefIndexOutput());
+		table.addField(getFields().getIndexInput());
+		table.addField(getFields().getIndexOutput());
 
 		// Index group (groups consecutive transitions of the same state).
-		table.addField(getFieldDefIndexGroup());
+		table.addField(getFields().getIndexGroup());
 
 		// Input spreads, speeds and calculations.
 		table.addFields(getFieldListSpreads(Suffix.in));
@@ -254,15 +211,15 @@ public class Transitions extends Averages {
 		table.addFields(getFieldListCalculations(Suffix.out));
 
 		// Estimaded function value high, low and close.
-		table.addField(getFieldDefTransitionValueHigh());
-		table.addField(getFieldDefTransitionValueLow());
-		table.addField(getFieldDefTransitionValueClose());
+		table.addField(getFields().getTransitionValueHigh());
+		table.addField(getFields().getTransitionValueLow());
+		table.addField(getFields().getTransitionValueClose());
 
 		// Primary key.
-		getFieldDefStateInput().setPrimaryKey(true);
-		getFieldDefStateOutput().setPrimaryKey(true);
-		getFieldDefIndexInput().setPrimaryKey(true);
-		getFieldDefIndexOutput().setPrimaryKey(true);
+		getFields().getStateInput().setPrimaryKey(true);
+		getFields().getStateOutput().setPrimaryKey(true);
+		getFields().getIndexInput().setPrimaryKey(true);
+		getFields().getIndexOutput().setPrimaryKey(true);
 
 		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
 		return table;
@@ -282,9 +239,9 @@ public class Transitions extends Averages {
 		view.setName(table.getName());
 
 		// Group by fields
-		view.addField(getFieldDefStateInput());
-		view.addField(getFieldDefStateOutput());
-		view.addField(getFieldDefIndexGroup());
+		view.addField(getFields().getStateInput());
+		view.addField(getFields().getStateOutput());
+		view.addField(getFields().getIndexGroup());
 
 		// Count(*)
 		Field count = DomainUtils.getInteger(getSession(), "count", "Count", "Count same index group");
@@ -293,40 +250,40 @@ public class Transitions extends Averages {
 
 		// Sum(value_close)
 		Field sumClose = DomainUtils.getDouble(getSession(), "sum_close", "Sum Close", "Sum value close");
-		sumClose.setFunction("sum(" + getFieldDefTransitionValueClose().getName() + ")");
-		sumClose.setFormatter(getValueFormatterRaw());
+		sumClose.setFunction("sum(" + getFields().getTransitionValueClose().getName() + ")");
+		sumClose.setFormatter(new DataValue(getSession(), 10));
 		view.addField(sumClose);
 
 		// Min(value_close)
 		Field minClose = DomainUtils.getDouble(getSession(), "min_close", "Min Close", "Min value close");
-		minClose.setFunction("min(" + getFieldDefTransitionValueClose().getName() + ")");
-		minClose.setFormatter(getValueFormatterRaw());
+		minClose.setFunction("min(" + getFields().getTransitionValueClose().getName() + ")");
+		minClose.setFormatter(new DataValue(getSession(), 10));
 		view.addField(minClose);
 
 		// Max(value_close)
 		Field maxClose = DomainUtils.getDouble(getSession(), "max_close", "Max Close", "Max value close");
-		maxClose.setFunction("max(" + getFieldDefTransitionValueClose().getName() + ")");
-		maxClose.setFormatter(getValueFormatterRaw());
+		maxClose.setFunction("max(" + getFields().getTransitionValueClose().getName() + ")");
+		maxClose.setFormatter(new DataValue(getSession(), 10));
 		view.addField(maxClose);
 
 		// Avg(value_close)
 		Field avgClose = DomainUtils.getDouble(getSession(), "avg_close", "Avg Close", "Avg value close");
-		avgClose.setFunction("avg(" + getFieldDefTransitionValueClose().getName() + ")");
-		avgClose.setFormatter(getValueFormatterRaw());
+		avgClose.setFunction("avg(" +getFields(). getTransitionValueClose().getName() + ")");
+		avgClose.setFormatter(new DataValue(getSession(), 10));
 		view.addField(avgClose);
 
 		// Group by.
-		view.addGroupBy(getFieldDefStateInput());
-		view.addGroupBy(getFieldDefStateOutput());
-		view.addGroupBy(getFieldDefIndexGroup());
+		view.addGroupBy(getFields().getStateInput());
+		view.addGroupBy(getFields().getStateOutput());
+		view.addGroupBy(getFields().getIndexGroup());
 
 		// Having count(*) > 2
 		view.setHaving(count.getFunction() + " > 2");
 
 		// Order by.
-		view.addOrderBy(getFieldDefIndexGroup());
-		view.addOrderBy(getFieldDefStateInput());
-		view.addOrderBy(getFieldDefStateOutput());
+		view.addOrderBy(getFields().getIndexGroup());
+		view.addOrderBy(getFields().getStateInput());
+		view.addOrderBy(getFields().getStateOutput());
 
 		// Persistor.
 		view.setPersistor(PersistorUtils.getPersistor(view));

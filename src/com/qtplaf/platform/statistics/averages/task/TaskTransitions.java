@@ -96,20 +96,20 @@ public class TaskTransitions extends TaskAverages {
 			transitions.getConfiguration());
 		this.statesPersistor = transitions.getStates().getDataListStates().getDataPersistor();
 
-		keyName = transitions.getFieldDefState().getName();
-		keyInputName = transitions.getFieldDefStateInput().getName();
-		keyOutputName = transitions.getFieldDefStateOutput().getName();
-		indexInputName = transitions.getFieldDefIndexInput().getName();
-		indexOutputName = transitions.getFieldDefIndexOutput().getName();
-		indexGroupName = transitions.getFieldDefIndexGroup().getName();
-		indexName = transitions.getFieldDefIndex().getName();
-		valueHighName = transitions.getFieldDefTransitionValueHigh().getName();
-		valueLowName = transitions.getFieldDefTransitionValueLow().getName();
-		valueCloseName = transitions.getFieldDefTransitionValueClose().getName();
+		keyName = transitions.getFields().getState().getName();
+		keyInputName = transitions.getFields().getStateInput().getName();
+		keyOutputName = transitions.getFields().getStateOutput().getName();
+		indexInputName = transitions.getFields().getIndexInput().getName();
+		indexOutputName = transitions.getFields().getIndexOutput().getName();
+		indexGroupName = transitions.getFields().getIndexGroup().getName();
+		indexName = transitions.getFields().getIndex().getName();
+		valueHighName = transitions.getFields().getTransitionValueHigh().getName();
+		valueLowName = transitions.getFields().getTransitionValueLow().getName();
+		valueCloseName = transitions.getFields().getTransitionValueClose().getName();
 
-		deltaHighName = states.getFieldDefDeltaHight().getName();
-		deltaLowName = states.getFieldDefDeltaLow().getName();
-		deltaCloseName = states.getFieldDefDeltaClose().getName();
+		deltaHighName = states.getFields().getDeltaHight().getName();
+		deltaLowName = states.getFields().getDeltaLow().getName();
+		deltaCloseName = states.getFields().getDeltaClose().getName();
 
 		setNameAndDescription(transitions, "Transitions values");
 	}
@@ -180,7 +180,7 @@ public class TaskTransitions extends TaskAverages {
 
 			// Source (states) iterator.
 			Order order = new Order();
-			order.add(getStates().getFieldDefIndex());
+			order.add(getStates().getFields().getIndex());
 			iterator = statesPersistor.iterator(null, order);
 
 			// Step and steps.

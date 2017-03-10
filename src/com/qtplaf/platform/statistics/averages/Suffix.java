@@ -15,14 +15,16 @@
 package com.qtplaf.platform.statistics.averages;
 
 /**
- * Enumerates suffixes of values.
+ * Suffixes of values.
  *
  * @author Miquel Sas
  */
-public enum Suffix {
-	raw,		// Raw
-	nrm,		// Normalize continuous
-	dsc,		// Normalize discrete
-	in,			// Input discrete 
-	out;		// Output discrete
+public interface Suffix {
+	String raw = "raw";		// Raw
+	String nrm = "nrm";		// Normalize continuous
+	String dsc = "dsc";		// Normalize discrete
+	String in = "in";		// Input 
+	String out = "out";		// Output
+	String min = "min";		// Min
+	String max = "max";		// Max
 }

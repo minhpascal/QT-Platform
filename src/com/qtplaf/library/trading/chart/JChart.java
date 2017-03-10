@@ -498,7 +498,7 @@ public class JChart extends JPanel {
 			ActionUtils.setChartPlotter(action, chartPlotter);
 			ActionUtils.setMousePoint(action, mousePoint);
 		}
-		
+
 		JPopupMenu popupMenu = new JPopupMenu();
 		SwingUtils.addMenuItems(popupMenu, actionsToPopup);
 		if (!SwingUtils.isEmpty(popupMenu)) {
@@ -540,5 +540,14 @@ public class JChart extends JPanel {
 			}
 		}
 		return plotDataListNotVisible;
+	}
+
+	/**
+	 * Returns the list of plot datas.
+	 * 
+	 * @return The plot data list.
+	 */
+	public List<PlotData> getPlotDataList() {
+		return plotDataList;
 	}
 }

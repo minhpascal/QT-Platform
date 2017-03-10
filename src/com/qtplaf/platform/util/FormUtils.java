@@ -250,7 +250,7 @@ public class FormUtils {
 			public void actionPerformed(ActionEvent e) {
 				String instrument = form.getEditField(Tickers.Fields.InstrumentId).getValue().toString();
 				String period = form.getEditField(Tickers.Fields.PeriodId).getValue().toString();
-				Value tableName = new Value(Names.getName(instrument, period));
+				Value tableName = new Value(Names.getTable(instrument, period));
 				form.getEditField(Tickers.Fields.TableName).setValue(tableName);
 			}
 		}

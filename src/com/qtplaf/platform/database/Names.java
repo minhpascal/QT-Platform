@@ -16,7 +16,6 @@ package com.qtplaf.platform.database;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.library.util.StringUtils;
 
 /**
  * An utility to generate names based on instruments, periods, filters and offer sides.
@@ -51,8 +50,8 @@ public class Names {
 	 * @param period The period.
 	 * @return The name for a table of price data.
 	 */
-	public static String getName(Instrument instrument, Period period) {
-		return getName(instrument.getId(), period.getId());
+	public static String getTable(Instrument instrument, Period period) {
+		return getTable(instrument.getId(), period.getId());
 	}
 	
 	/**
@@ -63,8 +62,8 @@ public class Names {
 	 * @param suffix The suffix.
 	 * @return The name for a table of price data.
 	 */
-	public static String getName(Instrument instrument, Period period, String suffix) {
-		return getName(instrument.getId(), period.getId(), suffix);
+	public static String getTable(Instrument instrument, Period period, String suffix) {
+		return getTable(instrument.getId(), period.getId(), suffix);
 	}
 
 	/**
@@ -75,8 +74,8 @@ public class Names {
 	 * @param suffix The suffix.
 	 * @return The name for a table of price data.
 	 */
-	public static String getName(String instrument, String period) {
-		return getName(instrument, period, null);
+	public static String getTable(String instrument, String period) {
+		return getTable(instrument, period, null);
 	}
 
 	/**
@@ -87,7 +86,7 @@ public class Names {
 	 * @param suffix The suffix.
 	 * @return The name for a table of price data.
 	 */
-	public static String getName(String instrument, String period, String suffix) {
+	public static String getTable(String instrument, String period, String suffix) {
 		StringBuilder b = new StringBuilder();
 		b.append(instrument.toLowerCase());
 		b.append("_");
@@ -97,15 +96,5 @@ public class Names {
 			b.append(suffix.toLowerCase());
 		}
 		return b.toString();
-	}
-
-	/**
-	 * Returns the period id given an price table name.
-	 * 
-	 * @param tableName The table name.
-	 * @return The period id.
-	 */
-	public static String getPeriodId(String tableName) {
-		return StringUtils.split(tableName,"_")[1];
 	}
 }

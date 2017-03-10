@@ -499,7 +499,7 @@ public abstract class DataList {
 		if (isEmpty()) {
 			return false;
 		}
-		if (get(0).size() <= index) {
+		if (size() <= index) {
 			return false;
 		}
 		return (getOddCode(get(index)) == 1);
@@ -518,7 +518,7 @@ public abstract class DataList {
 		if (isEmpty()) {
 			return false;
 		}
-		if (get(0).size() <= index) {
+		if (size() <= index) {
 			return false;
 		}
 		return (getOddCode(get(index)) == 2);

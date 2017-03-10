@@ -39,6 +39,7 @@ import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.statistics.Fields;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -77,10 +78,10 @@ public class StatesIndicator extends Indicator {
 		// Output informations.
 		int index = 0;
 
-		Field open = states.getFieldDefOpen();
-		Field high = states.getFieldDefHigh();
-		Field low = states.getFieldDefLow();
-		Field close = states.getFieldDefClose();
+		Field open = states.getFields().getOpen();
+		Field high = states.getFields().getHigh();
+		Field low = states.getFields().getLow();
+		Field close = states.getFields().getClose();
 		info.addOutput(open.getName(), open.getTitle(), index++);
 		info.addOutput(high.getName(), high.getTitle(), index++);
 		info.addOutput(low.getName(), low.getTitle(), index++);
@@ -90,7 +91,7 @@ public class StatesIndicator extends Indicator {
 		int lookBackward = 0;
 		for (Field field : fields) {
 			info.addOutput(field.getName(), field.getTitle(), index++);
-			int period = states.getPropertyAverage(field).getPeriod();
+			int period = Fields.getPropertyAverage(field).getPeriod();
 			lookBackward = Math.max(lookBackward, period);
 		}
 		info.setLookBackward(lookBackward);
@@ -174,7 +175,7 @@ public class StatesIndicator extends Indicator {
 	private IndicatorDataList getDataListAverage(Field averageField) {
 		DataList dataList = mapDataLists.get(averageField.getName());
 		if (dataList == null) {
-			Average average = states.getPropertyAverage(averageField);
+			Average average = Fields.getPropertyAverage(averageField);
 			if (average.getType().equals(Average.Type.SMA)) {
 				dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 					getDataListPrice(),
@@ -219,10 +220,10 @@ public class StatesIndicator extends Indicator {
 
 		// Price values.
 		Data price = getDataListPrice().get(index);
-		Field open = states.getFieldDefOpen();
-		Field high = states.getFieldDefHigh();
-		Field low = states.getFieldDefLow();
-		Field close = states.getFieldDefClose();
+		Field open = states.getFields().getOpen();
+		Field high = states.getFields().getHigh();
+		Field low = states.getFields().getLow();
+		Field close = states.getFields().getClose();
 		values[info.getOutputIndex(open.getName())] = Data.getOpen(price);
 		values[info.getOutputIndex(high.getName())] = Data.getHigh(price);
 		values[info.getOutputIndex(low.getName())] = Data.getLow(price);
