@@ -32,7 +32,7 @@ import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
-import com.qtplaf.platform.database.tables.Instruments;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordSetUtils;
 
@@ -88,15 +88,15 @@ public class ActionAvailableInstruments extends AbstractAction {
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentId);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentDesc);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentPipValue);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentPipScale);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentTickValue);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentTickScale);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentVolumeScale);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentPrimaryCurrency);
-				tableModelRecord.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
+				tableModelRecord.addColumn(Fields.InstrumentId);
+				tableModelRecord.addColumn(Fields.InstrumentDesc);
+				tableModelRecord.addColumn(Fields.InstrumentPipValue);
+				tableModelRecord.addColumn(Fields.InstrumentPipScale);
+				tableModelRecord.addColumn(Fields.InstrumentTickValue);
+				tableModelRecord.addColumn(Fields.InstrumentTickScale);
+				tableModelRecord.addColumn(Fields.InstrumentVolumeScale);
+				tableModelRecord.addColumn(Fields.InstrumentPrimaryCurrency);
+				tableModelRecord.addColumn(Fields.InstrumentSecondaryCurrency);
 				tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetAvailableInstruments(session, server));
 				tableRecord.setModel(tableModelRecord);
 

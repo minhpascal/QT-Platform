@@ -12,18 +12,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.util;
+package com.qtplaf.platform.statistics;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Types;
+import com.qtplaf.library.util.StringUtils;
 
 /**
  * Centralizes master field definitions (domains). These definitions do not include table attributes like primary key.
  * 
  * @author Miquel Sas
  */
-public class DomainUtils {
+public class Domains {
 
 	/**
 	 * Returns field definition for a double value.
@@ -70,6 +71,19 @@ public class DomainUtils {
 	}
 
 	/**
+	 * Returns field definition for a string value. Header and label are set capitalizing.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param length Field length.
+	 * @return The field definition.
+	 */
+	public static Field getString(Session session, String name, int length) {
+		String header = toHeader(name);
+		return getString(session, name, name, length, header, header, header);
+	}
+
+	/**
 	 * Returns field definition for a string value.
 	 * 
 	 * @param session Working session.
@@ -83,20 +97,6 @@ public class DomainUtils {
 		return getString(session, name, name, length, header, label, label);
 	}
 
-
-	/**
-	 * Returns field definition for an integer value.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param header The field header.
-	 * @param label The field label.
-	 * @return The field definition.
-	 */
-	public static Field getInteger(Session session, String name, String header, String label) {
-		return getInteger(session, name, name, header, label, label);
-	}
-	
 	/**
 	 * Returns field definition for a string value.
 	 * 
@@ -130,6 +130,30 @@ public class DomainUtils {
 		return field;
 	}
 
+	/**
+	 * Returns field definition for an integer value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getInteger(Session session, String name) {
+		String header = toHeader(name);
+		return getInteger(session, name, name, header, header, header);
+	}
+
+	/**
+	 * Returns field definition for an integer value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @param header The field header.
+	 * @param label The field label.
+	 * @return The field definition.
+	 */
+	public static Field getInteger(Session session, String name, String header, String label) {
+		return getInteger(session, name, name, header, label, label);
+	}
 
 	/**
 	 * Returns field definition for an integer value.
@@ -161,6 +185,19 @@ public class DomainUtils {
 
 		return field;
 	}
+
+	/**
+	 * Returns field definition for an long value.
+	 * 
+	 * @param session Working session.
+	 * @param name Field name.
+	 * @return The field definition.
+	 */
+	public static Field getLong(Session session, String name) {
+		String header = toHeader(name);
+		return getLong(session, name, name, header, header, header);
+	}
+
 	/**
 	 * Returns field definition for an long value.
 	 * 
@@ -173,7 +210,7 @@ public class DomainUtils {
 	public static Field getLong(Session session, String name, String header, String label) {
 		return getLong(session, name, name, header, label, label);
 	}
-	
+
 	/**
 	 * Returns field definition for an long value.
 	 * 
@@ -203,5 +240,23 @@ public class DomainUtils {
 		field.setTitle(title);
 
 		return field;
+	}
+
+	/**
+	 * Returns a header or label capitalizing and replacing underscores by spaces.
+	 * 
+	 * @param name The field name.
+	 * @return The header.
+	 */
+	private static String toHeader(String name) {
+		StringBuilder b = new StringBuilder();
+		String[] words = StringUtils.parse(name, "_");
+		for (int i = 0; i < words.length; i++) {
+			if (i > 0) {
+				b.append(" ");
+			}
+			b.append(StringUtils.capitalize(words[i]));
+		}
+		return b.toString();
 	}
 }

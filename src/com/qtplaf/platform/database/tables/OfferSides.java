@@ -16,7 +16,9 @@ package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Names.Schemas;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -27,14 +29,6 @@ import com.qtplaf.platform.util.PersistorUtils;
  */
 public class OfferSides extends Table {
 
-	/** Field names. */
-	public interface Fields {
-		String OfferSide = "offer_side";
-	}
-
-	/** Table name. */
-	public static final String Name = "offer_sides";
-
 	/**
 	 * Constructor.
 	 * 
@@ -43,8 +37,8 @@ public class OfferSides extends Table {
 	public OfferSides(Session session) {
 		super(session);
 		
-		setName(Name);
-		setSchema(Names.getSchema());
+		setName(Tables.OfferSides);
+		setSchema(Schemas.qtp);
 		
 		addField(FieldUtils.getOfferSide(session, Fields.OfferSide));
 		

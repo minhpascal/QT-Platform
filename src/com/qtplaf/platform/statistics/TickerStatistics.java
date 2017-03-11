@@ -34,7 +34,7 @@ public abstract class TickerStatistics extends Statistics {
 	/** The period. */
 	private Period period;
 	/** Fields manager. */
-	private Fields fields;
+	private FieldSrc fields;
 
 	/**
 	 * Constructor.
@@ -50,9 +50,9 @@ public abstract class TickerStatistics extends Statistics {
 	 * 
 	 * @return The fields manager.
 	 */
-	public Fields getFields() {
+	public FieldSrc getFields() {
 		if (fields == null) {
-			fields = new Fields(getSession(), getInstrument(), getPeriod());
+			fields = new FieldSrc(getSession(), getInstrument(), getPeriod());
 		}
 		return fields;
 	}

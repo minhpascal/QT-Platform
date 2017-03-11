@@ -55,9 +55,7 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
-import com.qtplaf.platform.database.tables.DataPrice;
-import com.qtplaf.platform.database.tables.Periods;
-import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.task.TaskDownloadTicker;
 import com.qtplaf.platform.util.FormUtils;
 import com.qtplaf.platform.util.InstrumentUtils;
@@ -116,7 +114,7 @@ public class ActionTickers extends AbstractAction {
 				Persistor persistor = PersistorUtils.getPersistorTickers(session);
 				persistor.insert(record);
 				// Create the table.
-				String tableName = record.getValue(Tickers.Fields.TableName).getString();
+				String tableName = record.getValue(Fields.TableName).getString();
 				Table table = TableUtils.getTableDataPrice(session, server, tableName);
 				PersistorUtils.getDDL().buildTable(table);
 				getTableModel().insertRecord(record, persistor.getView().getOrderBy());
@@ -166,7 +164,7 @@ public class ActionTickers extends AbstractAction {
 				int row = getTableRecord().getSelectedRow();
 				for (Record record : records) {
 					PersistorUtils.getPersistorTickers(session).delete(record);
-					String tableName = record.getValue(Tickers.Fields.TableName).getString();
+					String tableName = record.getValue(Fields.TableName).getString();
 					Table table = TableUtils.getTableDataPrice(session, server, tableName);
 					PersistorUtils.getDDL().dropTable(table);
 					getTableModel().deleteRecord(record);
@@ -215,7 +213,7 @@ public class ActionTickers extends AbstractAction {
 
 				// Delete record and table.
 				for (Record record : records) {
-					String tableName = record.getValue(Tickers.Fields.TableName).getString();
+					String tableName = record.getValue(Fields.TableName).getString();
 					Table table = TableUtils.getTableDataPrice(session, server, tableName);
 					PersistorUtils.getDDL().dropTable(table);
 					PersistorUtils.getDDL().buildTable(table);
@@ -259,8 +257,8 @@ public class ActionTickers extends AbstractAction {
 				for (Record record : records) {
 					Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
 					Period period = PeriodUtils.getPeriodFromRecordTickers(record);
-					OfferSide offerSide = OfferSide.valueOf(record.getValue(Tickers.Fields.OfferSide).getString());
-					Filter filter = Filter.valueOf(record.getValue(Tickers.Fields.DataFilter).getString());
+					OfferSide offerSide = OfferSide.valueOf(record.getValue(Fields.OfferSide).getString());
+					Filter filter = Filter.valueOf(record.getValue(Fields.DataFilter).getString());
 
 					TaskDownloadTicker task =
 						new TaskDownloadTicker(session, server, instrument, period, offerSide, filter);
@@ -331,13 +329,13 @@ public class ActionTickers extends AbstractAction {
 				if (record == null) {
 					return;
 				}
-				String tableName = record.getValue(Tickers.Fields.TableName).getString();
+				String tableName = record.getValue(Fields.TableName).getString();
 				DataPersistor persistor = new DataPersistor(PersistorUtils.getPersistorDataPrice(session, server, tableName));
 				persistor.setSensitive(false);
 
-				String serverId = record.getValue(Tickers.Fields.ServerId).getString();
-				String instrId = record.getValue(Tickers.Fields.InstrumentId).getString();
-				String periodId = record.getValue(Tickers.Fields.PeriodId).getString();
+				String serverId = record.getValue(Fields.ServerId).getString();
+				String instrId = record.getValue(Fields.InstrumentId).getString();
+				String periodId = record.getValue(Fields.PeriodId).getString();
 				Formatters.configureDataPrice(session, persistor, serverId, instrId, periodId);
 
 				Record masterRecord = persistor.getDefaultRecord();
@@ -345,14 +343,14 @@ public class ActionTickers extends AbstractAction {
 				JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.SINGLE_SELECTION);
 				JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 				TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-				tableModelRecord.addColumn(DataPrice.Fields.Index);
-				tableModelRecord.addColumn(DataPrice.Fields.Time);
-				tableModelRecord.addColumn(DataPrice.Fields.TimeFmt);
-				tableModelRecord.addColumn(DataPrice.Fields.Open);
-				tableModelRecord.addColumn(DataPrice.Fields.High);
-				tableModelRecord.addColumn(DataPrice.Fields.Low);
-				tableModelRecord.addColumn(DataPrice.Fields.Close);
-				tableModelRecord.addColumn(DataPrice.Fields.Volume);
+				tableModelRecord.addColumn(Fields.Index);
+				tableModelRecord.addColumn(Fields.Time);
+				tableModelRecord.addColumn(Fields.TimeFmt);
+				tableModelRecord.addColumn(Fields.Open);
+				tableModelRecord.addColumn(Fields.High);
+				tableModelRecord.addColumn(Fields.Low);
+				tableModelRecord.addColumn(Fields.Close);
+				tableModelRecord.addColumn(Fields.Volume);
 
 				tableModelRecord.setRecordSet(new DataRecordSet(persistor));
 				tableRecord.setModel(tableModelRecord);
@@ -408,7 +406,7 @@ public class ActionTickers extends AbstractAction {
 				if (record == null) {
 					return;
 				}
-				String tableName = record.getValue(Tickers.Fields.TableName).getString();
+				String tableName = record.getValue(Fields.TableName).getString();
 				Persistor persistor = PersistorUtils.getPersistorDataPrice(session, server, tableName);
 
 				Period period = PeriodUtils.getPeriodFromRecordTickers(record);
@@ -475,11 +473,11 @@ public class ActionTickers extends AbstractAction {
 			JTableRecord tableRecord = new JTableRecord(session, ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 			TableModelRecord tableModelRecord = new TableModelRecord(session, masterRecord);
-			tableModelRecord.addColumn(Tickers.Fields.InstrumentId);
-			tableModelRecord.addColumn(Periods.Fields.PeriodName);
-			tableModelRecord.addColumn(Tickers.Fields.OfferSide);
-			tableModelRecord.addColumn(Tickers.Fields.DataFilter);
-			tableModelRecord.addColumn(Tickers.Fields.TableName);
+			tableModelRecord.addColumn(Fields.InstrumentId);
+			tableModelRecord.addColumn(Fields.PeriodName);
+			tableModelRecord.addColumn(Fields.OfferSide);
+			tableModelRecord.addColumn(Fields.DataFilter);
+			tableModelRecord.addColumn(Fields.TableName);
 
 			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetTickers(session, server));
 			tableRecord.setModel(tableModelRecord);

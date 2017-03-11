@@ -16,6 +16,7 @@ package com.qtplaf.platform.util;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.platform.statistics.Domains;
 
 /**
  * Field definitions.
@@ -32,7 +33,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getClose(Session session, String name) {
-		return DomainUtils.getDouble(session, name,	"Close", "Close value");
+		return Domains.getDouble(session, name,	"Close", "Close value");
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getDataFilter(Session session, String name) {
-		return DomainUtils.getString(session, name, 10, "Filter", "Data filter");
+		return Domains.getString(session, name, 10, "Filter", "Data filter");
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getHigh(Session session, String name) {
-		return DomainUtils.getDouble(session, name, "High", "High value");
+		return Domains.getDouble(session, name, "High", "High value");
 	}
 
 	/**
@@ -65,20 +66,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getIndex(Session session, String name) {
-		return DomainUtils.getLong(session, name, "Index", "Data index");
-	}
-
-	/**
-	 * Returns the <b><i>Index</i></b> field definition.
-	 * 
-	 * @param session Working session.
-	 * @param name Field name.
-	 * @param header Field header.
-	 * @param label Field label.
-	 * @return The field definition.
-	 */
-	public static Field getIndex(Session session, String name, String header, String label) {
-		return DomainUtils.getLong(session, name, header, label);
+		return Domains.getLong(session, name);
 	}
 
 	/**
@@ -89,7 +77,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentDesc(Session session, String name) {
-		return DomainUtils.getString(session, name, 120, "Instrument description", "Instrument description");
+		return Domains.getString(session, name, 120, "Instrument description", "Instrument description");
 	}
 
 	/**
@@ -100,7 +88,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentId(Session session, String name) {
-		return DomainUtils.getString(session, name,	20,	"Instrument", "Instrument id");
+		return Domains.getString(session, name,	20,	"Instrument", "Instrument id");
 	}
 
 	/**
@@ -111,7 +99,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentPipScale(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Pip scale", "Instrument pip scale");
+		return Domains.getInteger(session, name, "Pip scale", "Instrument pip scale");
 	}
 
 	/**
@@ -122,7 +110,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentPipValue(Session session, String name) {
-		return DomainUtils.getDouble(session, name, "Pip value", "Instrument pip value");
+		return Domains.getDouble(session, name, "Pip value", "Instrument pip value");
 	}
 
 	/**
@@ -133,7 +121,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentPrimaryCurrency(Session session, String name) {
-		return DomainUtils.getString(session, name, 6, "P-Currency", "Primary currency");
+		return Domains.getString(session, name, 6, "P-Currency", "Primary currency");
 	}
 
 	/**
@@ -144,7 +132,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentSecondaryCurrency(Session session, String name) {
-		return DomainUtils.getString(session, name, 6, "S-Currency", "Secondary currency");
+		return Domains.getString(session, name, 6, "S-Currency", "Secondary currency");
 	}
 
 	/**
@@ -155,7 +143,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentTickScale(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Tick scale", "Instrument tick scale");
+		return Domains.getInteger(session, name, "Tick scale", "Instrument tick scale");
 	}
 
 	/**
@@ -166,7 +154,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentTickValue(Session session, String name) {
-		return DomainUtils.getDouble(session, name, "Tick value", "Instrument tick value");
+		return Domains.getDouble(session, name, "Tick value", "Instrument tick value");
 	}
 
 	/**
@@ -177,7 +165,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getInstrumentVolumeScale(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Volume scale", "Instrument volume scale");
+		return Domains.getInteger(session, name, "Volume scale", "Instrument volume scale");
 	}
 
 	/**
@@ -188,7 +176,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getLow(Session session, String name) {
-		return DomainUtils.getDouble(session, name, "Low", "Low value");
+		return Domains.getDouble(session, name, "Low", "Low value");
 	}
 
 	/**
@@ -199,7 +187,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getOfferSide(Session session, String name) {
-		return DomainUtils.getString(session, name, 3, "Offer side", "Offer side");
+		return Domains.getString(session, name, 3, "Offer side", "Offer side");
 	}
 
 	/**
@@ -210,7 +198,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getOpen(Session session, String name) {
-		return DomainUtils.getDouble(session, name, "Open", "Open value");
+		return Domains.getDouble(session, name, "Open", "Open value");
 	}
 
 	/**
@@ -221,7 +209,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getPeriodId(Session session, String name) {
-		return DomainUtils.getString(session, name, 5, "Period id", "Period id");
+		return Domains.getString(session, name, 5, "Period id", "Period id");
 	}
 
 	/**
@@ -232,7 +220,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getPeriodName(Session session, String name) {
-		return DomainUtils.getString(session, name, 15, "Period name", "Period name");
+		return Domains.getString(session, name, 15, "Period name", "Period name");
 	}
 
 	/**
@@ -243,7 +231,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getPeriodSize(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Period size", "Period size");
+		return Domains.getInteger(session, name, "Period size", "Period size");
 	}
 
 	/**
@@ -254,7 +242,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getPeriodUnitIndex(Session session, String name) {
-		return DomainUtils.getInteger(session, name, "Period unit index", "Period unit index");
+		return Domains.getInteger(session, name, "Period unit index", "Period unit index");
 	}
 
 	/**
@@ -265,7 +253,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getServerId(Session session, String name) {
-		return DomainUtils.getString(session, name, 20, "Server id", "Server id");
+		return Domains.getString(session, name, 20, "Server id", "Server id");
 	}
 
 	/**
@@ -276,7 +264,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getServerName(Session session, String name) {
-		return DomainUtils.getString(session, name, 60, "Server name", "Server name");
+		return Domains.getString(session, name, 60, "Server name", "Server name");
 	}
 
 	/**
@@ -287,7 +275,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getServerTitle(Session session, String name) {
-		return DomainUtils.getString(session, name, 120, "Server title", "Server title");
+		return Domains.getString(session, name, 120, "Server title", "Server title");
 	}
 
 	/**
@@ -298,7 +286,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getStatisticsId(Session session, String name) {
-		return DomainUtils.getString(session, name, 40, "Stats id", "Statistics id");
+		return Domains.getString(session, name, 40, "Stats id", "Statistics id");
 	}
 
 	/**
@@ -309,7 +297,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getStatisticsTitle(Session session, String name) {
-		return DomainUtils.getString(session, name, 100, "Statistics title", "Statistics title");
+		return Domains.getString(session, name, 100, "Statistics title", "Statistics title");
 	}
 
 	/**
@@ -320,7 +308,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getTableName(Session session, String name) {
-		return DomainUtils.getString(session, name, 30, "Table name", "Table name");
+		return Domains.getString(session, name, 30, "Table name", "Table name");
 	}
 
 	/**
@@ -331,7 +319,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getTime(Session session, String name) {
-		return DomainUtils.getLong(session, name, "Time", "Time");
+		return Domains.getLong(session, name, "Time", "Time");
 	}
 
 	/**
@@ -342,7 +330,7 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getTimeFmt(Session session, String name) {
-		Field timeFmt = DomainUtils.getLong(session, name, "Time fmt", "Time fmt");
+		Field timeFmt = Domains.getLong(session, name, "Time fmt", "Time fmt");
 		timeFmt.setPersistent(false);
 		return timeFmt;
 	}
@@ -355,6 +343,6 @@ public class FieldUtils {
 	 * @return The field definition.
 	 */
 	public static Field getVolume(Session session, String name) {
-		return DomainUtils.getDouble(session, name, "Volume", "Volume");
+		return Domains.getDouble(session, name, "Volume", "Volume");
 	}
 }

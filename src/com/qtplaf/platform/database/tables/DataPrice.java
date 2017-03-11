@@ -19,6 +19,7 @@ import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -28,18 +29,6 @@ import com.qtplaf.platform.util.PersistorUtils;
  * @author Miquel Sas
  */
 public class DataPrice extends Table {
-
-	/** Field names. */
-	public interface Fields {
-		String Index = "index";
-		String Time = "time";
-		String TimeFmt = "time_fmt";
-		String Open = "open";
-		String High = "high";
-		String Low = "low";
-		String Close = "close";
-		String Volume = "volume";
-	}
 
 	/**
 	 * Constructor.
@@ -52,7 +41,7 @@ public class DataPrice extends Table {
 		super(session);
 
 		setName(name);
-		setSchema(Names.getSchema(server));
+		setSchema(Names.Schemas.server(server));
 
 		addField(FieldUtils.getIndex(session, Fields.Index));
 		addField(FieldUtils.getTime(session, Fields.Time));

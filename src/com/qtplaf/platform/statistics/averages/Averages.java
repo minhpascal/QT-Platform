@@ -34,7 +34,7 @@ import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.statistics.Fields;
+import com.qtplaf.platform.statistics.FieldSrc.Properties;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
@@ -192,13 +192,13 @@ public abstract class Averages extends TickerStatistics {
 		speedFields.addAll(getFieldListSpeeds(Suffix.dsc));
 		List<Field> keyFields = new ArrayList<>();
 		for (Field field : spreadFields) {
-			Spread spread = Fields.getPropertySpread(field);
+			Spread spread = Properties.getSpread(field);
 			if (spread.isStateKey()) {
 				keyFields.add(field);
 			}
 		}
 		for (Field field : speedFields) {
-			Speed speed = Fields.getPropertySpeed(field);
+			Speed speed = Properties.getSpeed(field);
 			if (speed.isStateKey()) {
 				keyFields.add(field);
 			}

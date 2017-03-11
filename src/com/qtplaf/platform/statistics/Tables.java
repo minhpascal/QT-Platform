@@ -12,27 +12,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.util;
-
-import com.qtplaf.library.database.Record;
-import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.platform.database.Names.Fields;
+package com.qtplaf.platform.statistics;
 
 /**
- * Centralizes period operations.
+ * 
  *
  * @author Miquel Sas
  */
-public class PeriodUtils {
+public class Tables {
 
 	/**
-	 * Returns the period from the tickers record.
 	 * 
-	 * @param record The tickers record.
-	 * @return The period.
 	 */
-	public static Period getPeriodFromRecordTickers(Record record) {
-		String periodId = record.getValue(Fields.PeriodId).getString();
-		return Period.parseId(periodId);
+	public Tables() {
+		// TODO Auto-generated constructor stub
 	}
+
 }

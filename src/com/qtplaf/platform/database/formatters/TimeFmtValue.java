@@ -24,7 +24,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.util.Timestamp;
-import com.qtplaf.platform.database.tables.DataPrice;
+import com.qtplaf.platform.database.Names.Fields;
 
 /**
  * A formatter for Bar time that adapts to the period.
@@ -92,6 +92,6 @@ public class TimeFmtValue extends AbstractFormatter implements FieldCalculator {
 
 	@Override
 	public Value getValue(Record record) {
-		return record.getValue(DataPrice.Fields.Time);
+		return record.getValue(Fields.Time);
 	}
 }

@@ -16,7 +16,9 @@ package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Names.Schemas;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -27,23 +29,6 @@ import com.qtplaf.platform.util.PersistorUtils;
  */
 public class Instruments extends Table {
 
-	/** Field names. */
-	public interface Fields {
-		String ServerId = "server_id";
-		String InstrumentId = "instr_id";
-		String InstrumentDesc = "instr_desc";
-		String InstrumentPipValue = "instr_pipv";
-		String InstrumentPipScale = "instr_pips";
-		String InstrumentTickValue = "instr_tickv";
-		String InstrumentTickScale = "instr_ticks";
-		String InstrumentVolumeScale = "instr_vols";
-		String InstrumentPrimaryCurrency = "instr_currp";
-		String InstrumentSecondaryCurrency = "instr_currs";
-	}
-
-	/** Table name. */
-	public static final String Name = "instruments";
-
 	/**
 	 * Constructor.
 	 * 
@@ -52,8 +37,8 @@ public class Instruments extends Table {
 	public Instruments(Session session) {
 		super(session);
 		
-		setName(Name);
-		setSchema(Names.getSchema());
+		setName(Tables.Instruments);
+		setSchema(Schemas.qtp);
 		
 		addField(FieldUtils.getServerId(session, Fields.ServerId));
 		addField(FieldUtils.getInstrumentId(session, Fields.InstrumentId));

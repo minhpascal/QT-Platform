@@ -38,8 +38,8 @@ import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.tables.Tickers;
-import com.qtplaf.platform.statistics.Fields;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.statistics.FieldSrc;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -91,7 +91,7 @@ public class StatesIndicator extends Indicator {
 		int lookBackward = 0;
 		for (Field field : fields) {
 			info.addOutput(field.getName(), field.getTitle(), index++);
-			int period = Fields.getPropertyAverage(field).getPeriod();
+			int period = FieldSrc.Properties.getAverage(field).getPeriod();
 			lookBackward = Math.max(lookBackward, period);
 		}
 		info.setLookBackward(lookBackward);
@@ -142,7 +142,7 @@ public class StatesIndicator extends Indicator {
 
 				// The first input source is a persistor data list on the price (instrument-period).
 				Record record = RecordUtils.getRecordTicker(getSession(), server, instrument, period);
-				String tableName = record.getValue(Tickers.Fields.TableName).getString();
+				String tableName = record.getValue(Fields.TableName).getString();
 				DataInfo infoPrice = new PriceInfo(getSession(), instrument, period);
 				Persistor persistor = PersistorUtils.getPersistorDataPrice(getSession(), server, tableName);
 				price = new PersistorDataList(getSession(), infoPrice, persistor);
@@ -175,7 +175,7 @@ public class StatesIndicator extends Indicator {
 	private IndicatorDataList getDataListAverage(Field averageField) {
 		DataList dataList = mapDataLists.get(averageField.getName());
 		if (dataList == null) {
-			Average average = Fields.getPropertyAverage(averageField);
+			Average average = FieldSrc.Properties.getAverage(averageField);
 			if (average.getType().equals(Average.Type.SMA)) {
 				dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 					getDataListPrice(),

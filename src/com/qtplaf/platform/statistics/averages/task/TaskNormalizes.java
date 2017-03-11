@@ -27,7 +27,7 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
-import com.qtplaf.platform.statistics.Fields;
+import com.qtplaf.platform.statistics.FieldSrc.Properties;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.statistics.averages.configuration.Calculation;
@@ -192,7 +192,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Normalizer normDisc = Fields.getPropertySpread(fieldDisc).getNormalizer();
+						Normalizer normDisc = Properties.getSpread(fieldDisc).getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -211,7 +211,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Normalizer normDisc = Fields.getPropertySpeed(fieldDisc).getNormalizer();
+						Normalizer normDisc = Properties.getSpeed(fieldDisc).getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -230,7 +230,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Calculation calculation = Fields.getPropertyCalculation(fieldDisc);
+						Calculation calculation = Properties.getCalculation(fieldDisc);
 						Normalizer normDisc = calculation.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);

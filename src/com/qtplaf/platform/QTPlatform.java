@@ -51,14 +51,9 @@ import com.qtplaf.platform.action.ActionAvailableInstruments;
 import com.qtplaf.platform.action.ActionStatistics;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
-import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.tables.DataFilters;
-import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.OfferSides;
-import com.qtplaf.platform.database.tables.Periods;
-import com.qtplaf.platform.database.tables.Servers;
-import com.qtplaf.platform.database.tables.StatisticsDefs;
-import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Names.Schemas;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
 import com.qtplaf.platform.util.TableUtils;
@@ -178,14 +173,14 @@ public class QTPlatform {
 		PersistorDDL ddl = PersistorUtils.getDDL();
 
 		// Check for the system schema.
-		if (!ddl.existsSchema(Names.getSchema())) {
-			ddl.createSchema(Names.getSchema());
+		if (!ddl.existsSchema(Schemas.qtp)) {
+			ddl.createSchema(Schemas.qtp);
 		}
 
 		// Check for supported servers schemas.
 		List<Server> servers = ServerFactory.getSupportedServers();
 		for (Server server : servers) {
-			String schema = Names.getSchema(server);
+			String schema = Schemas.server(server);
 			if (!ddl.existsSchema(schema)) {
 				ddl.createSchema(schema);
 			}
@@ -198,35 +193,35 @@ public class QTPlatform {
 		synchronizeSupportedServer(session);
 
 		// Check for the necessary table Periods in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Periods.Name)) {
+		if (!ddl.existsTable(Schemas.qtp, Tables.Periods)) {
 			ddl.buildTable(TableUtils.getTablePeriods(session));
 		}
 		synchronizeStandardPeriods(session);
 
 		// Check for the necessary table OfferSides in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), OfferSides.Name)) {
+		if (!ddl.existsTable(Schemas.qtp, Tables.OfferSides)) {
 			ddl.buildTable(TableUtils.getTableOfferSides(session));
 		}
 		synchronizeStandardOfferSides(session, dbEngine);
 
 		// Check for the necessary table DataFilters in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), DataFilters.Name)) {
+		if (!ddl.existsTable(Schemas.qtp, Tables.DataFilters)) {
 			ddl.buildTable(TableUtils.getTableDataFilters(session));
 		}
 		synchronizeStandardDataFilters(session);
 
 		// Check for the necessary table Instruments in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Instruments.Name)) {
+		if (!ddl.existsTable(Schemas.qtp, Tables.Instruments)) {
 			ddl.buildTable(TableUtils.getTableInstruments(session));
 		}
 
 		// Check for the necessary table Tickers in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), Tickers.Name)) {
+		if (!ddl.existsTable(Schemas.qtp, Tables.Tickers)) {
 			ddl.buildTable(TableUtils.getTableTickers(session));
 		}
 
 		// Check for the necessary table Statistics in the system schema.
-		if (!ddl.existsTable(Names.getSchema(), StatisticsDefs.Name)) {
+		if (!ddl.existsTable(Schemas.qtp, Tables.Statistics)) {
 			ddl.buildTable(TableUtils.getTableStatistics(session));
 		}
 	}
@@ -302,7 +297,7 @@ public class QTPlatform {
 				if (server
 					.getId()
 					.toLowerCase()
-					.equals(record.getValue(Servers.Fields.ServerId).toString().toLowerCase())) {
+					.equals(record.getValue(Fields.ServerId).toString().toLowerCase())) {
 					remove = false;
 					break;
 				}
@@ -318,7 +313,7 @@ public class QTPlatform {
 			boolean included = false;
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
-				if (record.getValue(Servers.Fields.ServerId).toString().toLowerCase().equals(id)) {
+				if (record.getValue(Fields.ServerId).toString().toLowerCase().equals(id)) {
 					included = true;
 					break;
 				}

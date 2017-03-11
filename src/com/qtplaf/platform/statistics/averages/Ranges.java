@@ -38,7 +38,8 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Names.Schemas;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
@@ -129,8 +130,8 @@ public class Ranges extends Averages {
 
 		Table table = new Table();
 
-		table.setName(Names.getTable(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Names.getSchema(getServer()));
+		table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
+		table.setSchema(Schemas.server(getServer()));
 
 		table.addField(getFields().getName());
 		table.addField(getFields().getMinMax());

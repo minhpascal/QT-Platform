@@ -22,10 +22,8 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.database.formatters.DataValue;
-import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.StatisticsDefs;
-import com.qtplaf.platform.database.tables.Tickers;
 
 /**
  * Centralizes recordset operations.
@@ -46,7 +44,7 @@ public class RecordSetUtils {
 
 		Persistor persistor = PersistorUtils.getPersistorInstruments(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(Instruments.Fields.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 
 		// Track max pip and tick scale to set their values decimals.
@@ -54,14 +52,14 @@ public class RecordSetUtils {
 		int maxTickScale = 0;
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			maxPipScale = Math.max(maxPipScale, record.getValue(Instruments.Fields.InstrumentPipScale).getInteger());
-			maxTickScale = Math.max(maxTickScale, record.getValue(Instruments.Fields.InstrumentTickScale).getInteger());
+			maxPipScale = Math.max(maxPipScale, record.getValue(Fields.InstrumentPipScale).getInteger());
+			maxTickScale = Math.max(maxTickScale, record.getValue(Fields.InstrumentTickScale).getInteger());
 		}
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
-			record.getField(Instruments.Fields.InstrumentPipValue).setFormatter(
+			record.getField(Fields.InstrumentPipValue).setFormatter(
 				new DataValue(session, maxPipScale));
-			record.getField(Instruments.Fields.InstrumentTickValue).setFormatter(
+			record.getField(Fields.InstrumentTickValue).setFormatter(
 				new DataValue(session, maxTickScale));
 		}
 
@@ -79,7 +77,7 @@ public class RecordSetUtils {
 	public static RecordSet getRecordSetTickers(Session session, Server server) throws Exception {
 		Persistor persistor = PersistorUtils.getPersistorTickers(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(Tickers.Fields.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}
@@ -95,7 +93,7 @@ public class RecordSetUtils {
 	public static RecordSet getRecordSetStatistics(Session session, Server server) throws Exception {
 		Persistor persistor = PersistorUtils.getPersistorStatistics(session);
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(persistor.getField(StatisticsDefs.Fields.ServerId), new Value(server.getId())));
+		criteria.add(Condition.fieldEQ(persistor.getField(Fields.ServerId), new Value(server.getId())));
 		RecordSet recordSet = persistor.select(criteria);
 		return recordSet;
 	}

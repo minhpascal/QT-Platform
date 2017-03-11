@@ -20,11 +20,11 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.database.formatters.VolumeValue;
-import com.qtplaf.platform.database.tables.DataPrice;
 import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordUtils;
@@ -103,16 +103,16 @@ public class Formatters {
 		// Time based on period.
 		Period period = Period.parseId(periodId);
 		TimeFmtValue timeFmt = new TimeFmtValue(period.getUnit());
-		persistor.getField(DataPrice.Fields.TimeFmt).setFormatter(timeFmt);
-		persistor.getField(DataPrice.Fields.TimeFmt).setCalculator(timeFmt);
+		persistor.getField(Fields.TimeFmt).setFormatter(timeFmt);
+		persistor.getField(Fields.TimeFmt).setCalculator(timeFmt);
 
 		Record recordInstr = RecordUtils.getRecordInstrument(session, serverId, instrId);
 		Instrument instrument = InstrumentUtils.getInstrumentFromRecordInstruments(recordInstr);
-		persistor.getField(DataPrice.Fields.Open).setFormatter(new TickValue(session, instrument));
-		persistor.getField(DataPrice.Fields.High).setFormatter(new TickValue(session, instrument));
-		persistor.getField(DataPrice.Fields.Low).setFormatter(new TickValue(session, instrument));
-		persistor.getField(DataPrice.Fields.Close).setFormatter(new TickValue(session, instrument));
-		persistor.getField(DataPrice.Fields.Volume).setFormatter(new VolumeValue(session, instrument));
+		persistor.getField(Fields.Open).setFormatter(new TickValue(session, instrument));
+		persistor.getField(Fields.High).setFormatter(new TickValue(session, instrument));
+		persistor.getField(Fields.Low).setFormatter(new TickValue(session, instrument));
+		persistor.getField(Fields.Close).setFormatter(new TickValue(session, instrument));
+		persistor.getField(Fields.Volume).setFormatter(new VolumeValue(session, instrument));
 	}
 
 }

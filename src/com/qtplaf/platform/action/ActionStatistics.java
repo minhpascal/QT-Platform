@@ -44,8 +44,7 @@ import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
 import com.qtplaf.platform.database.Lookup;
-import com.qtplaf.platform.database.tables.Periods;
-import com.qtplaf.platform.database.tables.StatisticsDefs;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
 import com.qtplaf.platform.util.FormUtils;
@@ -157,7 +156,7 @@ public class ActionStatistics extends AbstractAction {
 				if (rcStats == null) {
 					return;
 				}
-				String statsId = rcStats.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+				String statsId = rcStats.getValue(Fields.StatisticsId).getString();
 				Manager manager = new Manager(session);
 				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
 
@@ -213,9 +212,9 @@ public class ActionStatistics extends AbstractAction {
 				int row = getTableRecord().getSelectedRow();
 				for (Record record : records) {
 					PersistorUtils.getPersistorStatistics(session).delete(record);
-					String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
-					String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
-					String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+					String instrId = record.getValue(Fields.InstrumentId).getString();
+					String periodId = record.getValue(Fields.PeriodId).getString();
+					String statsId = record.getValue(Fields.StatisticsId).getString();
 					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
 					Period period = Period.parseId(periodId);
 					Manager manager = new Manager(session);
@@ -270,10 +269,10 @@ public class ActionStatistics extends AbstractAction {
 			JTableRecord tableRecord = new JTableRecord(getSession(), ListSelectionModel.SINGLE_SELECTION);
 			JPanelTableRecord panelTableRecord = new JPanelTableRecord(tableRecord);
 			TableModelRecord tableModelRecord = new TableModelRecord(getSession(), masterRecord);
-			tableModelRecord.addColumn(StatisticsDefs.Fields.InstrumentId);
-			tableModelRecord.addColumn(Periods.Fields.PeriodName);
-			tableModelRecord.addColumn(StatisticsDefs.Fields.StatisticsId);
-			tableModelRecord.addColumn(StatisticsDefs.Fields.TableName);
+			tableModelRecord.addColumn(Fields.InstrumentId);
+			tableModelRecord.addColumn(Fields.PeriodName);
+			tableModelRecord.addColumn(Fields.StatisticsId);
+			tableModelRecord.addColumn(Fields.TableName);
 
 			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(getSession(), getServer()));
 			tableRecord.setModel(tableModelRecord);
@@ -310,7 +309,7 @@ public class ActionStatistics extends AbstractAction {
 	 * @return The instrument.
 	 */
 	public Instrument getInstrument(Record record) {
-		String instrId = record.getValue(StatisticsDefs.Fields.InstrumentId).getString();
+		String instrId = record.getValue(Fields.InstrumentId).getString();
 		Instrument instrument = InstrumentUtils.getInstrument(getSession(), getServer().getId(), instrId);
 		return instrument;
 	}
@@ -322,7 +321,7 @@ public class ActionStatistics extends AbstractAction {
 	 * @return The period.
 	 */
 	public Period getPeriod(Record record) {
-		String periodId = record.getValue(StatisticsDefs.Fields.PeriodId).getString();
+		String periodId = record.getValue(Fields.PeriodId).getString();
 		Period period = Period.parseId(periodId);
 		return period;
 	}
@@ -336,7 +335,7 @@ public class ActionStatistics extends AbstractAction {
 	public TickerStatistics getStatistics(Record record) {
 		Instrument instrument = getInstrument(record);
 		Period period = getPeriod(record);
-		String statsId = record.getValue(StatisticsDefs.Fields.StatisticsId).getString();
+		String statsId = record.getValue(Fields.StatisticsId).getString();
 		Manager manager = new Manager(getSession());
 		TickerStatistics statistics = manager.getStatistics(getServer(), instrument, period, statsId);
 		return statistics;

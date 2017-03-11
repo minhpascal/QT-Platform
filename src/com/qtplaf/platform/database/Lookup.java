@@ -22,9 +22,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.Periods;
-import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordSetUtils;
 
@@ -48,15 +46,15 @@ public class Lookup {
 		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
 		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersAvInst").toLowerCase());
 		lookup.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lookup.addColumn(Instruments.Fields.InstrumentId);
-		lookup.addColumn(Instruments.Fields.InstrumentDesc);
-		lookup.addColumn(Instruments.Fields.InstrumentPipValue);
-		lookup.addColumn(Instruments.Fields.InstrumentPipScale);
-		lookup.addColumn(Instruments.Fields.InstrumentTickValue);
-		lookup.addColumn(Instruments.Fields.InstrumentTickScale);
-		lookup.addColumn(Instruments.Fields.InstrumentVolumeScale);
-		lookup.addColumn(Instruments.Fields.InstrumentPrimaryCurrency);
-		lookup.addColumn(Instruments.Fields.InstrumentSecondaryCurrency);
+		lookup.addColumn(Fields.InstrumentId);
+		lookup.addColumn(Fields.InstrumentDesc);
+		lookup.addColumn(Fields.InstrumentPipValue);
+		lookup.addColumn(Fields.InstrumentPipScale);
+		lookup.addColumn(Fields.InstrumentTickValue);
+		lookup.addColumn(Fields.InstrumentTickScale);
+		lookup.addColumn(Fields.InstrumentVolumeScale);
+		lookup.addColumn(Fields.InstrumentPrimaryCurrency);
+		lookup.addColumn(Fields.InstrumentSecondaryCurrency);
 		Record selected = lookup.lookupRecord(recordSet);
 		return InstrumentUtils.getInstrumentFromRecordInstruments(selected);
 	}
@@ -75,9 +73,9 @@ public class Lookup {
 		JLookupRecords lookup = new JLookupRecords(session, masterRecord);
 		lookup.setTitle(server.getName() + " " + session.getString("qtMenuServersTickers").toLowerCase());
 		lookup.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		lookup.addColumn(Tickers.Fields.InstrumentId);
-		lookup.addColumn(Periods.Fields.PeriodName);
-		lookup.addColumn(Tickers.Fields.TableName);
+		lookup.addColumn(Fields.InstrumentId);
+		lookup.addColumn(Fields.PeriodName);
+		lookup.addColumn(Fields.TableName);
 		Record selected = lookup.lookupRecord(recordSet);
 		return selected;
 	}

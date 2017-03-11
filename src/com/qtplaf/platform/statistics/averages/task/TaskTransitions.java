@@ -64,18 +64,6 @@ public class TaskTransitions extends TaskAverages {
 	private String indexGroupName;
 	/** Short cut to index name. */
 	private String indexName;
-	/** Transition value hight. */
-	private String valueHighName;
-	/** Transition value low. */
-	private String valueLowName;
-	/** Transition value close. */
-	private String valueCloseName;
-	/** Short cut to delta high name. */
-	private String deltaHighName;
-	/** Short cut to delta low name. */
-	private String deltaLowName;
-	/** Short cut to delta close name. */
-	private String deltaCloseName;
 
 	/**
 	 * Constructor.
@@ -99,17 +87,10 @@ public class TaskTransitions extends TaskAverages {
 		keyName = transitions.getFields().getState().getName();
 		keyInputName = transitions.getFields().getStateInput().getName();
 		keyOutputName = transitions.getFields().getStateOutput().getName();
-		indexInputName = transitions.getFields().getIndexInput().getName();
-		indexOutputName = transitions.getFields().getIndexOutput().getName();
+		indexInputName = transitions.getFields().getIndexIn().getName();
+		indexOutputName = transitions.getFields().getIndexOut().getName();
 		indexGroupName = transitions.getFields().getIndexGroup().getName();
 		indexName = transitions.getFields().getIndex().getName();
-		valueHighName = transitions.getFields().getTransitionValueHigh().getName();
-		valueLowName = transitions.getFields().getTransitionValueLow().getName();
-		valueCloseName = transitions.getFields().getTransitionValueClose().getName();
-
-		deltaHighName = states.getFields().getDeltaHight().getName();
-		deltaLowName = states.getFields().getDeltaLow().getName();
-		deltaCloseName = states.getFields().getDeltaClose().getName();
 
 		setNameAndDescription(transitions, "Transitions values");
 	}
@@ -282,9 +263,6 @@ public class TaskTransitions extends TaskAverages {
 					transition.setValue(indexInputName, indexInput);
 					transition.setValue(indexOutputName, indexOutput);
 					transition.setValue(indexGroupName, group);
-					transition.setValue(valueHighName, stateOutput.getValue(deltaHighName));
-					transition.setValue(valueLowName, stateOutput.getValue(deltaLowName));
-					transition.setValue(valueCloseName, stateOutput.getValue(deltaCloseName));
 
 					 List<Field> spreads = getStates().getFieldListSpreads(Suffix.dsc);
 					 List<Field> spreadsIn = getTransitions().getFieldListSpreads(Suffix.in);

@@ -18,7 +18,9 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Names.Schemas;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -29,18 +31,6 @@ import com.qtplaf.platform.util.PersistorUtils;
  */
 public class StatisticsDefs extends Table {
 
-	/** Field names. */
-	public interface Fields {
-		String ServerId = "server_id";
-		String InstrumentId = "instr_id";
-		String PeriodId = "period_id";
-		String StatisticsId = "stats_id";
-		String TableName = "table_name";
-	}
-
-	/** Table name. */
-	public static final String Name = "statistics";
-
 	/**
 	 * Constructor.
 	 * 
@@ -49,8 +39,8 @@ public class StatisticsDefs extends Table {
 	public StatisticsDefs(Session session) {
 		super(session);
 
-		setName(Name);
-		setSchema(Names.getSchema());
+		setName(Tables.Statistics);
+		setSchema(Schemas.qtp);
 
 		addField(FieldUtils.getServerId(session, Fields.ServerId));
 		addField(FieldUtils.getInstrumentId(session, Fields.InstrumentId));
@@ -67,15 +57,15 @@ public class StatisticsDefs extends Table {
 		ForeignKey fkPeriods = new ForeignKey(false);
 		fkPeriods.setLocalTable(this);
 		fkPeriods.setForeignTable(tablePeriods);
-		fkPeriods.add(getField(Fields.PeriodId), tablePeriods.getField(Periods.Fields.PeriodId));
+		fkPeriods.add(getField(Fields.PeriodId), tablePeriods.getField(Fields.PeriodId));
 		addForeignKey(fkPeriods);
 		
 		
 		Order order = new Order();
 		order.add(getField(Fields.ServerId));
 		order.add(getField(Fields.InstrumentId));
-		order.add(tablePeriods.getField(Periods.Fields.PeriodUnitIndex));
-		order.add(tablePeriods.getField(Periods.Fields.PeriodSize));
+		order.add(tablePeriods.getField(Fields.PeriodUnitIndex));
+		order.add(tablePeriods.getField(Fields.PeriodSize));
 		order.add(getField(Fields.StatisticsId));
 		
 		setPersistor(PersistorUtils.getPersistor(getComplexView(order)));

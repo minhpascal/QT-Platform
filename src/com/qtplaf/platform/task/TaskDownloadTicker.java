@@ -35,8 +35,8 @@ import com.qtplaf.library.trading.server.DataIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.Names;
-import com.qtplaf.platform.database.tables.DataPrice;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.util.RecordUtils;
 import com.qtplaf.platform.util.TableUtils;
 
@@ -219,7 +219,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 * @return The table.
 	 */
 	private Table getTable() {
-		String tableName = Names.getTable(instrument, period);
+		String tableName = Tables.ticker(instrument, period);
 		return TableUtils.getTableDataPrice(getSession(), server, tableName);
 	}
 
@@ -287,7 +287,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private long getTimeOfLastDowloaded() throws PersistorException {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(DataPrice.Fields.Time);
+		Field fTIME = persistor.getField(Fields.Time);
 		Order order = new Order();
 		order.add(fTIME, false);
 		Record record = null;
@@ -297,7 +297,7 @@ public class TaskDownloadTicker extends TaskRunner {
 		}
 		iter.close();
 		if (record != null) {
-			return record.getValue(DataPrice.Fields.Time).getLong();
+			return record.getValue(Fields.Time).getLong();
 		}
 		return -1;
 	}
@@ -330,7 +330,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private void deleteFromTimeFrom() throws Exception {
 		Persistor persistor = getPersistor();
-		Field fTIME = persistor.getField(DataPrice.Fields.Time);
+		Field fTIME = persistor.getField(Fields.Time);
 		Value vTIME = new Value(getTimeFrom());
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldGT(fTIME, vTIME));

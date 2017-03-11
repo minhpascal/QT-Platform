@@ -23,8 +23,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.platform.database.tables.Instruments;
-import com.qtplaf.platform.database.tables.Tickers;
+import com.qtplaf.platform.database.Names.Fields;
 
 /**
  * Centralizes instrument operations.
@@ -66,8 +65,8 @@ public class InstrumentUtils {
 			return null;
 		}
 		try {
-			Value vSERVER_ID = record.getValue(Tickers.Fields.ServerId);
-			Value vINSTR_ID = record.getValue(Tickers.Fields.InstrumentId);
+			Value vSERVER_ID = record.getValue(Fields.ServerId);
+			Value vINSTR_ID = record.getValue(Fields.InstrumentId);
 			Record recordInstr = RecordUtils.getRecordInstrument(session, vSERVER_ID, vINSTR_ID);
 			return getInstrumentFromRecordInstruments(recordInstr);
 		} catch (Exception exc) {
@@ -87,16 +86,16 @@ public class InstrumentUtils {
 			return null;
 		}
 		Instrument instrument = new Instrument();
-		instrument.setId(record.getValue(Instruments.Fields.InstrumentId).getString());
-		instrument.setDescription(record.getValue(Instruments.Fields.InstrumentDesc).getString());
-		instrument.setPipValue(record.getValue(Instruments.Fields.InstrumentPipValue).getDouble());
-		instrument.setPipScale(record.getValue(Instruments.Fields.InstrumentPipScale).getInteger());
-		instrument.setTickValue(record.getValue(Instruments.Fields.InstrumentTickValue).getDouble());
-		instrument.setTickScale(record.getValue(Instruments.Fields.InstrumentTickScale).getInteger());
-		instrument.setVolumeScale(record.getValue(Instruments.Fields.InstrumentVolumeScale).getInteger());
-		String primaryCurrency = record.getValue(Instruments.Fields.InstrumentPrimaryCurrency).getString();
+		instrument.setId(record.getValue(Fields.InstrumentId).getString());
+		instrument.setDescription(record.getValue(Fields.InstrumentDesc).getString());
+		instrument.setPipValue(record.getValue(Fields.InstrumentPipValue).getDouble());
+		instrument.setPipScale(record.getValue(Fields.InstrumentPipScale).getInteger());
+		instrument.setTickValue(record.getValue(Fields.InstrumentTickValue).getDouble());
+		instrument.setTickScale(record.getValue(Fields.InstrumentTickScale).getInteger());
+		instrument.setVolumeScale(record.getValue(Fields.InstrumentVolumeScale).getInteger());
+		String primaryCurrency = record.getValue(Fields.InstrumentPrimaryCurrency).getString();
 		instrument.setPrimaryCurrency(Currency.getInstance(primaryCurrency));
-		String secondaryCurrency = record.getValue(Instruments.Fields.InstrumentSecondaryCurrency).getString();
+		String secondaryCurrency = record.getValue(Fields.InstrumentSecondaryCurrency).getString();
 		instrument.setSecondaryCurrency(Currency.getInstance(secondaryCurrency));
 		return instrument;
 	}

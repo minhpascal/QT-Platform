@@ -18,7 +18,9 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.ForeignKey;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
-import com.qtplaf.platform.database.Names;
+import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Names.Schemas;
+import com.qtplaf.platform.database.Names.Tables;
 import com.qtplaf.platform.util.FieldUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 
@@ -29,19 +31,6 @@ import com.qtplaf.platform.util.PersistorUtils;
  */
 public class Tickers extends Table {
 
-	/** Field names. */
-	public interface Fields {
-		String ServerId = "server_id";
-		String InstrumentId = "instr_id";
-		String PeriodId = "period_id";
-		String OfferSide = "offer_side";
-		String DataFilter = "data_filter";
-		String TableName = "table_name";
-	}
-
-	/** Table name. */
-	public static final String Name = "tickers";
-
 	/**
 	 * Constructor.
 	 * 
@@ -50,8 +39,8 @@ public class Tickers extends Table {
 	public Tickers(Session session) {
 		super(session);
 
-		setName(Name);
-		setSchema(Names.getSchema());
+		setName(Tables.Tickers);
+		setSchema(Schemas.qtp);
 
 		addField(FieldUtils.getServerId(session, Fields.ServerId));
 		addField(FieldUtils.getInstrumentId(session, Fields.InstrumentId));
@@ -68,28 +57,28 @@ public class Tickers extends Table {
 		ForeignKey fkPeriods = new ForeignKey(false);
 		fkPeriods.setLocalTable(this);
 		fkPeriods.setForeignTable(tablePeriods);
-		fkPeriods.add(getField(Fields.PeriodId), tablePeriods.getField(Periods.Fields.PeriodId));
+		fkPeriods.add(getField(Fields.PeriodId), tablePeriods.getField(Fields.PeriodId));
 		addForeignKey(fkPeriods);
 
 		Table tableOfferSides = new OfferSides(session);
 		ForeignKey fkOfferSides = new ForeignKey(false);
 		fkOfferSides.setLocalTable(this);
 		fkOfferSides.setForeignTable(tableOfferSides);
-		fkOfferSides.add(getField(Fields.OfferSide), tableOfferSides.getField(OfferSides.Fields.OfferSide));
+		fkOfferSides.add(getField(Fields.OfferSide), tableOfferSides.getField(Fields.OfferSide));
 		addForeignKey(fkOfferSides);
 
 		Table tableDataFilters = new DataFilters(session);
 		ForeignKey fkDataFilters = new ForeignKey(false);
 		fkDataFilters.setLocalTable(this);
 		fkDataFilters.setForeignTable(tableDataFilters);
-		fkDataFilters.add(getField(Fields.DataFilter), tableDataFilters.getField(DataFilters.Fields.DataFilter));
+		fkDataFilters.add(getField(Fields.DataFilter), tableDataFilters.getField(Fields.DataFilter));
 		addForeignKey(fkDataFilters);
 		
 		Order order = new Order();
 		order.add(getField(Fields.ServerId));
 		order.add(getField(Fields.InstrumentId));
-		order.add(tablePeriods.getField(Periods.Fields.PeriodUnitIndex));
-		order.add(tablePeriods.getField(Periods.Fields.PeriodSize));
+		order.add(tablePeriods.getField(Fields.PeriodUnitIndex));
+		order.add(tablePeriods.getField(Fields.PeriodSize));
 		
 		setPersistor(PersistorUtils.getPersistor(getComplexView(order)));
 	}

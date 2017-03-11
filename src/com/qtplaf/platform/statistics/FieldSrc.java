@@ -22,13 +22,13 @@ import com.qtplaf.library.database.Field;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.platform.database.Formatters;
+import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.statistics.averages.configuration.Calculation;
 import com.qtplaf.platform.statistics.averages.configuration.Speed;
 import com.qtplaf.platform.statistics.averages.configuration.Spread;
-import com.qtplaf.platform.util.DomainUtils;
 import com.qtplaf.platform.util.FieldUtils;
 
 /**
@@ -36,105 +36,113 @@ import com.qtplaf.platform.util.FieldUtils;
  *
  * @author Miquel Sas
  */
-public class Fields {
-	/**
-	 * Returns the average property of the field.
-	 * 
-	 * @param field The source field.
-	 * @return The average.
-	 */
-	public static Average getPropertyAverage(Field field) {
-		return (Average) field.getProperty("average");
-	}
+public class FieldSrc {
 
 	/**
-	 * Sets the average property to the field.
-	 * 
-	 * @param field The field.
-	 * @param average The average.
+	 * Properties set to fields.
 	 */
-	private static void setPropertyAverage(Field field, Average average) {
-		field.setProperty("average", average);
-	}
+	public static class Properties {
 
-	/**
-	 * Returns the spread property of the field.
-	 * 
-	 * @param field The source field.
-	 * @return The spread.
-	 */
-	public static Spread getPropertySpread(Field field) {
-		return (Spread) field.getProperty("spread");
-	}
+		/**
+		 * Returns the average property of the field.
+		 * 
+		 * @param field The source field.
+		 * @return The average.
+		 */
+		public static Average getAverage(Field field) {
+			return (Average) field.getProperty("average");
+		}
 
-	/**
-	 * Sets the spread property to the field.
-	 * 
-	 * @param field The field.
-	 * @param spread The spread.
-	 */
-	private static void setPropertySpread(Field field, Spread spread) {
-		field.setProperty("spread", spread);
-	}
+		/**
+		 * Sets the average property to the field.
+		 * 
+		 * @param field The field.
+		 * @param average The average.
+		 */
+		private static void setAverage(Field field, Average average) {
+			field.setProperty("average", average);
+		}
 
-	/**
-	 * Returns the speed property of the field.
-	 * 
-	 * @param field The source field.
-	 * @return The speed.
-	 */
-	public static Speed getPropertySpeed(Field field) {
-		return (Speed) field.getProperty("speed");
-	}
+		/**
+		 * Returns the spread property of the field.
+		 * 
+		 * @param field The source field.
+		 * @return The spread.
+		 */
+		public static Spread getSpread(Field field) {
+			return (Spread) field.getProperty("spread");
+		}
 
-	/**
-	 * Sets the speed property to the field.
-	 * 
-	 * @param field The field.
-	 * @param speed The speed.
-	 */
-	private static void setPropertySpeed(Field field, Speed speed) {
-		field.setProperty("speed", speed);
-	}
+		/**
+		 * Sets the spread property to the field.
+		 * 
+		 * @param field The field.
+		 * @param spread The spread.
+		 */
+		private static void setSpread(Field field, Spread spread) {
+			field.setProperty("spread", spread);
+		}
 
-	/**
-	 * Return the source field property.
-	 * 
-	 * @param field The field.
-	 * @return The source field.
-	 */
-	public static Field getPropertySourceField(Field field) {
-		return (Field) field.getProperty("source-field");
-	}
+		/**
+		 * Returns the speed property of the field.
+		 * 
+		 * @param field The source field.
+		 * @return The speed.
+		 */
+		public static Speed getSpeed(Field field) {
+			return (Speed) field.getProperty("speed");
+		}
 
-	/**
-	 * Sets the source field property for the field.
-	 * 
-	 * @param field The field.
-	 * @param source The source field.
-	 */
-	private static void setPropertySourceField(Field field, Field source) {
-		field.setProperty("source-field", source);
-	}
+		/**
+		 * Sets the speed property to the field.
+		 * 
+		 * @param field The field.
+		 * @param speed The speed.
+		 */
+		private static void setSpeed(Field field, Speed speed) {
+			field.setProperty("speed", speed);
+		}
 
-	/**
-	 * Returns the calculation property of a field.
-	 * 
-	 * @param field The field.
-	 * @return The normalizer.
-	 */
-	public static Calculation getPropertyCalculation(Field field) {
-		return (Calculation) field.getProperty("calculation");
-	}
+		/**
+		 * Return the source field property.
+		 * 
+		 * @param field The field.
+		 * @return The source field.
+		 */
+		public static Field getSourceField(Field field) {
+			return (Field) field.getProperty("source-field");
+		}
 
-	/**
-	 * Set the calculation property of the field.
-	 * 
-	 * @param field The field.
-	 * @param normalizer The normalizer.
-	 */
-	private static void setPropertyCalculation(Field field, Calculation calculation) {
-		field.setProperty("calculation", calculation);
+		/**
+		 * Sets the source field property for the field.
+		 * 
+		 * @param field The field.
+		 * @param source The source field.
+		 */
+		private static void setSourceField(Field field, Field source) {
+			field.setProperty("source-field", source);
+		}
+
+		/**
+		 * Returns the calculation property of a field.
+		 * 
+		 * @param field The field.
+		 * @return The normalizer.
+		 */
+		public static Calculation getCalculation(Field field) {
+			return (Calculation) field.getProperty("calculation");
+		}
+
+		/**
+		 * Set the calculation property of the field.
+		 * 
+		 * @param field The field.
+		 * @param normalizer The normalizer.
+		 */
+		private static void setCalculation(Field field, Calculation calculation) {
+			field.setProperty("calculation", calculation);
+		}
+
 	}
 
 	/** Working session. */
@@ -156,7 +164,7 @@ public class Fields {
 	 * @param instrument Instrument.
 	 * @param period Period.
 	 */
-	public Fields(Session session, Instrument instrument, Period period) {
+	public FieldSrc(Session session, Instrument instrument, Period period) {
 		this.session = session;
 		this.instrument = instrument;
 		this.period = period;
@@ -168,13 +176,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getAverage() {
-		String name = "average";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Average);
 		if (field == null) {
-			field = DomainUtils.getDouble(session, "average", "Average", "Average value");
+			field = Domains.getDouble(session, "average", "Average", "Average value");
 			field.setFunction("avg(value)");
 			field.setFormatter(new DataValue(session, 10));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Average, field);
 		}
 		return field;
 	}
@@ -191,9 +198,9 @@ public class Fields {
 		if (field == null) {
 			String header = average.getHeader();
 			String label = average.getLabel();
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, name, header, label);
 			field.setFormatter(Formatters.getTickValue(session, instrument));
-			setPropertyAverage(field, average);
+			Properties.setAverage(field, average);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -205,13 +212,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getAvgStd1() {
-		String name = "avgstd1";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.AvgStd1);
 		if (field == null) {
-			field = DomainUtils.getDouble(session, "avgstd_1", "AvgStd_1", "Avg/1 Stddev value");
+			field = Domains.getDouble(session, "avgstd_1", "AvgStd_1", "Avg/1 Stddev value");
 			field.setPersistent(false);
 			field.setFormatter(new DataValue(session, 2));
-			mapFields.put(name, field);
+			mapFields.put(Fields.AvgStd1, field);
 		}
 		return field;
 	}
@@ -222,13 +228,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getAvgStd2() {
-		String name = "avgstd2";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.AvgStd2);
 		if (field == null) {
-			field = DomainUtils.getDouble(session, "avgstd_2", "AvgStd_2", "Avg/2 Stddev value");
+			field = Domains.getDouble(session, "avgstd_2", "AvgStd_2", "Avg/2 Stddev value");
 			field.setPersistent(false);
 			field.setFormatter(new DataValue(session, 2));
-			mapFields.put(name, field);
+			mapFields.put(Fields.AvgStd2, field);
 		}
 		return field;
 	}
@@ -246,9 +251,9 @@ public class Fields {
 		if (field == null) {
 			String header = calculation.getHeader() + "-" + suffix;
 			String label = calculation.getLabel() + " - " + suffix;
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, name, header, label);
 			field.setFormatter(Formatters.getValueFormatter(session, suffix));
-			setPropertyCalculation(field, calculation);
+			Properties.setCalculation(field, calculation);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -260,12 +265,11 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getClose() {
-		String name = "close";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Close);
 		if (field == null) {
-			field = FieldUtils.getClose(session, name);
+			field = FieldUtils.getClose(session, Fields.Close);
 			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Close, field);
 		}
 		return field;
 	}
@@ -276,12 +280,25 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getCount() {
-		String name = "count";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Count);
 		if (field == null) {
-			field = DomainUtils.getInteger(session, "count", "Count", "Count records for the same value");
+			field = Domains.getInteger(session, Fields.Count);
 			field.setFunction("count(*)");
-			mapFields.put(name, field);
+			mapFields.put(Fields.Count, field);
+		}
+		return field;
+	}
+
+	/**
+	 * Returns the data filter field.
+	 * 
+	 * @return The field.
+	 */
+	public Field getDataFilter() {
+		Field field = mapFields.get(Fields.DataFilter);
+		if (field == null) {
+			field = Domains.getString(session, Fields.DataFilter, 10);
+			mapFields.put(Fields.DataFilter, field);
 		}
 		return field;
 	}
@@ -299,9 +316,9 @@ public class Fields {
 		if (field == null) {
 			String header = "Delta-" + source.getName() + "-" + suffix;
 			String label = "Delta " + source.getName() + " - " + suffix;
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, name, header, label);
 			field.setFormatter(Formatters.getTickValue(session, instrument));
-			setPropertySourceField(field, source);
+			Properties.setSourceField(field, source);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -333,19 +350,18 @@ public class Fields {
 	public Field getDeltaLow() {
 		return getDelta(getLow(), Suffix.nrm);
 	}
-	
+
 	/**
 	 * Returns the high field.
 	 * 
 	 * @return The field.
 	 */
 	public Field getHigh() {
-		String name = "high";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.High);
 		if (field == null) {
-			field = FieldUtils.getHigh(session, name);
+			field = FieldUtils.getHigh(session, Fields.High);
 			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
+			mapFields.put(Fields.High, field);
 		}
 		return field;
 	}
@@ -356,13 +372,10 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getIndex() {
-		String name = "index";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Index);
 		if (field == null) {
-			String header = "Index";
-			String label = "Index";
-			field = FieldUtils.getIndex(session, name, header, label);
-			mapFields.put(name, field);
+			field = FieldUtils.getIndex(session, Fields.Index);
+			mapFields.put(Fields.Index, field);
 		}
 		return field;
 	}
@@ -373,13 +386,10 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getIndexGroup() {
-		String name = "index_group";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.IndexGroup);
 		if (field == null) {
-			String header = "Index group";
-			String label = "Index group";
-			field = FieldUtils.getIndex(session, name, header, label);
-			mapFields.put(name, field);
+			field = FieldUtils.getIndex(session, Fields.IndexGroup);
+			mapFields.put(Fields.IndexGroup, field);
 		}
 		return field;
 	}
@@ -389,14 +399,11 @@ public class Fields {
 	 * 
 	 * @return The field.
 	 */
-	public Field getIndexInput() {
-		String name = "index_in";
-		Field field = mapFields.get(name);
+	public Field getIndexIn() {
+		Field field = mapFields.get(Fields.IndexIn);
 		if (field == null) {
-			String header = "Input index";
-			String label = "Input index";
-			field = FieldUtils.getIndex(session, name, header, label);
-			mapFields.put(name, field);
+			field = FieldUtils.getIndex(session, Fields.IndexIn);
+			mapFields.put(Fields.IndexIn, field);
 		}
 		return field;
 	}
@@ -406,14 +413,11 @@ public class Fields {
 	 * 
 	 * @return The field.
 	 */
-	public Field getIndexOutput() {
-		String name = "index_out";
-		Field field = mapFields.get(name);
+	public Field getIndexOut() {
+		Field field = mapFields.get(Fields.IndexOut);
 		if (field == null) {
-			String header = "Output index";
-			String label = "Output index";
-			field = FieldUtils.getIndex(session, name, header, label);
-			mapFields.put(name, field);
+			field = FieldUtils.getIndex(session, Fields.IndexOut);
+			mapFields.put(Fields.IndexOut, field);
 		}
 		return field;
 	}
@@ -424,12 +428,11 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getLow() {
-		String name = "low";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Low);
 		if (field == null) {
-			field = FieldUtils.getLow(session, name);
+			field = FieldUtils.getLow(session, Fields.Low);
 			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Low, field);
 		}
 		return field;
 	}
@@ -440,13 +443,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getMaximum() {
-		String name = "maximum";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Maximum);
 		if (field == null) {
-			field = DomainUtils.getDouble(session, "maximum", "Maximum", "Maximum value");
+			field = Domains.getDouble(session, Fields.Maximum, "Maximum", "Maximum value");
 			field.setFunction("max(value)");
 			field.setFormatter(new DataValue(session, 10));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Maximum, field);
 		}
 		return field;
 	}
@@ -457,13 +459,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getMinimum() {
-		String name = "minimum";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Minimum);
 		if (field == null) {
-			field = DomainUtils.getDouble(session, "minimum", "Minimum", "Minimum value");
+			field = Domains.getDouble(session, Fields.Minimum, "Minimum", "Minimum value");
 			field.setFunction("min(value)");
 			field.setFormatter(new DataValue(session, 10));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Minimum, field);
 		}
 		return field;
 	}
@@ -474,14 +475,11 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getMinMax() {
-		String name = "min_max";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.MinMax);
 		if (field == null) {
 			int length = 3;
-			String header = "Min/Max";
-			String label = "Minimum/Maximum calculation";
-			field = DomainUtils.getString(session, name, length, header, label);
-			mapFields.put(name, field);
+			field = Domains.getString(session, Fields.MinMax, length);
+			mapFields.put(Fields.MinMax, field);
 		}
 		return field;
 	}
@@ -492,14 +490,11 @@ public class Fields {
 	 * @return The field definition.
 	 */
 	public Field getName() {
-		String name = "name";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Name);
 		if (field == null) {
 			int length = 40;
-			String header = "Name";
-			String label = "Value name";
-			field = DomainUtils.getString(session, name, length, header, label);
-			mapFields.put(name, field);
+			field = Domains.getString(session, Fields.Name, length);
+			mapFields.put(Fields.Name, field);
 		}
 		return field;
 	}
@@ -510,14 +505,13 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getOpen() {
-		String name = "open";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Open);
 		if (field == null) {
 			String header = "Open";
 			String label = "Open price";
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, Fields.Open, header, label);
 			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Open, field);
 		}
 		return field;
 	}
@@ -528,13 +522,10 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getPeriod() {
-		String name = "period";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Period);
 		if (field == null) {
-			String header = "Period";
-			String label = "Period";
-			field = DomainUtils.getInteger(session, name, header, label);
-			mapFields.put(name, field);
+			field = Domains.getInteger(session, Fields.Period);
+			mapFields.put(Fields.Period, field);
 		}
 		return field;
 	}
@@ -552,9 +543,9 @@ public class Fields {
 		if (field == null) {
 			String header = speed.getHeader() + "-" + suffix;
 			String label = speed.getLabel() + " - " + suffix;
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, name, header, label);
 			field.setFormatter(Formatters.getValueFormatter(session, suffix));
-			setPropertySpeed(field, speed);
+			Properties.setSpeed(field, speed);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -573,9 +564,9 @@ public class Fields {
 		if (field == null) {
 			String header = spread.getHeader() + "-" + suffix;
 			String label = spread.getLabel() + " - " + suffix;
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, name, header, label);
 			field.setFormatter(Formatters.getValueFormatter(session, suffix));
-			setPropertySpread(field, spread);
+			Properties.setSpread(field, spread);
 			mapFields.put(name, field);
 		}
 		return field;
@@ -587,15 +578,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getState() {
-		String name = "state";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.State);
 		if (field == null) {
 			int length = 100;
-			String header = "State key";
-			String label = "State key";
-			field = DomainUtils.getString(session, name, length, header, label);
+			field = Domains.getString(session, Fields.State, length);
 			field.setNullable(true);
-			mapFields.put(name, field);
+			mapFields.put(Fields.State, field);
 		}
 		return field;
 	}
@@ -606,14 +594,11 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getStateInput() {
-		String name = "state_in";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.StateIn);
 		if (field == null) {
 			int length = 100;
-			String header = "Input state key";
-			String label = "Input state key";
-			field = DomainUtils.getString(session, name, length, header, label);
-			mapFields.put(name, field);
+			field = Domains.getString(session, Fields.StateIn, length);
+			mapFields.put(Fields.StateIn, field);
 		}
 		return field;
 	}
@@ -624,14 +609,11 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getStateOutput() {
-		String name = "state_out";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.StateOut);
 		if (field == null) {
 			int length = 100;
-			String header = "Output state key";
-			String label = "Output state key";
-			field = DomainUtils.getString(session, name, length, header, label);
-			mapFields.put(name, field);
+			field = Domains.getString(session, Fields.StateOut, length);
+			mapFields.put(Fields.StateOut, field);
 		}
 		return field;
 	}
@@ -642,13 +624,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getStdDev() {
-		String name = "stddev";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.StdDev);
 		if (field == null) {
-			field = DomainUtils.getDouble(session, "stddev", "Std Dev", "Standard deviation value");
+			field = Domains.getDouble(session, Fields.StdDev, "Std Dev", "Standard deviation value");
 			field.setFunction("stddev(value)");
 			field.setFormatter(new DataValue(session, 10));
-			mapFields.put(name, field);
+			mapFields.put(Fields.StdDev, field);
 		}
 		return field;
 	}
@@ -659,11 +640,10 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getTime() {
-		String name = "time";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Time);
 		if (field == null) {
-			field = FieldUtils.getTime(session, name);
-			mapFields.put(name, field);
+			field = FieldUtils.getTime(session, Fields.Time);
+			mapFields.put(Fields.Time, field);
 		}
 		return field;
 	}
@@ -674,67 +654,12 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getTimeFmt() {
-		String name = "time_fmt";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.TimeFmt);
 		if (field == null) {
-			field = FieldUtils.getTimeFmt(session, name);
+			field = FieldUtils.getTimeFmt(session, Fields.TimeFmt);
 			field.setFormatter(Formatters.getTimeFmtValue(period));
 			field.setCalculator(Formatters.getTimeFmtValue(period));
-			mapFields.put(name, field);
-		}
-		return field;
-	}
-
-	/**
-	 * Returns the transition value field.v
-	 * 
-	 * @return The field.
-	 */
-	public Field getTransitionValueClose() {
-		String name = "value_close";
-		Field field = mapFields.get(name);
-		if (field == null) {
-			String header = "Value close";
-			String label = "Transition value close";
-			field = DomainUtils.getDouble(session, name, header, label);
-			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
-		}
-		return field;
-	}
-
-	/**
-	 * Returns the transition value field.v
-	 * 
-	 * @return The field.
-	 */
-	public Field getTransitionValueHigh() {
-		String name = "value_high";
-		Field field = mapFields.get(name);
-		if (field == null) {
-			String header = "Value high";
-			String label = "Transition value high";
-			field = DomainUtils.getDouble(session, name, header, label);
-			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
-		}
-		return field;
-	}
-
-	/**
-	 * Returns the transition value field.
-	 * 
-	 * @return The field.
-	 */
-	public Field getTransitionValueLow() {
-		String name = "value_low";
-		Field field = mapFields.get(name);
-		if (field == null) {
-			String header = "Value low";
-			String label = "Transition value low";
-			field = DomainUtils.getDouble(session, name, header, label);
-			field.setFormatter(Formatters.getTickValue(session, instrument));
-			mapFields.put(name, field);
+			mapFields.put(Fields.TimeFmt, field);
 		}
 		return field;
 	}
@@ -745,14 +670,13 @@ public class Fields {
 	 * @return The field.
 	 */
 	public Field getValue() {
-		String name = "value";
-		Field field = mapFields.get(name);
+		Field field = mapFields.get(Fields.Value);
 		if (field == null) {
 			String header = "Value";
 			String label = "Value";
-			field = DomainUtils.getDouble(session, name, header, label);
+			field = Domains.getDouble(session, Fields.Value, header, label);
 			field.setFormatter(new DataValue(session, 10));
-			mapFields.put(name, field);
+			mapFields.put(Fields.Value, field);
 		}
 		return field;
 	}
