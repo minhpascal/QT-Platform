@@ -167,7 +167,7 @@ public class TaskStates extends TaskAverages {
 			{
 				List<Field> fields = states.getFieldListSpreads(Suffix.raw);
 				for (Field field : fields) {
-					Spread spread = Fields.Properties.getSpread(field);
+					Spread spread = (Spread) field.getProperty(Fields.Properties.Spread);
 					String avgFastName = spread.getFastAverage().getName();
 					String avgSlowName = spread.getSlowAverage().getName();
 					double valueFast = data.getValue(info.getOutputIndex(avgFastName));
@@ -183,7 +183,7 @@ public class TaskStates extends TaskAverages {
 					Data prev = indicatorList.get(index - 1);
 					List<Field> fields = states.getFieldListSpeeds(Suffix.raw);
 					for (Field field : fields) {
-						Speed speed = Fields.Properties.getSpeed(field);
+						Speed speed = (Speed) field.getProperty(Fields.Properties.Speed);
 						String avgName = speed.getAverage().getName();
 						double valueCurr = data.getValue(info.getOutputIndex(avgName));
 						double valuePrev = prev.getValue(info.getOutputIndex(avgName));
@@ -197,7 +197,7 @@ public class TaskStates extends TaskAverages {
 			{
 				List<Field> fields = states.getFieldListCalculations(Suffix.raw);
 				for (Field field : fields) {
-					Calculation calculation = Fields.Properties.getCalculation(field);
+					Calculation calculation = (Calculation) field.getProperty(Fields.Properties.Calculation);
 					FieldCalculator calculator = calculation.getCalculator();
 					record.setValue(field.getName(), calculator.getValue(record));
 				}				

@@ -492,4 +492,16 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return b.toString();
 	}
+
+	/**
+	 * Returns the suffix given the separator.
+	 * 
+	 * @param src The source string.
+	 * @param sep The seprator.
+	 * @return The suffix.
+	 */
+	public static String getSuffix(String src, String sep) {
+		int index = src.lastIndexOf(sep);
+		return src.substring(index + 1);
+	}
 }

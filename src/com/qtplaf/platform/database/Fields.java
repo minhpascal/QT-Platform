@@ -14,7 +14,6 @@
 
 package com.qtplaf.platform.database;
 
-import com.qtplaf.library.database.Field;
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Speed;
@@ -32,87 +31,9 @@ public class Fields {
 	 */
 	public static class Properties {
 		public static final String Average = "average";
-		public static final String Spread = "average";
-
-		/**
-		 * Returns the spread property of the field.
-		 * 
-		 * @param field The source field.
-		 * @return The spread.
-		 */
-		public static Spread getSpread(Field field) {
-			return (Spread) field.getProperty("spread");
-		}
-
-		/**
-		 * Sets the spread property to the field.
-		 * 
-		 * @param field The field.
-		 * @param spread The spread.
-		 */
-		public static void setSpread(Field field, Spread spread) {
-			field.setProperty("spread", spread);
-		}
-
-		/**
-		 * Returns the speed property of the field.
-		 * 
-		 * @param field The source field.
-		 * @return The speed.
-		 */
-		public static Speed getSpeed(Field field) {
-			return (Speed) field.getProperty("speed");
-		}
-
-		/**
-		 * Sets the speed property to the field.
-		 * 
-		 * @param field The field.
-		 * @param speed The speed.
-		 */
-		public static void setSpeed(Field field, Speed speed) {
-			field.setProperty("speed", speed);
-		}
-
-		/**
-		 * Return the source field property.
-		 * 
-		 * @param field The field.
-		 * @return The source field.
-		 */
-		public static Field getSourceField(Field field) {
-			return (Field) field.getProperty("source-field");
-		}
-
-		/**
-		 * Sets the source field property for the field.
-		 * 
-		 * @param field The field.
-		 * @param source The source field.
-		 */
-		public static void setSourceField(Field field, Field source) {
-			field.setProperty("source-field", source);
-		}
-
-		/**
-		 * Returns the calculation property of a field.
-		 * 
-		 * @param field The field.
-		 * @return The normalizer.
-		 */
-		public static Calculation getCalculation(Field field) {
-			return (Calculation) field.getProperty("calculation");
-		}
-
-		/**
-		 * Set the calculation property of the field.
-		 * 
-		 * @param field The field.
-		 * @param normalizer The normalizer.
-		 */
-		public static void setCalculation(Field field, Calculation calculation) {
-			field.setProperty("calculation", calculation);
-		}
+		public static final String Calculation = "calculation";
+		public static final String Spread = "spread";
+		public static final String Speed = "speed";
 	}
 	
 	public static final String Average = "average";
@@ -165,7 +86,15 @@ public class Fields {
 		return average.getName();
 	}
 	
+	public static String calculation(Calculation calculation, String suffix) {
+		return calculation.getName() + "_" + suffix;
+	}
+	
 	public static String spread(Spread spread, String suffix) {
 		return spread.getName() + "_" + suffix;
+	}
+	
+	public static String speed(Speed speed, String suffix) {
+		return speed.getName() + "_" + suffix;
 	}
 }

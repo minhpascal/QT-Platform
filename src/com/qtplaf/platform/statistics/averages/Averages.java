@@ -41,6 +41,8 @@ import com.qtplaf.platform.database.configuration.Configuration;
 import com.qtplaf.platform.database.configuration.Speed;
 import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.database.fields.FieldAverage;
+import com.qtplaf.platform.database.fields.FieldCalculation;
+import com.qtplaf.platform.database.fields.FieldSpeed;
 import com.qtplaf.platform.database.fields.FieldSpread;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
@@ -118,7 +120,7 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Spread spread : getConfiguration().getSpreads()) {
-				fields.add(new FieldSpread(getSession(), getInstrument(), spread, Fields.spread(spread, suffix)));
+				fields.add(new FieldSpread(getSession(), spread, Fields.spread(spread, suffix)));
 			}
 			mapFieldLists.put(name, fields);
 		}
@@ -137,7 +139,7 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Calculation calculation : getConfiguration().getCalculations()) {
-				fields.add(getFields().getCalculation(calculation, suffix));
+				fields.add(new FieldCalculation(getSession(), calculation, Fields.calculation(calculation, suffix)));
 			}
 			mapFieldLists.put(name, fields);
 		}
@@ -156,7 +158,7 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Speed speed : getConfiguration().getSpeeds()) {
-				fields.add(getFields().getSpeed(speed, suffix));
+				fields.add(new FieldSpeed(getSession(), speed, Fields.speed(speed, suffix)));
 			}
 			mapFieldLists.put(name, fields);
 		}
@@ -175,13 +177,13 @@ public abstract class Averages extends TickerStatistics {
 		speedFields.addAll(getFieldListSpeeds(Suffix.dsc));
 		List<Field> keyFields = new ArrayList<>();
 		for (Field field : spreadFields) {
-			Spread spread = Fields.Properties.getSpread(field);
+			Spread spread = (Spread) field.getProperty(Fields.Properties.Spread);
 			if (spread.isStateKey()) {
 				keyFields.add(field);
 			}
 		}
 		for (Field field : speedFields) {
-			Speed speed = Fields.Properties.getSpeed(field);
+			Speed speed = (Speed) field.getProperty(Fields.Properties.Speed);
 			if (speed.isStateKey()) {
 				keyFields.add(field);
 			}

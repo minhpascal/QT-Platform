@@ -92,7 +92,7 @@ public class TaskRanges extends TaskAverages {
 		int index,
 		long time) {
 		Record record = persistor.getDefaultRecord();
-		record.setValue(ranges.getFields().getName().getName(), name);
+		record.setValue(Fields.Name, name);
 		record.setValue(Fields.Period, period);
 		record.setValue(Fields.MinMax, (minimum ? "min" : "max"));
 		record.setValue(Fields.Value, value);

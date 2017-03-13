@@ -29,6 +29,8 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.configuration.Calculation;
+import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Suffix;
 
@@ -86,6 +88,7 @@ public class TaskNormalizes extends TaskAverages {
 
 	/**
 	 * Count pending records.
+	 * 
 	 * @return The number of records to process.
 	 */
 	private long countPenging() throws Exception {
@@ -167,7 +170,7 @@ public class TaskNormalizes extends TaskAverages {
 					break;
 				}
 				Record record = iterator.next();
-				
+
 				// Spreads between averages.
 				{
 					List<Field> fieldsRaw = states.getFieldListSpreads(Suffix.raw);
@@ -178,7 +181,8 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Normalizer normDisc = Fields.Properties.getSpread(fieldDisc).getNormalizer();
+						Spread spread = (Spread) fieldDisc.getProperty(Fields.Properties.Spread);
+						Normalizer normDisc = spread.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -197,7 +201,8 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Normalizer normDisc = Fields.Properties.getSpeed(fieldDisc).getNormalizer();
+						Speed speed = (Speed) fieldDisc.getProperty(Fields.Properties.Speed);
+						Normalizer normDisc = speed.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -205,7 +210,7 @@ public class TaskNormalizes extends TaskAverages {
 						record.getValue(fieldDisc.getName()).setDouble(valueDisc);
 					}
 				}
-				
+
 				// Calculations
 				{
 					List<Field> fieldsRaw = states.getFieldListCalculations(Suffix.raw);
@@ -216,7 +221,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Calculation calculation = Fields.Properties.getCalculation(fieldDisc);
+						Calculation calculation = (Calculation) fieldDisc.getProperty(Fields.Properties.Calculation);
 						Normalizer normDisc = calculation.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);

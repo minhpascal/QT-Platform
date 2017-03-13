@@ -25,6 +25,4 @@ public interface Suffix {
 	String dsc = "dsc";		// Normalize discrete
 	String in = "in";		// Input 
 	String out = "out";		// Output
-	String min = "min";		// Min
-	String max = "max";		// Max
 }

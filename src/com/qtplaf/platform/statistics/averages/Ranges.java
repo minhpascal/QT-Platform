@@ -27,7 +27,6 @@ import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.FieldCalculator;
-import com.qtplaf.library.database.Index;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -40,14 +39,8 @@ import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
 import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
-import com.qtplaf.platform.database.Schemas;
-import com.qtplaf.platform.database.Tables;
-import com.qtplaf.platform.database.fields.FieldIndex;
-import com.qtplaf.platform.database.fields.FieldMinMax;
-import com.qtplaf.platform.database.fields.FieldPeriod;
-import com.qtplaf.platform.database.fields.FieldTime;
-import com.qtplaf.platform.database.fields.FieldValue;
 import com.qtplaf.platform.database.formatters.DataValue;
+import com.qtplaf.platform.database.tables.TableRanges;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
@@ -138,30 +131,8 @@ public class Ranges extends Averages {
 	 */
 	@Override
 	public Table getTable() {
-
 		if (table == null) {
-
-			table = new Table();
-
-			table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
-			table.setSchema(Schemas.server(getServer()));
-
-			table.addField(getFields().getName());
-			table.addField(new FieldMinMax(getSession(), Fields.MinMax));
-			table.addField(new FieldPeriod(getSession(), Fields.Period));
-			table.addField(new FieldValue(getSession(), Fields.Value));
-			table.addField(new FieldIndex(getSession(), Fields.Index));
-			table.addField(new FieldTime(getSession(), Fields.Time));
-
-			// Non unique index on name, minmax, period.
-			Index index = new Index();
-			index.add(getFields().getName());
-			index.add(table.getField(Fields.MinMax));
-			index.add(table.getField(Fields.Period));
-			index.setUnique(false);
-			table.addIndex(index);
-
-			table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+			table = new TableRanges(getSession(), this);
 		}
 		return table;
 	}
@@ -176,14 +147,14 @@ public class Ranges extends Averages {
 	 */
 	private void setValues(Persistor persistor, Record record, boolean includePeriod) throws PersistorException {
 
-		Field fName = getFields().getName();
+		Field fName = persistor.getField(Fields.Name);
 		Field fMinMax = persistor.getField(Fields.MinMax);
 		Field fPeriod = persistor.getField(Fields.Period);
 		Field fValue = persistor.getField(Fields.Value);
 
-		Value vName = record.getValue(fName.getName());
-		Value vMinMax = record.getValue(fMinMax.getName());
-		Value vPeriod = record.getValue(fPeriod.getName());
+		Value vName = record.getValue(Fields.Name);
+		Value vMinMax = record.getValue(Fields.MinMax);
+		Value vPeriod = record.getValue(Fields.Period);
 
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fName, vName));
@@ -256,7 +227,7 @@ public class Ranges extends Averages {
 		view.setName(table.getName());
 
 		// Group by fields
-		view.addField(getFields().getName());
+		view.addField(table.getField(Fields.Name));
 		view.addField(table.getField(Fields.MinMax));
 		if (includePeriod) {
 			view.addField(table.getField(Fields.Period));
@@ -301,14 +272,14 @@ public class Ranges extends Averages {
 		view.addField(avgStd2);
 
 		// Group by.
-		view.addGroupBy(getFields().getName());
+		view.addGroupBy(table.getField(Fields.Name));
 		view.addGroupBy(table.getField(Fields.MinMax));
 		if (includePeriod) {
 			view.addGroupBy(table.getField(Fields.Period));
 		}
 
 		// Order by.
-		view.addOrderBy(getFields().getName());
+		view.addOrderBy(table.getField(Fields.Name));
 		view.addOrderBy(table.getField(Fields.MinMax));
 		if (includePeriod) {
 			view.addOrderBy(table.getField(Fields.Period));
