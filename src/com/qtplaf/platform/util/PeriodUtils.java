@@ -16,7 +16,7 @@ package com.qtplaf.platform.util;
 
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Fields;
 
 /**
  * Centralizes period operations.

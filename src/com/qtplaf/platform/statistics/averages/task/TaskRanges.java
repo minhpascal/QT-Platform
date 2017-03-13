@@ -21,8 +21,9 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.PersistorDataList;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.configuration.Range;
 import com.qtplaf.platform.statistics.averages.Ranges;
-import com.qtplaf.platform.statistics.averages.configuration.Range;
 
 /**
  * Calculate ranges (min-max) values.
@@ -92,11 +93,11 @@ public class TaskRanges extends TaskAverages {
 		long time) {
 		Record record = persistor.getDefaultRecord();
 		record.setValue(ranges.getFields().getName().getName(), name);
-		record.setValue(ranges.getFields().getPeriod().getName(), period);
-		record.setValue(ranges.getFields().getMinMax().getName(), (minimum ? "min" : "max"));
-		record.setValue(ranges.getFields().getValue().getName(), value);
-		record.setValue(ranges.getFields().getIndex().getName(), index);
-		record.setValue(ranges.getFields().getTime().getName(), time);
+		record.setValue(Fields.Period, period);
+		record.setValue(Fields.MinMax, (minimum ? "min" : "max"));
+		record.setValue(Fields.Value, value);
+		record.setValue(Fields.Index, index);
+		record.setValue(Fields.Time, time);
 		return record;
 	}
 

@@ -43,9 +43,12 @@ import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.drawings.VerticalArea;
 import com.qtplaf.library.trading.data.PlotData;
-import com.qtplaf.platform.database.Names.Schemas;
-import com.qtplaf.platform.database.Names.Tables;
-import com.qtplaf.platform.statistics.Domains;
+import com.qtplaf.platform.database.Domains;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Schemas;
+import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.fields.FieldIndex;
+import com.qtplaf.platform.database.fields.FieldState;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
@@ -88,9 +91,9 @@ public class Transitions extends Averages {
 				return;
 			}
 			List<Record> transitions = getTransitions(record);
-			int startIndex = transitions.get(0).getValue(getFields().getIndexIn().getName()).getInteger();
+			int startIndex = transitions.get(0).getValue(Fields.IndexIn).getInteger();
 			int endIndex =
-				transitions.get(transitions.size() - 1).getValue(getFields().getIndexIn().getName()).getInteger();
+				transitions.get(transitions.size() - 1).getValue(Fields.IndexIn).getInteger();
 			VerticalArea vertBand = new VerticalArea(startIndex, endIndex);
 			JChart chart = ActionUtils.getChart(this);
 			PlotData plotData = chart.getChartContainer(0).getPlotData();
@@ -99,6 +102,9 @@ public class Transitions extends Averages {
 			chart.propagateFrameChanges(plotData);
 		}
 	}
+
+	/** Cached table. */
+	private Table table;
 
 	/**
 	 * @param session
@@ -146,13 +152,13 @@ public class Transitions extends Averages {
 
 		Persistor persistor = getTable().getPersistor();
 
-		Field fStateInput = persistor.getField(getFields().getStateInput().getName());
-		Field fStateOutput = persistor.getField(getFields().getStateOutput().getName());
-		Field fIndexGroup = persistor.getField(getFields().getIndexGroup().getName());
+		Field fStateInput = persistor.getField(Fields.StateIn);
+		Field fStateOutput = persistor.getField(Fields.StateOut);
+		Field fIndexGroup = persistor.getField(Fields.IndexGroup);
 
-		Value vStateInput = record.getValue(getFields().getStateInput().getName());
-		Value vStateOutput = record.getValue(getFields().getStateOutput().getName());
-		Value vIndexGroup = record.getValue(getFields().getIndexGroup().getName());
+		Value vStateInput = record.getValue(Fields.StateIn);
+		Value vStateOutput = record.getValue(Fields.StateOut);
+		Value vIndexGroup = record.getValue(Fields.IndexGroup);
 
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fStateInput, vStateInput));
@@ -160,7 +166,7 @@ public class Transitions extends Averages {
 		criteria.add(Condition.fieldEQ(fIndexGroup, vIndexGroup));
 
 		Order order = new Order();
-		order.add(persistor.getField(getFields().getIndexIn().getName()));
+		order.add(persistor.getField(Fields.IndexIn));
 
 		try {
 			RecordIterator iterator = persistor.iterator(criteria, order);
@@ -184,39 +190,42 @@ public class Transitions extends Averages {
 	@Override
 	public Table getTable() {
 
-		Table table = new Table();
+		if (table == null) {
 
-		table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Schemas.server(getServer()));
+			table = new Table();
 
-		// Input and output states (keys)
-		table.addField(getFields().getStateInput());
-		table.addField(getFields().getStateOutput());
+			table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
+			table.setSchema(Schemas.server(getServer()));
 
-		// Input and output indexes of source states.
-		table.addField(getFields().getIndexIn());
-		table.addField(getFields().getIndexOut());
+			// Input and output states (keys)
+			table.addField(new FieldState(getSession(), Fields.StateIn));
+			table.addField(new FieldState(getSession(), Fields.StateOut));
 
-		// Index group (groups consecutive transitions of the same state).
-		table.addField(getFields().getIndexGroup());
+			// Input and output indexes of source states.
+			table.addField(new FieldIndex(getSession(), Fields.IndexIn));
+			table.addField(new FieldIndex(getSession(), Fields.IndexOut));
 
-		// Input spreads, speeds and calculations.
-		table.addFields(getFieldListSpreads(Suffix.in));
-		table.addFields(getFieldListSpeeds(Suffix.in));
-		table.addFields(getFieldListCalculations(Suffix.in));
+			// Index group (groups consecutive transitions of the same state).
+			table.addField(new FieldIndex(getSession(), Fields.IndexGroup));
 
-		// Output spreads, speeds and calculations.
-		table.addFields(getFieldListSpreads(Suffix.out));
-		table.addFields(getFieldListSpeeds(Suffix.out));
-		table.addFields(getFieldListCalculations(Suffix.out));
+			// Input spreads, speeds and calculations.
+			table.addFields(getFieldListSpreads(Suffix.in));
+			table.addFields(getFieldListSpeeds(Suffix.in));
+			table.addFields(getFieldListCalculations(Suffix.in));
 
-		// Primary key.
-		getFields().getStateInput().setPrimaryKey(true);
-		getFields().getStateOutput().setPrimaryKey(true);
-		getFields().getIndexIn().setPrimaryKey(true);
-		getFields().getIndexOut().setPrimaryKey(true);
+			// Output spreads, speeds and calculations.
+			table.addFields(getFieldListSpreads(Suffix.out));
+			table.addFields(getFieldListSpeeds(Suffix.out));
+			table.addFields(getFieldListCalculations(Suffix.out));
 
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+			// Primary key.
+			table.getField(Fields.StateIn).setPrimaryKey(true);
+			table.getField(Fields.StateOut).setPrimaryKey(true);
+			table.getField(Fields.IndexIn).setPrimaryKey(true);
+			table.getField(Fields.IndexOut).setPrimaryKey(true);
+
+			table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		}
 		return table;
 	}
 
@@ -234,9 +243,9 @@ public class Transitions extends Averages {
 		view.setName(table.getName());
 
 		// Group by fields
-		view.addField(getFields().getStateInput());
-		view.addField(getFields().getStateOutput());
-		view.addField(getFields().getIndexGroup());
+		view.addField(new FieldState(getSession(), Fields.StateIn));
+		view.addField(new FieldState(getSession(), Fields.StateOut));
+		view.addField(new FieldIndex(getSession(), Fields.IndexGroup));
 
 		// Count(*)
 		Field count = Domains.getInteger(getSession(), "count");
@@ -244,17 +253,17 @@ public class Transitions extends Averages {
 		view.addField(count);
 
 		// Group by.
-		view.addGroupBy(getFields().getStateInput());
-		view.addGroupBy(getFields().getStateOutput());
-		view.addGroupBy(getFields().getIndexGroup());
+		view.addGroupBy(view.getField(Fields.StateIn));
+		view.addGroupBy(view.getField(Fields.StateOut));
+		view.addGroupBy(view.getField(Fields.IndexGroup));
 
 		// Having count(*) > 2
 		view.setHaving(count.getFunction() + " > 2");
 
 		// Order by.
-		view.addOrderBy(getFields().getIndexGroup());
-		view.addOrderBy(getFields().getStateInput());
-		view.addOrderBy(getFields().getStateOutput());
+		view.addOrderBy(view.getField(Fields.IndexGroup));
+		view.addOrderBy(view.getField(Fields.StateIn));
+		view.addOrderBy(view.getField(Fields.StateOut));
 
 		// Persistor.
 		view.setPersistor(PersistorUtils.getPersistor(view));

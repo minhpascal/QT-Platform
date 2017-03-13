@@ -34,14 +34,16 @@ import com.qtplaf.library.trading.data.DelegateDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.statistics.FieldSrc.Properties;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.configuration.Average;
+import com.qtplaf.platform.database.configuration.Calculation;
+import com.qtplaf.platform.database.configuration.Configuration;
+import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Spread;
+import com.qtplaf.platform.database.fields.FieldAverage;
+import com.qtplaf.platform.database.fields.FieldSpread;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
-import com.qtplaf.platform.statistics.averages.configuration.Average;
-import com.qtplaf.platform.statistics.averages.configuration.Calculation;
-import com.qtplaf.platform.statistics.averages.configuration.Configuration;
-import com.qtplaf.platform.statistics.averages.configuration.Speed;
-import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
  * Root class for states statistics based on averages.
@@ -97,28 +99,9 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Average average : getConfiguration().getAverages()) {
-				fields.add(getFields().getAverage(average));
+				fields.add(new FieldAverage(getSession(), getInstrument(), average, Fields.average(average)));
 			}
 			mapFieldLists.put("averages", fields);
-		}
-		return fields;
-	}
-
-	/**
-	 * Returns the list of delta fields.
-	 * 
-	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListDeltas(String suffix) {
-		String name = "deltas_" + suffix;
-		List<Field> fields = mapFieldLists.get(name);
-		if (fields == null) {
-			fields = new ArrayList<>();
-			fields.add(getFields().getDelta(getFields().getHigh(), suffix));
-			fields.add(getFields().getDelta(getFields().getLow(), suffix));
-			fields.add(getFields().getDelta(getFields().getClose(), suffix));
-			mapFieldLists.put(name, fields);
 		}
 		return fields;
 	}
@@ -135,7 +118,7 @@ public abstract class Averages extends TickerStatistics {
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Spread spread : getConfiguration().getSpreads()) {
-				fields.add(getFields().getSpread(spread, suffix));
+				fields.add(new FieldSpread(getSession(), getInstrument(), spread, Fields.spread(spread, suffix)));
 			}
 			mapFieldLists.put(name, fields);
 		}
@@ -192,13 +175,13 @@ public abstract class Averages extends TickerStatistics {
 		speedFields.addAll(getFieldListSpeeds(Suffix.dsc));
 		List<Field> keyFields = new ArrayList<>();
 		for (Field field : spreadFields) {
-			Spread spread = Properties.getSpread(field);
+			Spread spread = Fields.Properties.getSpread(field);
 			if (spread.isStateKey()) {
 				keyFields.add(field);
 			}
 		}
 		for (Field field : speedFields) {
-			Speed speed = Properties.getSpeed(field);
+			Speed speed = Fields.Properties.getSpeed(field);
 			if (speed.isStateKey()) {
 				keyFields.add(field);
 			}
@@ -213,7 +196,6 @@ public abstract class Averages extends TickerStatistics {
 	 */
 	public List<Field> getFieldListToCalculateRanges() {
 		List<Field> fields = new ArrayList<>();
-		fields.addAll(getFieldListDeltas(Suffix.raw));
 		fields.addAll(getFieldListSpreads(Suffix.raw));
 		fields.addAll(getFieldListSpeeds(Suffix.raw));
 		fields.addAll(getFieldListCalculations(Suffix.raw));
@@ -269,10 +251,10 @@ public abstract class Averages extends TickerStatistics {
 			RecordSet recordSet = ranges.getRecordSet(false);
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
-				String fieldName = record.getValue(ranges.getFields().getName().getName()).getString();
-				String minMax = record.getValue(ranges.getFields().getMinMax().getName()).getString();
-				double average = record.getValue(ranges.getFields().getAverage().getName()).getDouble();
-				double stddev = record.getValue(ranges.getFields().getStdDev().getName()).getDouble();
+				String fieldName = record.getValue(Fields.Name).getString();
+				String minMax = record.getValue(Fields.MinMax).getString();
+				double average = record.getValue(Fields.Average).getDouble();
+				double stddev = record.getValue(Fields.StdDev).getDouble();
 				Normalizer normalizer = map.get(fieldName);
 				if (normalizer == null) {
 					normalizer = new Normalizer();
@@ -310,18 +292,18 @@ public abstract class Averages extends TickerStatistics {
 		info.setPeriod(getPeriod());
 
 		// Candlestick on price: info
-		info.addOutput("Open", "O", dataList.getDataIndex(getFields().getOpen().getName()), "Open data value");
-		info.addOutput("High", "H", dataList.getDataIndex(getFields().getHigh().getName()), "High data value");
-		info.addOutput("Low", "L", dataList.getDataIndex(getFields().getLow().getName()), "Low data value");
-		info.addOutput("Close", "C", dataList.getDataIndex(getFields().getClose().getName()), "Close data value");
+		info.addOutput("Open", "O", dataList.getDataIndex(Fields.Open), "Open data value");
+		info.addOutput("High", "H", dataList.getDataIndex(Fields.High), "High data value");
+		info.addOutput("Low", "L", dataList.getDataIndex(Fields.Low), "Low data value");
+		info.addOutput("Close", "C", dataList.getDataIndex(Fields.Close), "Close data value");
 
 		// Candlestick on price: plotter.
 		CandlestickPlotter plotterCandle = new CandlestickPlotter();
 		plotterCandle.setIndexes(new int[] {
-			dataList.getDataIndex(getFields().getOpen().getName()),
-			dataList.getDataIndex(getFields().getHigh().getName()),
-			dataList.getDataIndex(getFields().getLow().getName()),
-			dataList.getDataIndex(getFields().getClose().getName()) });
+			dataList.getDataIndex(Fields.Open),
+			dataList.getDataIndex(Fields.High),
+			dataList.getDataIndex(Fields.Low),
+			dataList.getDataIndex(Fields.Close) });
 		dataList.addDataPlotter(plotterCandle);
 
 		// Line plotter for each average.

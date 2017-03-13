@@ -35,10 +35,10 @@ import com.qtplaf.library.trading.server.DataIterator;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.ServerConnector;
-import com.qtplaf.platform.database.Names.Fields;
-import com.qtplaf.platform.database.Names.Tables;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.tables.TableDataPrice;
 import com.qtplaf.platform.util.RecordUtils;
-import com.qtplaf.platform.util.TableUtils;
 
 /**
  * Task to download a ticker from a server, starting at the last data downloaded, up to the last data available in the
@@ -220,7 +220,7 @@ public class TaskDownloadTicker extends TaskRunner {
 	 */
 	private Table getTable() {
 		String tableName = Tables.ticker(instrument, period);
-		return TableUtils.getTableDataPrice(getSession(), server, tableName);
+		return new TableDataPrice(getSession(), server, instrument, tableName);
 	}
 
 	/**

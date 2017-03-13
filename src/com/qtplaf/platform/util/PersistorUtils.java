@@ -21,7 +21,16 @@ import com.qtplaf.library.database.View;
 import com.qtplaf.library.database.rdbms.DBEngine;
 import com.qtplaf.library.database.rdbms.DBPersistor;
 import com.qtplaf.library.database.rdbms.DBPersistorDDL;
+import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.tables.TableDataFilters;
+import com.qtplaf.platform.database.tables.TableDataPrice;
+import com.qtplaf.platform.database.tables.TableInstruments;
+import com.qtplaf.platform.database.tables.TableOfferSides;
+import com.qtplaf.platform.database.tables.TablePeriods;
+import com.qtplaf.platform.database.tables.TableServers;
+import com.qtplaf.platform.database.tables.TableStatistics;
+import com.qtplaf.platform.database.tables.TableTickers;
 
 /**
  * Centralizes persistors access.
@@ -74,10 +83,12 @@ public class PersistorUtils {
 	 * Returns the data price persistor.
 	 * 
 	 * @param session Working session.
+	 * @param server Server.
+	 * @param instrument Instrument.
 	 * @return The persistor.
 	 */
-	public static Persistor getPersistorDataPrice(Session session, Server server, String name) {
-		return TableUtils.getTableDataPrice(session, server, name).getPersistor();
+	public static Persistor getPersistorDataPrice(Session session, Server server, Instrument instrument, String name) {
+		return new TableDataPrice(session, server, instrument, name).getPersistor();
 	}
 
 	/**
@@ -87,7 +98,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorInstruments(Session session) {
-		return TableUtils.getTableInstruments(session).getPersistor();
+		return new TableInstruments(session).getPersistor();
 	}
 
 	/**
@@ -97,7 +108,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorPeriods(Session session) {
-		return TableUtils.getTablePeriods(session).getPersistor();
+		return new TablePeriods(session).getPersistor();
 	}
 
 	/**
@@ -107,7 +118,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorServers(Session session) {
-		return TableUtils.getTableServers(session).getPersistor();
+		return new TableServers(session).getPersistor();
 	}
 
 	/**
@@ -117,7 +128,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorStatistics(Session session) {
-		return TableUtils.getTableStatistics(session).getPersistor();
+		return new TableStatistics(session).getPersistor();
 	}
 
 	/**
@@ -127,7 +138,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorTickers(Session session) {
-		return TableUtils.getTableTickers(session).getPersistor();
+		return new TableTickers(session).getPersistor();
 	}
 
 	/**
@@ -137,7 +148,7 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorOfferSides(Session session) {
-		return TableUtils.getTableOfferSides(session).getPersistor();
+		return new TableOfferSides(session).getPersistor();
 	}
 
 	/**
@@ -147,6 +158,6 @@ public class PersistorUtils {
 	 * @return The persistor.
 	 */
 	public static Persistor getPersistorDataFilters(Session session) {
-		return TableUtils.getTableDataFilters(session).getPersistor();
+		return new TableDataFilters(session).getPersistor();
 	}
 }

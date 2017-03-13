@@ -25,13 +25,13 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.configuration.Calculation;
+import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.indicators.StatesIndicator;
-import com.qtplaf.platform.statistics.FieldSrc.Properties;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Suffix;
-import com.qtplaf.platform.statistics.averages.configuration.Calculation;
-import com.qtplaf.platform.statistics.averages.configuration.Speed;
-import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
  * Calculates source states values.
@@ -144,18 +144,14 @@ public class TaskStates extends TaskAverages {
 			Record record = persistor.getDefaultRecord();
 
 			// Time.
-			record.getValue(states.getFields().getTime().getName()).setLong(data.getTime());
+			record.getValue(Fields.Time).setLong(data.getTime());
 
 			// Open, high, low, close.
 			{
-				String open = states.getFields().getOpen().getName();
-				String high = states.getFields().getHigh().getName();
-				String low = states.getFields().getLow().getName();
-				String close = states.getFields().getClose().getName();
-				record.getValue(open).setDouble(data.getValue(info.getOutputIndex(open)));
-				record.getValue(high).setDouble(data.getValue(info.getOutputIndex(high)));
-				record.getValue(low).setDouble(data.getValue(info.getOutputIndex(low)));
-				record.getValue(close).setDouble(data.getValue(info.getOutputIndex(close)));
+				record.getValue(Fields.Open).setDouble(data.getValue(info.getOutputIndex(Fields.Open)));
+				record.getValue(Fields.High).setDouble(data.getValue(info.getOutputIndex(Fields.High)));
+				record.getValue(Fields.Low).setDouble(data.getValue(info.getOutputIndex(Fields.Low)));
+				record.getValue(Fields.Close).setDouble(data.getValue(info.getOutputIndex(Fields.Close)));
 			}
 
 			// Averages.
@@ -167,26 +163,11 @@ public class TaskStates extends TaskAverages {
 				}
 			}
 			
-			// Deltas high, low, close, raw values.
-			{
-				if (index > 0) {
-					Data prev = indicatorList.get(index - 1);
-					List<Field> fields = states.getFieldListDeltas(Suffix.raw);
-					for (Field field : fields) {
-						String srcName = Properties.getSourceField(field).getName();
-						double valuePrev = prev.getValue(info.getOutputIndex(srcName));
-						double valueCurr = data.getValue(info.getOutputIndex(srcName));
-						double valueDelta = (valueCurr / valuePrev) - 1;
-						record.getValue(field.getName()).setDouble(valueDelta);
-					}
-				}
-			}
-
 			// Raw spreads between averages.
 			{
 				List<Field> fields = states.getFieldListSpreads(Suffix.raw);
 				for (Field field : fields) {
-					Spread spread = Properties.getSpread(field);
+					Spread spread = Fields.Properties.getSpread(field);
 					String avgFastName = spread.getFastAverage().getName();
 					String avgSlowName = spread.getSlowAverage().getName();
 					double valueFast = data.getValue(info.getOutputIndex(avgFastName));
@@ -202,7 +183,7 @@ public class TaskStates extends TaskAverages {
 					Data prev = indicatorList.get(index - 1);
 					List<Field> fields = states.getFieldListSpeeds(Suffix.raw);
 					for (Field field : fields) {
-						Speed speed = Properties.getSpeed(field);
+						Speed speed = Fields.Properties.getSpeed(field);
 						String avgName = speed.getAverage().getName();
 						double valueCurr = data.getValue(info.getOutputIndex(avgName));
 						double valuePrev = prev.getValue(info.getOutputIndex(avgName));
@@ -216,7 +197,7 @@ public class TaskStates extends TaskAverages {
 			{
 				List<Field> fields = states.getFieldListCalculations(Suffix.raw);
 				for (Field field : fields) {
-					Calculation calculation = Properties.getCalculation(field);
+					Calculation calculation = Fields.Properties.getCalculation(field);
 					FieldCalculator calculator = calculation.getCalculator();
 					record.setValue(field.getName(), calculator.getValue(record));
 				}				

@@ -20,7 +20,6 @@ import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
-import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;

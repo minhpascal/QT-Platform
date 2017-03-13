@@ -24,7 +24,7 @@ import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Unit;
 import com.qtplaf.library.util.Timestamp;
-import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Fields;
 
 /**
  * A formatter for Bar time that adapts to the period.

@@ -22,7 +22,6 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.swing.core.JLookupRecords;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Names.Fields;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordSetUtils;
 

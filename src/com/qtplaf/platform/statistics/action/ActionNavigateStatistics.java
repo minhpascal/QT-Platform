@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.FieldList;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
@@ -47,9 +46,9 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
+import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.statistics.averages.Averages;
 import com.qtplaf.platform.statistics.averages.Suffix;
-import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
  * Navigate a chart.
@@ -299,7 +298,7 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		List<Record> records = tableRecord.getSelectedRecords();
 		List<Integer> indexes = new ArrayList<>();
 		for (Record record : records) {
-			indexes.add(record.getValue(getNameIndex()).getInteger());
+			indexes.add(record.getValue(Fields.Index).getInteger());
 		}
 		return indexes;
 	}
@@ -346,8 +345,8 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		if (record == null) {
 			return;
 		}
-		Field fState = record.getField(getNameState());
-		Value vState = record.getValue(getNameState());
+		Field fState = record.getField(Fields.State);
+		Value vState = record.getValue(Fields.State);
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fState, vState));
 		RecordSet recordSet = null;
@@ -363,41 +362,20 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	/**
 	 * Filter transitions from the same state.
 	 */
-	private void filterTransitionsFromState() throws Exception {
+	protected void filterTransitionsFromState() throws Exception {
 		Record record = getChartNavigate().getTableRecord().getSelectedRecord();
 		if (record == null) {
 			return;
 		}
-		Value vState = record.getValue(getNameState());
+		Value vState = record.getValue(Fields.State);
 		
 		// Get all transitions where state_in == state
 		Persistor persistor = getAverages().getTransitions().getTable().getPersistor();
-		Field fStateIn = persistor.getField(getNameStateIn());
+		Field fStateIn = persistor.getField(Fields.StateIn);
 		
 		// Select criteria.
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(fStateIn, vState));
-	}
-
-	/**
-	 * Return the name of the field.
-	 */
-	private String getNameIndex() {
-		return getAverages().getFields().getIndex().getName();
-	}
-
-	/**
-	 * Return the name of the field.
-	 */
-	private String getNameState() {
-		return getAverages().getFields().getState().getName();
-	}
-
-	/**
-	 * Return the name of the field.
-	 */
-	private String getNameStateIn() {
-		return getAverages().getFields().getStateInput().getName();
 	}
 
 	/**
@@ -408,24 +386,5 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	private RecordSet getRecordSetStd() {
 		DataPersistor persistor = new DataPersistor(getAverages().getStates().getTable().getPersistor());
 		return new DataRecordSet(persistor);
-	}
-
-	/**
-	 * Returns a record with min/max fields to filter spreads and speeds.
-	 * 
-	 * @return The record.
-	 */
-	private Record getRecordFilterSpreadsAndSpeeds() {
-
-		Averages avgs = getAverages();
-
-		FieldList fieldList = new FieldList();
-
-		for (Spread spread : avgs.getConfiguration().getSpreads()) {
-			fieldList.addField(avgs.getFields().getSpread(spread, Suffix.min));
-			fieldList.addField(avgs.getFields().getSpread(spread, Suffix.max));
-		}
-
-		return new Record(fieldList);
 	}
 }

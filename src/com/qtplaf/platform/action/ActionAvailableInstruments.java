@@ -32,7 +32,7 @@ import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.swing.core.TableModelRecord;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
-import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordSetUtils;
 

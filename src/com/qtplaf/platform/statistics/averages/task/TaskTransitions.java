@@ -29,6 +29,7 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
+import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Suffix;
@@ -50,21 +51,6 @@ public class TaskTransitions extends TaskAverages {
 	/** Source states data list. */
 	private DataPersistor statesPersistor;
 
-	/** Short cut to state name. */
-	private String keyName;
-	/** Short cut to input key name. */
-	private String keyInputName;
-	/** Short cut to output key name. */
-	private String keyOutputName;
-	/** Short cut to input index name. */
-	private String indexInputName;
-	/** Short cut to output index name. */
-	private String indexOutputName;
-	/** Short cut to index group name. */
-	private String indexGroupName;
-	/** Short cut to index name. */
-	private String indexName;
-
 	/**
 	 * Constructor.
 	 * 
@@ -83,14 +69,6 @@ public class TaskTransitions extends TaskAverages {
 			transitions.getPeriod(),
 			transitions.getConfiguration());
 		this.statesPersistor = transitions.getStates().getDataListStates().getDataPersistor();
-
-		keyName = transitions.getFields().getState().getName();
-		keyInputName = transitions.getFields().getStateInput().getName();
-		keyOutputName = transitions.getFields().getStateOutput().getName();
-		indexInputName = transitions.getFields().getIndexIn().getName();
-		indexOutputName = transitions.getFields().getIndexOut().getName();
-		indexGroupName = transitions.getFields().getIndexGroup().getName();
-		indexName = transitions.getFields().getIndex().getName();
 
 		setNameAndDescription(transitions, "Transitions values");
 	}
@@ -161,7 +139,7 @@ public class TaskTransitions extends TaskAverages {
 
 			// Source (states) iterator.
 			Order order = new Order();
-			order.add(getStates().getFields().getIndex());
+			order.add(getStates().getTable().getField(Fields.Index));
 			iterator = statesPersistor.iterator(null, order);
 
 			// Step and steps.
@@ -191,7 +169,7 @@ public class TaskTransitions extends TaskAverages {
 
 				// Record.
 				Record record = iterator.next();
-				String key = record.getValue(keyName).getString();
+				String key = record.getValue(Fields.State).getString();
 
 				// Process the key if not already processed.
 				if (!processedKeys.containsKey(key)) {
@@ -231,12 +209,12 @@ public class TaskTransitions extends TaskAverages {
 			Record stateInput = recordSet.get(i);
 			Record stateOutput = null;
 
-			int indexInput = stateInput.getValue(indexName).getInteger();
+			int indexInput = stateInput.getValue(Fields.Index).getInteger();
 			int indexOutput = indexInput + 1;
 
 			// If not the last record, check if next record is index output (same output key correlative).
 			if (i < recordSet.size() - 1) {
-				if (indexOutput == recordSet.get(i + 1).getValue(indexName).getInteger()) {
+				if (indexOutput == recordSet.get(i + 1).getValue(Fields.Index).getInteger()) {
 					stateOutput = recordSet.get(i + 1);
 				}
 			}
@@ -248,7 +226,7 @@ public class TaskTransitions extends TaskAverages {
 
 			// Transition available.
 			if (stateOutput != null) {
-				String keyOutput = stateOutput.getValue(keyName).getString();
+				String keyOutput = stateOutput.getValue(Fields.State).getString();
 				if (group < 0) {
 					group = indexInput;
 					keyOutputPrevious = keyOutput;
@@ -258,11 +236,11 @@ public class TaskTransitions extends TaskAverages {
 				}
 				if (!map.containsKey(indexInput)) {
 					Record transition = transitionsPersistor.getDefaultRecord();
-					transition.setValue(keyInputName, keyInput);
-					transition.setValue(keyOutputName, keyOutput);
-					transition.setValue(indexInputName, indexInput);
-					transition.setValue(indexOutputName, indexOutput);
-					transition.setValue(indexGroupName, group);
+					transition.setValue(Fields.StateIn, keyInput);
+					transition.setValue(Fields.StateOut, keyOutput);
+					transition.setValue(Fields.IndexIn, indexInput);
+					transition.setValue(Fields.IndexOut, indexOutput);
+					transition.setValue(Fields.IndexGroup, group);
 
 					 List<Field> spreads = getStates().getFieldListSpreads(Suffix.dsc);
 					 List<Field> spreadsIn = getTransitions().getFieldListSpreads(Suffix.in);
@@ -317,8 +295,8 @@ public class TaskTransitions extends TaskAverages {
 	 */
 	private RecordSet getRecordSet(String key) throws Exception {
 
-		Field indexField = statesPersistor.getField(indexName);
-		Field keyField = statesPersistor.getField(keyName);
+		Field indexField = statesPersistor.getField(Fields.Index);
+		Field keyField = statesPersistor.getField(Fields.State);
 		Value keyValue = new Value(key);
 
 		Criteria criteria = new Criteria();

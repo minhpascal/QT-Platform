@@ -38,10 +38,13 @@ import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Names.Fields;
-import com.qtplaf.platform.statistics.FieldSrc;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.configuration.Average;
+import com.qtplaf.platform.database.fields.FieldClose;
+import com.qtplaf.platform.database.fields.FieldHigh;
+import com.qtplaf.platform.database.fields.FieldLow;
+import com.qtplaf.platform.database.fields.FieldOpen;
 import com.qtplaf.platform.statistics.averages.States;
-import com.qtplaf.platform.statistics.averages.configuration.Average;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -78,10 +81,10 @@ public class StatesIndicator extends Indicator {
 		// Output informations.
 		int index = 0;
 
-		Field open = states.getFields().getOpen();
-		Field high = states.getFields().getHigh();
-		Field low = states.getFields().getLow();
-		Field close = states.getFields().getClose();
+		Field open = new FieldOpen(states.getSession(), states.getInstrument(), Fields.Open);
+		Field high = new FieldHigh(states.getSession(), states.getInstrument(), Fields.High);
+		Field low = new FieldLow(states.getSession(), states.getInstrument(), Fields.Low);
+		Field close = new FieldClose(states.getSession(), states.getInstrument(), Fields.Close);
 		info.addOutput(open.getName(), open.getTitle(), index++);
 		info.addOutput(high.getName(), high.getTitle(), index++);
 		info.addOutput(low.getName(), low.getTitle(), index++);
@@ -91,7 +94,7 @@ public class StatesIndicator extends Indicator {
 		int lookBackward = 0;
 		for (Field field : fields) {
 			info.addOutput(field.getName(), field.getTitle(), index++);
-			int period = FieldSrc.Properties.getAverage(field).getPeriod();
+			int period = ((Average) field.getProperty(Fields.Properties.Average)).getPeriod();
 			lookBackward = Math.max(lookBackward, period);
 		}
 		info.setLookBackward(lookBackward);
@@ -144,7 +147,7 @@ public class StatesIndicator extends Indicator {
 				Record record = RecordUtils.getRecordTicker(getSession(), server, instrument, period);
 				String tableName = record.getValue(Fields.TableName).getString();
 				DataInfo infoPrice = new PriceInfo(getSession(), instrument, period);
-				Persistor persistor = PersistorUtils.getPersistorDataPrice(getSession(), server, tableName);
+				Persistor persistor = PersistorUtils.getPersistorDataPrice(getSession(), server, instrument, tableName);
 				price = new PersistorDataList(getSession(), infoPrice, persistor);
 				price.setCacheSize(getIndicatorInfo().getLookBackward());
 
@@ -175,7 +178,7 @@ public class StatesIndicator extends Indicator {
 	private IndicatorDataList getDataListAverage(Field averageField) {
 		DataList dataList = mapDataLists.get(averageField.getName());
 		if (dataList == null) {
-			Average average = FieldSrc.Properties.getAverage(averageField);
+			Average average = (Average) averageField.getProperty(Fields.Properties.Average);
 			if (average.getType().equals(Average.Type.SMA)) {
 				dataList = IndicatorUtils.getSmoothedSimpleMovingAverage(
 					getDataListPrice(),
@@ -220,14 +223,10 @@ public class StatesIndicator extends Indicator {
 
 		// Price values.
 		Data price = getDataListPrice().get(index);
-		Field open = states.getFields().getOpen();
-		Field high = states.getFields().getHigh();
-		Field low = states.getFields().getLow();
-		Field close = states.getFields().getClose();
-		values[info.getOutputIndex(open.getName())] = Data.getOpen(price);
-		values[info.getOutputIndex(high.getName())] = Data.getHigh(price);
-		values[info.getOutputIndex(low.getName())] = Data.getLow(price);
-		values[info.getOutputIndex(close.getName())] = Data.getClose(price);
+		values[info.getOutputIndex(Fields.Open)] = Data.getOpen(price);
+		values[info.getOutputIndex(Fields.High)] = Data.getHigh(price);
+		values[info.getOutputIndex(Fields.Low)] = Data.getLow(price);
+		values[info.getOutputIndex(Fields.Close)] = Data.getClose(price);
 
 		// Averages.
 		List<Field> averageFields = states.getFieldListAverages();

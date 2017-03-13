@@ -27,10 +27,10 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
-import com.qtplaf.platform.statistics.FieldSrc.Properties;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Suffix;
-import com.qtplaf.platform.statistics.averages.configuration.Calculation;
 
 /**
  * Calculates normalized states values.
@@ -98,7 +98,7 @@ public class TaskNormalizes extends TaskAverages {
 	 * @return The select criteria.
 	 */
 	private Criteria getSelectCriteria() {
-		Field f_key_state = states.getFields().getState();
+		Field f_key_state = states.getTable().getField(Fields.State);
 		Value v_key_state = new Value("");
 		Criteria criteria = new Criteria();
 		criteria.add(Condition.fieldEQ(f_key_state, v_key_state));
@@ -112,7 +112,7 @@ public class TaskNormalizes extends TaskAverages {
 	 */
 	private Order getSelectOrder() {
 		Order order = new Order();
-		order.add(states.getFields().getIndex());
+		order.add(states.getTable().getField(Fields.Index));
 		return order;
 	}
 
@@ -168,20 +168,6 @@ public class TaskNormalizes extends TaskAverages {
 				}
 				Record record = iterator.next();
 				
-				// Deltas high, low, close.
-				{
-					List<Field> fieldsRaw = states.getFieldListDeltas(Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListDeltas(Suffix.nrm);
-					for (int i = 0; i < fieldsRaw.size(); i++) {
-						Field fieldRaw = fieldsRaw.get(i);
-						Field fieldCont = fieldsCont.get(i);
-						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
-						double valueCont = normCont.getValue(valueRaw);
-						record.getValue(fieldCont.getName()).setDouble(valueCont);
-					}					
-				}
-
 				// Spreads between averages.
 				{
 					List<Field> fieldsRaw = states.getFieldListSpreads(Suffix.raw);
@@ -192,7 +178,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Normalizer normDisc = Properties.getSpread(fieldDisc).getNormalizer();
+						Normalizer normDisc = Fields.Properties.getSpread(fieldDisc).getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -211,7 +197,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Normalizer normDisc = Properties.getSpeed(fieldDisc).getNormalizer();
+						Normalizer normDisc = Fields.Properties.getSpeed(fieldDisc).getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -230,7 +216,7 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Calculation calculation = Properties.getCalculation(fieldDisc);
+						Calculation calculation = Fields.Properties.getCalculation(fieldDisc);
 						Normalizer normDisc = calculation.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
@@ -242,7 +228,7 @@ public class TaskNormalizes extends TaskAverages {
 
 				// Key state.
 				{
-					Field fieldKey = states.getFields().getState();
+					Field fieldKey = states.getTable().getField(Fields.State);
 					List<Field> fieldsKey = states.getFieldListStateKey();
 					double[] keyValues = new double[fieldsKey.size()];
 					for (int i = 0; i < fieldsKey.size(); i++) {

@@ -53,16 +53,16 @@ import com.qtplaf.library.trading.data.info.PriceInfo;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.LaunchArgs;
+import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Formatters;
 import com.qtplaf.platform.database.Lookup;
-import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.tables.TableDataPrice;
 import com.qtplaf.platform.task.TaskDownloadTicker;
 import com.qtplaf.platform.util.FormUtils;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.PeriodUtils;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordSetUtils;
-import com.qtplaf.platform.util.TableUtils;
 
 /**
  * Edit the list of server tickers.
@@ -115,7 +115,7 @@ public class ActionTickers extends AbstractAction {
 				persistor.insert(record);
 				// Create the table.
 				String tableName = record.getValue(Fields.TableName).getString();
-				Table table = TableUtils.getTableDataPrice(session, server, tableName);
+				Table table = new TableDataPrice(session, server, instrument, tableName);
 				PersistorUtils.getDDL().buildTable(table);
 				getTableModel().insertRecord(record, persistor.getView().getOrderBy());
 				getTableRecord().setSelectedRecord(record);
@@ -163,9 +163,10 @@ public class ActionTickers extends AbstractAction {
 				// Delete records and tables.
 				int row = getTableRecord().getSelectedRow();
 				for (Record record : records) {
+					Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
 					PersistorUtils.getPersistorTickers(session).delete(record);
 					String tableName = record.getValue(Fields.TableName).getString();
-					Table table = TableUtils.getTableDataPrice(session, server, tableName);
+					Table table = new TableDataPrice(session, server, instrument, tableName);
 					PersistorUtils.getDDL().dropTable(table);
 					getTableModel().deleteRecord(record);
 				}
@@ -213,8 +214,9 @@ public class ActionTickers extends AbstractAction {
 
 				// Delete record and table.
 				for (Record record : records) {
+					Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
 					String tableName = record.getValue(Fields.TableName).getString();
-					Table table = TableUtils.getTableDataPrice(session, server, tableName);
+					Table table = new TableDataPrice(session, server, instrument, tableName);
 					PersistorUtils.getDDL().dropTable(table);
 					PersistorUtils.getDDL().buildTable(table);
 				}
@@ -329,8 +331,10 @@ public class ActionTickers extends AbstractAction {
 				if (record == null) {
 					return;
 				}
+				Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
 				String tableName = record.getValue(Fields.TableName).getString();
-				DataPersistor persistor = new DataPersistor(PersistorUtils.getPersistorDataPrice(session, server, tableName));
+				DataPersistor persistor = 
+					new DataPersistor(PersistorUtils.getPersistorDataPrice(session, server, instrument, tableName));
 				persistor.setSensitive(false);
 
 				String serverId = record.getValue(Fields.ServerId).getString();
@@ -406,11 +410,10 @@ public class ActionTickers extends AbstractAction {
 				if (record == null) {
 					return;
 				}
-				String tableName = record.getValue(Fields.TableName).getString();
-				Persistor persistor = PersistorUtils.getPersistorDataPrice(session, server, tableName);
-
-				Period period = PeriodUtils.getPeriodFromRecordTickers(record);
 				Instrument instrument = InstrumentUtils.getInstrumentFromRecordTickers(session, record);
+				Period period = PeriodUtils.getPeriodFromRecordTickers(record);
+				String tableName = record.getValue(Fields.TableName).getString();
+				Persistor persistor = PersistorUtils.getPersistorDataPrice(session, server, instrument, tableName);
 
 				// Build the plot data.
 				DataInfo infoPrice = new PriceInfo(session, instrument, period);

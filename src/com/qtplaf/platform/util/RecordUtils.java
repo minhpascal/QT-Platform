@@ -25,7 +25,7 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.OfferSide;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Fields;
 
 /**
  * Centralizes record operations.

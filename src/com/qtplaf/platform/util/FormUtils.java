@@ -36,8 +36,8 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.library.trading.server.ServerFactory;
-import com.qtplaf.platform.database.Names.Fields;
-import com.qtplaf.platform.database.Names.Tables;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Tables;
 import com.qtplaf.platform.statistics.Manager;
 
 /**

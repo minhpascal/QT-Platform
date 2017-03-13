@@ -472,4 +472,24 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 			b.append(o);
 		}
 	}
+
+	/**
+	 * Parse and capitalize.
+	 * 
+	 * @param srcStr Source string.
+	 * @param srcSep Source separator.
+	 * @param dstSep Destination separator.
+	 * @return
+	 */
+	public static String parseCapitalize(String srcStr, String srcSep, String dstSep) {
+		StringBuilder b = new StringBuilder();
+		String[] words = StringUtils.parse(srcStr, srcSep);
+		for (int i = 0; i < words.length; i++) {
+			if (i > 0) {
+				b.append(dstSep);
+			}
+			b.append(StringUtils.capitalize(words[i]));
+		}
+		return b.toString();
+	}
 }

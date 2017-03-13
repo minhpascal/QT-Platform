@@ -29,8 +29,17 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.trading.data.DataRecordSet;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.DataInfo;
-import com.qtplaf.platform.database.Names.Schemas;
-import com.qtplaf.platform.database.Names.Tables;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Schemas;
+import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.fields.FieldClose;
+import com.qtplaf.platform.database.fields.FieldHigh;
+import com.qtplaf.platform.database.fields.FieldIndex;
+import com.qtplaf.platform.database.fields.FieldLow;
+import com.qtplaf.platform.database.fields.FieldOpen;
+import com.qtplaf.platform.database.fields.FieldState;
+import com.qtplaf.platform.database.fields.FieldTime;
+import com.qtplaf.platform.database.fields.FieldTimeFmt;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
@@ -44,7 +53,7 @@ import com.qtplaf.platform.util.PersistorUtils;
  * @author Miquel Sas
  */
 public class States extends Averages {
-	
+
 	/**
 	 * Browse states.
 	 */
@@ -52,12 +61,16 @@ public class States extends Averages {
 		ActionBrowseStates(States states) {
 			super(states);
 		}
+
 		@Override
 		public RecordSet getRecordSet() {
 			DataPersistor persistor = new DataPersistor(getTable().getPersistor());
 			return new DataRecordSet(persistor);
 		}
 	}
+
+	/** Cached table. */
+	private Table table;
 
 	/**
 	 * Constructor.
@@ -67,6 +80,7 @@ public class States extends Averages {
 	public States(Session session) {
 		super(session);
 	}
+
 	/**
 	 * Returns the persistor data list for this states statistics.
 	 * 
@@ -85,7 +99,6 @@ public class States extends Averages {
 
 		return new PersistorDataList(getSession(), info, persistor);
 	}
-
 
 	/**
 	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to
@@ -120,7 +133,7 @@ public class States extends Averages {
 
 		// Standard navigate.
 		actions.add(new ActionNavigateStatistics(this));
-		
+
 		return actions;
 	}
 
@@ -133,79 +146,76 @@ public class States extends Averages {
 	@Override
 	public Table getTable() {
 
-		Table table = new Table();
+		if (table == null) {
 
-		table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Schemas.server(getServer()));
+			table = new Table();
 
-		// Index and time.
-		table.addField(getFields().getIndex());
-		table.addField(getFields().getTime());
+			table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
+			table.setSchema(Schemas.server(getServer()));
 
-		// Time formatted.
-		table.addField(getFields().getTimeFmt());
+			// Index and time.
+			table.addField(new FieldIndex(getSession(), Fields.Index));
+			table.addField(new FieldTime(getSession(), Fields.Time));
 
-		// Open, high, low, close.
-		table.addField(getFields().getOpen());
-		table.addField(getFields().getHigh());
-		table.addField(getFields().getLow());
-		table.addField(getFields().getClose());
+			// Time formatted.
+			table.addField(new FieldTimeFmt(getSession(), Fields.TimeFmt));
 
-		// Averages fields.
-		table.addFields(getFieldListAverages());
+			// Open, high, low, close.
+			table.addField(new FieldOpen(getSession(), getInstrument(), Fields.Open));
+			table.addField(new FieldHigh(getSession(), getInstrument(), Fields.High));
+			table.addField(new FieldLow(getSession(), getInstrument(), Fields.Low));
+			table.addField(new FieldClose(getSession(), getInstrument(), Fields.Close));
 
-		// Deltas high, low, close, raw values.
-		table.addFields(getFieldListDeltas(Suffix.raw));
+			// Averages fields.
+			table.addFields(getFieldListAverages());
 
-		// Spreads between averages, raw values.
-		table.addFields(getFieldListSpreads(Suffix.raw));
+			// Spreads between averages, raw values.
+			table.addFields(getFieldListSpreads(Suffix.raw));
 
-		// Speed (tangent) of averages, raw values
-		table.addFields(getFieldListSpeeds(Suffix.raw));
+			// Speed (tangent) of averages, raw values
+			table.addFields(getFieldListSpeeds(Suffix.raw));
 
-		// Sum of spreads and sum of speeds, raw values.
-		table.addFields(getFieldListCalculations(Suffix.raw));
+			// Sum of spreads and sum of speeds, raw values.
+			table.addFields(getFieldListCalculations(Suffix.raw));
 
-		// Deltas high, low, close, normalized values continuous.
-		table.addFields(getFieldListDeltas(Suffix.nrm));
+			// Spreads between averages, normalized values continuous.
+			table.addFields(getFieldListSpreads(Suffix.nrm));
 
-		// Spreads between averages, normalized values continuous.
-		table.addFields(getFieldListSpreads(Suffix.nrm));
+			// Speed (tangent) of averages, normalized values continuous.
+			table.addFields(getFieldListSpeeds(Suffix.nrm));
 
-		// Speed (tangent) of averages, normalized values continuous.
-		table.addFields(getFieldListSpeeds(Suffix.nrm));
+			// Sum of spreads and sum of speeds, normalizes continuous.
+			table.addFields(getFieldListCalculations(Suffix.nrm));
 
-		// Sum of spreads and sum of speeds, normalizes continuous.
-		table.addFields(getFieldListCalculations(Suffix.nrm));
+			// Spreads between averages, normalized values discrete.
+			table.addFields(getFieldListSpreads(Suffix.dsc));
 
-		// Spreads between averages, normalized values discrete.
-		table.addFields(getFieldListSpreads(Suffix.dsc));
+			// Speed (tangent) of averages, normalized values discrete.
+			table.addFields(getFieldListSpeeds(Suffix.dsc));
 
-		// Speed (tangent) of averages, normalized values discrete.
-		table.addFields(getFieldListSpeeds(Suffix.dsc));
+			// Sum of spreads and sum of speeds, normalizes continuous.
+			table.addFields(getFieldListCalculations(Suffix.dsc));
 
-		// Sum of spreads and sum of speeds, normalizes continuous.
-		table.addFields(getFieldListCalculations(Suffix.dsc));
+			// The state key.
+			table.addField(new FieldState(getSession(), Fields.State));
 
-		// The state key.
-		table.addField(getFields().getState());
+			// Primary key on Time.
+			table.getField(Fields.Index).setPrimaryKey(true);
 
-		// Primary key on Time.
-		getFields().getIndex().setPrimaryKey(true);
+			// Unique index on Index.
+			Index indexOnIndex = new Index();
+			indexOnIndex.add(table.getField(Fields.Index));
+			indexOnIndex.setUnique(true);
+			table.addIndex(indexOnIndex);
 
-		// Unique index on Index.
-		Index indexOnIndex = new Index();
-		indexOnIndex.add(getFields().getIndex());
-		indexOnIndex.setUnique(true);
-		table.addIndex(indexOnIndex);
+			// Non unique index on the state key.
+			Index indexOnKeyState = new Index();
+			indexOnKeyState.add(table.getField(Fields.State));
+			indexOnKeyState.setUnique(false);
+			table.addIndex(indexOnKeyState);
 
-		// Non unique index on the state key.
-		Index indexOnKeyState = new Index();
-		indexOnKeyState.add(getFields().getState());
-		indexOnKeyState.setUnique(false);
-		table.addIndex(indexOnKeyState);
-
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+			table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		}
 		return table;
 	}
 

@@ -23,7 +23,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
-import com.qtplaf.platform.database.Names.Fields;
+import com.qtplaf.platform.database.Fields;
 
 /**
  * Centralizes instrument operations.

@@ -51,12 +51,18 @@ import com.qtplaf.platform.action.ActionAvailableInstruments;
 import com.qtplaf.platform.action.ActionStatistics;
 import com.qtplaf.platform.action.ActionSynchronizeServerInstruments;
 import com.qtplaf.platform.action.ActionTickers;
-import com.qtplaf.platform.database.Names.Fields;
-import com.qtplaf.platform.database.Names.Schemas;
-import com.qtplaf.platform.database.Names.Tables;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Schemas;
+import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.tables.TableDataFilters;
+import com.qtplaf.platform.database.tables.TableInstruments;
+import com.qtplaf.platform.database.tables.TableOfferSides;
+import com.qtplaf.platform.database.tables.TablePeriods;
+import com.qtplaf.platform.database.tables.TableServers;
+import com.qtplaf.platform.database.tables.TableStatistics;
+import com.qtplaf.platform.database.tables.TableTickers;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
-import com.qtplaf.platform.util.TableUtils;
 
 /**
  * Main entry of the QT-Platform.
@@ -187,42 +193,42 @@ public class QTPlatform {
 		}
 
 		// Check for the necessary table KeyServer in the system schema.
-		if (!ddl.existsTable(TableUtils.getTableServers(session))) {
-			ddl.buildTable(TableUtils.getTableServers(session));
+		if (!ddl.existsTable(Schemas.qtp, Tables.Servers)) {
+			ddl.buildTable(new TableServers(session));
 		}
 		synchronizeSupportedServer(session);
 
 		// Check for the necessary table Periods in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.Periods)) {
-			ddl.buildTable(TableUtils.getTablePeriods(session));
+			ddl.buildTable(new TablePeriods(session));
 		}
 		synchronizeStandardPeriods(session);
 
 		// Check for the necessary table OfferSides in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.OfferSides)) {
-			ddl.buildTable(TableUtils.getTableOfferSides(session));
+			ddl.buildTable(new TableOfferSides(session));
 		}
 		synchronizeStandardOfferSides(session, dbEngine);
 
 		// Check for the necessary table DataFilters in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.DataFilters)) {
-			ddl.buildTable(TableUtils.getTableDataFilters(session));
+			ddl.buildTable(new TableDataFilters(session));
 		}
 		synchronizeStandardDataFilters(session);
 
 		// Check for the necessary table Instruments in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.Instruments)) {
-			ddl.buildTable(TableUtils.getTableInstruments(session));
+			ddl.buildTable(new TableInstruments(session));
 		}
 
 		// Check for the necessary table Tickers in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.Tickers)) {
-			ddl.buildTable(TableUtils.getTableTickers(session));
+			ddl.buildTable(new TableTickers(session));
 		}
 
 		// Check for the necessary table Statistics in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.Statistics)) {
-			ddl.buildTable(TableUtils.getTableStatistics(session));
+			ddl.buildTable(new TableStatistics(session));
 		}
 	}
 
@@ -252,7 +258,7 @@ public class QTPlatform {
 	 */
 	private static void synchronizeStandardOfferSides(Session session, DBEngine dbEngine) throws Exception {
 		OfferSide[] offerSides = OfferSide.values();
-		Table table = TableUtils.getTableOfferSides(session);
+		Table table = new TableOfferSides(session);
 		for (OfferSide offerSide : offerSides) {
 			Record record = RecordUtils.getRecordOfferSide(table.getDefaultRecord(), offerSide);
 			if (!dbEngine.existsRecord(table, record)) {

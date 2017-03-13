@@ -38,8 +38,16 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.database.View;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
-import com.qtplaf.platform.database.Names.Schemas;
-import com.qtplaf.platform.database.Names.Tables;
+import com.qtplaf.platform.database.Domains;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Schemas;
+import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.fields.FieldIndex;
+import com.qtplaf.platform.database.fields.FieldMinMax;
+import com.qtplaf.platform.database.fields.FieldPeriod;
+import com.qtplaf.platform.database.fields.FieldTime;
+import com.qtplaf.platform.database.fields.FieldValue;
+import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
 import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
@@ -88,8 +96,8 @@ public class Ranges extends Averages {
 			List<Double> values = (List<Double>) record.getProperty("values");
 			Value normalIndex = (Value) record.getProperty(stddevs);
 			if (normalIndex == null) {
-				double average = record.getValue(getFields().getAverage().getName()).getDouble();
-				double stddev = record.getValue(getFields().getStdDev().getName()).getDouble();
+				double average = record.getValue(Fields.Average).getDouble();
+				double stddev = record.getValue(Fields.StdDev).getDouble();
 				double min = average - (stddev * stddevs);
 				double max = average + (stddev * stddevs);
 				int count = 0;
@@ -110,6 +118,9 @@ public class Ranges extends Averages {
 
 	}
 
+	/** Cached table. */
+	private Table table;
+
 	/**
 	 * Constructor.
 	 * 
@@ -128,27 +139,30 @@ public class Ranges extends Averages {
 	@Override
 	public Table getTable() {
 
-		Table table = new Table();
+		if (table == null) {
 
-		table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
-		table.setSchema(Schemas.server(getServer()));
+			table = new Table();
 
-		table.addField(getFields().getName());
-		table.addField(getFields().getMinMax());
-		table.addField(getFields().getPeriod());
-		table.addField(getFields().getValue());
-		table.addField(getFields().getIndex());
-		table.addField(getFields().getTime());
+			table.setName(Tables.ticker(getInstrument(), getPeriod(), getId().toLowerCase()));
+			table.setSchema(Schemas.server(getServer()));
 
-		// Non unique index on name, minmax, period.
-		Index index = new Index();
-		index.add(getFields().getName());
-		index.add(getFields().getMinMax());
-		index.add(getFields().getPeriod());
-		index.setUnique(false);
-		table.addIndex(index);
+			table.addField(getFields().getName());
+			table.addField(new FieldMinMax(getSession(), Fields.MinMax));
+			table.addField(new FieldPeriod(getSession(), Fields.Period));
+			table.addField(new FieldValue(getSession(), Fields.Value));
+			table.addField(new FieldIndex(getSession(), Fields.Index));
+			table.addField(new FieldTime(getSession(), Fields.Time));
 
-		table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+			// Non unique index on name, minmax, period.
+			Index index = new Index();
+			index.add(getFields().getName());
+			index.add(table.getField(Fields.MinMax));
+			index.add(table.getField(Fields.Period));
+			index.setUnique(false);
+			table.addIndex(index);
+
+			table.setPersistor(PersistorUtils.getPersistor(table.getSimpleView()));
+		}
 		return table;
 	}
 
@@ -163,9 +177,9 @@ public class Ranges extends Averages {
 	private void setValues(Persistor persistor, Record record, boolean includePeriod) throws PersistorException {
 
 		Field fName = getFields().getName();
-		Field fMinMax = getFields().getMinMax();
-		Field fPeriod = getFields().getPeriod();
-		Field fValue = getFields().getValue();
+		Field fMinMax = persistor.getField(Fields.MinMax);
+		Field fPeriod = persistor.getField(Fields.Period);
+		Field fValue = persistor.getField(Fields.Value);
 
 		Value vName = record.getValue(fName.getName());
 		Value vMinMax = record.getValue(fMinMax.getName());
@@ -243,44 +257,61 @@ public class Ranges extends Averages {
 
 		// Group by fields
 		view.addField(getFields().getName());
-		view.addField(getFields().getMinMax());
+		view.addField(table.getField(Fields.MinMax));
 		if (includePeriod) {
-			view.addField(getFields().getPeriod());
+			view.addField(table.getField(Fields.Period));
 		}
 
 		// Aggregate function count.
-		view.addField(getFields().getCount());
+		Field count = Domains.getInteger(getSession(), Fields.Count);
+		count.setFunction("count(*)");
+		view.addField(count);
 
 		// Aggregate function minimum.
-		view.addField(getFields().getMinimum());
+		Field minimum = Domains.getDouble(getSession(), Fields.Minimum, "Minimum", "Minimum value");
+		minimum.setFunction("min(value)");
+		minimum.setFormatter(new DataValue(getSession(), 10));
+		view.addField(minimum);
 
 		// Aggregate function maximum.
-		view.addField(getFields().getMaximum());
+		Field maximum = Domains.getDouble(getSession(), Fields.Maximum, "Maximum", "Maximum value");
+		maximum.setFunction("max(value)");
+		maximum.setFormatter(new DataValue(getSession(), 10));
+		view.addField(maximum);
 
 		// Aggregate function average.
-		view.addField(getFields().getAverage());
+		Field average = Domains.getDouble(getSession(), Fields.Average);
+		average.setFunction("avg(value)");
+		average.setFormatter(new DataValue(getSession(), 10));
+		view.addField(average);
 
 		// Aggregate function stddev.
-		view.addField(getFields().getStdDev());
+		Field stdDev = Domains.getDouble(getSession(), Fields.StdDev, "Std Dev", "Standard deviation value");
+		stdDev.setFunction("stddev(value)");
+		stdDev.setFormatter(new DataValue(getSession(), 10));
+		view.addField(stdDev);
 
 		// Index +- n * stddev
-		view.addField(getFields().getAvgStd1());
-		view.addField(getFields().getAvgStd2());
-		getFields().getAvgStd1().setCalculator(new NormalIndex(1));
-		getFields().getAvgStd2().setCalculator(new NormalIndex(2));
+		Field avgStd1 = Domains.getDouble(getSession(), "avgstd_1", "AvgStd_1", "Avg/1 Stddev value");
+		avgStd1.setCalculator(new NormalIndex(1));
+		view.addField(avgStd1);
+
+		Field avgStd2 = Domains.getDouble(getSession(), "avgstd_2", "AvgStd_2", "Avg/2 Stddev value");
+		avgStd2.setCalculator(new NormalIndex(2));
+		view.addField(avgStd2);
 
 		// Group by.
 		view.addGroupBy(getFields().getName());
-		view.addGroupBy(getFields().getMinMax());
+		view.addGroupBy(table.getField(Fields.MinMax));
 		if (includePeriod) {
-			view.addGroupBy(getFields().getPeriod());
+			view.addGroupBy(table.getField(Fields.Period));
 		}
 
 		// Order by.
 		view.addOrderBy(getFields().getName());
-		view.addOrderBy(getFields().getMinMax());
+		view.addOrderBy(table.getField(Fields.MinMax));
 		if (includePeriod) {
-			view.addOrderBy(getFields().getPeriod());
+			view.addOrderBy(table.getField(Fields.Period));
 		}
 
 		// Persistor.

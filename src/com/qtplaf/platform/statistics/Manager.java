@@ -23,16 +23,16 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.calculators.SumFields;
+import com.qtplaf.platform.database.configuration.Average;
+import com.qtplaf.platform.database.configuration.Calculation;
+import com.qtplaf.platform.database.configuration.Configuration;
+import com.qtplaf.platform.database.configuration.Range;
+import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.statistics.averages.Ranges;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Transitions;
-import com.qtplaf.platform.statistics.averages.calculators.FieldCalcSum;
-import com.qtplaf.platform.statistics.averages.configuration.Average;
-import com.qtplaf.platform.statistics.averages.configuration.Configuration;
-import com.qtplaf.platform.statistics.averages.configuration.Calculation;
-import com.qtplaf.platform.statistics.averages.configuration.Range;
-import com.qtplaf.platform.statistics.averages.configuration.Speed;
-import com.qtplaf.platform.statistics.averages.configuration.Spread;
 
 /**
  * Manager to centralize states statistics access.
@@ -249,7 +249,7 @@ public class Manager {
 	 */
 	private Calculation getCalculationSumSpreads(List<Spread> spreads, int segments) {
 		Calculation calculation = new Calculation("spread_sum", "Spread sum", "Sum of spreads");
-		FieldCalcSum calcSum = new FieldCalcSum();
+		SumFields calcSum = new SumFields();
 		for (Spread spread : spreads) {
 			calcSum.add(spread.getName() + "_raw");
 		}
@@ -268,7 +268,7 @@ public class Manager {
 	 */
 	private Calculation getCalculationSumSpeeds(List<Speed> speeds, int segments) {
 		Calculation calculation = new Calculation("speed_sum", "Speed sum", "Sum of speeds");
-		FieldCalcSum calcSum = new FieldCalcSum();
+		SumFields calcSum = new SumFields();
 		for (Speed speed : speeds) {
 			calcSum.add(speed.getName() + "_raw");
 		}
