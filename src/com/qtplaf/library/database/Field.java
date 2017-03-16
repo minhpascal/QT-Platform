@@ -1453,8 +1453,8 @@ public class Field implements Comparable<Object> {
 	 * 
 	 * @return The calculator.
 	 */
-	public FieldCalculator getCalculator() {
-		return (FieldCalculator) properties.getObject(KeyCalculator);
+	public Calculator getCalculator() {
+		return (Calculator) properties.getObject(KeyCalculator);
 	}
 
 	/**
@@ -1462,7 +1462,7 @@ public class Field implements Comparable<Object> {
 	 * 
 	 * @param calculator The field calculator.
 	 */
-	public void setCalculator(FieldCalculator calculator) {
+	public void setCalculator(Calculator calculator) {
 		properties.setObject(KeyCalculator, calculator);
 	}
 

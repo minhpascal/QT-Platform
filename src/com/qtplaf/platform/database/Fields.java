@@ -16,7 +16,7 @@ package com.qtplaf.platform.database;
 
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
-import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
 
 /**
@@ -29,11 +29,22 @@ public class Fields {
 	/**
 	 * Fields additional properties names.
 	 */
-	public static class Properties {
-		public static final String Average = "average";
-		public static final String Calculation = "calculation";
-		public static final String Spread = "spread";
-		public static final String Speed = "speed";
+	public interface Properties {
+		String Average = "average";
+		String Calculation = "calculation";
+		String Spread = "spread";
+		String Slope = "slope";
+	}
+	
+	/**
+	 * Suffixes of field names.
+	 */
+	public interface Suffix {
+		String raw = "raw";		// Raw
+		String nrm = "nrm";		// Normalize continuous
+		String dsc = "dsc";		// Normalize discrete
+		String in = "in";		// Input 
+		String out = "out";		// Output
 	}
 	
 	public static final String Average = "average";
@@ -94,7 +105,7 @@ public class Fields {
 		return spread.getName() + "_" + suffix;
 	}
 	
-	public static String speed(Speed speed, String suffix) {
-		return speed.getName() + "_" + suffix;
+	public static String slope(Slope slope, String suffix) {
+		return slope.getName() + "_" + suffix;
 	}
 }

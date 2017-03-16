@@ -23,12 +23,13 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.platform.database.calculators.SumFields;
+import com.qtplaf.platform.database.calculators.CalculatorRange;
+import com.qtplaf.platform.database.calculators.CalculatorSpreadPrice;
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Configuration;
 import com.qtplaf.platform.database.configuration.Range;
-import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.statistics.averages.Ranges;
 import com.qtplaf.platform.statistics.averages.States;
@@ -187,10 +188,7 @@ public class Manager {
 	 */
 	public List<Configuration> getConfigurations() {
 		List<Configuration> configurations = new ArrayList<>();
-		configurations.add(getConfigurationMF());
-		configurations.add(getConfigurationSF());
-		configurations.add(getConfigurationWF());
-		configurations.add(getConfigurationWM());
+		configurations.add(getConfigurationWeightedMedium());
 		return configurations;
 	}
 
@@ -214,213 +212,78 @@ public class Manager {
 	 * @param fast Fast average.
 	 * @param slow Slow average.
 	 * @param segments Segments of the normalizer.
+	 * @param key State key flag.
 	 * @return The spread.
 	 */
-	private Spread getSpread(Average fast, Average slow, int segments) {
+	private Spread getSpread(Average fast, Average slow, int segments, boolean key) {
 		Spread spread = new Spread();
 		spread.setFastAverage(fast);
 		spread.setSlowAverage(slow);
-		spread.setStateKey(true);
+		spread.setStateKey(key);
 		spread.setNormalizer(getNormalizer(segments));
 		return spread;
 	}
 
 	/**
-	 * Returns the speed of the average with a normalizer of segments.
+	 * Returns the slope of the average with a normalizer of segments.
 	 * 
 	 * @param avg The average.
 	 * @param segments Segments of the normalizer.
-	 * @return The speed.
+	 * @param key State key flag.
+	 * @return The slope.
 	 */
-	private Speed getSpeed(Average avg, int segments) {
-		Speed speed = new Speed();
-		speed.setAverage(avg);
-		speed.setStateKey(true);
-		speed.setNormalizer(getNormalizer(segments));
-		return speed;
+	private Slope getSlope(Average avg, int segments, boolean key) {
+		Slope slope = new Slope();
+		slope.setAverage(avg);
+		slope.setStateKey(key);
+		slope.setNormalizer(getNormalizer(segments));
+		return slope;
 	}
 
 	/**
-	 * Returns the calculation to sum spreads.
+	 * Calculation for the price spread .
 	 * 
-	 * @param spreads The spreads.
+	 * @param field The field.
+	 * @param average The average.
 	 * @param segments Segments of the normalizer.
-	 * @return The calculation.
+	 * @param key State key flag.
+	 * @return The calculator.
 	 */
-	private Calculation getCalculationSumSpreads(List<Spread> spreads, int segments) {
-		Calculation calculation = new Calculation("spread_sum", "Spread sum", "Sum of spreads");
-		SumFields calcSum = new SumFields();
-		for (Spread spread : spreads) {
-			calcSum.add(spread.getName() + "_raw");
-		}
-		calculation.setCalculator(calcSum);
+	private Calculation getCalculationSpreadPrice(Average average, int segments, boolean key) {
+		String name = "spwcp_avg_" + average.getPeriod();
+		String header = "Spread WCP-Avg-" + average.getPeriod();
+		Calculation calculation = new Calculation(name, header, header);
+		CalculatorSpreadPrice calculator = new CalculatorSpreadPrice(average);
+		calculation.setCalculator(calculator);
 		calculation.setNormalizer(getNormalizer(segments));
-		calculation.setStateKey(true);
+		calculation.setStateKey(key);
 		return calculation;
 	}
 
 	/**
-	 * Returns the calculation to sum speeds.
-	 * 
-	 * @param spreads The speeds.
+	 * Returns the calculation for the range.
 	 * @param segments Segments of the normalizer.
-	 * @return The calculation.
+	 * @param key State key flag.
+	 * @return The calculator.
 	 */
-	private Calculation getCalculationSumSpeeds(List<Speed> speeds, int segments) {
-		Calculation calculation = new Calculation("speed_sum", "Speed sum", "Sum of speeds");
-		SumFields calcSum = new SumFields();
-		for (Speed speed : speeds) {
-			calcSum.add(speed.getName() + "_raw");
-		}
-		calculation.setCalculator(calcSum);
+	private Calculation getCalculationRange(int segments, boolean key) {
+		String name = "range";
+		String header = "Range";
+		Calculation calculation = new Calculation(name, header, header);
+		CalculatorRange calculator = new CalculatorRange();
+		calculation.setCalculator(calculator);
 		calculation.setNormalizer(getNormalizer(segments));
-		calculation.setStateKey(true);
+		calculation.setStateKey(key);
 		return calculation;
 	}
 
 	/**
 	 * Returns the configuration with 5-21-89-377 averages. Normalizers are discrete normalizers over values that have
-	 * already been normalized continuous.
+	 * already been normalized continuous. Weighted averages.
 	 * 
 	 * @return The configuration.
 	 */
-	private Configuration getConfigurationSF() {
-		Configuration cfg = new Configuration(getSession());
-		cfg.setId("sf");
-		cfg.setScale(3);
-
-		// Averages.
-		Average avg_5 = new Average(5, 5, 3);
-		Average avg_21 = new Average(21, 13, 3);
-		Average avg_89 = new Average(89, 21, 13);
-		Average avg_377 = new Average(377, 34, 21);
-		Average avg_610 = new Average(610, 55, 34);
-		cfg.addAverage(avg_5);
-		cfg.addAverage(avg_21);
-		cfg.addAverage(avg_89);
-		cfg.addAverage(avg_377);
-		cfg.addAverage(avg_610);
-
-		// Spreads.
-		cfg.addSpread(getSpread(avg_5, avg_21, 10));
-		cfg.addSpread(getSpread(avg_21, avg_89, 10));
-		cfg.addSpread(getSpread(avg_89, avg_377, 10));
-		cfg.addSpread(getSpread(avg_377, avg_610, 10));
-
-		// Speeds.
-		cfg.addSpeed(getSpeed(avg_89, 10));
-		cfg.addSpeed(getSpeed(avg_377, 10));
-		cfg.addSpeed(getSpeed(avg_610, 10));
-		
-		// Sum of spreads and speeds.
-		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
-		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
-
-		// Ranges for min-max values.
-		cfg.addRange(new Range(89));
-		cfg.addRange(new Range(377));
-
-		return cfg;
-	}
-
-	/**
-	 * Returns the configuration with 5-21-89-377 averages. Normalizers are discrete normalizers over values that have
-	 * already been normalized continuous.
-	 * 
-	 * @return The configuration.
-	 */
-	private Configuration getConfigurationWF() {
-		Configuration cfg = new Configuration(getSession());
-		cfg.setId("wf");
-		cfg.setScale(3);
-
-		// Averages.
-		Average avg_5 = new Average(5, 5, 3);
-		Average avg_21 = new Average(21, 13, 3);
-		Average avg_89 = new Average(89, 21, 13);
-		Average avg_377 = new Average(377, 34, 21);
-		Average avg_610 = new Average(610, 55, 34);
-		avg_5.setType(Average.Type.WMA);
-		avg_21.setType(Average.Type.WMA);
-		avg_89.setType(Average.Type.WMA);
-		avg_377.setType(Average.Type.WMA);
-		avg_610.setType(Average.Type.WMA);
-		cfg.addAverage(avg_5);
-		cfg.addAverage(avg_21);
-		cfg.addAverage(avg_89);
-		cfg.addAverage(avg_377);
-		cfg.addAverage(avg_610);
-
-		// Spreads.
-		cfg.addSpread(getSpread(avg_5, avg_21, 10));
-		cfg.addSpread(getSpread(avg_21, avg_89, 10));
-		cfg.addSpread(getSpread(avg_89, avg_377, 10));
-		cfg.addSpread(getSpread(avg_377, avg_610, 10));
-
-		// Speeds.
-		cfg.addSpeed(getSpeed(avg_89, 10));
-		cfg.addSpeed(getSpeed(avg_377, 10));
-		cfg.addSpeed(getSpeed(avg_610, 10));
-		
-		// Sum of spreads and speeds.
-		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
-		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
-
-		// Ranges for min-max values.
-		cfg.addRange(new Range(89));
-		cfg.addRange(new Range(377));
-
-		return cfg;
-	}
-
-	/**
-	 * Returns the configuration with 5-21-89-377 averages. Normalizers are discrete normalizers over values that have
-	 * already been normalized continuous.
-	 * 
-	 * @return The configuration.
-	 */
-	private Configuration getConfigurationMF() {
-		Configuration cfg = new Configuration(getSession());
-		cfg.setId("mf");
-		cfg.setScale(3);
-
-		// Averages.
-		Average avg_5 = new Average(5, 5, 3);
-		Average avg_21 = new Average(21, 13, 3);
-		Average avg_89 = new Average(89, 21, 13);
-		Average avg_377 = new Average(377, 34, 21);
-		cfg.addAverage(avg_5);
-		cfg.addAverage(avg_21);
-		cfg.addAverage(avg_89);
-		cfg.addAverage(avg_377);
-
-		// Spreads.
-		cfg.addSpread(getSpread(avg_5, avg_21, 10));
-		cfg.addSpread(getSpread(avg_21, avg_89, 10));
-		cfg.addSpread(getSpread(avg_89, avg_377, 10));
-
-		// Speeds.
-		cfg.addSpeed(getSpeed(avg_89, 10));
-		cfg.addSpeed(getSpeed(avg_377, 10));
-	
-		// Sum of spreads and speeds.
-		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
-		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
-
-		// Ranges for min-max values.
-		cfg.addRange(new Range(89));
-		cfg.addRange(new Range(377));
-
-		return cfg;
-	}
-
-	/**
-	 * Returns the configuration with 5-21-89-377 averages. Normalizers are discrete normalizers over values that have
-	 * already been normalized continuous.
-	 * 
-	 * @return The configuration.
-	 */
-	private Configuration getConfigurationWM() {
+	private Configuration getConfigurationWeightedMedium() {
 		Configuration cfg = new Configuration(getSession());
 		cfg.setId("wm");
 		cfg.setScale(3);
@@ -440,17 +303,21 @@ public class Manager {
 		cfg.addAverage(avg_377);
 
 		// Spreads.
-		cfg.addSpread(getSpread(avg_5, avg_21, 10));
-		cfg.addSpread(getSpread(avg_21, avg_89, 10));
-		cfg.addSpread(getSpread(avg_89, avg_377, 10));
+		cfg.addSpread(getSpread(avg_5, avg_21, 10, true));
+		cfg.addSpread(getSpread(avg_21, avg_89, 10, true));
+		cfg.addSpread(getSpread(avg_89, avg_377, 10, true));
 
-		// Speeds.
-		cfg.addSpeed(getSpeed(avg_89, 10));
-		cfg.addSpeed(getSpeed(avg_377, 10));
-	
-		// Sum of spreads and speeds.
-		cfg.addCalculation(getCalculationSumSpreads(cfg.getSpreads(), 10));
-		cfg.addCalculation(getCalculationSumSpeeds(cfg.getSpeeds(), 10));
+		// Slopes.
+		cfg.addSlope(getSlope(avg_5, 10, false));
+		cfg.addSlope(getSlope(avg_21, 10, false));
+		cfg.addSlope(getSlope(avg_89, 10, true));
+		cfg.addSlope(getSlope(avg_377, 10, true));
+
+		// Range.
+		cfg.addCalculation(getCalculationRange(10, false));
+		
+		// Spreads high, low close.
+		cfg.addCalculation(getCalculationSpreadPrice(avg_5, 10, true));
 
 		// Ranges for min-max values.
 		cfg.addRange(new Range(89));

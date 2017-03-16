@@ -16,8 +16,8 @@ package com.qtplaf.platform.statistics.averages.task;
 
 import java.util.List;
 
+import com.qtplaf.library.database.Calculator;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.FieldCalculator;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.Data;
@@ -27,11 +27,10 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.configuration.Calculation;
-import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.indicators.StatesIndicator;
 import com.qtplaf.platform.statistics.averages.States;
-import com.qtplaf.platform.statistics.averages.Suffix;
 
 /**
  * Calculates source states values.
@@ -139,8 +138,8 @@ public class TaskStates extends TaskAverages {
 			// Calculate the result indicator and save the data.
 			Data data = indicatorList.calculate(index);
 
-			// Indicator data contains open, high, low, close and the averages. Raw spreads and speed will be calculated
-			// here.
+			// Indicator data contains open, high, low, close and the averages. Raw spreads and slopes will be
+			// calculated here.
 			Record record = persistor.getDefaultRecord();
 
 			// Time.
@@ -162,10 +161,10 @@ public class TaskStates extends TaskAverages {
 					record.getValue(name).setDouble(data.getValue(info.getOutputIndex(name)));
 				}
 			}
-			
+
 			// Raw spreads between averages.
 			{
-				List<Field> fields = states.getFieldListSpreads(Suffix.raw);
+				List<Field> fields = states.getFieldListSpreads(Fields.Suffix.raw);
 				for (Field field : fields) {
 					Spread spread = (Spread) field.getProperty(Fields.Properties.Spread);
 					String avgFastName = spread.getFastAverage().getName();
@@ -176,33 +175,33 @@ public class TaskStates extends TaskAverages {
 					record.getValue(field.getName()).setDouble(valueSpread);
 				}
 			}
-			
-			// Raw speeds of averages.
+
+			// Raw slopes of averages.
 			{
 				if (index > 0) {
 					Data prev = indicatorList.get(index - 1);
-					List<Field> fields = states.getFieldListSpeeds(Suffix.raw);
+					List<Field> fields = states.getFieldListSlopes(Fields.Suffix.raw);
 					for (Field field : fields) {
-						Speed speed = (Speed) field.getProperty(Fields.Properties.Speed);
-						String avgName = speed.getAverage().getName();
+						Slope slope = (Slope) field.getProperty(Fields.Properties.Slope);
+						String avgName = slope.getAverage().getName();
 						double valueCurr = data.getValue(info.getOutputIndex(avgName));
 						double valuePrev = prev.getValue(info.getOutputIndex(avgName));
-						double valueSpeed = (valueCurr / valuePrev) - 1;
-						record.getValue(field.getName()).setDouble(valueSpeed);
+						double valueSlope = (valueCurr / valuePrev) - 1;
+						record.getValue(field.getName()).setDouble(valueSlope);
 					}
 				}
 			}
-			
-			// Raw sums of spreads and speeds.
+
+			// Raw calculations.
 			{
-				List<Field> fields = states.getFieldListCalculations(Suffix.raw);
+				List<Field> fields = states.getFieldListCalculations(Fields.Suffix.raw);
 				for (Field field : fields) {
 					Calculation calculation = (Calculation) field.getProperty(Fields.Properties.Calculation);
-					FieldCalculator calculator = calculation.getCalculator();
+					Calculator calculator = calculation.getCalculator();
 					record.setValue(field.getName(), calculator.getValue(record));
-				}				
+				}
 			}
-			
+
 			// Insert.
 			persistor.insert(record);
 

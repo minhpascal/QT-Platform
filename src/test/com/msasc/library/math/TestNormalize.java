@@ -12,19 +12,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.database;
+package test.com.msasc.library.math;
+
+import com.qtplaf.library.ai.fuzzy.function.Linear;
 
 /**
- * Interface for calculated fields in a record.
- * 
+ * Test the normalize function.
+ *
  * @author Miquel Sas
  */
-public interface FieldCalculator {
-	/**
-	 * Calculate and return the value.
-	 * 
-	 * @param record The record that contains the field.
-	 * @return The calculated value.
-	 */
-	Value getValue(Record record);
+public class TestNormalize {
+	public static void main(String[] args) {
+		Linear linear = new Linear();
+		System.out.println(linear.getFactor(0, 1, -1, 0));
+		System.out.println(linear.getFactor(0, 1, -1, -1));
+		System.out.println(linear.getFactor(-1, 1, -1, -1));
+		System.out.println(linear.getFactor(1, 1, -1, -1));
+		System.out.println(linear.getFactor(0, 1, -1, 1));
+		System.out.println(linear.getFactor(-1, 1, -1, 1));
+		System.out.println(linear.getFactor(1, 1, -1, 1));
+	}
 }

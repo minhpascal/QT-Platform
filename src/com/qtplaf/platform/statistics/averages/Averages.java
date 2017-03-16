@@ -38,11 +38,11 @@ import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Configuration;
-import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.database.fields.FieldAverage;
 import com.qtplaf.platform.database.fields.FieldCalculation;
-import com.qtplaf.platform.database.fields.FieldSpeed;
+import com.qtplaf.platform.database.fields.FieldSlope;
 import com.qtplaf.platform.database.fields.FieldSpread;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
@@ -147,18 +147,18 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
-	 * Returns the list of speed fields, raw values
+	 * Returns the list of slope fields, raw values
 	 * 
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
 	 */
-	public List<Field> getFieldListSpeeds(String suffix) {
-		String name = "speeds_" + suffix;
+	public List<Field> getFieldListSlopes(String suffix) {
+		String name = "slopes_" + suffix;
 		List<Field> fields = mapFieldLists.get(name);
 		if (fields == null) {
 			fields = new ArrayList<>();
-			for (Speed speed : getConfiguration().getSpeeds()) {
-				fields.add(new FieldSpeed(getSession(), speed, Fields.speed(speed, suffix)));
+			for (Slope slope : getConfiguration().getSlopes()) {
+				fields.add(new FieldSlope(getSession(), slope, Fields.slope(slope, suffix)));
 			}
 			mapFieldLists.put(name, fields);
 		}
@@ -172,9 +172,9 @@ public abstract class Averages extends TickerStatistics {
 	 */
 	public List<Field> getFieldListStateKey() {
 		List<Field> spreadFields = new ArrayList<>();
-		spreadFields.addAll(getFieldListSpreads(Suffix.dsc));
-		List<Field> speedFields = new ArrayList<>();
-		speedFields.addAll(getFieldListSpeeds(Suffix.dsc));
+		spreadFields.addAll(getFieldListSpreads(Fields.Suffix.dsc));
+		List<Field> slopeFields = new ArrayList<>();
+		slopeFields.addAll(getFieldListSlopes(Fields.Suffix.dsc));
 		List<Field> keyFields = new ArrayList<>();
 		for (Field field : spreadFields) {
 			Spread spread = (Spread) field.getProperty(Fields.Properties.Spread);
@@ -182,9 +182,9 @@ public abstract class Averages extends TickerStatistics {
 				keyFields.add(field);
 			}
 		}
-		for (Field field : speedFields) {
-			Speed speed = (Speed) field.getProperty(Fields.Properties.Speed);
-			if (speed.isStateKey()) {
+		for (Field field : slopeFields) {
+			Slope slope = (Slope) field.getProperty(Fields.Properties.Slope);
+			if (slope.isStateKey()) {
 				keyFields.add(field);
 			}
 		}
@@ -198,9 +198,9 @@ public abstract class Averages extends TickerStatistics {
 	 */
 	public List<Field> getFieldListToCalculateRanges() {
 		List<Field> fields = new ArrayList<>();
-		fields.addAll(getFieldListSpreads(Suffix.raw));
-		fields.addAll(getFieldListSpeeds(Suffix.raw));
-		fields.addAll(getFieldListCalculations(Suffix.raw));
+		fields.addAll(getFieldListSpreads(Fields.Suffix.raw));
+		fields.addAll(getFieldListSlopes(Fields.Suffix.raw));
+		fields.addAll(getFieldListCalculations(Fields.Suffix.raw));
 		return fields;
 	}
 

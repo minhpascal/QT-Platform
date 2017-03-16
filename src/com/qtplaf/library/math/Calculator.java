@@ -179,16 +179,16 @@ public class Calculator {
 	}
 
 	/**
-	 * Normalizes the value in a range of maximum/minimum values. If both the maximum and the minimum are positive,
-	 * normalizes to the range [1.0, 0.0]. If both are negative, normalizes in the range [0.0, -1.0]. If the maximum is
-	 * positive and the minimum is negative, normalizes in the range [1.0, -1.0].
+	 * Normalizes the value in a range of maximum/minimum values with a sign. If both the maximum and the minimum are
+	 * positive, normalizes to the range [1.0, 0.0]. If both are negative, normalizes in the range [0.0, -1.0]. If the
+	 * maximum is positive and the minimum is negative, normalizes in the range [1.0, -1.0].
 	 * 
 	 * @param value The value to normalize.
 	 * @param maximum The maximum.
 	 * @param minimum The minimum.
 	 * @return The normalized value.
 	 */
-	public static double normalize(double value, double maximum, double minimum) {
+	public static double normalizeSign(double value, double maximum, double minimum) {
 
 		// Ensure maximum and minimum, swap if necessary..
 		if (minimum > maximum) {
@@ -227,12 +227,41 @@ public class Calculator {
 	}
 
 	/**
+	 * Normalize a value within a minimum and maximum.
+	 * 
+	 * @param value The value.
+	 * @param maximum The minimum.
+	 * @param minimum The maximum.
+	 * @return The normalized value.
+	 */
+	public static double normalize(double value, double maximum, double minimum) {
+
+		// Maximum and minimum can not be equal.
+		if (maximum == minimum) {
+			throw new IllegalArgumentException();
+		}
+
+		// Ensure maximum and minimum, swap if necessary..
+		if (minimum > maximum) {
+			double tmp = maximum;
+			maximum = minimum;
+			minimum = tmp;
+		}
+
+		// Ensure in the range.
+		value = Math.min(value, maximum);
+		value = Math.max(value, minimum);
+
+		return ((value - minimum) / (maximum - minimum));
+	}
+
+	/**
 	 * Returns the list of normalized values, values that are >= 0 and <= 1.
 	 * 
 	 * @param values The list of value to normalize.
 	 * @return The list of values normalized
 	 */
-	public static double[] normalize(double[] values) {
+	public static double[] normalizeSign(double[] values) {
 		double maximum = Double.NEGATIVE_INFINITY;
 		double minimum = Double.POSITIVE_INFINITY;
 		for (double value : values) {
@@ -246,7 +275,7 @@ public class Calculator {
 		int size = size(values);
 		double[] normalized = new double[size];
 		for (int i = 0; i < size; i++) {
-			normalized[i] = normalize(values[i], maximum, minimum);
+			normalized[i] = normalizeSign(values[i], maximum, minimum);
 		}
 		return normalized;
 	}
@@ -257,8 +286,8 @@ public class Calculator {
 	 * @param values The list of value to normalize.
 	 * @return The list of values normalized
 	 */
-	public static List<Double> normalize(List<Double> values) {
-		return toList(normalize(ListUtils.toArray(values)));
+	public static List<Double> normalizeSign(List<Double> values) {
+		return toList(normalizeSign(ListUtils.toArray(values)));
 	}
 
 	/**
@@ -269,7 +298,7 @@ public class Calculator {
 	 * @param stddev The standard deviation.
 	 * @return The list normalized.
 	 */
-	public static double[] normalize(double[] values, double mean, double stddev) {
+	public static double[] normalizeSign(double[] values, double mean, double stddev) {
 		int size = size(values);
 		double[] normalized = new double[size];
 		for (int i = 0; i < size; i++) {
@@ -291,8 +320,8 @@ public class Calculator {
 	 * @param stddev The standard deviation.
 	 * @return The list normalized.
 	 */
-	public static List<Double> normalize(List<Double> values, double mean, double stddev) {
-		return toList(normalize(ListUtils.toArray(values), mean, stddev));
+	public static List<Double> normalizeSign(List<Double> values, double mean, double stddev) {
+		return toList(normalizeSign(ListUtils.toArray(values), mean, stddev));
 	}
 
 	/**
@@ -1008,5 +1037,26 @@ public class Calculator {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Returns the sigmoid of a value.
+	 * 
+	 * @param value The value.
+	 * @return The sigmoid.
+	 */
+	public static double sigmoid(double value) {
+		return 1 / (1 + Math.exp(-(value)));
+	}
+
+	/**
+	 * Returns the sigmoid derivative of a value.
+	 * 
+	 * @param value The value.
+	 * @return The sigmoid derivative.
+	 */
+	public static double sigmoidDerivative(double value) {
+		double output = sigmoid(value);
+		return output * (1 - output);
 	}
 }

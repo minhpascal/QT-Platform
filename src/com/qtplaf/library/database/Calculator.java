@@ -12,17 +12,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.platform.statistics.averages;
+package com.qtplaf.library.database;
 
 /**
- * Suffixes of values.
- *
+ * Interface for calculated fields in a record.
+ * 
  * @author Miquel Sas
  */
-public interface Suffix {
-	String raw = "raw";		// Raw
-	String nrm = "nrm";		// Normalize continuous
-	String dsc = "dsc";		// Normalize discrete
-	String in = "in";		// Input 
-	String out = "out";		// Output
+public interface Calculator {
+	/**
+	 * Calculate and return the value.
+	 * 
+	 * @param record The record that contains the field.
+	 * @return The calculated value.
+	 */
+	Value getValue(Record record);
 }

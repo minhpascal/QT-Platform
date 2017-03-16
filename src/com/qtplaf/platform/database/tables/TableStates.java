@@ -32,7 +32,6 @@ import com.qtplaf.platform.database.fields.FieldState;
 import com.qtplaf.platform.database.fields.FieldTime;
 import com.qtplaf.platform.database.fields.FieldTimeFmt;
 import com.qtplaf.platform.statistics.averages.States;
-import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -76,31 +75,31 @@ public class TableStates extends Table {
 		addFields(states.getFieldListAverages());
 
 		// Spreads between averages, raw values.
-		addFields(states.getFieldListSpreads(Suffix.raw));
+		addFields(states.getFieldListSpreads(Fields.Suffix.raw));
 
-		// Speed (tangent) of averages, raw values
-		addFields(states.getFieldListSpeeds(Suffix.raw));
+		// Slope (tangent) of averages, raw values
+		addFields(states.getFieldListSlopes(Fields.Suffix.raw));
 
-		// Sum of spreads and sum of speeds, raw values.
-		addFields(states.getFieldListCalculations(Suffix.raw));
+		// Calculations, raw values.
+		addFields(states.getFieldListCalculations(Fields.Suffix.raw));
 
 		// Spreads between averages, normalized values continuous.
-		addFields(states.getFieldListSpreads(Suffix.nrm));
+		addFields(states.getFieldListSpreads(Fields.Suffix.nrm));
 
-		// Speed (tangent) of averages, normalized values continuous.
-		addFields(states.getFieldListSpeeds(Suffix.nrm));
+		// Slope (tangent) of averages, normalized values continuous.
+		addFields(states.getFieldListSlopes(Fields.Suffix.nrm));
 
-		// Sum of spreads and sum of speeds, normalizes continuous.
-		addFields(states.getFieldListCalculations(Suffix.nrm));
+		// Calculations, normalizes continuous.
+		addFields(states.getFieldListCalculations(Fields.Suffix.nrm));
 
 		// Spreads between averages, normalized values discrete.
-		addFields(states.getFieldListSpreads(Suffix.dsc));
+		addFields(states.getFieldListSpreads(Fields.Suffix.dsc));
 
-		// Speed (tangent) of averages, normalized values discrete.
-		addFields(states.getFieldListSpeeds(Suffix.dsc));
+		// Slope (tangent) of averages, normalized values discrete.
+		addFields(states.getFieldListSlopes(Fields.Suffix.dsc));
 
-		// Sum of spreads and sum of speeds, normalizes continuous.
-		addFields(states.getFieldListCalculations(Suffix.dsc));
+		// Calculations, normalizes continuous.
+		addFields(states.getFieldListCalculations(Fields.Suffix.dsc));
 
 		// The state key.
 		addField(new FieldState(getSession(), Fields.State));

@@ -206,7 +206,7 @@ public class Record implements Comparable<Object> {
 	 * @return The value at the given index.
 	 */
 	public Value getValue(int index) {
-		FieldCalculator calculator = getField(index).getCalculator();
+		Calculator calculator = getField(index).getCalculator();
 		if (calculator != null) {
 			return calculator.getValue(this);
 		}

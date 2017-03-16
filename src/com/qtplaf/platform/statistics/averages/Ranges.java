@@ -26,7 +26,7 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.FieldCalculator;
+import com.qtplaf.library.database.Calculator;
 import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
@@ -74,7 +74,7 @@ public class Ranges extends Averages {
 	/**
 	 * Field calculator to view the normal distribution index.
 	 */
-	class NormalIndex implements FieldCalculator {
+	class NormalIndex implements Calculator {
 
 		/** Stddev times. */
 		private double stddevs;
@@ -235,39 +235,46 @@ public class Ranges extends Averages {
 
 		// Aggregate function count.
 		Field count = Domains.getInteger(getSession(), Fields.Count);
+		count.setPersistent(false);
 		count.setFunction("count(*)");
 		view.addField(count);
 
 		// Aggregate function minimum.
 		Field minimum = Domains.getDouble(getSession(), Fields.Minimum, "Minimum", "Minimum value");
+		minimum.setPersistent(false);
 		minimum.setFunction("min(value)");
 		minimum.setFormatter(new DataValue(getSession(), 10));
 		view.addField(minimum);
 
 		// Aggregate function maximum.
 		Field maximum = Domains.getDouble(getSession(), Fields.Maximum, "Maximum", "Maximum value");
+		maximum.setPersistent(false);
 		maximum.setFunction("max(value)");
 		maximum.setFormatter(new DataValue(getSession(), 10));
 		view.addField(maximum);
 
 		// Aggregate function average.
 		Field average = Domains.getDouble(getSession(), Fields.Average);
+		average.setPersistent(false);
 		average.setFunction("avg(value)");
 		average.setFormatter(new DataValue(getSession(), 10));
 		view.addField(average);
 
 		// Aggregate function stddev.
-		Field stdDev = Domains.getDouble(getSession(), Fields.StdDev, "Std Dev", "Standard deviation value");
-		stdDev.setFunction("stddev(value)");
-		stdDev.setFormatter(new DataValue(getSession(), 10));
-		view.addField(stdDev);
+		Field stddev = Domains.getDouble(getSession(), Fields.StdDev, "Std Dev", "Standard deviation value");
+		stddev.setPersistent(false);
+		stddev.setFunction("stddev(value)");
+		stddev.setFormatter(new DataValue(getSession(), 10));
+		view.addField(stddev);
 
 		// Index +- n * stddev
 		Field avgStd1 = Domains.getDouble(getSession(), "avgstd_1", "AvgStd_1", "Avg/1 Stddev value");
+		avgStd1.setPersistent(false);
 		avgStd1.setCalculator(new NormalIndex(1));
 		view.addField(avgStd1);
 
 		Field avgStd2 = Domains.getDouble(getSession(), "avgstd_2", "AvgStd_2", "Avg/2 Stddev value");
+		avgStd2.setPersistent(false);
 		avgStd2.setCalculator(new NormalIndex(2));
 		view.addField(avgStd2);
 

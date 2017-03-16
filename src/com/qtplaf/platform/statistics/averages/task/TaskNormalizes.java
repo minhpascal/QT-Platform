@@ -18,21 +18,18 @@ import java.util.List;
 import java.util.Map;
 
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
-import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
-import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.configuration.Calculation;
-import com.qtplaf.platform.database.configuration.Speed;
+import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.statistics.averages.States;
-import com.qtplaf.platform.statistics.averages.Suffix;
 
 /**
  * Calculates normalized states values.
@@ -101,10 +98,7 @@ public class TaskNormalizes extends TaskAverages {
 	 * @return The select criteria.
 	 */
 	private Criteria getSelectCriteria() {
-		Field f_key_state = states.getTable().getField(Fields.State);
-		Value v_key_state = new Value("");
 		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(f_key_state, v_key_state));
 		return criteria;
 	}
 
@@ -173,9 +167,9 @@ public class TaskNormalizes extends TaskAverages {
 
 				// Spreads between averages.
 				{
-					List<Field> fieldsRaw = states.getFieldListSpreads(Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListSpreads(Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListSpreads(Suffix.dsc);
+					List<Field> fieldsRaw = states.getFieldListSpreads(Fields.Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListSpreads(Fields.Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListSpreads(Fields.Suffix.dsc);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
@@ -191,18 +185,18 @@ public class TaskNormalizes extends TaskAverages {
 					}
 				}
 
-				// Speeds.
+				// Slopes.
 				{
-					List<Field> fieldsRaw = states.getFieldListSpeeds(Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListSpeeds(Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListSpeeds(Suffix.dsc);
+					List<Field> fieldsRaw = states.getFieldListSlopes(Fields.Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListSlopes(Fields.Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListSlopes(Fields.Suffix.dsc);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
 						Field fieldDisc = fieldsDisc.get(i);
 						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Speed speed = (Speed) fieldDisc.getProperty(Fields.Properties.Speed);
-						Normalizer normDisc = speed.getNormalizer();
+						Slope slope = (Slope) fieldDisc.getProperty(Fields.Properties.Slope);
+						Normalizer normDisc = slope.getNormalizer();
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
 						double valueCont = normCont.getValue(valueRaw);
 						double valueDisc = normDisc.getValue(valueCont);
@@ -213,9 +207,9 @@ public class TaskNormalizes extends TaskAverages {
 
 				// Calculations
 				{
-					List<Field> fieldsRaw = states.getFieldListCalculations(Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListCalculations(Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListCalculations(Suffix.dsc);
+					List<Field> fieldsRaw = states.getFieldListCalculations(Fields.Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListCalculations(Fields.Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListCalculations(Fields.Suffix.dsc);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);

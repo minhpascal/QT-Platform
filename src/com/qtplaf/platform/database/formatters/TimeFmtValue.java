@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-import com.qtplaf.library.database.FieldCalculator;
+import com.qtplaf.library.database.Calculator;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Unit;
@@ -31,7 +31,7 @@ import com.qtplaf.platform.database.Fields;
  * 
  * @author Miquel Sas
  */
-public class TimeFmtValue extends AbstractFormatter implements FieldCalculator {
+public class TimeFmtValue extends AbstractFormatter implements Calculator {
 	
 	/** Date format. */
 	SimpleDateFormat format;

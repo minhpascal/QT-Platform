@@ -485,7 +485,7 @@ public abstract class DataList {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Check if a given period is odd.
 	 * 

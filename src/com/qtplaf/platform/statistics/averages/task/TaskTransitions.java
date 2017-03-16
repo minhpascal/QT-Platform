@@ -32,7 +32,6 @@ import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.averages.States;
-import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.statistics.averages.Transitions;
 
 /**
@@ -242,9 +241,9 @@ public class TaskTransitions extends TaskAverages {
 					transition.setValue(Fields.IndexOut, indexOutput);
 					transition.setValue(Fields.IndexGroup, group);
 
-					 List<Field> spreads = getStates().getFieldListSpreads(Suffix.dsc);
-					 List<Field> spreadsIn = getTransitions().getFieldListSpreads(Suffix.in);
-					 List<Field> spreadsOut = getTransitions().getFieldListSpreads(Suffix.out);
+					 List<Field> spreads = getStates().getFieldListSpreads(Fields.Suffix.dsc);
+					 List<Field> spreadsIn = getTransitions().getFieldListSpreads(Fields.Suffix.in);
+					 List<Field> spreadsOut = getTransitions().getFieldListSpreads(Fields.Suffix.out);
 					 for (int j = 0; j < spreads.size(); j++) {
 						 Field spread = spreads.get(j);
 						 Field spreadIn = spreadsIn.get(j);
@@ -253,20 +252,20 @@ public class TaskTransitions extends TaskAverages {
 						 transition.setValue(spreadOut.getName(), stateOutput.getValue(spread.getName()));
 					 }
 					 
-					 List<Field> speeds = getStates().getFieldListSpeeds(Suffix.dsc);
-					 List<Field> speedsIn = getTransitions().getFieldListSpeeds(Suffix.in);
-					 List<Field> speedsOut = getTransitions().getFieldListSpeeds(Suffix.out);
-					 for (int j = 0; j < speeds.size(); j++) {
-						 Field speed = speeds.get(j);
-						 Field speedIn = speedsIn.get(j);
-						 Field speedOut = speedsOut.get(j);
-						 transition.setValue(speedIn.getName(), stateInput.getValue(speed.getName()));
-						 transition.setValue(speedOut.getName(), stateOutput.getValue(speed.getName()));
+					 List<Field> slopes = getStates().getFieldListSlopes(Fields.Suffix.dsc);
+					 List<Field> slopesIn = getTransitions().getFieldListSlopes(Fields.Suffix.in);
+					 List<Field> slopesOut = getTransitions().getFieldListSlopes(Fields.Suffix.out);
+					 for (int j = 0; j < slopes.size(); j++) {
+						 Field slope = slopes.get(j);
+						 Field slopeIn = slopesIn.get(j);
+						 Field slopeOut = slopesOut.get(j);
+						 transition.setValue(slopeIn.getName(), stateInput.getValue(slope.getName()));
+						 transition.setValue(slopeOut.getName(), stateOutput.getValue(slope.getName()));
 					 }
 					 
-					 List<Field> calcs = getStates().getFieldListCalculations(Suffix.dsc);
-					 List<Field> calcsIn = getTransitions().getFieldListCalculations(Suffix.in);
-					 List<Field> calcsOut = getTransitions().getFieldListCalculations(Suffix.out);
+					 List<Field> calcs = getStates().getFieldListCalculations(Fields.Suffix.dsc);
+					 List<Field> calcsIn = getTransitions().getFieldListCalculations(Fields.Suffix.in);
+					 List<Field> calcsOut = getTransitions().getFieldListCalculations(Fields.Suffix.out);
 					 for (int j = 0; j < calcs.size(); j++) {
 						 Field calc = calcs.get(j);
 						 Field calcIn = calcsIn.get(j);

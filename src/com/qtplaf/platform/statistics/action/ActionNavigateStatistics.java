@@ -48,7 +48,6 @@ import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.statistics.averages.Averages;
-import com.qtplaf.platform.statistics.averages.Suffix;
 
 /**
  * Navigate a chart.
@@ -208,13 +207,13 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 
 		chart.addPlotData(avgs.getPlotDataMain(dataList), true);
 		chart.addPlotData(
-			avgs.getPlotData("Spreads normalized", dataList, avgs.getFieldListSpreads(Suffix.nrm)),
+			avgs.getPlotData("Spreads normalized", dataList, avgs.getFieldListSpreads(Fields.Suffix.nrm)),
 			false);
-		chart.addPlotData(avgs.getPlotData("Speeds normalized", dataList, avgs.getFieldListSpeeds(Suffix.nrm)), false);
-		chart.addPlotData(avgs.getPlotData("Spreads discrete", dataList, avgs.getFieldListSpreads(Suffix.dsc)), false);
-		chart.addPlotData(avgs.getPlotData("Speeds discrete", dataList, avgs.getFieldListSpeeds(Suffix.dsc)), false);
-		chart.addPlotData(avgs.getPlotData("Spreads raw", dataList, avgs.getFieldListSpreads(Suffix.raw)), false);
-		chart.addPlotData(avgs.getPlotData("Speeds raw", dataList, avgs.getFieldListSpeeds(Suffix.raw)), false);
+		chart.addPlotData(avgs.getPlotData("Slopes normalized", dataList, avgs.getFieldListSlopes(Fields.Suffix.nrm)), false);
+		chart.addPlotData(avgs.getPlotData("Spreads discrete", dataList, avgs.getFieldListSpreads(Fields.Suffix.dsc)), false);
+		chart.addPlotData(avgs.getPlotData("Slopes discrete", dataList, avgs.getFieldListSlopes(Fields.Suffix.dsc)), false);
+		chart.addPlotData(avgs.getPlotData("Spreads raw", dataList, avgs.getFieldListSpreads(Fields.Suffix.raw)), false);
+		chart.addPlotData(avgs.getPlotData("Slopes raw", dataList, avgs.getFieldListSlopes(Fields.Suffix.raw)), false);
 
 		getChartNavigate().addActionToChart(new ActionClearDrawings());
 		getChartNavigate().addActionToChart(new ActionMoveToChartIndex());

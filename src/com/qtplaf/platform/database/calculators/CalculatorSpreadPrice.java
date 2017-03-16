@@ -14,63 +14,45 @@
 
 package com.qtplaf.platform.database.calculators;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.qtplaf.library.database.FieldCalculator;
+import com.qtplaf.library.database.Calculator;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.configuration.Average;
 
 /**
- * Sum a list of fields (of double values)
+ * Spread between the weighted close price and an average (also already calculated, normally the fastest).
  *
  * @author Miquel Sas
  */
-public class SumFields implements FieldCalculator {
+public class CalculatorSpreadPrice implements Calculator {
 
-	/** Field names. */
-	private List<String> names = new ArrayList<>();
-
-	/**
-	 * Constructor.
-	 */
-	public SumFields() {
-		super();
-	}
+	/** Average. */
+	private Average average;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param fields The list of fields.
+	 * @param average The average (normally the fastest)
 	 */
-	public SumFields(String... names) {
+	public CalculatorSpreadPrice(Average average) {
 		super();
-		add(names);
+		this.average = average;
 	}
 
 	/**
-	 * Add field to sum.
+	 * Return the value.
 	 * 
 	 * @param fields The list of fields.
 	 */
-	public void add(String... names) {
-		for (String name : names) {
-			this.names.add(name);
-		}
-	}
-
-	/**
-	 * Calculate and return the value.
-	 * 
-	 * @param record The record that contains the field.
-	 * @return The calculated value.
-	 */
+	@Override
 	public Value getValue(Record record) {
-		double value = 0;
-		for (String name : names) {
-			value += record.getValue(name).getDouble();
-		}
-		return new Value(value);
+		double high = record.getValue(Fields.High).getDouble();
+		double low = record.getValue(Fields.Low).getDouble();
+		double close = record.getValue(Fields.Close).getDouble();
+		double avg = record.getValue(Fields.average(average)).getDouble();
+		double spread = (((high + low + (2 * close)) / 4) / avg) - 1;
+		return new Value(spread);
 	}
 
 }

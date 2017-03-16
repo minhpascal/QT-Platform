@@ -24,7 +24,6 @@ import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.formatters.TickValue;
 import com.qtplaf.platform.database.formatters.TimeFmtValue;
 import com.qtplaf.platform.database.formatters.VolumeValue;
-import com.qtplaf.platform.statistics.averages.Suffix;
 import com.qtplaf.platform.util.InstrumentUtils;
 import com.qtplaf.platform.util.RecordUtils;
 
@@ -63,19 +62,19 @@ public class Formatters {
 	 * @return The formatter.
 	 */
 	public static DataValue getValueFormatter(Session session, String suffix) {
-		if (suffix.equals(Suffix.raw)) {
+		if (suffix.equals(Fields.Suffix.raw)) {
 			return new DataValue(session, 10);
 		}
-		if (suffix.equals(Suffix.nrm)) {
+		if (suffix.equals(Fields.Suffix.nrm)) {
 			return new DataValue(session, 4);
 		}
-		if (suffix.equals(Suffix.dsc)) {
+		if (suffix.equals(Fields.Suffix.dsc)) {
 			return new DataValue(session, 4);
 		}
-		if (suffix.equals(Suffix.in)) {
+		if (suffix.equals(Fields.Suffix.in)) {
 			return new DataValue(session, 4);
 		}
-		if (suffix.equals(Suffix.out)) {
+		if (suffix.equals(Fields.Suffix.out)) {
 			return new DataValue(session, 4);
 		}
 		throw new IllegalArgumentException();

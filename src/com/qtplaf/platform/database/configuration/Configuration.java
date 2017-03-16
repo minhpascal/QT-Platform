@@ -33,8 +33,8 @@ public class Configuration {
 	private List<Average> averages = new ArrayList<>();
 	/** List of spread to calculate over averages. */
 	private List<Spread> spreads = new ArrayList<>();
-	/** List of speeds to calculate over averages. */
-	private List<Speed> speeds = new ArrayList<>();
+	/** List of slopes to calculate over averages. */
+	private List<Slope> slopes = new ArrayList<>();
 	/** List of ranges for min-max calculations. */
 	private List<Range> ranges = new ArrayList<>();
 	/** List of generic field calculations. */
@@ -138,12 +138,12 @@ public class Configuration {
 	}
 
 	/**
-	 * Add a speed.
+	 * Add a slope.
 	 * 
-	 * @param speed The speed.
+	 * @param slope The slope.
 	 */
-	public void addSpeed(Speed speed) {
-		speeds.add(speed);
+	public void addSlope(Slope slope) {
+		slopes.add(slope);
 	}
 
 	/**
@@ -192,12 +192,12 @@ public class Configuration {
 	}
 
 	/**
-	 * Returns the speeds.
+	 * Returns the slopes.
 	 * 
-	 * @return The speeds.
+	 * @return The slopes.
 	 */
-	public List<Speed> getSpeeds() {
-		return speeds;
+	public List<Slope> getSlopes() {
+		return slopes;
 	}
 
 	/**

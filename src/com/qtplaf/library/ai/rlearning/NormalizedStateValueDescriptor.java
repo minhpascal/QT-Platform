@@ -165,7 +165,7 @@ public class NormalizedStateValueDescriptor extends StateValueDescriptor {
 	 */
 	@Override
 	public double getValue(double value) {
-		double normalized = Calculator.normalize(value, maximum, minimum);
+		double normalized = Calculator.normalizeSign(value, maximum, minimum);
 		if (segments <= 1) {
 			if (getScale() < 0) {
 				return normalized;

@@ -17,12 +17,12 @@ package com.qtplaf.platform.database.configuration;
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
 
 /**
- * The speed class packs the average which speed has to be calculated and the normalizer used to calculate discretional
+ * The slope class packs the average which slope has to be calculated and the normalizer used to calculate discretional
  * values.
  *
  * @author Miquel Sas
  */
-public class Speed {
+public class Slope {
 	/** The average. */
 	private Average average;
 	/** The normalizer to use when calculating discretional values. */
@@ -33,7 +33,7 @@ public class Speed {
 	/**
 	 * Constructor.
 	 */
-	public Speed() {
+	public Slope() {
 		super();
 	}
 
@@ -97,7 +97,7 @@ public class Speed {
 	 * @return The name.
 	 */
 	public String getName() {
-		return "speed_" + getAverage().getPeriod();
+		return "slope_" + getAverage().getPeriod();
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class Speed {
 	 * @return The header.
 	 */
 	public String getHeader() {
-		return "Speed-" + getAverage().getPeriod();
+		return "Slope-" + getAverage().getPeriod();
 	}
 
 	/**
@@ -115,6 +115,6 @@ public class Speed {
 	 * @return The label.
 	 */
 	public String getLabel() {
-		return "Speed " + getAverage().getPeriod();
+		return "Slope " + getAverage().getPeriod();
 	}
 }

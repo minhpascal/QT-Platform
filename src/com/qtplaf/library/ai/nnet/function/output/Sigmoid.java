@@ -14,6 +14,7 @@
 package com.qtplaf.library.ai.nnet.function.output;
 
 import com.qtplaf.library.ai.nnet.function.OutputFunction;
+import com.qtplaf.library.math.Calculator;
 
 /**
  * A Sigmoid activation function.
@@ -35,7 +36,7 @@ public class Sigmoid implements OutputFunction {
 	 * @return The output.
 	 */
 	public double getOutput(double input) {
-		return 1 / (1 + Math.exp(-(input)));
+		return Calculator.sigmoid(input);
 	}
 
 	/**
@@ -45,8 +46,7 @@ public class Sigmoid implements OutputFunction {
 	 * @return The first derivative
 	 */
 	public double getDerivative(double input) {
-		double output = getOutput(input);
-		return output * (1 - output);
+		return Calculator.sigmoidDerivative(input);
 	}
 
 }

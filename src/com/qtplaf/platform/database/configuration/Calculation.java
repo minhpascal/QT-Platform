@@ -15,7 +15,7 @@
 package com.qtplaf.platform.database.configuration;
 
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
-import com.qtplaf.library.database.FieldCalculator;
+import com.qtplaf.library.database.Calculator;
 
 /**
  * Generic field calculation, has a field calculator and a normalizer.
@@ -31,7 +31,7 @@ public class Calculation {
 	/** Label. */
 	private String label;
 	/** Field calculator. */
-	private FieldCalculator calculator;
+	private Calculator calculator;
 	/** Normalizer. */
 	private Normalizer normalizer;
 	/** A boolean that indicates if the calculation should be inclided in the state key. */
@@ -83,7 +83,7 @@ public class Calculation {
 	 * 
 	 * @return The calculator.
 	 */
-	public FieldCalculator getCalculator() {
+	public Calculator getCalculator() {
 		return calculator;
 	}
 
@@ -92,7 +92,7 @@ public class Calculation {
 	 * 
 	 * @param calculator The calculator.
 	 */
-	public void setCalculator(FieldCalculator calculator) {
+	public void setCalculator(Calculator calculator) {
 		this.calculator = calculator;
 	}
 

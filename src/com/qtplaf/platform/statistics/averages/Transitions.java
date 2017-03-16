@@ -208,15 +208,15 @@ public class Transitions extends Averages {
 			// Index group (groups consecutive transitions of the same state).
 			table.addField(new FieldIndex(getSession(), Fields.IndexGroup));
 
-			// Input spreads, speeds and calculations.
-			table.addFields(getFieldListSpreads(Suffix.in));
-			table.addFields(getFieldListSpeeds(Suffix.in));
-			table.addFields(getFieldListCalculations(Suffix.in));
+			// Input spreads, slopes and calculations.
+			table.addFields(getFieldListSpreads(Fields.Suffix.in));
+			table.addFields(getFieldListSlopes(Fields.Suffix.in));
+			table.addFields(getFieldListCalculations(Fields.Suffix.in));
 
-			// Output spreads, speeds and calculations.
-			table.addFields(getFieldListSpreads(Suffix.out));
-			table.addFields(getFieldListSpeeds(Suffix.out));
-			table.addFields(getFieldListCalculations(Suffix.out));
+			// Output spreads, slopes and calculations.
+			table.addFields(getFieldListSpreads(Fields.Suffix.out));
+			table.addFields(getFieldListSlopes(Fields.Suffix.out));
+			table.addFields(getFieldListCalculations(Fields.Suffix.out));
 
 			// Primary key.
 			table.getField(Fields.StateIn).setPrimaryKey(true);
