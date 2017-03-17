@@ -1059,4 +1059,15 @@ public class Calculator {
 		double output = sigmoid(value);
 		return output * (1 - output);
 	}
+
+	/**
+	 * Returns the division or zero if the denominator is zero.
+	 * 
+	 * @param numerator The numerator.
+	 * @param denominator The denominator.
+	 * @return The division or zero if the denominator is zero.
+	 */
+	public static double zeroDiv(double numerator, double denominator) {
+		return (denominator == 0 ? 0 : numerator / denominator);
+	}
 }

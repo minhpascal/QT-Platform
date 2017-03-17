@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.qtplaf.library.ai.rlearning.function.Normalizer;
+import com.qtplaf.library.database.Calculator;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
@@ -26,6 +27,7 @@ import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
@@ -205,11 +207,11 @@ public class TaskNormalizes extends TaskAverages {
 					}
 				}
 
-				// Calculations
+				// Calculations: default family
 				{
-					List<Field> fieldsRaw = states.getFieldListCalculations(Fields.Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListCalculations(Fields.Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListCalculations(Fields.Suffix.dsc);
+					List<Field> fieldsRaw = states.getFieldListCalculations(Family.Default, Fields.Suffix.raw);
+					List<Field> fieldsCont = states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm);
+					List<Field> fieldsDisc = states.getFieldListCalculations(Family.Default, Fields.Suffix.dsc);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
 						Field fieldCont = fieldsCont.get(i);
@@ -222,6 +224,16 @@ public class TaskNormalizes extends TaskAverages {
 						double valueDisc = normDisc.getValue(valueCont);
 						record.getValue(fieldCont.getName()).setDouble(valueCont);
 						record.getValue(fieldDisc.getName()).setDouble(valueDisc);
+					}
+				}
+				
+				// Calculations: family weighted sum raw.
+				{
+					List<Field> fields = states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.raw);
+					for (Field field : fields) {
+						Calculation calculation = (Calculation) field.getProperty(Fields.Properties.Calculation);
+						Calculator calculator = calculation.getCalculator();
+						record.setValue(field.getName(), calculator.getValue(record));
 					}
 				}
 

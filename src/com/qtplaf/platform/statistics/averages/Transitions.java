@@ -47,6 +47,7 @@ import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Schemas;
 import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.fields.FieldIndex;
 import com.qtplaf.platform.database.fields.FieldState;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
@@ -211,12 +212,12 @@ public class Transitions extends Averages {
 			// Input spreads, slopes and calculations.
 			table.addFields(getFieldListSpreads(Fields.Suffix.in));
 			table.addFields(getFieldListSlopes(Fields.Suffix.in));
-			table.addFields(getFieldListCalculations(Fields.Suffix.in));
+			table.addFields(getFieldListCalculations(Family.Default, Fields.Suffix.in));
 
 			// Output spreads, slopes and calculations.
 			table.addFields(getFieldListSpreads(Fields.Suffix.out));
 			table.addFields(getFieldListSlopes(Fields.Suffix.out));
-			table.addFields(getFieldListCalculations(Fields.Suffix.out));
+			table.addFields(getFieldListCalculations(Family.Default, Fields.Suffix.out));
 
 			// Primary key.
 			table.getField(Fields.StateIn).setPrimaryKey(true);

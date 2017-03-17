@@ -17,12 +17,21 @@ package com.qtplaf.library.ai.fuzzy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.util.list.ListUtils;
+
 /**
  * A fuzzy control.
  *
  * @author Miquel Sas
  */
 public class Control {
+
+	/**
+	 * Enum comparison conditions.
+	 */
+	private enum Condition {
+		GT, GE, EQ, LE, LT
+	}
 
 	/**
 	 * The list of control segments.
@@ -41,28 +50,165 @@ public class Control {
 	}
 
 	/**
-	 * Check if the value is in the range of the label.
+	 * Check if the value is in the range of the label or GT.
 	 * 
 	 * @param value The value to check.
 	 * @param label The segment label.
 	 * @return A boolean.
 	 */
-	public boolean isLabel(double value, String label) {
-		return getSegment(label).inRange(value);
+	public boolean checkGT(double value, String label) {
+		return check(value, label, Condition.GT);
 	}
-	
+
+	/**
+	 * Check if the value is in the range of the label or GE.
+	 * 
+	 * @param value The value to check.
+	 * @param label The segment label.
+	 * @return A boolean.
+	 */
+	public boolean checkGE(double value, String label) {
+		return check(value, label, Condition.GE);
+	}
+
+	/**
+	 * Check if the value is in the range of the label or EQ.
+	 * 
+	 * @param value The value to check.
+	 * @param label The segment label.
+	 * @return A boolean.
+	 */
+	public boolean checkEQ(double value, String label) {
+		return check(value, label, Condition.EQ);
+	}
+
+	/**
+	 * Check if the value is in the range of the label or LE.
+	 * 
+	 * @param value The value to check.
+	 * @param label The segment label.
+	 * @return A boolean.
+	 */
+	public boolean checkLE(double value, String label) {
+		return check(value, label, Condition.LE);
+	}
+
+	/**
+	 * Check if the value is in the range of the label or LT.
+	 * 
+	 * @param value The value to check.
+	 * @param label The segment label.
+	 * @return A boolean.
+	 */
+	public boolean checkLT(double value, String label) {
+		return check(value, label, Condition.LT);
+	}
+
+	/**
+	 * Check if the value is in the range of the label applying the condition (GT, GE, EQ, LE, LT)
+	 * 
+	 * @param value The value to check.
+	 * @param label The segment label.
+	 * @param condition The comparison condition.
+	 * @return A boolean.
+	 */
+	private boolean check(double value, String label, Condition condition) {
+		int labelIndex = getIndex(label);
+		List<Integer> valueIndexes = getIndexes(value);
+		switch (condition) {
+		case GT:
+			if (ListUtils.getFirst(valueIndexes) > labelIndex) {
+				return true;
+			}
+			break;
+		case GE:
+			if (ListUtils.getFirst(valueIndexes) >= labelIndex) {
+				return true;
+			}
+			break;
+		case EQ:
+			if (ListUtils.getFirst(valueIndexes) == labelIndex || ListUtils.getLast(valueIndexes) == labelIndex) {
+				return true;
+			}
+			break;
+		case LE:
+			if (ListUtils.getLast(valueIndexes) <= labelIndex) {
+				return true;
+			}
+			break;
+		case LT:
+			if (ListUtils.getLast(valueIndexes) < labelIndex) {
+				return true;
+			}
+			break;
+		}
+		return false;
+	}
+
 	/**
 	 * Returns the segment of the label.
+	 * 
 	 * @param label The label.
 	 * @return The segment of the label (or throws an IllegalArgumentException)
 	 */
 	public Segment getSegment(String label) {
-		for (Segment segment : segments) {
-			if (segment.getLabel().equals(label)) {
-				return segment;
+		return segments.get(getIndex(label));
+	}
+
+	/**
+	 * Returns the index of the label (or throws an IllegalArgumentException).
+	 * 
+	 * @param label The label to check.
+	 * @return The index of the label.
+	 */
+	public int getIndex(String label) {
+		for (int i = 0; i < segments.size(); i++) {
+			if (segments.get(i).getLabel().equals(label)) {
+				return i;
 			}
 		}
 		throw new IllegalArgumentException();
+	}
+
+	/**
+	 * Returns the list of indexes of segments where the value should be included. The list must contain at least one
+	 * index and maximum two.
+	 * 
+	 * @param value The value.
+	 * @return The list of indexes of segments where the value should be included.
+	 */
+	public List<Integer> getIndexes(double value) {
+		List<Integer> indexes = new ArrayList<>();
+		if (value < getMinimumValue()) {
+			indexes.add(0);
+		}
+		for (int i = 0; i < segments.size(); i++) {
+			if (segments.get(i).inRange(value)) {
+				indexes.add(i);
+			}
+		}
+		if (value > getMaximumValue()) {
+			indexes.add(segments.size() - 1);
+		}
+		return indexes;
+	}
+
+	/**
+	 * Returns the minimum value in the list of segments.
+	 * 
+	 * @return The minimum value.
+	 */
+	public double getMinimumValue() {
+		return ListUtils.getFirst(segments).getMinimum();
+	}
+
+	/**
+	 * Returns the maximum value in the list of segments.
+	 * 
+	 * @return The maximum value.
+	 */
+	public double getMaximumValue() {
+		return ListUtils.getLast(segments).getMaximum();
 	}
 
 	/**

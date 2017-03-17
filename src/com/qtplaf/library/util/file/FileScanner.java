@@ -21,8 +21,7 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.task.TaskRunner;
-import com.qtplaf.library.util.list.ArrayDelist;
-import com.qtplaf.library.util.list.Delist;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A <code>FileScanner</code> scans the source directory and optionally its sub-directories, notifying each file or
@@ -177,9 +176,9 @@ public class FileScanner extends TaskRunner {
 		}
 
 		// The delist with scanning files.
-		Delist<File> files = new ArrayDelist<>();
+		List<File> files = new ArrayList<>();
 		for (File file : sourceFiles) {
-			files.addLast(file);
+			files.add(file);
 		}
 
 		// Initialize the step.
@@ -198,43 +197,43 @@ public class FileScanner extends TaskRunner {
 			}
 			
 			// File does not exist (passed a non existing file to scan)
-			if (!files.getLast().exists()) {
-				files.removeLast();
+			if (!ListUtils.getLast(files).exists()) {
+				ListUtils.removeLast(files);
 				continue;
 			}
 
 			// If last file is a file, notify if applicable and remove it.
-			if (files.getLast().isFile()) {
+			if (ListUtils.getLast(files).isFile()) {
 				if (isNotifyFiles()) {
-					notifyFile(files.getLast());
+					notifyFile(ListUtils.getLast(files));
 				}
-				files.removeLast();
+				ListUtils.removeLast(files);
 				continue;
 			}
 
 			// If last file is a directory, first notify if applicable, remove it and if should scan subdirectories, add
 			// the directory files.
-			if (files.getLast().isDirectory()) {
+			if (ListUtils.getLast(files).isDirectory()) {
 				
 				// Current source directory must be in the list of source files.
-				if (sourceFiles.contains(files.getLast())) {
-					currentSourceDirectory = files.getLast();
+				if (sourceFiles.contains(ListUtils.getLast(files))) {
+					currentSourceDirectory = ListUtils.getLast(files);
 				}
 				
 				// Notify directory if applicable.
 				if (isNotifyDirectories()) {
-					notifyFile(files.getLast());
+					notifyFile(ListUtils.getLast(files));
 				}
 				
 				// Remove.
-				File directory = files.removeLast();
+				File directory = ListUtils.removeLast(files);
 				
 				// Add children if should scan deeper.
 				if (isScanSubDirectories()) {
 					File[] children = directory.listFiles();
 					if (children != null) {
 						for (File child : children) {
-							files.addLast(child);
+							files.add(child);
 						}
 					}
 				}

@@ -23,10 +23,32 @@ import com.qtplaf.library.trading.data.DataList;
  */
 public abstract class Pattern {
 
+	/** Pattern family. */
+	private String family;
 	/** Id. */
 	private String id;
 	/** Description. */
 	private String description;
+	/** The necessary number of backward values to identify the pattern (-1 unknown). */
+	private int lookBackward = -1;
+
+	/**
+	 * Returns the patter family.
+	 * 
+	 * @return The patter family.
+	 */
+	public String getFamily() {
+		return family;
+	}
+
+	/**
+	 * Set the patter family.
+	 * 
+	 * @param family The patter family.
+	 */
+	public void setFamily(String family) {
+		this.family = family;
+	}
 
 	/**
 	 * Returns the unique identifier of the pattern.
@@ -62,6 +84,24 @@ public abstract class Pattern {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	/**
+	 * Returns the necessary number of backward values to identify the pattern.
+	 * 
+	 * @return The necessary number of backward values to identify the pattern.
+	 */
+	public int getLookBackward() {
+		return lookBackward;
+	}
+
+	/**
+	 * Sets the necessary number of backward values to identify the pattern.
+	 * 
+	 * @param lookBackward The necessary number of backward values to identify the pattern.
+	 */
+	public void setLookBackward(int lookBackward) {
+		this.lookBackward = lookBackward;
 	}
 
 	/**

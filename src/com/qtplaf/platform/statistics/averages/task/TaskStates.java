@@ -26,6 +26,7 @@ import com.qtplaf.library.trading.data.IndicatorDataList;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.info.IndicatorInfo;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
@@ -194,7 +195,7 @@ public class TaskStates extends TaskAverages {
 
 			// Raw calculations.
 			{
-				List<Field> fields = states.getFieldListCalculations(Fields.Suffix.raw);
+				List<Field> fields = states.getFieldListCalculations(Family.Default, Fields.Suffix.raw);
 				for (Field field : fields) {
 					Calculation calculation = (Calculation) field.getProperty(Fields.Properties.Calculation);
 					Calculator calculator = calculation.getCalculator();

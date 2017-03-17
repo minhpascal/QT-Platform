@@ -14,6 +14,7 @@
 
 package com.qtplaf.library.trading.pattern.candle;
 
+import com.qtplaf.library.math.Calculator;
 import com.qtplaf.library.trading.data.Data;
 
 /**
@@ -44,7 +45,32 @@ public class CandleUtils {
 	public static double getBodyFactor(Data data) {
 		double body = getBody(data);
 		double range = getRange(data);
-		return Math.max(1.0, body / range);
+		return Math.min(1.0, Calculator.zeroDiv(body, range));
+	}
+
+	/**
+	 * Returns the body center.
+	 * 
+	 * @param data The data element.
+	 * @return The body center.
+	 */
+	public static double getBodyCenter(Data data) {
+		double open = Data.getOpen(data);
+		double close = Data.getClose(data);
+		return (open + close) / 2;
+	}
+
+	/**
+	 * Returns the body center factors that indicates the body position.
+	 * 
+	 * @param data The data element.
+	 * @return The body center factor.
+	 */
+	public static double getBodyCenterFactor(Data data) {
+		double center = getBodyCenter(data);
+		double low = Data.getLow(data);
+		double range = getRange(data);
+		return Calculator.zeroDiv(center - low, range);
 	}
 
 	/**
@@ -67,16 +93,16 @@ public class CandleUtils {
 	 * @return The range fator (range / maxRange).
 	 */
 	public static double getRangeFactor(Data data, double maxRange) {
-		return Math.max(1.0, getRange(data) / maxRange);
+		return Math.min(1.0, Calculator.zeroDiv(getRange(data), maxRange));
 	}
 
 	/**
-	 * Returns the shadow factor (1 - body factor).
+	 * Returns the shadows factor (1 - body factor).
 	 * 
 	 * @param data The data element.
 	 * @return The shadow factor.
 	 */
-	public static double getShadowFactor(Data data) {
+	public static double getShadowsFactor(Data data) {
 		return 1.0 - getBodyFactor(data);
 	}
 
@@ -94,6 +120,18 @@ public class CandleUtils {
 	}
 
 	/**
+	 * Returns the lower shadow factor related to the range.
+	 * 
+	 * @param data The data element.
+	 * @return The lower shadow factor.
+	 */
+	public static double getShadowLowerFactor(Data data) {
+		double shadow = getShadowLower(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
+	}
+
+	/**
 	 * Returns the the upper shadow of the candle.
 	 * 
 	 * @param data The data element.
@@ -104,5 +142,17 @@ public class CandleUtils {
 		double open = Data.getOpen(data);
 		double close = Data.getClose(data);
 		return high - Math.max(open, close);
+	}
+
+	/**
+	 * Returns the upper shadow factor related to the range.
+	 * 
+	 * @param data The data element.
+	 * @return The upper shadow factor.
+	 */
+	public static double getShadowUpperFactor(Data data) {
+		double shadow = getShadowUpper(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
 	}
 }

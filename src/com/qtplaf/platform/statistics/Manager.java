@@ -23,14 +23,19 @@ import com.qtplaf.library.database.Value;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
+import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
+import com.qtplaf.platform.database.Fields.Suffix;
 import com.qtplaf.platform.database.calculators.CalculatorRange;
 import com.qtplaf.platform.database.calculators.CalculatorSpreadPrice;
+import com.qtplaf.platform.database.calculators.CalculatorWeightedSum;
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Configuration;
 import com.qtplaf.platform.database.configuration.Range;
 import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
+import com.qtplaf.platform.statistics.averages.Patterns;
 import com.qtplaf.platform.statistics.averages.Ranges;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.statistics.averages.Transitions;
@@ -143,6 +148,26 @@ public class Manager {
 	}
 
 	/**
+	 * Returns the patterns statistics.
+	 * 
+	 * @param server The server.
+	 * @param instrument The instrument.
+	 * @param period The period.
+	 * @param cfg The configuration.
+	 * @return The patterns statistics.
+	 */
+	public Patterns getPatterns(Server server, Instrument instrument, Period period, Configuration cfg) {
+		Patterns patterns = new Patterns(getSession());
+		patterns.setId(cfg.getId() + "pt");
+		patterns.setTitle("Patterns " + cfg.getTitle());
+		patterns.setServer(server);
+		patterns.setInstrument(instrument);
+		patterns.setPeriod(period);
+		patterns.setConfiguration(cfg);
+		return patterns;
+	}
+
+	/**
 	 * Returns the transitions statistics.
 	 * 
 	 * @param server The server.
@@ -177,6 +202,7 @@ public class Manager {
 			statistics.add(getStates(server, instrument, period, cfg));
 			statistics.add(getRanges(server, instrument, period, cfg));
 			statistics.add(getTransitions(server, instrument, period, cfg));
+			statistics.add(getPatterns(server, instrument, period, cfg));
 		}
 		return statistics;
 	}
@@ -250,9 +276,10 @@ public class Manager {
 	 * @return The calculator.
 	 */
 	private Calculation getCalculationSpreadPrice(Average average, int segments, boolean key) {
+		String family = Family.Default;
 		String name = "spwcp_avg_" + average.getPeriod();
 		String header = "Spread WCP-Avg-" + average.getPeriod();
-		Calculation calculation = new Calculation(name, header, header);
+		Calculation calculation = new Calculation(family, name, header, header);
 		CalculatorSpreadPrice calculator = new CalculatorSpreadPrice(average);
 		calculation.setCalculator(calculator);
 		calculation.setNormalizer(getNormalizer(segments));
@@ -262,18 +289,38 @@ public class Manager {
 
 	/**
 	 * Returns the calculation for the range.
+	 * 
 	 * @param segments Segments of the normalizer.
 	 * @param key State key flag.
 	 * @return The calculator.
 	 */
-	private Calculation getCalculationRange(int segments, boolean key) {
-		String name = "range";
+	public Calculation getCalculationRange(int segments, boolean key) {
+		String family = Family.Default;
+		String name = Fields.Range;
 		String header = "Range";
-		Calculation calculation = new Calculation(name, header, header);
+		Calculation calculation = new Calculation(family, name, header, header);
 		CalculatorRange calculator = new CalculatorRange();
 		calculation.setCalculator(calculator);
 		calculation.setNormalizer(getNormalizer(segments));
 		calculation.setStateKey(key);
+		return calculation;
+	}
+
+	/**
+	 * Returns the calculation for the weighted sum of price spread, averaregs spreads and averages slopes.
+	 * 
+	 * @param weightedSum The calculator.
+	 * @param segments The number of segment to discretize.
+	 * @return The calculation.
+	 */
+	public Calculation getCalculationWeightedSum(CalculatorWeightedSum weightedSum, int segments) {
+		String family = Family.WeightedSum;
+		String name = Fields.WeightedSum;
+		String header = "Weighted sum";
+		Calculation calculation = new Calculation(family, name, header, header);
+		calculation.setCalculator(weightedSum);
+		calculation.setNormalizer(getNormalizer(segments));
+		calculation.setStateKey(false);
 		return calculation;
 	}
 
@@ -283,7 +330,7 @@ public class Manager {
 	 * 
 	 * @return The configuration.
 	 */
-	private Configuration getConfigurationWeightedMedium() {
+	public Configuration getConfigurationWeightedMedium() {
 		Configuration cfg = new Configuration(getSession());
 		cfg.setId("wm");
 		cfg.setScale(3);
@@ -303,21 +350,43 @@ public class Manager {
 		cfg.addAverage(avg_377);
 
 		// Spreads.
-		cfg.addSpread(getSpread(avg_5, avg_21, 10, true));
-		cfg.addSpread(getSpread(avg_21, avg_89, 10, true));
-		cfg.addSpread(getSpread(avg_89, avg_377, 10, true));
+		Spread spread_5_21 = getSpread(avg_5, avg_21, 10, true);
+		Spread spread_21_89 = getSpread(avg_21, avg_89, 10, true);
+		Spread spread_89_377 = getSpread(avg_89, avg_377, 10, true);
+		cfg.addSpread(spread_5_21);
+		cfg.addSpread(spread_21_89);
+		cfg.addSpread(spread_89_377);
 
 		// Slopes.
-		cfg.addSlope(getSlope(avg_5, 10, false));
-		cfg.addSlope(getSlope(avg_21, 10, false));
-		cfg.addSlope(getSlope(avg_89, 10, true));
-		cfg.addSlope(getSlope(avg_377, 10, true));
+		Slope slope_5 = getSlope(avg_5, 10, false);
+		Slope slope_21 = getSlope(avg_21, 10, false);
+		Slope slope_89 = getSlope(avg_89, 10, true);
+		Slope slope_377 = getSlope(avg_377, 10, true);
+		cfg.addSlope(slope_5);
+		cfg.addSlope(slope_21);
+		cfg.addSlope(slope_89);
+		cfg.addSlope(slope_377);
 
 		// Range.
-		cfg.addCalculation(getCalculationRange(10, false));
-		
+		Calculation calcRange = getCalculationRange(10, false);
+		cfg.addCalculation(calcRange);
+
 		// Spreads high, low close.
-		cfg.addCalculation(getCalculationSpreadPrice(avg_5, 10, true));
+		Calculation calcSpreadPrice = getCalculationSpreadPrice(avg_5, 10, true);
+		cfg.addCalculation(calcSpreadPrice);
+
+		// Calculation weighted sum of spreads, slopes and price spread.
+		CalculatorWeightedSum weightedSum = new CalculatorWeightedSum();
+		weightedSum.add(Fields.calculation(calcSpreadPrice, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.spread(spread_5_21, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.spread(spread_21_89, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.spread(spread_89_377, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.slope(slope_5, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.slope(slope_21, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.slope(slope_89, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.slope(slope_377, Suffix.nrm), 1.0);
+		Calculation calcWeightedSum = getCalculationWeightedSum(weightedSum, 20);
+		cfg.addCalculation(calcWeightedSum);
 
 		// Ranges for min-max values.
 		cfg.addRange(new Range(89));

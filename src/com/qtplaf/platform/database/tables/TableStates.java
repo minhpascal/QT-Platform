@@ -23,6 +23,7 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Schemas;
 import com.qtplaf.platform.database.Tables;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.fields.FieldClose;
 import com.qtplaf.platform.database.fields.FieldHigh;
 import com.qtplaf.platform.database.fields.FieldIndex;
@@ -80,8 +81,8 @@ public class TableStates extends Table {
 		// Slope (tangent) of averages, raw values
 		addFields(states.getFieldListSlopes(Fields.Suffix.raw));
 
-		// Calculations, raw values.
-		addFields(states.getFieldListCalculations(Fields.Suffix.raw));
+		// Calculations, default, raw values.
+		addFields(states.getFieldListCalculations(Family.Default, Fields.Suffix.raw));
 
 		// Spreads between averages, normalized values continuous.
 		addFields(states.getFieldListSpreads(Fields.Suffix.nrm));
@@ -89,8 +90,8 @@ public class TableStates extends Table {
 		// Slope (tangent) of averages, normalized values continuous.
 		addFields(states.getFieldListSlopes(Fields.Suffix.nrm));
 
-		// Calculations, normalizes continuous.
-		addFields(states.getFieldListCalculations(Fields.Suffix.nrm));
+		// Calculations, default, normalizes continuous.
+		addFields(states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm));
 
 		// Spreads between averages, normalized values discrete.
 		addFields(states.getFieldListSpreads(Fields.Suffix.dsc));
@@ -98,14 +99,19 @@ public class TableStates extends Table {
 		// Slope (tangent) of averages, normalized values discrete.
 		addFields(states.getFieldListSlopes(Fields.Suffix.dsc));
 
-		// Calculations, normalizes continuous.
-		addFields(states.getFieldListCalculations(Fields.Suffix.dsc));
+		// Calculations, default, normalizes continuous.
+		addFields(states.getFieldListCalculations(Family.Default, Fields.Suffix.dsc));
+		
+		// Calculations weighted sum family.
+		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.raw));
+		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm));
+		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc));
 
 		// The state key.
 		addField(new FieldState(getSession(), Fields.State));
 
 		// Primary key on Time.
-		getField(Fields.Index).setPrimaryKey(true);
+		getField(Fields.Time).setPrimaryKey(true);
 
 		// Unique index on Index.
 		Index indexOnIndex = new Index();

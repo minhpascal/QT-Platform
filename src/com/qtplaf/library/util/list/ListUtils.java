@@ -77,6 +77,26 @@ public class ListUtils {
 	}
 
 	/**
+	 * Add the element to the first position of a list.
+	 *
+	 * @param e The element to add.
+	 * @param list The list.
+	 */
+	public static <T> void addFirst(T e, List<T> list) {
+		list.add(0, e);
+	}
+
+	/**
+	 * Add the element to the last position of a list.
+	 *
+	 * @param e The element to add.
+	 * @param list The list.
+	 */
+	public static <T> void addLast(T e, List<T> list) {
+		list.add(e);
+	}
+
+	/**
 	 * Returns the first element of a list.
 	 * 
 	 * @param list The list.
@@ -94,6 +114,26 @@ public class ListUtils {
 	 */
 	public static <T> T getLast(List<T> list) {
 		return list.get(list.size() - 1);
+	}
+
+	/**
+	 * Remove the first element in the list.
+	 * 
+	 * @param list The list.
+	 * @return The removed element.
+	 */
+	public static <T> T removeFirst(List<T> list) {
+		return list.remove(0);
+	}
+
+	/**
+	 * Remove the last element in the list.
+	 * 
+	 * @param list The list.
+	 * @return The removed element.
+	 */
+	public static <T> T removeLast(List<T> list) {
+		return list.remove(list.size() - 1);
 	}
 
 	/**

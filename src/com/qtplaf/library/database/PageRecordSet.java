@@ -14,14 +14,15 @@
 
 package com.qtplaf.library.database;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qtplaf.library.database.Condition.Operator;
-import com.qtplaf.library.util.list.ArrayDelist;
-import com.qtplaf.library.util.list.Delist;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A <tt>PageRecordSet</tt> is a <tt>RecordSet</tt> that first paginates the underliying <tt>Persistor</tt> and
@@ -209,7 +210,7 @@ public class PageRecordSet extends RecordSet {
 	/**
 	 * The stack of pages. The page in the recordset will always be the last.
 	 */
-	private Delist<Page> pages = new ArrayDelist<>();
+	private List<Page> pages = new ArrayList<>();
 	/**
 	 * The size of the recordset.
 	 */
@@ -537,7 +538,7 @@ public class PageRecordSet extends RecordSet {
 	 * param page Add a page.
 	 */
 	synchronized private void addPage(Page page) {
-		pages.addLast(page);
+		pages.add(page);
 	}
 
 	/**
@@ -546,7 +547,7 @@ public class PageRecordSet extends RecordSet {
 	 * @return The last page in the list.
 	 */
 	synchronized private Page getLastPage() {
-		return pages.getLast();
+		return ListUtils.getLast(pages);
 	}
 
 	/**

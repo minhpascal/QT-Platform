@@ -24,6 +24,8 @@ import com.qtplaf.library.database.Calculator;
  */
 public class Calculation {
 
+	/** Family of calculations. */
+	private String family;
 	/** Result field name. */
 	private String name;
 	/** Header. */
@@ -40,15 +42,26 @@ public class Calculation {
 	/**
 	 * Constructor.
 	 * 
+	 * @param family The family.
 	 * @param name The field name.
 	 * @param header The header.
 	 * @param label The label.
 	 */
-	public Calculation(String name, String header, String label) {
+	public Calculation(String family, String name, String header, String label) {
 		super();
+		this.family = family;
 		this.name = name;
 		this.header = header;
 		this.label = label;
+	}
+
+	/**
+	 * Returns the family.
+	 * 
+	 * @return The family.
+	 */
+	public String getFamily() {
+		return family;
 	}
 
 	/**

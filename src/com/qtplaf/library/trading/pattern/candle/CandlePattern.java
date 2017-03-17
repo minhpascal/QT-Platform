@@ -14,6 +14,12 @@
 
 package com.qtplaf.library.trading.pattern.candle;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qtplaf.library.ai.fuzzy.Control;
+import com.qtplaf.library.ai.fuzzy.Segment;
+import com.qtplaf.library.ai.fuzzy.function.Linear;
 import com.qtplaf.library.trading.pattern.Pattern;
 
 /**
@@ -24,32 +30,124 @@ import com.qtplaf.library.trading.pattern.Pattern;
  */
 public abstract class CandlePattern extends Pattern {
 
-	/** Parameters. */
-	private CandleParameters parameters;
+	/**
+	 * Enum the proportional sizes.
+	 */
+	public interface Size {
+		String VeryBig = "very_big";
+		String Big = "big";
+		String Medium = "mdium";
+		String Small = "small";
+		String VerySmall = "very_small";
+	}
+	
+	/**
+	 * Enum proportional positions.
+	 */
+	public interface Position {
+		String Top = "top";
+		String NearTop = "near_top";
+		String Middle = "middle";
+		String NearBottom = "near_bottom";
+		String Bottom = "bottom";
+	}
+
+	/** Average range statistically calculated for the time frame. */
+	private double rangeAverage;
+	/** Range standard deviation also statistically calculated for the time frame. */
+	private double rangeStdDev;
+	/** The fuzzy size control to check sizes in a range of 0 to 1. */
+	private Control sizeControl;
+	/** The fuzzy position control to check positions in a range of 0 to 1. */
+	private Control positionControl;
 
 	/**
-	 * 
+	 * Contructor.
 	 */
 	public CandlePattern() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/**
-	 * Returns the candlestick patterns recognition parameters.
+	 * Returns the maximum range for calculations, a rangeAverage + (2 * rangeStdDev)
 	 * 
-	 * @return The candlestick patterns recognition parameters.
+	 * @return The maximum range for calculations.
 	 */
-	public CandleParameters getParameters() {
-		return parameters;
+	public double getMaximumRange() {
+		return rangeAverage + (2 * rangeStdDev);
 	}
 
 	/**
-	 * Set the candlestick patterns recognition parameters.
+	 * Returns the fuzzy control to check positions in a range of 0 to 1, normally used with factors like range, body,
+	 * shadow factors.
 	 * 
-	 * @param parameters The candlestick patterns recognition parameters.
+	 * @return The fuzzy control.
 	 */
-	public void setParameters(CandleParameters parameters) {
-		this.parameters = parameters;
+	public Control getPositionControl() {
+		if (positionControl == null) {
+			List<Segment> segments = new ArrayList<>();
+			segments.add(new Segment(Position.Bottom, 0.15, 0.00, -1, new Linear()));
+			segments.add(new Segment(Position.NearBottom, 0.35, Math.nextUp(0.15), -1, new Linear()));
+			segments.add(new Segment(Position.Middle, 0.65, Math.nextUp(0.35), 0, new Linear()));
+			segments.add(new Segment(Position.NearTop, 0.85, Math.nextUp(0.65), 1, new Linear()));
+			segments.add(new Segment(Position.Top, 1.00, Math.nextUp(0.85), 1, new Linear()));
+			positionControl = new Control(segments);
+		}
+		return positionControl;
 	}
 
+	/**
+	 * Returns the fuzzy control to check sizes in a range of 0 to 1, normally used with factors like range, body,
+	 * shadow factors.
+	 * 
+	 * @return The fuzzy control.
+	 */
+	public Control getSizeControl() {
+		if (sizeControl == null) {
+			List<Segment> segments = new ArrayList<>();
+			segments.add(new Segment(Size.VerySmall, 0.10, 0.00, -1, new Linear()));
+			segments.add(new Segment(Size.Small, 0.25, Math.nextUp(0.10), -1, new Linear()));
+			segments.add(new Segment(Size.Medium, 0.75, Math.nextUp(0.25), 0, new Linear()));
+			segments.add(new Segment(Size.Big, 0.90, Math.nextUp(0.75), 1, new Linear()));
+			segments.add(new Segment(Size.VeryBig, 1.00, Math.nextUp(0.90), 1, new Linear()));
+			sizeControl = new Control(segments);
+		}
+		return sizeControl;
+	}
+
+	/**
+	 * Returns the average range.
+	 * 
+	 * @return The average range.
+	 */
+	public double getRangeAverage() {
+		return rangeAverage;
+	}
+
+	/**
+	 * Set the average range.
+	 * 
+	 * @param rangeAverage The average range.
+	 */
+	public void setRangeAverage(double rangeAverage) {
+		this.rangeAverage = rangeAverage;
+	}
+
+	/**
+	 * Returns the range standard deviation.
+	 * 
+	 * @return The range standard deviation.
+	 */
+	public double getRangeStdDev() {
+		return rangeStdDev;
+	}
+
+	/**
+	 * Set the range standard deviation.
+	 * 
+	 * @param rangeStdDev The range standard deviation.
+	 */
+	public void setRangeStdDev(double rangeStdDev) {
+		this.rangeStdDev = rangeStdDev;
+	}
 }

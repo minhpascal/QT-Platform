@@ -35,6 +35,7 @@ import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Configuration;
@@ -57,7 +58,6 @@ public abstract class Averages extends TickerStatistics {
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
 
-
 	/** The configuration. */
 	private Configuration configuration;
 
@@ -72,7 +72,7 @@ public abstract class Averages extends TickerStatistics {
 	public Averages(Session session) {
 		super(session);
 	}
-	
+
 	/**
 	 * Returns the configuration.
 	 * 
@@ -133,13 +133,18 @@ public abstract class Averages extends TickerStatistics {
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
 	 * @return The list of fields.
 	 */
-	public List<Field> getFieldListCalculations(String suffix) {
-		String name = "calculations_" + suffix;
+	public List<Field> getFieldListCalculations(String family, String suffix) {
+		String name = "calculations_" + family + "_" + suffix;
 		List<Field> fields = mapFieldLists.get(name);
 		if (fields == null) {
 			fields = new ArrayList<>();
 			for (Calculation calculation : getConfiguration().getCalculations()) {
-				fields.add(new FieldCalculation(getSession(), calculation, Fields.calculation(calculation, suffix)));
+				if (calculation.getFamily().equals(family)) {
+					fields.add(new FieldCalculation(
+						getSession(),
+						calculation,
+						Fields.calculation(calculation, suffix)));
+				}
 			}
 			mapFieldLists.put(name, fields);
 		}
@@ -200,7 +205,7 @@ public abstract class Averages extends TickerStatistics {
 		List<Field> fields = new ArrayList<>();
 		fields.addAll(getFieldListSpreads(Fields.Suffix.raw));
 		fields.addAll(getFieldListSlopes(Fields.Suffix.raw));
-		fields.addAll(getFieldListCalculations(Fields.Suffix.raw));
+		fields.addAll(getFieldListCalculations(Family.Default, Fields.Suffix.raw));
 		return fields;
 	}
 

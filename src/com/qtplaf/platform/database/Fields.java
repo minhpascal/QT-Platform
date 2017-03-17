@@ -47,6 +47,14 @@ public class Fields {
 		String out = "out";		// Output
 	}
 	
+	/**
+	 * Families of calculations.
+	 */
+	public interface Family {
+		String Default = "default";
+		String WeightedSum = "weighted_sum";
+	}
+	
 	public static final String Average = "average";
 	public static final String AvgStd1 = "avgstd1";
 	public static final String AvgStd2 = "avgstd2";
@@ -74,11 +82,14 @@ public class Fields {
 	public static final String Name = "name";
 	public static final String OfferSide = "offer_side";
 	public static final String Open = "open";
+	public static final String PatternFamily = "pattern_fam";
+	public static final String PatternId = "pattern_id";
 	public static final String Period = "period";
 	public static final String PeriodId = "period_id";
 	public static final String PeriodName = "period_name";
 	public static final String PeriodSize = "period_size";
 	public static final String PeriodUnitIndex = "period_unit_index";
+	public static final String Range = "range";
 	public static final String ServerId = "server_id";
 	public static final String ServerName = "server_name";
 	public static final String ServerTitle = "server_title";
@@ -92,6 +103,7 @@ public class Fields {
 	public static final String TimeFmt = "time_fmt";
 	public static final String Value = "value";
 	public static final String Volume = "volume";
+	public static final String WeightedSum = "weighted_sum";
 	
 	public static String average(Average average) {
 		return average.getName();
@@ -107,5 +119,9 @@ public class Fields {
 	
 	public static String slope(Slope slope, String suffix) {
 		return slope.getName() + "_" + suffix;
+	}
+	
+	public static String range(String suffix) {
+		return Range + "_" + suffix;
 	}
 }
