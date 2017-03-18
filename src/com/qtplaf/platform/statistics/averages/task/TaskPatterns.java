@@ -34,7 +34,7 @@ import com.qtplaf.library.trading.pattern.candle.patterns.SpinningLongShadows;
 import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.formatters.DataValue;
-import com.qtplaf.platform.statistics.averages.Patterns;
+import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -47,8 +47,8 @@ public class TaskPatterns extends TaskAverages {
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
 
-	/** Underlying patterns statistics. */
-	private Patterns patterns;
+	/** Underlying states statistics. */
+	private States states;
 	/** States data list. */
 	private PersistorDataList statesList;
 	/** List of patterns to identify. */
@@ -57,14 +57,14 @@ public class TaskPatterns extends TaskAverages {
 	/**
 	 * Construtor.
 	 * 
-	 * @param patterns Underlying patterns statistics.
+	 * @param states Underlying states statistics.
 	 */
-	public TaskPatterns(Patterns patterns) {
-		super(patterns.getSession());
-		this.patterns = patterns;
-		this.statesList = patterns.getStates().getDataListStates();
+	public TaskPatterns(States states) {
+		super(states.getSession());
+		this.states = states;
+		this.statesList = states.getStates().getDataListStates();
 
-		setNameAndDescription(patterns, "Patterns");
+		setNameAndDescription(states, "Patterns");
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class TaskPatterns extends TaskAverages {
 		candlePatterns.add(new SpinningLongShadows());
 
 		// States table.
-		Table table = patterns.getStates().getTable();
+		Table table = states.getStates().getTableStates();
 
 		// View.
 		View view = new View(getSession());
@@ -85,7 +85,7 @@ public class TaskPatterns extends TaskAverages {
 		view.setName(table.getName());
 
 		// Aggregate field name (range_raw)
-		String rangeName = Fields.range(Fields.Suffix.raw);
+		String rangeName = Fields.High + "-" + Fields.Low;
 
 		// Aggregate function average.
 		Field average = Domains.getDouble(getSession(), Fields.Average);
@@ -157,7 +157,7 @@ public class TaskPatterns extends TaskAverages {
 		countSteps();
 
 		// Result table and persistor.
-		Table table = patterns.getTable();
+		Table table = states.getTablePatterns();
 		Persistor persistor = table.getPersistor();
 
 		// Drop and create the table.

@@ -36,14 +36,20 @@ import com.qtplaf.platform.statistics.TickerStatistics;
  * @author Miquel Sas
  */
 public abstract class ActionBrowse extends ActionTickerStatistics {
+	
+	/** Title suffix. */
+	private String titleSuffix;
+	
 	/**
 	 * Constructor.
 	 * 
 	 * @param statistics The source statistics.
+	 * @param titleSuffix The title suffix.
 	 */
-	public ActionBrowse(TickerStatistics statistics) {
+	public ActionBrowse(TickerStatistics statistics, String titleSuffix) {
 		super(statistics);
 		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_browse));
+		this.titleSuffix = titleSuffix;
 	}
 
 	/**
@@ -80,7 +86,7 @@ public abstract class ActionBrowse extends ActionTickerStatistics {
 		title.append(" ");
 		title.append(getPeriod());
 		title.append(" [");
-		title.append(getStatistics().getTable().getName());
+		title.append(titleSuffix);
 		title.append("]");
 		frame.setTitle(title.toString());
 

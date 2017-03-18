@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import com.qtplaf.library.database.Condition;
 import com.qtplaf.library.database.Criteria;
 import com.qtplaf.library.database.Field;
-import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
@@ -359,31 +358,12 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	}
 
 	/**
-	 * Filter transitions from the same state.
-	 */
-	protected void filterTransitionsFromState() throws Exception {
-		Record record = getChartNavigate().getTableRecord().getSelectedRecord();
-		if (record == null) {
-			return;
-		}
-		Value vState = record.getValue(Fields.State);
-		
-		// Get all transitions where state_in == state
-		Persistor persistor = getAverages().getTransitions().getTable().getPersistor();
-		Field fStateIn = persistor.getField(Fields.StateIn);
-		
-		// Select criteria.
-		Criteria criteria = new Criteria();
-		criteria.add(Condition.fieldEQ(fStateIn, vState));
-	}
-
-	/**
 	 * Return the std recordset.
 	 * 
 	 * @return The recordset.
 	 */
 	private RecordSet getRecordSetStd() {
-		DataPersistor persistor = new DataPersistor(getAverages().getStates().getTable().getPersistor());
+		DataPersistor persistor = new DataPersistor(getAverages().getStates().getTableStates().getPersistor());
 		return new DataRecordSet(persistor);
 	}
 }

@@ -26,7 +26,6 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.Fields.Suffix;
-import com.qtplaf.platform.database.calculators.CalculatorRange;
 import com.qtplaf.platform.database.calculators.CalculatorSpreadPrice;
 import com.qtplaf.platform.database.calculators.CalculatorWeightedSum;
 import com.qtplaf.platform.database.configuration.Average;
@@ -35,10 +34,7 @@ import com.qtplaf.platform.database.configuration.Configuration;
 import com.qtplaf.platform.database.configuration.Range;
 import com.qtplaf.platform.database.configuration.Slope;
 import com.qtplaf.platform.database.configuration.Spread;
-import com.qtplaf.platform.statistics.averages.Patterns;
-import com.qtplaf.platform.statistics.averages.Ranges;
 import com.qtplaf.platform.statistics.averages.States;
-import com.qtplaf.platform.statistics.averages.Transitions;
 
 /**
  * Manager to centralize states statistics access.
@@ -118,73 +114,13 @@ public class Manager {
 	 */
 	public States getStates(Server server, Instrument instrument, Period period, Configuration cfg) {
 		States states = new States(getSession());
-		states.setId(cfg.getId() + "st");
+		states.setId(cfg.getId());
 		states.setTitle("States " + cfg.getTitle());
 		states.setServer(server);
 		states.setInstrument(instrument);
 		states.setPeriod(period);
 		states.setConfiguration(cfg);
 		return states;
-	}
-
-	/**
-	 * Returns the ranges statistics.
-	 * 
-	 * @param server The server.
-	 * @param instrument The instrument.
-	 * @param period The period.
-	 * @param cfg The configuration.
-	 * @return The ranges statistics.
-	 */
-	public Ranges getRanges(Server server, Instrument instrument, Period period, Configuration cfg) {
-		Ranges ranges = new Ranges(getSession());
-		ranges.setId(cfg.getId() + "rn");
-		ranges.setTitle("Ranges " + cfg.getTitle());
-		ranges.setServer(server);
-		ranges.setInstrument(instrument);
-		ranges.setPeriod(period);
-		ranges.setConfiguration(cfg);
-		return ranges;
-	}
-
-	/**
-	 * Returns the patterns statistics.
-	 * 
-	 * @param server The server.
-	 * @param instrument The instrument.
-	 * @param period The period.
-	 * @param cfg The configuration.
-	 * @return The patterns statistics.
-	 */
-	public Patterns getPatterns(Server server, Instrument instrument, Period period, Configuration cfg) {
-		Patterns patterns = new Patterns(getSession());
-		patterns.setId(cfg.getId() + "pt");
-		patterns.setTitle("Patterns " + cfg.getTitle());
-		patterns.setServer(server);
-		patterns.setInstrument(instrument);
-		patterns.setPeriod(period);
-		patterns.setConfiguration(cfg);
-		return patterns;
-	}
-
-	/**
-	 * Returns the transitions statistics.
-	 * 
-	 * @param server The server.
-	 * @param instrument The instrument.
-	 * @param period The period.
-	 * @param cfg The configuration.
-	 * @return The transitions statistics.
-	 */
-	public Transitions getTransitions(Server server, Instrument instrument, Period period, Configuration cfg) {
-		Transitions transitions = new Transitions(getSession());
-		transitions.setId(cfg.getId() + "tr");
-		transitions.setTitle("Transitions " + cfg.getTitle());
-		transitions.setServer(server);
-		transitions.setInstrument(instrument);
-		transitions.setPeriod(period);
-		transitions.setConfiguration(cfg);
-		return transitions;
 	}
 
 	/**
@@ -200,9 +136,6 @@ public class Manager {
 		List<Configuration> configurations = getConfigurations();
 		for (Configuration cfg : configurations) {
 			statistics.add(getStates(server, instrument, period, cfg));
-			statistics.add(getRanges(server, instrument, period, cfg));
-			statistics.add(getTransitions(server, instrument, period, cfg));
-			statistics.add(getPatterns(server, instrument, period, cfg));
 		}
 		return statistics;
 	}
@@ -277,29 +210,10 @@ public class Manager {
 	 */
 	private Calculation getCalculationSpreadPrice(Average average, int segments, boolean key) {
 		String family = Family.Default;
-		String name = "spwcp_avg_" + average.getPeriod();
+		String name = "spread_wcp_" + average.getPeriod();
 		String header = "Spread WCP-Avg-" + average.getPeriod();
 		Calculation calculation = new Calculation(family, name, header, header);
 		CalculatorSpreadPrice calculator = new CalculatorSpreadPrice(average);
-		calculation.setCalculator(calculator);
-		calculation.setNormalizer(getNormalizer(segments));
-		calculation.setStateKey(key);
-		return calculation;
-	}
-
-	/**
-	 * Returns the calculation for the range.
-	 * 
-	 * @param segments Segments of the normalizer.
-	 * @param key State key flag.
-	 * @return The calculator.
-	 */
-	public Calculation getCalculationRange(int segments, boolean key) {
-		String family = Family.Default;
-		String name = Fields.Range;
-		String header = "Range";
-		Calculation calculation = new Calculation(family, name, header, header);
-		CalculatorRange calculator = new CalculatorRange();
 		calculation.setCalculator(calculator);
 		calculation.setNormalizer(getNormalizer(segments));
 		calculation.setStateKey(key);
@@ -367,11 +281,7 @@ public class Manager {
 		cfg.addSlope(slope_89);
 		cfg.addSlope(slope_377);
 
-		// Range.
-		Calculation calcRange = getCalculationRange(10, false);
-		cfg.addCalculation(calcRange);
-
-		// Spreads high, low close.
+		// Spread price.
 		Calculation calcSpreadPrice = getCalculationSpreadPrice(avg_5, 10, true);
 		cfg.addCalculation(calcSpreadPrice);
 

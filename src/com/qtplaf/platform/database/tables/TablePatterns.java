@@ -28,7 +28,7 @@ import com.qtplaf.platform.database.fields.FieldPatternFamily;
 import com.qtplaf.platform.database.fields.FieldPatternId;
 import com.qtplaf.platform.database.fields.FieldTime;
 import com.qtplaf.platform.database.fields.FieldTimeFmt;
-import com.qtplaf.platform.statistics.averages.Patterns;
+import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
@@ -42,15 +42,15 @@ public class TablePatterns extends Table {
 	 * Constructor.
 	 * 
 	 * @param session Working session.
-	 * @param patterns The patterns statistics.
+	 * @param patterns The states statistics.
 	 */
-	public TablePatterns(Session session, Patterns patterns) {
+	public TablePatterns(Session session, States patterns) {
 		super(session);
 
 		Server server = patterns.getServer();
 		Instrument instrument = patterns.getInstrument();
 		Period period = patterns.getPeriod();
-		String id = patterns.getId().toLowerCase();
+		String id = patterns.getId().toLowerCase() + "_pt";
 
 		setName(Tables.ticker(instrument, period, id));
 		setSchema(Schemas.server(server));

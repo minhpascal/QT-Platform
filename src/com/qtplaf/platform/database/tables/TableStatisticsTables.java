@@ -15,8 +15,6 @@
 package com.qtplaf.platform.database.tables;
 
 import com.qtplaf.library.app.Session;
-import com.qtplaf.library.database.ForeignKey;
-import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Table;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Schemas;
@@ -25,51 +23,40 @@ import com.qtplaf.platform.database.fields.FieldInstrumentId;
 import com.qtplaf.platform.database.fields.FieldPeriodId;
 import com.qtplaf.platform.database.fields.FieldServerId;
 import com.qtplaf.platform.database.fields.FieldStatisticsId;
+import com.qtplaf.platform.database.fields.FieldTableName;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Statistics table definition.
+ * Statistics tables detail.
  *
  * @author Miquel Sas
  */
-public class TableStatistics extends Table {
+public class TableStatisticsTables extends Table {
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param session Working session.
 	 */
-	public TableStatistics(Session session) {
+	public TableStatisticsTables(Session session) {
 		super(session);
 
-		setName(Tables.Statistics);
+		setName(Tables.StatisticsTables);
 		setSchema(Schemas.qtp);
 
 		addField(new FieldServerId(session, Fields.ServerId));
 		addField(new FieldInstrumentId(session, Fields.InstrumentId));
 		addField(new FieldPeriodId(session, Fields.PeriodId));
 		addField(new FieldStatisticsId(session, Fields.StatisticsId));
+		addField(new FieldTableName(session, Fields.TableName));
 
 		getField(Fields.ServerId).setPrimaryKey(true);
 		getField(Fields.InstrumentId).setPrimaryKey(true);
 		getField(Fields.PeriodId).setPrimaryKey(true);
 		getField(Fields.StatisticsId).setPrimaryKey(true);
+		getField(Fields.TableName).setPrimaryKey(true);
 
-		Table tablePeriods = new TablePeriods(session);
-		ForeignKey fkPeriods = new ForeignKey(false);
-		fkPeriods.setLocalTable(this);
-		fkPeriods.setForeignTable(tablePeriods);
-		fkPeriods.add(getField(Fields.PeriodId), tablePeriods.getField(Fields.PeriodId));
-		addForeignKey(fkPeriods);
-		
-		Order order = new Order();
-		order.add(getField(Fields.ServerId));
-		order.add(getField(Fields.InstrumentId));
-		order.add(tablePeriods.getField(Fields.PeriodUnitIndex));
-		order.add(tablePeriods.getField(Fields.PeriodSize));
-		order.add(getField(Fields.StatisticsId));
-		
-		setPersistor(PersistorUtils.getPersistor(getComplexView(order)));
+		setPersistor(PersistorUtils.getPersistor(getSimpleView()));
 	}
 
 }

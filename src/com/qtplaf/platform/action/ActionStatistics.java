@@ -163,9 +163,22 @@ public class ActionStatistics extends AbstractAction {
 				// Create the statistics record.
 				Persistor persistor = PersistorUtils.getPersistorStatistics(session);
 				persistor.insert(rcStats);
-				PersistorUtils.getDDL().buildTable(statistics.getTable());
 				getTableModel().insertRecord(rcStats, persistor.getView().getOrderBy());
 				getTableRecord().setSelectedRecord(rcStats);
+				
+				// Create the detail of table records
+				Persistor persistorTables = PersistorUtils.getPersistorStatisticsTables(session);
+				List<Table> tables = statistics.getTables();
+				for (Table table : tables) {
+					Record rc = persistorTables.getDefaultRecord();
+					rc.setValue(Fields.ServerId, server.getId());
+					rc.setValue(Fields.InstrumentId, instrument.getId());
+					rc.setValue(Fields.PeriodId, period.getId());
+					rc.setValue(Fields.StatisticsId, statistics.getId());
+					rc.setValue(Fields.TableName, table.getName());
+					persistorTables.insert(rc);
+					persistorTables.getDDL().buildTable(table);
+				}
 
 			} catch (Exception exc) {
 				logger.catching(exc);
@@ -196,8 +209,8 @@ public class ActionStatistics extends AbstractAction {
 			try {
 				Session session = ActionUtils.getSession(ActionStatistics.this);
 				Server server = LaunchArgs.getServer(ActionStatistics.this);
-				List<Record> records = getSelectedRecords();
-				if (records.isEmpty()) {
+				Record record = getSelectedRecord();
+				if (record == null) {
 					return;
 				}
 
@@ -206,23 +219,33 @@ public class ActionStatistics extends AbstractAction {
 				if (MessageBox.question(session, question, MessageBox.yesNo) != MessageBox.yes) {
 					return;
 				}
-
-				// Delete records and tables.
-				String serverId = server.getId();
 				int row = getTableRecord().getSelectedRow();
-				for (Record record : records) {
-					PersistorUtils.getPersistorStatistics(session).delete(record);
-					String instrId = record.getValue(Fields.InstrumentId).getString();
-					String periodId = record.getValue(Fields.PeriodId).getString();
-					String statsId = record.getValue(Fields.StatisticsId).getString();
-					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
-					Period period = Period.parseId(periodId);
-					Manager manager = new Manager(session);
-					Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
-					Table table = statistics.getTable();
+
+				String serverId = server.getId();
+				String instrId = record.getValue(Fields.InstrumentId).getString();
+				String periodId = record.getValue(Fields.PeriodId).getString();
+				String statsId = record.getValue(Fields.StatisticsId).getString();
+				
+				Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
+				Period period = Period.parseId(periodId);
+				Manager manager = new Manager(session);
+				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
+				
+				Persistor persistorTables = PersistorUtils.getPersistorStatisticsTables(session);
+				List<Table> tables = statistics.getTables();
+				for (Table table : tables) {
+					Record rc = persistorTables.getDefaultRecord();
+					rc.setValue(Fields.ServerId, serverId);
+					rc.setValue(Fields.InstrumentId, instrId);
+					rc.setValue(Fields.PeriodId, periodId);
+					rc.setValue(Fields.StatisticsId, statsId);
+					rc.setValue(Fields.TableName, table.getName());
+					persistorTables.delete(rc);
 					PersistorUtils.getDDL().dropTable(table);
-					getTableModel().deleteRecord(record);
 				}
+				
+				PersistorUtils.getPersistorStatistics(session).delete(record);
+				getTableModel().deleteRecord(record);
 				getTableRecord().setSelectedRow(row);
 
 			} catch (Exception exc) {
@@ -272,7 +295,6 @@ public class ActionStatistics extends AbstractAction {
 			tableModelRecord.addColumn(Fields.InstrumentId);
 			tableModelRecord.addColumn(Fields.PeriodName);
 			tableModelRecord.addColumn(Fields.StatisticsId);
-			tableModelRecord.addColumn(Fields.TableName);
 
 			tableModelRecord.setRecordSet(RecordSetUtils.getRecordSetStatistics(getSession(), getServer()));
 			tableRecord.setModel(tableModelRecord);

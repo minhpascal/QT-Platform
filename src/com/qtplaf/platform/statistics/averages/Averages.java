@@ -27,6 +27,8 @@ import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordSet;
+import com.qtplaf.library.database.Table;
+import com.qtplaf.library.task.Task;
 import com.qtplaf.library.trading.chart.plotter.data.BufferedLinePlotter;
 import com.qtplaf.library.trading.chart.plotter.data.CandlestickPlotter;
 import com.qtplaf.library.trading.data.DataList;
@@ -49,7 +51,7 @@ import com.qtplaf.platform.statistics.Manager;
 import com.qtplaf.platform.statistics.TickerStatistics;
 
 /**
- * Root class for states statistics based on averages.
+ * Root class for states statistics based on averages, spreads and slopes.
  *
  * @author Miquel Sas
  */
@@ -220,26 +222,6 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
-	 * Returns a ranges.
-	 * 
-	 * @return A ranges.
-	 */
-	public Ranges getRanges() {
-		Manager manager = new Manager(getSession());
-		return manager.getRanges(getServer(), getInstrument(), getPeriod(), getConfiguration());
-	}
-
-	/**
-	 * Returns a transitions.
-	 * 
-	 * @return A transitions.
-	 */
-	public Transitions getTransitions() {
-		Manager manager = new Manager(getSession());
-		return manager.getTransitions(getServer(), getInstrument(), getPeriod(), getConfiguration());
-	}
-
-	/**
 	 * Returns the map of normalizers for continuous normalization.
 	 * 
 	 * @return The map of normalizers.
@@ -249,13 +231,13 @@ public abstract class Averages extends TickerStatistics {
 
 			// Ranges statistics.
 			Manager manager = new Manager(getSession());
-			Ranges ranges = manager.getRanges(getServer(), getInstrument(), getPeriod(), getConfiguration());
+			States states = manager.getStates(getServer(), getInstrument(), getPeriod(), getConfiguration());
 
 			// The map to fill.
 			Map<String, Normalizer> map = new HashMap<>();
 
 			double stddevs = 2;
-			RecordSet recordSet = ranges.getRecordSet(false);
+			RecordSet recordSet = states.getRecordSetRanges(false);
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
 				String fieldName = record.getValue(Fields.Name).getString();
@@ -377,5 +359,22 @@ public abstract class Averages extends TickerStatistics {
 		plotData.add(dataList);
 
 		return plotData;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.qtplaf.library.statistics.Statistics#getTables()
+	 */
+	@Override
+	public List<Table> getTables() {
+		return new ArrayList<>();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.qtplaf.library.statistics.Statistics#getTasks()
+	 */
+	@Override
+	public List<Task> getTasks() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

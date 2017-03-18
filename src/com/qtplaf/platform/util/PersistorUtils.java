@@ -30,6 +30,7 @@ import com.qtplaf.platform.database.tables.TableOfferSides;
 import com.qtplaf.platform.database.tables.TablePeriods;
 import com.qtplaf.platform.database.tables.TableServers;
 import com.qtplaf.platform.database.tables.TableStatistics;
+import com.qtplaf.platform.database.tables.TableStatisticsTables;
 import com.qtplaf.platform.database.tables.TableTickers;
 
 /**
@@ -129,6 +130,16 @@ public class PersistorUtils {
 	 */
 	public static Persistor getPersistorStatistics(Session session) {
 		return new TableStatistics(session).getPersistor();
+	}
+
+	/**
+	 * Returns the statistics tables persistor.
+	 * 
+	 * @param session Working session.
+	 * @return The persistor.
+	 */
+	public static Persistor getPersistorStatisticsTables(Session session) {
+		return new TableStatisticsTables(session).getPersistor();
 	}
 
 	/**

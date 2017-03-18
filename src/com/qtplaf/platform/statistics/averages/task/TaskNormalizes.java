@@ -25,12 +25,9 @@ import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
 import com.qtplaf.library.trading.data.DataPersistor;
-import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.configuration.Calculation;
-import com.qtplaf.platform.database.configuration.Slope;
-import com.qtplaf.platform.database.configuration.Spread;
 import com.qtplaf.platform.statistics.averages.States;
 
 /**
@@ -61,7 +58,7 @@ public class TaskNormalizes extends TaskAverages {
 	 * @return The persistor.
 	 */
 	private DataPersistor getPersistor() {
-		return new DataPersistor(states.getTable().getPersistor());
+		return new DataPersistor(states.getTableStates().getPersistor());
 	}
 
 	/**
@@ -91,17 +88,7 @@ public class TaskNormalizes extends TaskAverages {
 	 * @return The number of records to process.
 	 */
 	private long countPenging() throws Exception {
-		return getPersistor().count(getSelectCriteria());
-	}
-
-	/**
-	 * Returns the select criteria.
-	 * 
-	 * @return The select criteria.
-	 */
-	private Criteria getSelectCriteria() {
-		Criteria criteria = new Criteria();
-		return criteria;
+		return getPersistor().count(new Criteria());
 	}
 
 	/**
@@ -111,7 +98,7 @@ public class TaskNormalizes extends TaskAverages {
 	 */
 	private Order getSelectOrder() {
 		Order order = new Order();
-		order.add(states.getTable().getField(Fields.Index));
+		order.add(states.getTableStates().getField(Fields.Index));
 		return order;
 	}
 
@@ -129,8 +116,6 @@ public class TaskNormalizes extends TaskAverages {
 		try {
 			// Normalizers map.
 			Map<String, Normalizer> mapNormalizers = states.getMapNormalizers();
-			// Scale to calculate the key.
-			int keyScale = states.getConfiguration().getScale();
 
 			// Count steps.
 			countSteps();
@@ -139,7 +124,7 @@ public class TaskNormalizes extends TaskAverages {
 			DataPersistor persistor = getPersistor();
 
 			// Source iterator.
-			iterator = persistor.iterator(getSelectCriteria(), getSelectOrder());
+			iterator = persistor.iterator(new Criteria(), getSelectOrder());
 
 			// Step and steps.
 			long step = 0;
@@ -170,83 +155,60 @@ public class TaskNormalizes extends TaskAverages {
 				// Spreads between averages.
 				{
 					List<Field> fieldsRaw = states.getFieldListSpreads(Fields.Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListSpreads(Fields.Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListSpreads(Fields.Suffix.dsc);
+					List<Field> fieldsNrm = states.getFieldListSpreads(Fields.Suffix.nrm);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
-						Field fieldCont = fieldsCont.get(i);
-						Field fieldDisc = fieldsDisc.get(i);
-						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Spread spread = (Spread) fieldDisc.getProperty(Fields.Properties.Spread);
-						Normalizer normDisc = spread.getNormalizer();
+						Field fieldNrm = fieldsNrm.get(i);
+						Normalizer normalizer = mapNormalizers.get(fieldRaw.getName());
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
-						double valueCont = normCont.getValue(valueRaw);
-						double valueDisc = normDisc.getValue(valueCont);
-						record.getValue(fieldCont.getName()).setDouble(valueCont);
-						record.getValue(fieldDisc.getName()).setDouble(valueDisc);
+						double valueNrm = normalizer.getValue(valueRaw);
+						record.getValue(fieldNrm.getName()).setDouble(valueNrm);
 					}
 				}
 
 				// Slopes.
 				{
 					List<Field> fieldsRaw = states.getFieldListSlopes(Fields.Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListSlopes(Fields.Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListSlopes(Fields.Suffix.dsc);
+					List<Field> fieldsNrm = states.getFieldListSlopes(Fields.Suffix.nrm);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
-						Field fieldCont = fieldsCont.get(i);
-						Field fieldDisc = fieldsDisc.get(i);
-						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Slope slope = (Slope) fieldDisc.getProperty(Fields.Properties.Slope);
-						Normalizer normDisc = slope.getNormalizer();
+						Field fieldNrm = fieldsNrm.get(i);
+						Normalizer normalizer = mapNormalizers.get(fieldRaw.getName());
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
-						double valueCont = normCont.getValue(valueRaw);
-						double valueDisc = normDisc.getValue(valueCont);
-						record.getValue(fieldCont.getName()).setDouble(valueCont);
-						record.getValue(fieldDisc.getName()).setDouble(valueDisc);
+						double valueCont = normalizer.getValue(valueRaw);
+						record.getValue(fieldNrm.getName()).setDouble(valueCont);
 					}
 				}
 
 				// Calculations: default family
 				{
 					List<Field> fieldsRaw = states.getFieldListCalculations(Family.Default, Fields.Suffix.raw);
-					List<Field> fieldsCont = states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm);
-					List<Field> fieldsDisc = states.getFieldListCalculations(Family.Default, Fields.Suffix.dsc);
+					List<Field> fieldsNrm = states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm);
 					for (int i = 0; i < fieldsRaw.size(); i++) {
 						Field fieldRaw = fieldsRaw.get(i);
-						Field fieldCont = fieldsCont.get(i);
-						Field fieldDisc = fieldsDisc.get(i);
-						Normalizer normCont = mapNormalizers.get(fieldRaw.getName());
-						Calculation calculation = (Calculation) fieldDisc.getProperty(Fields.Properties.Calculation);
-						Normalizer normDisc = calculation.getNormalizer();
+						Field fieldNrm = fieldsNrm.get(i);
+						Normalizer normalizer = mapNormalizers.get(fieldRaw.getName());
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
-						double valueCont = normCont.getValue(valueRaw);
-						double valueDisc = normDisc.getValue(valueCont);
-						record.getValue(fieldCont.getName()).setDouble(valueCont);
-						record.getValue(fieldDisc.getName()).setDouble(valueDisc);
+						double valueCont = normalizer.getValue(valueRaw);
+						record.getValue(fieldNrm.getName()).setDouble(valueCont);
 					}
 				}
 				
-				// Calculations: family weighted sum raw.
+				// Calculations: family weighted sum nrm and dsc.
 				{
-					List<Field> fields = states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.raw);
-					for (Field field : fields) {
-						Calculation calculation = (Calculation) field.getProperty(Fields.Properties.Calculation);
+					List<Field> fieldsNrm = states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm);
+					List<Field> fieldsDsc = states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc);
+					for (int i = 0; i < fieldsNrm.size(); i++) {
+						Field fieldNrm = fieldsNrm.get(i);
+						Field fieldDsc = fieldsDsc.get(i);
+						Calculation calculation = (Calculation) fieldNrm.getProperty(Fields.Properties.Calculation);
 						Calculator calculator = calculation.getCalculator();
-						record.setValue(field.getName(), calculator.getValue(record));
+						Normalizer normalizer = calculation.getNormalizer();
+						double valueNrm = calculator.getValue(record).getDouble();
+						double valueDsc = normalizer.getValue(valueNrm);
+						record.setValue(fieldNrm.getName(), valueNrm);
+						record.setValue(fieldDsc.getName(), valueDsc);
 					}
-				}
-
-				// Key state.
-				{
-					Field fieldKey = states.getTable().getField(Fields.State);
-					List<Field> fieldsKey = states.getFieldListStateKey();
-					double[] keyValues = new double[fieldsKey.size()];
-					for (int i = 0; i < fieldsKey.size(); i++) {
-						String name = fieldsKey.get(i).getName();
-						keyValues[i] = record.getValue(name).getDouble();
-					}
-					record.getValue(fieldKey.getName()).setString(NumberUtils.getStringKey(keyValues, keyScale));
 				}
 
 				// Update the record.

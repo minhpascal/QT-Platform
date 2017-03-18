@@ -23,7 +23,7 @@ import com.qtplaf.library.database.Table;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.configuration.Range;
-import com.qtplaf.platform.statistics.averages.Ranges;
+import com.qtplaf.platform.statistics.averages.States;
 
 /**
  * Calculate ranges (min-max) values.
@@ -32,22 +32,22 @@ import com.qtplaf.platform.statistics.averages.Ranges;
  */
 public class TaskRanges extends TaskAverages {
 
-	/** Underlying ranges statistics. */
-	private Ranges ranges;
+	/** Underlying states statistics. */
+	private States states;
 	/** States data list. */
 	private PersistorDataList statesList;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param ranges The ranges statistics.
+	 * @param states The states statistics.
 	 */
-	public TaskRanges(Ranges ranges) {
-		super(ranges.getSession());
-		this.ranges = ranges;
-		this.statesList = ranges.getStates().getDataListStates();
+	public TaskRanges(States states) {
+		super(states.getSession());
+		this.states = states;
+		this.statesList = states.getStates().getDataListStates();
 
-		setNameAndDescription(ranges, "Ranges (min-max) values");
+		setNameAndDescription(states, "Ranges (min-max) values");
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class TaskRanges extends TaskAverages {
 		countSteps();
 
 		// Result table and persistor.
-		Table table = ranges.getTable();
+		Table table = states.getTableRanges();
 		Persistor persistor = table.getPersistor();
 
 		// Drop and create the table.
@@ -123,7 +123,7 @@ public class TaskRanges extends TaskAverages {
 		persistor.getDDL().buildTable(table);
 
 		// List of ranges.
-		List<Range> rangeList = ranges.getConfiguration().getRanges();
+		List<Range> rangeList = states.getConfiguration().getRanges();
 
 		// Set the states list cache size.
 		int cacheSize = -1;
@@ -133,7 +133,7 @@ public class TaskRanges extends TaskAverages {
 		statesList.setCacheSize(cacheSize * 10);
 
 		// Fields to calculate ranges.
-		List<Field> fields = ranges.getFieldListToCalculateRanges();
+		List<Field> fields = states.getFieldListToCalculateRanges();
 
 		// The current index to calculate.
 		int index = 0;

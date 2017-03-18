@@ -31,15 +31,18 @@ import com.qtplaf.platform.statistics.TickerStatistics;
  */
 public class ActionChart extends ActionTickerStatistics {
 	
+	/** Title suffix. */
+	private String titleSuffix;
 	/** Plot data list. */
 	private List<PlotData> plotDataList;
 
 	/**
 	 * @param statistics
 	 */
-	public ActionChart(TickerStatistics statistics, List<PlotData> plotDataList) {
+	public ActionChart(TickerStatistics statistics, List<PlotData> plotDataList, String titleSuffix) {
 		super(statistics);
 		this.plotDataList = plotDataList;
+		this.titleSuffix = titleSuffix;
 		ActionUtils.setSmallIcon(this, ImageIconUtils.getImageIcon(Icons.app_16x16_chart));
 	}
 
@@ -56,7 +59,7 @@ public class ActionChart extends ActionTickerStatistics {
 		title.append(" ");
 		title.append(getPeriod());
 		title.append(" [");
-		title.append(getStatistics().getTable().getName());
+		title.append(titleSuffix);
 		title.append("]");
 
 		// The chart frame.

@@ -89,7 +89,6 @@ public class Fields {
 	public static final String PeriodName = "period_name";
 	public static final String PeriodSize = "period_size";
 	public static final String PeriodUnitIndex = "period_unit_index";
-	public static final String Range = "range";
 	public static final String ServerId = "server_id";
 	public static final String ServerName = "server_name";
 	public static final String ServerTitle = "server_title";
@@ -119,9 +118,5 @@ public class Fields {
 	
 	public static String slope(Slope slope, String suffix) {
 		return slope.getName() + "_" + suffix;
-	}
-	
-	public static String range(String suffix) {
-		return Range + "_" + suffix;
 	}
 }

@@ -26,6 +26,6 @@
 	<entry key="qtAskDeleteTickers">Delete selected tickers and downloaded data?</entry>
 	<entry key="qtAskPurgeTickers">Purge (delete) selected tickers data?</entry>
 	
-	<entry key="qtAskDeleteStatistic">Delete selected statistics and calculated data?</entry>
+	<entry key="qtAskDeleteStatistic">Delete the selected statistics and calculated data?</entry>
 	
 </properties>

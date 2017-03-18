@@ -94,7 +94,7 @@ public class TaskStates extends TaskAverages {
 		countSteps();
 
 		// Result table and persistor.
-		Table table = states.getTable();
+		Table table = states.getTableStates();
 		DataPersistor persistor = new DataPersistor(table.getPersistor());
 
 		// Drop and create the table.

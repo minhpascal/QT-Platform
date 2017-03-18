@@ -27,7 +27,6 @@ import com.qtplaf.library.database.Persistor;
 import com.qtplaf.library.database.PersistorException;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.Value;
-import com.qtplaf.library.statistics.Statistics;
 import com.qtplaf.library.swing.EditMode;
 import com.qtplaf.library.swing.MessageBox;
 import com.qtplaf.library.swing.core.JFormRecord;
@@ -35,7 +34,6 @@ import com.qtplaf.library.swing.core.JFormRecordCustomizer;
 import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
-import com.qtplaf.library.trading.server.ServerFactory;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Tables;
 import com.qtplaf.platform.statistics.Manager;
@@ -176,56 +174,6 @@ public class FormUtils {
 		/**
 		 * Value action to build the table name as values are set.
 		 */
-		public static class ActionTableNameStatistics extends AbstractAction {
-
-			/** List of form edit fields. */
-			private JFormRecord form;
-
-			/**
-			 * Constructor.
-			 * 
-			 * @param editFields List of edit fields in the form.
-			 */
-			public ActionTableNameStatistics(JFormRecord form) {
-				super();
-				this.form = form;
-			}
-
-			/**
-			 * Perform the action.
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					String periodId = form.getEditField(Fields.PeriodId).getValue().toString();
-					if (periodId.isEmpty()) {
-						return;
-					}
-
-					String serverId = form.getEditField(Fields.ServerId).getValue().toString();
-					String instrId = form.getEditField(Fields.InstrumentId).getValue().toString();
-					String statsId = form.getEditField(Fields.StatisticsId).getValue().toString();
-
-					Session session = form.getSession();
-					Server server = ServerFactory.getServer(serverId);
-					Instrument instrument = InstrumentUtils.getInstrument(session, serverId, instrId);
-					Period period = Period.parseId(periodId);
-
-					Manager manager = new Manager(session);
-					Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
-					Value tableName = new Value(statistics.getTable().getName());
-
-					form.getRecord().setValue(Fields.TableName, tableName);
-					form.getEditField(Fields.TableName).setValue(tableName);
-				} catch (Exception exc) {
-					logger.catching(exc);
-				}
-			}
-		}
-
-		/**
-		 * Value action to build the table name as values are set.
-		 */
 		public static class ActionTableNameTickers extends AbstractAction {
 
 			/** List of form edit fields. */
@@ -329,17 +277,10 @@ public class FormUtils {
 		form.addField(Fields.PeriodId);
 		form.addField(Fields.PeriodName);
 		form.addField(Fields.StatisticsId);
-		form.addField(Fields.TableName);
 
 		form.getEditField(Fields.ServerId).setEnabled(false);
 		form.getEditField(Fields.InstrumentId).setEnabled(false);
 		form.getEditField(Fields.PeriodId).setEnabled(false);
-		form.getEditField(Fields.TableName).setEnabled(false);
-
-		ValueActions.ActionTableNameStatistics actionTableName = new ValueActions.ActionTableNameStatistics(form);
-		form.getEditField(Fields.InstrumentId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Fields.PeriodId).getEditContext().addValueAction(actionTableName);
-		form.getEditField(Fields.StatisticsId).getEditContext().addValueAction(actionTableName);
 
 		form.setCustomizer(new Customizers.StatisticsFormCustomizer(session));
 

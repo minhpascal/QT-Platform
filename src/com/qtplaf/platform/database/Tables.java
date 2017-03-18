@@ -30,6 +30,7 @@ public class Tables {
 	public static final String Periods = "periods";
 	public static final String Servers = "servers";
 	public static final String Statistics = "statistics";
+	public static final String StatisticsTables = "statistics_tables";
 	public static final String Tickers = "tickers";
 
 	public static String ticker(Instrument instrument, Period period) {
@@ -44,7 +45,7 @@ public class Tables {
 		return ticker(instrument, period, null);
 	}
 
-	public static String ticker(String instrument, String period, String suffix) {
+	private static String ticker(String instrument, String period, String suffix) {
 		StringBuilder b = new StringBuilder();
 		b.append(instrument.toLowerCase());
 		b.append("_");

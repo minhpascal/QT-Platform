@@ -21,6 +21,7 @@ import javax.swing.Action;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Table;
+import com.qtplaf.library.task.Task;
 
 /**
  * Statistics descriptor.
@@ -160,12 +161,18 @@ public abstract class Statistics {
 	}
 
 	/**
-	 * Returns the definition of the table where output results are stored or at least displayed in tabular form. It is
-	 * expected to have at least fields to hold the output values.
+	 * Returns the list of tables where statistic results are stored.
 	 * 
-	 * @return The results table.
+	 * @return The list of result tables.
 	 */
-	public abstract Table getTable();
+	public abstract List<Table> getTables();
+
+	/**
+	 * Returns the list of tasks to calculate the results. Tasks are expected to be executed sequentially.
+	 * 
+	 * @return The list of tasks.
+	 */
+	public abstract List<Task> getTasks();
 
 	/**
 	 * Returns the list of actions associated with the statistics. Actions are expected to be suitably configurated to

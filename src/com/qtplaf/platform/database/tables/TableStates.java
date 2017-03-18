@@ -21,15 +21,14 @@ import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.library.trading.data.Period;
 import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.Schemas;
 import com.qtplaf.platform.database.Tables;
-import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.fields.FieldClose;
 import com.qtplaf.platform.database.fields.FieldHigh;
 import com.qtplaf.platform.database.fields.FieldIndex;
 import com.qtplaf.platform.database.fields.FieldLow;
 import com.qtplaf.platform.database.fields.FieldOpen;
-import com.qtplaf.platform.database.fields.FieldState;
 import com.qtplaf.platform.database.fields.FieldTime;
 import com.qtplaf.platform.database.fields.FieldTimeFmt;
 import com.qtplaf.platform.statistics.averages.States;
@@ -54,7 +53,7 @@ public class TableStates extends Table {
 		Server server = states.getServer();
 		Instrument instrument = states.getInstrument();
 		Period period = states.getPeriod();
-		String id = states.getId().toLowerCase();
+		String id = states.getId().toLowerCase() + "_st";
 
 		setName(Tables.ticker(instrument, period, id));
 		setSchema(Schemas.server(server));
@@ -93,22 +92,9 @@ public class TableStates extends Table {
 		// Calculations, default, normalizes continuous.
 		addFields(states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm));
 
-		// Spreads between averages, normalized values discrete.
-		addFields(states.getFieldListSpreads(Fields.Suffix.dsc));
-
-		// Slope (tangent) of averages, normalized values discrete.
-		addFields(states.getFieldListSlopes(Fields.Suffix.dsc));
-
-		// Calculations, default, normalizes continuous.
-		addFields(states.getFieldListCalculations(Family.Default, Fields.Suffix.dsc));
-		
 		// Calculations weighted sum family.
-		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.raw));
 		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm));
 		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc));
-
-		// The state key.
-		addField(new FieldState(getSession(), Fields.State));
 
 		// Primary key on Time.
 		getField(Fields.Time).setPrimaryKey(true);
@@ -118,12 +104,6 @@ public class TableStates extends Table {
 		indexOnIndex.add(getField(Fields.Index));
 		indexOnIndex.setUnique(true);
 		addIndex(indexOnIndex);
-
-		// Non unique index on the state key.
-		Index indexOnKeyState = new Index();
-		indexOnKeyState.add(getField(Fields.State));
-		indexOnKeyState.setUnique(false);
-		addIndex(indexOnKeyState);
 
 		setPersistor(PersistorUtils.getPersistor(getSimpleView()));
 	}

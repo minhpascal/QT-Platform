@@ -29,11 +29,11 @@ import com.qtplaf.platform.database.fields.FieldName;
 import com.qtplaf.platform.database.fields.FieldPeriod;
 import com.qtplaf.platform.database.fields.FieldTime;
 import com.qtplaf.platform.database.fields.FieldValue;
-import com.qtplaf.platform.statistics.averages.Ranges;
+import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Ranges table, based on ranges averages.
+ * Ranges table, based on states averages.
  *
  * @author Miquel Sas
  */
@@ -41,16 +41,16 @@ public class TableRanges extends Table {
 	/**
 	 * Constructor.
 	 * 
-	 * @param session Wroking session.
-	 * @param ranges The ranges statistics.
+	 * @param session Working session.
+	 * @param states The states statistics.
 	 */
-	public TableRanges(Session session, Ranges ranges) {
+	public TableRanges(Session session, States states) {
 		super(session);
 		
-		Server server = ranges.getServer();
-		Instrument instrument = ranges.getInstrument();
-		Period period = ranges.getPeriod();
-		String id = ranges.getId().toLowerCase();
+		Server server = states.getServer();
+		Instrument instrument = states.getInstrument();
+		Period period = states.getPeriod();
+		String id = states.getId().toLowerCase() + "_rn";
 		
 		setName(Tables.ticker(instrument, period, id));
 		setSchema(Schemas.server(server));
