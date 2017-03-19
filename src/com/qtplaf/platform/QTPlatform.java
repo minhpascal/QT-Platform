@@ -60,7 +60,6 @@ import com.qtplaf.platform.database.tables.TableOfferSides;
 import com.qtplaf.platform.database.tables.TablePeriods;
 import com.qtplaf.platform.database.tables.TableServers;
 import com.qtplaf.platform.database.tables.TableStatistics;
-import com.qtplaf.platform.database.tables.TableStatisticsTables;
 import com.qtplaf.platform.database.tables.TableTickers;
 import com.qtplaf.platform.util.PersistorUtils;
 import com.qtplaf.platform.util.RecordUtils;
@@ -230,9 +229,6 @@ public class QTPlatform {
 		// Check for the necessary table Statistics in the system schema.
 		if (!ddl.existsTable(Schemas.qtp, Tables.Statistics)) {
 			ddl.buildTable(new TableStatistics(session));
-		}
-		if (!ddl.existsTable(Schemas.qtp, Tables.StatisticsTables)) {
-			ddl.buildTable(new TableStatisticsTables(session));
 		}
 	}
 

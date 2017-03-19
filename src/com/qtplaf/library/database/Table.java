@@ -770,7 +770,7 @@ public class Table implements Comparable<Object> {
 			throw new IllegalArgumentException();
 		}
 		for (int i = 0; i < primaryKeyFields.size(); i++) {
-			Field field = getField(i);
+			Field field = primaryKeyFields.get(i);
 			Value value = primaryKey.get(i).getValue();
 			if (i > 0) {
 				filter.and();

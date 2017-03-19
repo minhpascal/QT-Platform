@@ -162,6 +162,7 @@ public class Manager {
 		norm.setMaximum(1.0);
 		norm.setMinimum(-1.0);
 		norm.setSegments(segments);
+		norm.setScale(4);
 		return norm;
 	}
 
@@ -247,7 +248,6 @@ public class Manager {
 	public Configuration getConfigurationWeightedMedium() {
 		Configuration cfg = new Configuration(getSession());
 		cfg.setId("wm");
-		cfg.setScale(3);
 
 		// Averages.
 		Average avg_5 = new Average(5, 5, 3);
@@ -288,14 +288,14 @@ public class Manager {
 		// Calculation weighted sum of spreads, slopes and price spread.
 		CalculatorWeightedSum weightedSum = new CalculatorWeightedSum();
 		weightedSum.add(Fields.calculation(calcSpreadPrice, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.spread(spread_5_21, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.spread(spread_21_89, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.spread(spread_89_377, Suffix.nrm), 1.0);
+		weightedSum.add(Fields.spread(spread_5_21, Suffix.nrm), 2.0);
+		weightedSum.add(Fields.spread(spread_21_89, Suffix.nrm), 3.0);
+		weightedSum.add(Fields.spread(spread_89_377, Suffix.nrm), 4.0);
 		weightedSum.add(Fields.slope(slope_5, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.slope(slope_21, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.slope(slope_89, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.slope(slope_377, Suffix.nrm), 1.0);
-		Calculation calcWeightedSum = getCalculationWeightedSum(weightedSum, 20);
+		weightedSum.add(Fields.slope(slope_21, Suffix.nrm), 2.0);
+		weightedSum.add(Fields.slope(slope_89, Suffix.nrm), 3.0);
+		weightedSum.add(Fields.slope(slope_377, Suffix.nrm), 4.0);
+		Calculation calcWeightedSum = getCalculationWeightedSum(weightedSum, 40);
 		cfg.addCalculation(calcWeightedSum);
 
 		// Ranges for min-max values.

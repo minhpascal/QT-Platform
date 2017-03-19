@@ -46,6 +46,7 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.statistics.averages.Averages;
 
 /**
@@ -205,14 +206,10 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		dataList.setPageSize(1000);
 
 		chart.addPlotData(avgs.getPlotDataMain(dataList), true);
-		chart.addPlotData(
-			avgs.getPlotData("Spreads normalized", dataList, avgs.getFieldListSpreads(Fields.Suffix.nrm)),
-			false);
-		chart.addPlotData(avgs.getPlotData("Slopes normalized", dataList, avgs.getFieldListSlopes(Fields.Suffix.nrm)), false);
-		chart.addPlotData(avgs.getPlotData("Spreads discrete", dataList, avgs.getFieldListSpreads(Fields.Suffix.dsc)), false);
-		chart.addPlotData(avgs.getPlotData("Slopes discrete", dataList, avgs.getFieldListSlopes(Fields.Suffix.dsc)), false);
-		chart.addPlotData(avgs.getPlotData("Spreads raw", dataList, avgs.getFieldListSpreads(Fields.Suffix.raw)), false);
-		chart.addPlotData(avgs.getPlotData("Slopes raw", dataList, avgs.getFieldListSlopes(Fields.Suffix.raw)), false);
+		chart.addPlotData(avgs.getPlotData("Spreads", dataList, avgs.getFieldListSpreads(Fields.Suffix.nrm)),false);
+		chart.addPlotData(avgs.getPlotData("Slopes", dataList, avgs.getFieldListSlopes(Fields.Suffix.nrm)),false);
+		chart.addPlotData(avgs.getPlotData("WSum nrm", dataList, avgs.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm)),false);
+		chart.addPlotData(avgs.getPlotData("WSum dsc", dataList, avgs.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc)),false);
 
 		getChartNavigate().addActionToChart(new ActionClearDrawings());
 		getChartNavigate().addActionToChart(new ActionMoveToChartIndex());
@@ -310,7 +307,7 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		JChart chart = getChartNavigate().getChart();
 		for (PlotData plotData : chart.getPlotDataList()) {
 			VerticalLine vertLine = new VerticalLine(index);
-			vertLine.getParameters().setColor(Color.RED);
+			vertLine.getParameters().setColor(new Color(0.75f, 0.75f, 0.75f, 0.6f));
 			plotData.addDrawing(vertLine);
 		}
 		PlotData plotData = chart.getChartContainer(0).getPlotData();
@@ -328,6 +325,7 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		JChart chart = getChartNavigate().getChart();
 		for (PlotData plotData : chart.getPlotDataList()) {
 			VerticalArea vertBand = new VerticalArea(startIndex, endIndex);
+			vertBand.getParameters().setPaintBorder(false);
 			plotData.addDrawing(vertBand);
 		}
 		PlotData plotData = chart.getChartContainer(0).getPlotData();

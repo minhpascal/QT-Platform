@@ -353,11 +353,13 @@ public class States extends Averages {
 		Field avgStd1 = Domains.getDouble(getSession(), "avgstd_1", "AvgStd_1", "Avg/1 Stddev value");
 		avgStd1.setPersistent(false);
 		avgStd1.setCalculator(new NormalIndex(1));
+		avgStd1.setFormatter(new DataValue(getSession(), 4));
 		view.addField(avgStd1);
 
 		Field avgStd2 = Domains.getDouble(getSession(), "avgstd_2", "AvgStd_2", "Avg/2 Stddev value");
 		avgStd2.setPersistent(false);
 		avgStd2.setCalculator(new NormalIndex(2));
+		avgStd2.setFormatter(new DataValue(getSession(), 4));
 		view.addField(avgStd2);
 
 		// Group by.

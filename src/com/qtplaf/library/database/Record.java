@@ -294,7 +294,7 @@ public class Record implements Comparable<Object> {
 	 */
 	public void setValue(int index, Value value) {
 		values.set(index, value);
-		values.get(index).setModified(true);
+		values.get(index).setModified(value.isModified());
 	}
 
 	/**

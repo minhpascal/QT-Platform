@@ -36,7 +36,7 @@ public abstract class CandlePattern extends Pattern {
 	public interface Size {
 		String VeryBig = "very_big";
 		String Big = "big";
-		String Medium = "mdium";
+		String Medium = "medium";
 		String Small = "small";
 		String VerySmall = "very_small";
 	}
@@ -106,9 +106,9 @@ public abstract class CandlePattern extends Pattern {
 		if (sizeControl == null) {
 			List<Segment> segments = new ArrayList<>();
 			segments.add(new Segment(Size.VerySmall, 0.10, 0.00, -1, new Linear()));
-			segments.add(new Segment(Size.Small, 0.25, Math.nextUp(0.10), -1, new Linear()));
-			segments.add(new Segment(Size.Medium, 0.75, Math.nextUp(0.25), 0, new Linear()));
-			segments.add(new Segment(Size.Big, 0.90, Math.nextUp(0.75), 1, new Linear()));
+			segments.add(new Segment(Size.Small, 0.35, Math.nextUp(0.10), -1, new Linear()));
+			segments.add(new Segment(Size.Medium, 0.65, Math.nextUp(0.35), 0, new Linear()));
+			segments.add(new Segment(Size.Big, 0.90, Math.nextUp(0.65), 1, new Linear()));
 			segments.add(new Segment(Size.VeryBig, 1.00, Math.nextUp(0.90), 1, new Linear()));
 			sizeControl = new Control(segments);
 		}

@@ -37,7 +37,7 @@ public class RectanglePlotParameters {
 	/**
 	 * Fill paint.
 	 */
-	private Paint paint = new Color(0.75f, 0.75f, 0.75f, 0.05f);
+	private Paint paint = new Color(0.75f, 0.75f, 0.75f, 0.2f);
 	/**
 	 * A boolean to paint the border or not.
 	 */

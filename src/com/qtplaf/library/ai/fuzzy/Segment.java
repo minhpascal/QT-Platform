@@ -132,4 +132,20 @@ public class Segment {
 		return minimum <= value && value <= maximum;
 	}
 
+	/**
+	 * Returns a string representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuffer b = new StringBuffer();
+		b.append(label);
+		b.append(", ");
+		b.append(maximum);
+		b.append(", ");
+		b.append(minimum);
+		b.append(", ");
+		b.append(sign);
+		return b.toString();
+	}
+
 }

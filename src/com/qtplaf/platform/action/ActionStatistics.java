@@ -167,17 +167,9 @@ public class ActionStatistics extends AbstractAction {
 				getTableRecord().setSelectedRecord(rcStats);
 				
 				// Create the detail of table records
-				Persistor persistorTables = PersistorUtils.getPersistorStatisticsTables(session);
 				List<Table> tables = statistics.getTables();
 				for (Table table : tables) {
-					Record rc = persistorTables.getDefaultRecord();
-					rc.setValue(Fields.ServerId, server.getId());
-					rc.setValue(Fields.InstrumentId, instrument.getId());
-					rc.setValue(Fields.PeriodId, period.getId());
-					rc.setValue(Fields.StatisticsId, statistics.getId());
-					rc.setValue(Fields.TableName, table.getName());
-					persistorTables.insert(rc);
-					persistorTables.getDDL().buildTable(table);
+					persistor.getDDL().buildTable(table);
 				}
 
 			} catch (Exception exc) {
@@ -231,16 +223,8 @@ public class ActionStatistics extends AbstractAction {
 				Manager manager = new Manager(session);
 				Statistics statistics = manager.getStatistics(server, instrument, period, statsId);
 				
-				Persistor persistorTables = PersistorUtils.getPersistorStatisticsTables(session);
 				List<Table> tables = statistics.getTables();
 				for (Table table : tables) {
-					Record rc = persistorTables.getDefaultRecord();
-					rc.setValue(Fields.ServerId, serverId);
-					rc.setValue(Fields.InstrumentId, instrId);
-					rc.setValue(Fields.PeriodId, periodId);
-					rc.setValue(Fields.StatisticsId, statsId);
-					rc.setValue(Fields.TableName, table.getName());
-					persistorTables.delete(rc);
 					PersistorUtils.getDDL().dropTable(table);
 				}
 				

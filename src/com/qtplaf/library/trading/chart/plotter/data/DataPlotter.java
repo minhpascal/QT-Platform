@@ -43,7 +43,8 @@ public abstract class DataPlotter extends Plotter {
 	 * The color used for a bearish line bar candle is an odd period. For periods lower than day, the color changes when
 	 * the day changes, for the day period when the week changes, for the week the month and for the monththe year.
 	 */
-	private Color colorBearishOdd = new Color(25, 25, 25);
+	private Color colorBearishOdd = new Color(128, 16, 16);
+//	private Color colorBearishOdd = new Color(25, 25, 25);
 	/**
 	 * The color used for a bullish line/bar/candle in an even period. For periods lower than day, the color changes
 	 * when the day changes, for the day period when the week changes, for the week the month and for the monththe year.
@@ -53,7 +54,8 @@ public abstract class DataPlotter extends Plotter {
 	 * The color used for a bullish line/bar/candle in an odd period. For periods lower than day, the color changes when
 	 * the day changes, for the day period when the week changes, for the week the month and for the monththe year.
 	 */
-	private Color colorBullishOdd = new Color(215, 215, 215);
+	private Color colorBullishOdd = new Color(16, 96, 16);
+//	private Color colorBullishOdd = new Color(215, 215, 215);
 
 	/**
 	 * A boolean to control if the plotter should plot, thus allowing to hide/show plot actions.
@@ -236,7 +238,7 @@ public abstract class DataPlotter extends Plotter {
 	public Color getColorBullishOdd() {
 		return colorBullishOdd;
 	}
-
+	
 	/**
 	 * Returns a string representation of this plotter and the data it plots.
 	 * 

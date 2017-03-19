@@ -14,6 +14,7 @@
 
 package com.qtplaf.platform.statistics.averages.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ import com.qtplaf.library.database.Field;
 import com.qtplaf.library.database.Order;
 import com.qtplaf.library.database.Record;
 import com.qtplaf.library.database.RecordIterator;
+import com.qtplaf.library.database.Value;
+import com.qtplaf.library.database.ValueMap;
 import com.qtplaf.library.trading.data.DataPersistor;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Fields.Family;
@@ -122,6 +125,19 @@ public class TaskNormalizes extends TaskAverages {
 
 			// Persistor.
 			DataPersistor persistor = getPersistor();
+			
+			// Reset values.
+			List<Field> resetFields = new ArrayList<>();
+			resetFields.addAll(states.getFieldListSpreads(Fields.Suffix.nrm));
+			resetFields.addAll(states.getFieldListSlopes(Fields.Suffix.nrm));
+			resetFields.addAll(states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm));
+			resetFields.addAll(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm));
+			resetFields.addAll(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc));
+			ValueMap resetMap = new ValueMap();
+			for (Field field : resetFields) {
+				resetMap.put(field, new Value(0.0));
+			}
+			persistor.update(null, resetMap);
 
 			// Source iterator.
 			iterator = persistor.iterator(new Criteria(), getSelectOrder());
@@ -175,8 +191,8 @@ public class TaskNormalizes extends TaskAverages {
 						Field fieldNrm = fieldsNrm.get(i);
 						Normalizer normalizer = mapNormalizers.get(fieldRaw.getName());
 						double valueRaw = record.getValue(fieldRaw.getName()).getDouble();
-						double valueCont = normalizer.getValue(valueRaw);
-						record.getValue(fieldNrm.getName()).setDouble(valueCont);
+						double valueNrm = normalizer.getValue(valueRaw);
+						record.getValue(fieldNrm.getName()).setDouble(valueNrm);
 					}
 				}
 

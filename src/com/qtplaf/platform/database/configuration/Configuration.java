@@ -40,9 +40,6 @@ public class Configuration {
 	/** List of generic field calculations. */
 	private List<Calculation> calculations = new ArrayList<>();
 
-	/** The scale to calculate the key. */
-	private int scale = 4;
-
 	/** Working session. */
 	private Session session;
 
@@ -99,24 +96,6 @@ public class Configuration {
 			b.append(averages.get(i).getPeriod());
 		}
 		return b.toString();
-	}
-
-	/**
-	 * Returns the scale to calculate the key.
-	 * 
-	 * @return The scale to calculate the key.
-	 */
-	public int getScale() {
-		return scale;
-	}
-
-	/**
-	 * Set the scale to calculate the key.
-	 * 
-	 * @param scale The scale to calculate the key.
-	 */
-	public void setScale(int scale) {
-		this.scale = scale;
 	}
 
 	/**

@@ -283,4 +283,12 @@ public class Control {
 		}
 		return -1;
 	}
+
+	/**
+	 * Returns a string representation.
+	 */
+	@Override
+	public String toString() {
+		return segments.toString();
+	}
 }
