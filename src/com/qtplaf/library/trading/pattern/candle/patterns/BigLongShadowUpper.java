@@ -47,14 +47,13 @@ public class BigLongShadowUpper extends CandlePattern {
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		Control sizeControl = getSizeControl();
-		Control positionControl = getPositionControl();
+		Control control = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
 		double bodyCenter = getBodyCenterFactor(data);
-		if (sizeControl.checkGE(rangeFactor, Size.Big)) {
-			if (sizeControl.checkLE(bodyFactor, Size.Small)) {
-				if (positionControl.checkLE(bodyCenter, Position.NearBottom)) {
+		if (control.checkGE(rangeFactor, Size.Big)) {
+			if (control.checkLE(bodyFactor, Size.Small)) {
+				if (control.checkLE(bodyCenter, Position.Bottom)) {
 					return true;
 				}
 			}

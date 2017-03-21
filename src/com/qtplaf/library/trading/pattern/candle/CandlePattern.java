@@ -29,8 +29,12 @@ import com.qtplaf.library.trading.pattern.Pattern;
  * Root class of candlestick patterns. To correctly calculate proportions and ranges, it receives the average range
  * (hig-low) and its standard deviation.
  * <p>
- * Candle patterns are calculated comparing factors. For instance if the range factor is greater than or equal to bib
+ * Candle patterns are calculated comparing factors. For instance if the range factor is greater than or equal to big
  * and the body factor is also greater than or equal to big, and the candle is bullish, then it is a big bullish candle.
+ * <p>
+ * The fuzzy control to determine sizes and positions is configured pretty simple, big, medium, smal and top, middle,
+ * bottom. For further detail about the position within a segment, the segment factor can be used again through the
+ * control.
  *
  * @author Miquel Sas
  */
@@ -40,22 +44,18 @@ public abstract class CandlePattern extends Pattern {
 	 * Enum the proportional sizes.
 	 */
 	public interface Size {
-		String VeryBig = "very_big";
-		String Big = "big";
-		String Medium = "medium";
-		String Small = "small";
-		String VerySmall = "very_small";
+		String Big = "2";
+		String Medium = "1";
+		String Small = "0";
 	}
 
 	/**
 	 * Enum proportional positions.
 	 */
 	public interface Position {
-		String Top = "top";
-		String NearTop = "near_top";
-		String Middle = "middle";
-		String NearBottom = "near_bottom";
-		String Bottom = "bottom";
+		String Top = "2";
+		String Middle = "1";
+		String Bottom = "0";
 	}
 
 	/**
@@ -279,9 +279,7 @@ public abstract class CandlePattern extends Pattern {
 	/** Range standard deviation also statistically calculated for the time frame. */
 	private double rangeStdDev;
 	/** The fuzzy size control to check sizes in a range of 0 to 1. */
-	private Control sizeControl;
-	/** The fuzzy position control to check positions in a range of 0 to 1. */
-	private Control positionControl;
+	private Control control;
 
 	/**
 	 * Contructor.
@@ -300,41 +298,20 @@ public abstract class CandlePattern extends Pattern {
 	}
 
 	/**
-	 * Returns the fuzzy control to check positions in a range of 0 to 1, normally used with factors like range, body,
-	 * shadow factors.
-	 * 
-	 * @return The fuzzy control.
-	 */
-	public Control getPositionControl() {
-		if (positionControl == null) {
-			List<Segment> segments = new ArrayList<>();
-			segments.add(new Segment(Position.Bottom, 0.15, 0.00, 1, new Linear()));
-			segments.add(new Segment(Position.NearBottom, 0.35, Math.nextUp(0.15), 1, new Linear()));
-			segments.add(new Segment(Position.Middle, 0.65, Math.nextUp(0.35), 1, new Linear()));
-			segments.add(new Segment(Position.NearTop, 0.85, Math.nextUp(0.65), 1, new Linear()));
-			segments.add(new Segment(Position.Top, 1.00, Math.nextUp(0.85), 1, new Linear()));
-			positionControl = new Control(segments);
-		}
-		return positionControl;
-	}
-
-	/**
 	 * Returns the fuzzy control to check sizes in a range of 0 to 1, normally used with factors like range, body,
 	 * shadow factors.
 	 * 
 	 * @return The fuzzy control.
 	 */
-	public Control getSizeControl() {
-		if (sizeControl == null) {
+	public Control getControl() {
+		if (control == null) {
 			List<Segment> segments = new ArrayList<>();
-			segments.add(new Segment(Size.VerySmall, 0.10, 0.00, 1, new Linear()));
-			segments.add(new Segment(Size.Small, 0.35, Math.nextUp(0.10), 1, new Linear()));
-			segments.add(new Segment(Size.Medium, 0.65, Math.nextUp(0.35), 1, new Linear()));
-			segments.add(new Segment(Size.Big, 0.90, Math.nextUp(0.65), 1, new Linear()));
-			segments.add(new Segment(Size.VeryBig, 1.00, Math.nextUp(0.90), 1, new Linear()));
-			sizeControl = new Control(segments);
+			segments.add(new Segment(Size.Small, 0.30, 0.00, 1, new Linear()));
+			segments.add(new Segment(Size.Medium, 0.67, Math.nextUp(0.30), 1, new Linear()));
+			segments.add(new Segment(Size.Big, 1.00, Math.nextUp(0.70), 1, new Linear()));
+			control = new Control(segments);
 		}
-		return sizeControl;
+		return control;
 	}
 
 	/**

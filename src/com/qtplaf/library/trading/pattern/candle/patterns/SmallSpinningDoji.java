@@ -47,14 +47,13 @@ public class SmallSpinningDoji extends CandlePattern {
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		Control sizeControl = getSizeControl();
-		Control positionControl = getPositionControl();
+		Control control = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
 		double bodyCenter = getBodyCenterFactor(data);
-		if (sizeControl.checkLE(rangeFactor, Size.Small)) {
-			if (sizeControl.checkLE(bodyFactor, Size.Small)) {
-				if (positionControl.checkEQ(bodyCenter, Position.Middle)) {
+		if (control.checkLE(rangeFactor, Size.Small)) {
+			if (control.checkLE(bodyFactor, Size.Small)) {
+				if (control.checkEQ(bodyCenter, Position.Middle)) {
 					return true;
 				}
 			}

@@ -47,7 +47,7 @@ public class MediumBullishMediumBody extends CandlePattern {
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		Control sizeControl = getSizeControl();
+		Control sizeControl = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
 		if (isBullish(data)) {
