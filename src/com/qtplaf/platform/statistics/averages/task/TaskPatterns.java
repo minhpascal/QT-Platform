@@ -30,13 +30,11 @@ import com.qtplaf.library.database.View;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.pattern.Pattern;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigBearish;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigBullish;
-import com.qtplaf.library.trading.pattern.candle.patterns.LongShadowLower;
-import com.qtplaf.library.trading.pattern.candle.patterns.SpinningLongShadows;
-import com.qtplaf.library.trading.pattern.candle.patterns.SpinningTop;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigPiercingBearishBullish;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigPiercingBullishBearish;
 import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
+import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -78,11 +76,6 @@ public class TaskPatterns extends TaskAverages {
 	 */
 	private List<Pattern> getCandlePatterns() {
 		List<Pattern> candlePatterns = new ArrayList<>();
-		candlePatterns.add(new SpinningLongShadows());
-		candlePatterns.add(new SpinningTop());
-		candlePatterns.add(new BigBullish());
-		candlePatterns.add(new BigBearish());
-		candlePatterns.add(new LongShadowLower());
 		
 		// States table.
 		Table table = states.getStates().getTableStates();
@@ -204,24 +197,22 @@ public class TaskPatterns extends TaskAverages {
 			// Notify step start.
 			notifyStepStart(step, getStepMessage(step, steps, null, null));
 			
-			if (index == 1013246 || 
-				index == 1013255 || 
-				index == 1013264 || 
-				index == 1013271 ||
-				index == 1013283 ||
-				index == 1013285) {
-//				System.out.println();
-			}
-			
 			// Process patterns.
 			for (Pattern pattern : patternList) {
 				if (pattern.isPattern(statesList, index)) {
-					Record record = persistor.getDefaultRecord();
-					record.setValue(Fields.Index, index);
-					record.setValue(Fields.Time, statesList.get(index).getTime());
-					record.setValue(Fields.PatternFamily, pattern.getFamily());
-					record.setValue(Fields.PatternId, pattern.getId());
-					persistor.insert(record);
+					Record rcState = statesList.getRecord(index);
+					Record rcPattern = persistor.getDefaultRecord();
+					rcPattern.setValue(Fields.Index, index);
+					rcPattern.setValue(Fields.Time, rcState.getValue(Fields.Time));
+					rcPattern.setValue(Fields.PatternFamily, pattern.getFamily());
+					rcPattern.setValue(Fields.PatternId, pattern.getId());
+					
+					List<Field> fields = states.getFieldListCalculations(Family.State, Fields.Suffix.dsc);
+					for (Field field : fields) {
+						String name = field.getName();
+						rcPattern.setValue(name, rcState.getValue(name));
+					}
+					persistor.insert(rcPattern);
 				}
 			}
 			

@@ -14,27 +14,25 @@
 
 package com.qtplaf.library.trading.pattern.candle.patterns;
 
-import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
-import com.qtplaf.library.trading.pattern.candle.CandleUtils;
 
 /**
- * Spinnin top, spinning with short shadows.
+ * Big piercing bearish-bullish pattern
  *
  * @author Miquel Sas
  */
-public class SpinningTop extends CandlePattern {
+public class BigPiercingBearishBullish extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public SpinningTop() {
+	public BigPiercingBearishBullish() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Spinning with short shadows");
+		setDescription("Big piercing bearish-bullish pattern");
 		setLookBackward(1);
 	}
 
@@ -47,20 +45,28 @@ public class SpinningTop extends CandlePattern {
 	 */
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
-		Data data = dataList.get(index);
-		Control sizeControl = getSizeControl();
-		Control positionControl = getPositionControl();
-		double rangeFactor = CandleUtils.getRangeFactor(data, getMaximumRange());
-		double bodyFactor = CandleUtils.getBodyFactor(data);
-		double bodyCenter = CandleUtils.getBodyCenterFactor(data);
-		if (sizeControl.checkLE(rangeFactor, Size.Small)) {
-			if (sizeControl.checkLE(bodyFactor, Size.Small)) {
-				if (positionControl.checkEQ(bodyCenter, Position.Middle)) {
-					return true;
+
+		// Index 0 no sense.
+		if (index == 0) {
+			return false;
+		}
+
+		// Big bearish previous
+		if (isPattern(new MediumBearishMediumBody(), dataList, index - 1)) {
+			// Big bullish current
+			if (isPattern(new MediumBullishMediumBody(), dataList, index)) {
+				Data prev = dataList.get(index - 1);
+				Data curr = dataList.get(index);
+				// Low curr < prev
+				if (getLow(curr) <= getBodyLow(prev)) {
+					// Body high curr >= body center prev.
+					if (getBodyHigh(curr) >= getBodyCenter(prev)) {
+						return true;
+					}
 				}
 			}
 		}
+
 		return false;
 	}
-
 }

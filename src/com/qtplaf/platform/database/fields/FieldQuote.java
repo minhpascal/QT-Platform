@@ -16,20 +16,30 @@ package com.qtplaf.platform.database.fields;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.database.Field;
+import com.qtplaf.library.trading.data.Instrument;
 import com.qtplaf.platform.database.Domains;
+import com.qtplaf.platform.database.Formatters;
 
 /**
- * Index field.
+ * Quote value field, related to an instrument..
  *
  * @author Miquel Sas
  */
-public class FieldIndex extends Field {
+public class FieldQuote extends Field {
 
 	/**
 	 * Constructor.
 	 */
-	public FieldIndex(Session session, String name) {
-		super(Domains.getLong(session, name));
-		setLength(15);
+	public FieldQuote(Session session, Instrument instrument, String name) {
+		super(Domains.getDouble(session, name, "Quote", "Quote value"));
+		setFormatter(Formatters.getTickValue(session, instrument));
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public FieldQuote(Session session, Instrument instrument, String name, String header, String label) {
+		super(Domains.getDouble(session, name, header, label));
+		setFormatter(Formatters.getTickValue(session, instrument));
 	}
 }

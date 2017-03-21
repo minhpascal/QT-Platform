@@ -33,6 +33,7 @@ import com.qtplaf.library.database.RecordSet;
 import com.qtplaf.library.database.Value;
 import com.qtplaf.library.swing.ActionGroup;
 import com.qtplaf.library.swing.ActionUtils;
+import com.qtplaf.library.swing.core.JFormRecord;
 import com.qtplaf.library.swing.core.JTableRecord;
 import com.qtplaf.library.trading.chart.JChart;
 import com.qtplaf.library.trading.chart.JChartNavigate;
@@ -46,15 +47,16 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.util.Icons;
 import com.qtplaf.library.util.ImageIconUtils;
 import com.qtplaf.platform.database.Fields;
-import com.qtplaf.platform.database.Fields.Family;
+import com.qtplaf.platform.database.Fields.Suffix;
 import com.qtplaf.platform.statistics.averages.Averages;
+import com.qtplaf.platform.statistics.averages.States;
 
 /**
  * Navigate a chart.
  *
  * @author Miquel Sas
  */
-public class ActionNavigateStatistics extends ActionTickerStatistics {
+public class ActionNavigateStates extends ActionTickerStatistics {
 
 	/** Logger instance. */
 	private static final Logger logger = LogManager.getLogger();
@@ -113,7 +115,7 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	class ActionMoveChartToSelectedIndex extends AbstractAction {
 
 		ActionMoveChartToSelectedIndex() {
-			ActionUtils.setName(this, "Move to index");
+			ActionUtils.setName(this, "Move to selected index");
 			ActionUtils.setShortDescription(this, "Move the chart to the selected index.");
 		}
 
@@ -156,13 +158,33 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		}
 	}
 
+	/**
+	 * Move to the record of the queries index in the chart.
+	 */
+	class ActionMoveToQueriedIndex extends AbstractAction {
+
+		ActionMoveToQueriedIndex() {
+			ActionUtils.setName(this, "Move to index");
+			ActionUtils.setShortDescription(this, "Move to the indicated index.");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int index = getIndex();
+			if (index >= 0) {
+				setRecordSetStd(index);
+				moveChartToIndex(index);
+			}
+		}
+	}
+
 	/** Chart navigate frame. */
 	private JChartNavigate chartNavigate;
 
 	/**
 	 * @param averages
 	 */
-	public ActionNavigateStatistics(Averages averages) {
+	public ActionNavigateStates(Averages averages) {
 		super(averages);
 		ActionUtils.setName(this, "Navigate chart");
 		ActionUtils.setShortDescription(this, "Navigate the chart");
@@ -175,8 +197,8 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	 * 
 	 * @return The averages statistics.
 	 */
-	private Averages getAverages() {
-		return (Averages) getStatistics();
+	private States getStates() {
+		return (States) getStatistics();
 	}
 
 	/**
@@ -200,7 +222,7 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		getChartNavigate().setRecordSet(getRecordSetStd());
 
 		JChart chart = getChartNavigate().getChart();
-		Averages avgs = getAverages();
+		Averages avgs = getStates();
 		PersistorDataList dataList = avgs.getStates().getDataListStates();
 		dataList.setCacheSize(-1);
 		dataList.setPageSize(1000);
@@ -208,14 +230,17 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 		chart.addPlotData(avgs.getPlotDataMain(dataList), true);
 		chart.addPlotData(avgs.getPlotData("Spreads", dataList, avgs.getFieldListSpreads(Fields.Suffix.nrm)),false);
 		chart.addPlotData(avgs.getPlotData("Slopes", dataList, avgs.getFieldListSlopes(Fields.Suffix.nrm)),false);
-		chart.addPlotData(avgs.getPlotData("WSum nrm", dataList, avgs.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm)),false);
-		chart.addPlotData(avgs.getPlotData("WSum dsc", dataList, avgs.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc)),false);
+		chart.addPlotData(avgs.getPlotData("States spread nrm", dataList, avgs.getFieldListStateSpread(Suffix.nrm)),false);
+		chart.addPlotData(avgs.getPlotData("States spread dsc", dataList, avgs.getFieldListStateSpread(Suffix.dsc)),false);
+		chart.addPlotData(avgs.getPlotData("States slope nrm", dataList, avgs.getFieldListStateSlope(Suffix.nrm)),false);
+		chart.addPlotData(avgs.getPlotData("States slope dsc", dataList, avgs.getFieldListStateSlope(Suffix.dsc)),false);
 
 		getChartNavigate().addActionToChart(new ActionClearDrawings());
 		getChartNavigate().addActionToChart(new ActionMoveToChartIndex());
 
 		getChartNavigate().addActionToTable(new ActionRecordSetStd());
 		getChartNavigate().addActionToTable(new ActionClearDrawings());
+		getChartNavigate().addActionToTable(new ActionMoveToQueriedIndex());
 		getChartNavigate().addActionToTable(new ActionMoveChartToSelectedIndex());
 		getChartNavigate().addActionToTable(new ActionMoveChartToSelectedRange());
 		getChartNavigate().addActionToTable(new ActionFilterSameState());
@@ -239,7 +264,6 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	 * @param selectedRow The row to select.
 	 */
 	private void setRecordSetStd(int selectedRow) {
-		getChartNavigate().setRecordSet(getRecordSetStd());
 		getChartNavigate().getTableRecord().setSelectedRow(selectedRow);
 	}
 
@@ -361,7 +385,27 @@ public class ActionNavigateStatistics extends ActionTickerStatistics {
 	 * @return The recordset.
 	 */
 	private RecordSet getRecordSetStd() {
-		DataPersistor persistor = new DataPersistor(getAverages().getStates().getTableStates().getPersistor());
+		DataPersistor persistor = new DataPersistor(getStates().getStates().getTableStates().getPersistor());
 		return new DataRecordSet(persistor);
+	}
+	
+	/**
+	 * Query and return the index.
+	 * @return The index or -1.
+	 */
+	private int getIndex() {
+		Record record = getStates().getTableStates().getDefaultRecord();
+		int index = getSelectedEndIndex();
+		if (index >= 0) {
+			record.setValue(Fields.Index, index);
+		}
+		JFormRecord form = new JFormRecord(getSession());
+		form.setTitle("Index");
+		form.setRecord(record);
+		form.addField(Fields.Index);
+		if (form.edit()) {
+			return form.getRecord().getValue(Fields.Index).getInteger();
+		}
+		return -1;
 	}
 }

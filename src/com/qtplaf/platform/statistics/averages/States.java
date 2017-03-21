@@ -46,13 +46,15 @@ import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.formatters.DataValue;
 import com.qtplaf.platform.database.tables.TablePatterns;
+import com.qtplaf.platform.database.tables.TablePerformance;
 import com.qtplaf.platform.database.tables.TableRanges;
 import com.qtplaf.platform.database.tables.TableStates;
 import com.qtplaf.platform.statistics.action.ActionBrowse;
 import com.qtplaf.platform.statistics.action.ActionCalculate;
-import com.qtplaf.platform.statistics.action.ActionNavigateStatistics;
+import com.qtplaf.platform.statistics.action.ActionNavigateStates;
 import com.qtplaf.platform.statistics.averages.task.TaskNormalizes;
 import com.qtplaf.platform.statistics.averages.task.TaskPatterns;
+import com.qtplaf.platform.statistics.averages.task.TaskPerformance;
 import com.qtplaf.platform.statistics.averages.task.TaskRanges;
 import com.qtplaf.platform.statistics.averages.task.TaskStates;
 import com.qtplaf.platform.util.PersistorUtils;
@@ -142,6 +144,8 @@ public class States extends Averages {
 	private Table tableRanges;
 	/** Table patterns. */
 	private Table tablePatterns;
+	/** Tablke performance. */
+	private Table tablePerformance;
 
 	/**
 	 * Constructor.
@@ -209,6 +213,13 @@ public class States extends Averages {
 		ActionUtils.setActionGroup(actionCalcPatterns, new ActionGroup("Calculate", 10000));
 		actions.add(actionCalcPatterns);
 
+		// Calculate performance.
+		ActionCalculate actionCalcPerform = new ActionCalculate(this, new TaskPerformance(this));
+		ActionUtils.setName(actionCalcPerform, "Calculate performance");
+		ActionUtils.setShortDescription(actionCalcPerform, "Calculate patterns performance");
+		ActionUtils.setActionGroup(actionCalcPerform, new ActionGroup("Calculate", 10000));
+		actions.add(actionCalcPerform);
+
 		// Browse states.
 		ActionBrowseStates actionBrowse = new ActionBrowseStates(this);
 		ActionUtils.setName(actionBrowse, "Browse states");
@@ -224,7 +235,7 @@ public class States extends Averages {
 		actions.add(actionRanges);
 
 		// Standard navigate.
-		actions.add(new ActionNavigateStatistics(this));
+		actions.add(new ActionNavigateStates(this));
 
 		return actions;
 	}
@@ -241,6 +252,7 @@ public class States extends Averages {
 		tasks.add(new TaskRanges(this));
 		tasks.add(new TaskNormalizes(this));
 		tasks.add(new TaskPatterns(this));
+		tasks.add(new TaskPerformance(this));
 		return tasks;
 	}
 
@@ -255,6 +267,7 @@ public class States extends Averages {
 		tables.add(getTableStates());
 		tables.add(getTableRanges());
 		tables.add(getTablePatterns());
+		tables.add(getTablePerformance());
 		return tables;
 	}
 
@@ -292,6 +305,18 @@ public class States extends Averages {
 			tablePatterns = new TablePatterns(getSession(), this);
 		}
 		return tablePatterns;
+	}
+
+	/**
+	 * Returns the performance table.
+	 * 
+	 * @return The performance table.
+	 */
+	public Table getTablePerformance() {
+		if (tablePerformance == null) {
+			tablePerformance = new TablePerformance(getSession(), this);
+		}
+		return tablePerformance;
 	}
 
 	/**
@@ -429,5 +454,21 @@ public class States extends Averages {
 		iter.close();
 
 		record.setProperty("values", values);
+	}
+
+	/**
+	 * Returns the list of periods to register performance values (maximum and minimum) from a given time/index.
+	 * 
+	 * @return The list of performance periods.
+	 */
+	public List<Integer> getPerformancePeriods() {
+		List<Integer> periods = new ArrayList<>();
+		periods.add(3);
+		periods.add(5);
+		periods.add(8);
+		periods.add(13);
+		periods.add(21);
+		periods.add(34);
+		return periods;
 	}
 }

@@ -40,11 +40,13 @@ public class Fields {
 	 * Suffixes of field names.
 	 */
 	public interface Suffix {
-		String raw = "raw";		// Raw
-		String nrm = "nrm";		// Normalize continuous
-		String dsc = "dsc";		// Normalize discrete
-		String in = "in";		// Input 
-		String out = "out";		// Output
+		String raw = "raw";			// Raw
+		String nrm = "nrm";			// Normalize continuous
+		String dsc = "dsc";			// Normalize discrete
+		String in = "in";			// Input 
+		String out = "out";			// Output
+		String spread = "spread";	// Spread
+		String slope = "slope";		// Slope
 	}
 	
 	/**
@@ -52,7 +54,7 @@ public class Fields {
 	 */
 	public interface Family {
 		String Default = "default";
-		String WeightedSum = "weighted_sum";
+		String State = "state";
 	}
 	
 	public static final String Average = "average";
@@ -102,7 +104,6 @@ public class Fields {
 	public static final String TimeFmt = "time_fmt";
 	public static final String Value = "value";
 	public static final String Volume = "volume";
-	public static final String WeightedSum = "weighted_sum";
 	
 	public static String average(Average average) {
 		return average.getName();

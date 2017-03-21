@@ -38,6 +38,7 @@ import com.qtplaf.library.trading.data.PlotData;
 import com.qtplaf.library.trading.data.info.DataInfo;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Fields.Family;
+import com.qtplaf.platform.database.Fields.Suffix;
 import com.qtplaf.platform.database.configuration.Average;
 import com.qtplaf.platform.database.configuration.Calculation;
 import com.qtplaf.platform.database.configuration.Configuration;
@@ -154,6 +155,58 @@ public abstract class Averages extends TickerStatistics {
 	}
 
 	/**
+	 * Returns the list of spread state.
+	 * 
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListStateSpread(String suffix) {
+		String name = "calculations_state_spread_" + suffix;
+		List<Field> fields = mapFieldLists.get(name);
+		if (fields == null) {
+			fields = new ArrayList<>();
+			for (Calculation calculation : getConfiguration().getCalculations()) {
+				if (calculation.getFamily().equals(Family.State)) {
+					if (calculation.getName().contains(Suffix.spread)) {
+						fields.add(new FieldCalculation(
+							getSession(),
+							calculation,
+							Fields.calculation(calculation, suffix)));
+					}
+				}
+			}
+			mapFieldLists.put(name, fields);
+		}
+		return fields;
+	}
+
+	/**
+	 * Returns the list of slope state.
+	 * 
+	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
+	 * @return The list of fields.
+	 */
+	public List<Field> getFieldListStateSlope(String suffix) {
+		String name = "calculations_state_slope_" + suffix;
+		List<Field> fields = mapFieldLists.get(name);
+		if (fields == null) {
+			fields = new ArrayList<>();
+			for (Calculation calculation : getConfiguration().getCalculations()) {
+				if (calculation.getFamily().equals(Family.State)) {
+					if (calculation.getName().contains(Suffix.slope)) {
+						fields.add(new FieldCalculation(
+							getSession(),
+							calculation,
+							Fields.calculation(calculation, suffix)));
+					}
+				}
+			}
+			mapFieldLists.put(name, fields);
+		}
+		return fields;
+	}
+
+	/**
 	 * Returns the list of slope fields, raw values
 	 * 
 	 * @param suffix The suffix to differentiate from raw, normalized continuous and discrete.
@@ -170,32 +223,6 @@ public abstract class Averages extends TickerStatistics {
 			mapFieldLists.put(name, fields);
 		}
 		return fields;
-	}
-
-	/**
-	 * Returns the list of fields to calculate the state key.
-	 * 
-	 * @return The list of fields.
-	 */
-	public List<Field> getFieldListStateKey() {
-		List<Field> spreadFields = new ArrayList<>();
-		spreadFields.addAll(getFieldListSpreads(Fields.Suffix.dsc));
-		List<Field> slopeFields = new ArrayList<>();
-		slopeFields.addAll(getFieldListSlopes(Fields.Suffix.dsc));
-		List<Field> keyFields = new ArrayList<>();
-		for (Field field : spreadFields) {
-			Spread spread = (Spread) field.getProperty(Fields.Properties.Spread);
-			if (spread.isStateKey()) {
-				keyFields.add(field);
-			}
-		}
-		for (Field field : slopeFields) {
-			Slope slope = (Slope) field.getProperty(Fields.Properties.Slope);
-			if (slope.isStateKey()) {
-				keyFields.add(field);
-			}
-		}
-		return keyFields;
 	}
 
 	/**

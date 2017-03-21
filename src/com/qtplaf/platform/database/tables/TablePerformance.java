@@ -23,21 +23,22 @@ import com.qtplaf.library.trading.server.Server;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Schemas;
 import com.qtplaf.platform.database.Tables;
-import com.qtplaf.platform.database.Fields.Family;
 import com.qtplaf.platform.database.fields.FieldIndex;
-import com.qtplaf.platform.database.fields.FieldPatternFamily;
-import com.qtplaf.platform.database.fields.FieldPatternId;
+import com.qtplaf.platform.database.fields.FieldPeriod;
+import com.qtplaf.platform.database.fields.FieldQuote;
 import com.qtplaf.platform.database.fields.FieldTime;
 import com.qtplaf.platform.database.fields.FieldTimeFmt;
 import com.qtplaf.platform.statistics.averages.States;
 import com.qtplaf.platform.util.PersistorUtils;
 
 /**
- * Patterns table, related to the states averages.
+ * Performance table. Traces the performance from a data, normally the confirmation of a pattern, up to the given
+ * period, registering the maximum and the minimum, with the objective to check the performance after a pattern
+ * confirmation, related to a certain state.
  *
  * @author Miquel Sas
  */
-public class TablePatterns extends Table {
+public class TablePerformance extends Table {
 
 	/**
 	 * Constructor.
@@ -45,13 +46,13 @@ public class TablePatterns extends Table {
 	 * @param session Working session.
 	 * @param states The states statistics.
 	 */
-	public TablePatterns(Session session, States states) {
+	public TablePerformance(Session session, States states) {
 		super(session);
 
 		Server server = states.getServer();
 		Instrument instrument = states.getInstrument();
 		Period period = states.getPeriod();
-		String id = states.getId().toLowerCase() + "_pt";
+		String id = states.getId().toLowerCase() + "_pf";
 
 		setName(Tables.ticker(instrument, period, id));
 		setSchema(Schemas.server(server));
@@ -62,24 +63,22 @@ public class TablePatterns extends Table {
 
 		// Time formatted.
 		addField(new FieldTimeFmt(getSession(), Fields.TimeFmt));
-		
-		// Pattern family and id.
-		addField(new FieldPatternFamily(getSession(), Fields.PatternFamily));
-		addField(new FieldPatternId(getSession(), Fields.PatternId));
-		
-		// Calculations state family discrete.
-		addFields(states.getFieldListCalculations(Family.State, Fields.Suffix.dsc));
 
-		// Primary key on Time, PatternFamily, PatternId.
+		// Period of performance starting at time.
+		addField(new FieldPeriod(getSession(), Fields.Period));
+		
+		// Maximum and minimum values.
+		addField(new FieldQuote(getSession(), instrument, Fields.Maximum, "Maximum", "Maximum value"));
+		addField(new FieldQuote(getSession(), instrument, Fields.Minimum, "Minimum", "Minimum value"));
+		
+		// Primary key on Time
 		getField(Fields.Time).setPrimaryKey(true);
-		getField(Fields.PatternFamily).setPrimaryKey(true);
-		getField(Fields.PatternId).setPrimaryKey(true);
+		getField(Fields.Period).setPrimaryKey(true);
 
-		// Unique index on Index, PatternFamily, PatternId.
+		// Unique index on Index
 		Index index = new Index();
 		index.add(getField(Fields.Index));
-		index.add(getField(Fields.PatternFamily));
-		index.add(getField(Fields.PatternId));
+		index.add(getField(Fields.Period));
 		index.setUnique(true);
 		addIndex(index);
 

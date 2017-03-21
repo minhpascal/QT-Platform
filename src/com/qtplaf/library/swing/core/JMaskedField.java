@@ -443,6 +443,13 @@ public class JMaskedField extends JPanel implements EditField, FocusListener {
 	 */
 	@Override
 	public Value getValue() throws IllegalArgumentException {
+		
+		if (getEditContext().getField().isNumber()) {
+			if (getTextField().getText().equals("")) {
+				return getEditContext().getField().getDefaultValue();
+			}
+		}
+		
 		if (!getTextField().getText().equals("") && currentValue != null && currentValue.isValueArray()) {
 			return currentValue;
 		}

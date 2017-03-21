@@ -362,7 +362,7 @@ public class JPanelFormFields extends JPanel {
 		// Set the layout.
 		setLayout(new GridBagLayout());
 
-		// Get the list of fielfd groups.
+		// Get the list of field groups.
 		List<FieldGroup> fieldGroups = getFieldGroups();
 
 		// List of components (JPanel or JScrollPane) that will be further added.

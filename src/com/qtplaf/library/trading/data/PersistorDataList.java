@@ -175,7 +175,17 @@ public class PersistorDataList extends DataList {
 	 */
 	@Override
 	public Data get(int index) {
-		return dataPersistor.getData(getRecord(index));
+		return getData(getRecord(index));
+	}
+
+	/**
+	 * Returns the data given its record.
+	 * 
+	 * @param record The underlying record.
+	 * @return The data element.
+	 */
+	public Data getData(Record record) {
+		return dataPersistor.getData(record);
 	}
 
 	/**

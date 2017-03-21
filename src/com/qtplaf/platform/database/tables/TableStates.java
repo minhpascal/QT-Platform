@@ -92,9 +92,9 @@ public class TableStates extends Table {
 		// Calculations, default, normalizes continuous.
 		addFields(states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm));
 
-		// Calculations weighted sum family.
-		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm));
-		addFields(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc));
+		// Calculations state family.
+		addFields(states.getFieldListCalculations(Family.State, Fields.Suffix.nrm));
+		addFields(states.getFieldListCalculations(Family.State, Fields.Suffix.dsc));
 
 		// Primary key on Time.
 		getField(Fields.Time).setPrimaryKey(true);

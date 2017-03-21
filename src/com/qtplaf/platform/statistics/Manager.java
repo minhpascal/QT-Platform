@@ -147,7 +147,7 @@ public class Manager {
 	 */
 	public List<Configuration> getConfigurations() {
 		List<Configuration> configurations = new ArrayList<>();
-		configurations.add(getConfigurationWeightedMedium());
+		configurations.add(getConfigurationStateMedium());
 		return configurations;
 	}
 
@@ -228,10 +228,10 @@ public class Manager {
 	 * @param segments The number of segment to discretize.
 	 * @return The calculation.
 	 */
-	public Calculation getCalculationWeightedSum(CalculatorWeightedSum weightedSum, int segments) {
-		String family = Family.WeightedSum;
-		String name = Fields.WeightedSum;
-		String header = "Weighted sum";
+	public Calculation getCalculationState(CalculatorWeightedSum weightedSum, String suffix, int segments) {
+		String family = Family.State;
+		String name = Fields.State + "_" + suffix;
+		String header = "State";
 		Calculation calculation = new Calculation(family, name, header, header);
 		calculation.setCalculator(weightedSum);
 		calculation.setNormalizer(getNormalizer(segments));
@@ -245,9 +245,9 @@ public class Manager {
 	 * 
 	 * @return The configuration.
 	 */
-	public Configuration getConfigurationWeightedMedium() {
+	public Configuration getConfigurationStateMedium() {
 		Configuration cfg = new Configuration(getSession());
-		cfg.setId("wm");
+		cfg.setId("sm");
 
 		// Averages.
 		Average avg_5 = new Average(5, 5, 3);
@@ -285,18 +285,23 @@ public class Manager {
 		Calculation calcSpreadPrice = getCalculationSpreadPrice(avg_5, 10, true);
 		cfg.addCalculation(calcSpreadPrice);
 
-		// Calculation weighted sum of spreads, slopes and price spread.
-		CalculatorWeightedSum weightedSum = new CalculatorWeightedSum();
-		weightedSum.add(Fields.calculation(calcSpreadPrice, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.spread(spread_5_21, Suffix.nrm), 2.0);
-		weightedSum.add(Fields.spread(spread_21_89, Suffix.nrm), 3.0);
-		weightedSum.add(Fields.spread(spread_89_377, Suffix.nrm), 4.0);
-		weightedSum.add(Fields.slope(slope_5, Suffix.nrm), 1.0);
-		weightedSum.add(Fields.slope(slope_21, Suffix.nrm), 2.0);
-		weightedSum.add(Fields.slope(slope_89, Suffix.nrm), 3.0);
-		weightedSum.add(Fields.slope(slope_377, Suffix.nrm), 4.0);
-		Calculation calcWeightedSum = getCalculationWeightedSum(weightedSum, 40);
-		cfg.addCalculation(calcWeightedSum);
+		// Calculation weighted sum: state spread.
+		CalculatorWeightedSum state_spread = new CalculatorWeightedSum();
+		state_spread.add(Fields.calculation(calcSpreadPrice, Suffix.nrm), 1.0);
+		state_spread.add(Fields.spread(spread_5_21, Suffix.nrm), 2.0);
+		state_spread.add(Fields.spread(spread_21_89, Suffix.nrm), 4.0);
+		state_spread.add(Fields.spread(spread_89_377, Suffix.nrm), 8.0);
+		Calculation calcStateSpread = getCalculationState(state_spread, Suffix.spread, 20);
+		cfg.addCalculation(calcStateSpread);
+
+		// Calculation weighted sum: state slope.
+		CalculatorWeightedSum state_slope = new CalculatorWeightedSum();
+		state_slope.add(Fields.slope(slope_5, Suffix.nrm), 1.0);
+		state_slope.add(Fields.slope(slope_21, Suffix.nrm), 2.0);
+		state_slope.add(Fields.slope(slope_89, Suffix.nrm), 3.0);
+		state_slope.add(Fields.slope(slope_377, Suffix.nrm), 4.0);
+		Calculation calcStateSlope = getCalculationState(state_slope, Suffix.slope, 20);
+		cfg.addCalculation(calcStateSlope);
 
 		// Ranges for min-max values.
 		cfg.addRange(new Range(89));

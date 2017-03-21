@@ -131,8 +131,8 @@ public class TaskNormalizes extends TaskAverages {
 			resetFields.addAll(states.getFieldListSpreads(Fields.Suffix.nrm));
 			resetFields.addAll(states.getFieldListSlopes(Fields.Suffix.nrm));
 			resetFields.addAll(states.getFieldListCalculations(Family.Default, Fields.Suffix.nrm));
-			resetFields.addAll(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm));
-			resetFields.addAll(states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc));
+			resetFields.addAll(states.getFieldListCalculations(Family.State, Fields.Suffix.nrm));
+			resetFields.addAll(states.getFieldListCalculations(Family.State, Fields.Suffix.dsc));
 			ValueMap resetMap = new ValueMap();
 			for (Field field : resetFields) {
 				resetMap.put(field, new Value(0.0));
@@ -212,8 +212,8 @@ public class TaskNormalizes extends TaskAverages {
 				
 				// Calculations: family weighted sum nrm and dsc.
 				{
-					List<Field> fieldsNrm = states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.nrm);
-					List<Field> fieldsDsc = states.getFieldListCalculations(Family.WeightedSum, Fields.Suffix.dsc);
+					List<Field> fieldsNrm = states.getFieldListCalculations(Family.State, Fields.Suffix.nrm);
+					List<Field> fieldsDsc = states.getFieldListCalculations(Family.State, Fields.Suffix.dsc);
 					for (int i = 0; i < fieldsNrm.size(); i++) {
 						Field fieldNrm = fieldsNrm.get(i);
 						Field fieldDsc = fieldsDsc.get(i);

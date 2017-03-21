@@ -20,11 +20,17 @@ import java.util.List;
 import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.ai.fuzzy.Segment;
 import com.qtplaf.library.ai.fuzzy.function.Linear;
+import com.qtplaf.library.math.Calculator;
+import com.qtplaf.library.trading.data.Data;
+import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.Pattern;
 
 /**
  * Root class of candlestick patterns. To correctly calculate proportions and ranges, it receives the average range
  * (hig-low) and its standard deviation.
+ * <p>
+ * Candle patterns are calculated comparing factors. For instance if the range factor is greater than or equal to bib
+ * and the body factor is also greater than or equal to big, and the candle is bullish, then it is a big bullish candle.
  *
  * @author Miquel Sas
  */
@@ -40,7 +46,7 @@ public abstract class CandlePattern extends Pattern {
 		String Small = "small";
 		String VerySmall = "very_small";
 	}
-	
+
 	/**
 	 * Enum proportional positions.
 	 */
@@ -50,6 +56,222 @@ public abstract class CandlePattern extends Pattern {
 		String Middle = "middle";
 		String NearBottom = "near_bottom";
 		String Bottom = "bottom";
+	}
+
+	/**
+	 * Returns the open value.
+	 * 
+	 * @param data The data element.
+	 * @return The open value.
+	 */
+	public static double getOpen(Data data) {
+		return Data.getOpen(data);
+	}
+
+	/**
+	 * Returns the high value.
+	 * 
+	 * @param data The data element.
+	 * @return The high value.
+	 */
+	public static double getHigh(Data data) {
+		return Data.getHigh(data);
+	}
+
+	/**
+	 * Returns the low value.
+	 * 
+	 * @param data The data element.
+	 * @return The low value.
+	 */
+	public static double getLow(Data data) {
+		return Data.getLow(data);
+	}
+
+	/**
+	 * Returns the close value.
+	 * 
+	 * @param data The data element.
+	 * @return The open value.
+	 */
+	public static double getClose(Data data) {
+		return Data.getClose(data);
+	}
+
+	/**
+	 * Returns the body of the candle.
+	 * 
+	 * @param data The data element.
+	 * @return The body.
+	 */
+	public static double getBody(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.abs(close - open);
+	}
+
+	/**
+	 * Returns the body high.
+	 * 
+	 * @param data The data element.
+	 * @return The body high.
+	 */
+	public static double getBodyHigh(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.max(close, open);
+	}
+
+	/**
+	 * Returns the body low.
+	 * 
+	 * @param data The data element.
+	 * @return The body low.
+	 */
+	public static double getBodyLow(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.min(close, open);
+	}
+
+	/**
+	 * Returns the body factor (0 to 1) relating the body with the range.
+	 * 
+	 * @param data The data element.
+	 * @return The body factor.
+	 */
+	public static double getBodyFactor(Data data) {
+		double body = getBody(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(body, range));
+	}
+
+	/**
+	 * Returns the body center.
+	 * 
+	 * @param data The data element.
+	 * @return The body center.
+	 */
+	public static double getBodyCenter(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return (open + close) / 2;
+	}
+
+	/**
+	 * Returns the body center factors that indicates the body position.
+	 * 
+	 * @param data The data element.
+	 * @return The body center factor.
+	 */
+	public static double getBodyCenterFactor(Data data) {
+		double center = getBodyCenter(data);
+		double low = getLow(data);
+		double range = getRange(data);
+		return Calculator.zeroDiv(center - low, range);
+	}
+
+	/**
+	 * Returns the candle range (high - low).
+	 * 
+	 * @param data The data element.
+	 * @return The range (high - low).
+	 */
+	public static double getRange(Data data) {
+		double high = getHigh(data);
+		double low = getLow(data);
+		return high - low;
+	}
+
+	/**
+	 * Returns the range unitary factor (0 to 1) by comparing the range with an estimated maximum range.
+	 * 
+	 * @param data The data element.
+	 * @param maxRange The expected maximum range.
+	 * @return The range fator (range / maxRange).
+	 */
+	public static double getRangeFactor(Data data, double maxRange) {
+		return Math.min(1.0, Calculator.zeroDiv(getRange(data), maxRange));
+	}
+
+	/**
+	 * Returns the shadows factor (1 - body factor).
+	 * 
+	 * @param data The data element.
+	 * @return The shadow factor.
+	 */
+	public static double getShadowsFactor(Data data) {
+		return 1.0 - getBodyFactor(data);
+	}
+
+	/**
+	 * Returns the the lower shadow of the candle.
+	 * 
+	 * @param data The data element.
+	 * @return Tha lower shadow.
+	 */
+	public static double getShadowLower(Data data) {
+		double low = getLow(data);
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.min(open, close) - low;
+	}
+
+	/**
+	 * Returns the lower shadow factor related to the range.
+	 * 
+	 * @param data The data element.
+	 * @return The lower shadow factor.
+	 */
+	public static double getShadowLowerFactor(Data data) {
+		double shadow = getShadowLower(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
+	}
+
+	/**
+	 * Returns the the upper shadow of the candle.
+	 * 
+	 * @param data The data element.
+	 * @return Tha upper shadow.
+	 */
+	public static double getShadowUpper(Data data) {
+		double high = getHigh(data);
+		double open = getOpen(data);
+		double close = getClose(data);
+		return high - Math.max(open, close);
+	}
+
+	/**
+	 * Returns the upper shadow factor related to the range.
+	 * 
+	 * @param data The data element.
+	 * @return The upper shadow factor.
+	 */
+	public static double getShadowUpperFactor(Data data) {
+		double shadow = getShadowUpper(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
+	}
+
+	/**
+	 * Check bearish
+	 * 
+	 * @param data The data element.
+	 * @return A boolean.
+	 */
+	public static boolean isBearish(Data data) {
+		return Data.isBearish(data);
+	}
+
+	/**
+	 * Check bullish
+	 * 
+	 * @param data The data element.
+	 * @return A boolean.
+	 */
+	public static boolean isBullish(Data data) {
+		return Data.isBullish(data);
 	}
 
 	/** Average range statistically calculated for the time frame. */
@@ -86,9 +308,9 @@ public abstract class CandlePattern extends Pattern {
 	public Control getPositionControl() {
 		if (positionControl == null) {
 			List<Segment> segments = new ArrayList<>();
-			segments.add(new Segment(Position.Bottom, 0.15, 0.00, -1, new Linear()));
-			segments.add(new Segment(Position.NearBottom, 0.35, Math.nextUp(0.15), -1, new Linear()));
-			segments.add(new Segment(Position.Middle, 0.65, Math.nextUp(0.35), 0, new Linear()));
+			segments.add(new Segment(Position.Bottom, 0.15, 0.00, 1, new Linear()));
+			segments.add(new Segment(Position.NearBottom, 0.35, Math.nextUp(0.15), 1, new Linear()));
+			segments.add(new Segment(Position.Middle, 0.65, Math.nextUp(0.35), 1, new Linear()));
 			segments.add(new Segment(Position.NearTop, 0.85, Math.nextUp(0.65), 1, new Linear()));
 			segments.add(new Segment(Position.Top, 1.00, Math.nextUp(0.85), 1, new Linear()));
 			positionControl = new Control(segments);
@@ -105,9 +327,9 @@ public abstract class CandlePattern extends Pattern {
 	public Control getSizeControl() {
 		if (sizeControl == null) {
 			List<Segment> segments = new ArrayList<>();
-			segments.add(new Segment(Size.VerySmall, 0.10, 0.00, -1, new Linear()));
-			segments.add(new Segment(Size.Small, 0.35, Math.nextUp(0.10), -1, new Linear()));
-			segments.add(new Segment(Size.Medium, 0.65, Math.nextUp(0.35), 0, new Linear()));
+			segments.add(new Segment(Size.VerySmall, 0.10, 0.00, 1, new Linear()));
+			segments.add(new Segment(Size.Small, 0.35, Math.nextUp(0.10), 1, new Linear()));
+			segments.add(new Segment(Size.Medium, 0.65, Math.nextUp(0.35), 1, new Linear()));
 			segments.add(new Segment(Size.Big, 0.90, Math.nextUp(0.65), 1, new Linear()));
 			segments.add(new Segment(Size.VeryBig, 1.00, Math.nextUp(0.90), 1, new Linear()));
 			sizeControl = new Control(segments);
@@ -149,5 +371,19 @@ public abstract class CandlePattern extends Pattern {
 	 */
 	public void setRangeStdDev(double rangeStdDev) {
 		this.rangeStdDev = rangeStdDev;
+	}
+
+	/**
+	 * Convenience method to check a pattern from anothe pattern.
+	 * 
+	 * @param pattern The pattern to check.
+	 * @param dataList The data list.
+	 * @param index The index.
+	 * @return
+	 */
+	public boolean isPattern(CandlePattern pattern, DataList dataList, int index) {
+		pattern.setRangeAverage(getRangeAverage());
+		pattern.setRangeStdDev(getRangeStdDev());
+		return pattern.isPattern(dataList, index);
 	}
 }

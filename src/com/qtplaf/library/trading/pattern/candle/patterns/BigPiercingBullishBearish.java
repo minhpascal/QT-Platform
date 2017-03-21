@@ -14,27 +14,25 @@
 
 package com.qtplaf.library.trading.pattern.candle.patterns;
 
-import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
-import com.qtplaf.library.trading.pattern.candle.CandleUtils;
 
 /**
- * Big bearish.
+ * Big piercing bullish-bearish pattern.
  *
  * @author Miquel Sas
  */
-public class BigBearish extends CandlePattern {
+public class BigPiercingBullishBearish extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public BigBearish() {
+	public BigPiercingBullishBearish() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Big bearish");
+		setDescription("Big piercing bullish-bearish pattern");
 		setLookBackward(1);
 	}
 
@@ -47,18 +45,28 @@ public class BigBearish extends CandlePattern {
 	 */
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
-		Data data = dataList.get(index);
-		Control sizeControl = getSizeControl();
-		double rangeFactor = CandleUtils.getRangeFactor(data, getMaximumRange());
-		double bodyFactor = CandleUtils.getBodyFactor(data);
-		if (Data.isBearish(data)) {
-			if (sizeControl.checkGE(rangeFactor, Size.Big)) {
-				if (sizeControl.checkGE(bodyFactor, Size.Big)) {
-					return true;
+
+		// Index 0 no sense.
+		if (index == 0) {
+			return false;
+		}
+
+		// Big bullish previous
+		if (isPattern(new MediumBullishMediumBody(), dataList, index - 1)) {
+			// Big bearish current
+			if (isPattern(new MediumBearishMediumBody(), dataList, index)) {
+				Data prev = dataList.get(index - 1);
+				Data curr = dataList.get(index);
+				// High curr >= body high prev
+				if (getHigh(curr) >= getBodyHigh(prev)) {
+					// Body low curr <= body center prev.
+					if (getBodyLow(curr) <= getBodyCenter(prev)) {
+						return true;
+					}
 				}
 			}
 		}
+
 		return false;
 	}
-
 }

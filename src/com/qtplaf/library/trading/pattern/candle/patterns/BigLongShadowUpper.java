@@ -18,23 +18,22 @@ import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
-import com.qtplaf.library.trading.pattern.candle.CandleUtils;
 
 /**
  * Spinnin with long shadows.
  *
  * @author Miquel Sas
  */
-public class LongShadowLower extends CandlePattern {
+public class BigLongShadowUpper extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public LongShadowLower() {
+	public BigLongShadowUpper() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Long lower shadow");
+		setDescription("Big candle with small body and long upper shadow");
 		setLookBackward(1);
 	}
 
@@ -50,12 +49,12 @@ public class LongShadowLower extends CandlePattern {
 		Data data = dataList.get(index);
 		Control sizeControl = getSizeControl();
 		Control positionControl = getPositionControl();
-		double rangeFactor = CandleUtils.getRangeFactor(data, getMaximumRange());
-		double bodyFactor = CandleUtils.getBodyFactor(data);
-		double bodyCenter = CandleUtils.getBodyCenterFactor(data);
-		if (sizeControl.checkGE(rangeFactor, Size.VeryBig)) {
+		double rangeFactor = getRangeFactor(data, getMaximumRange());
+		double bodyFactor = getBodyFactor(data);
+		double bodyCenter = getBodyCenterFactor(data);
+		if (sizeControl.checkGE(rangeFactor, Size.Big)) {
 			if (sizeControl.checkLE(bodyFactor, Size.Small)) {
-				if (positionControl.checkGE(bodyCenter, Position.NearTop)) {
+				if (positionControl.checkLE(bodyCenter, Position.NearBottom)) {
 					return true;
 				}
 			}
