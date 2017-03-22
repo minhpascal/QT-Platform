@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.trading.pattern.candle.patterns;
+package com.qtplaf.library.trading.pattern.candle.patterns.trash;
 
 import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
@@ -20,20 +20,20 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Big bullish.
+ * Big bearish.
  *
  * @author Miquel Sas
  */
-public class MediumBullishMediumBody extends CandlePattern {
+public class MediumBearishMediumBody extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public MediumBullishMediumBody() {
+	public MediumBearishMediumBody() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Big bullish candle with medium or greater body");
+		setDescription("Medium (or bigger) bearish candle with medium or greater body");
 		setLookBackward(1);
 	}
 
@@ -50,7 +50,7 @@ public class MediumBullishMediumBody extends CandlePattern {
 		Control sizeControl = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
-		if (isBullish(data)) {
+		if (isBearish(data)) {
 			if (sizeControl.checkGE(rangeFactor, Size.Medium)) {
 				if (sizeControl.checkGE(bodyFactor, Size.Medium)) {
 					return true;

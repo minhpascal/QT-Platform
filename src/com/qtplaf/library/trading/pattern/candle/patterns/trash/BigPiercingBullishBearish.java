@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.trading.pattern.candle.patterns;
+package com.qtplaf.library.trading.pattern.candle.patterns.trash;
 
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;

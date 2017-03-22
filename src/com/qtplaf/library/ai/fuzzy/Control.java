@@ -17,6 +17,7 @@ package com.qtplaf.library.ai.fuzzy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qtplaf.library.math.Calculator;
 import com.qtplaf.library.util.list.ListUtils;
 
 /**
@@ -80,6 +81,22 @@ public class Control {
 	 */
 	public boolean checkEQ(double value, String label) {
 		return check(value, label, Condition.EQ);
+	}
+
+	/**
+	 * Check if the value is in the list of labels.
+	 * 
+	 * @param value The value to check.
+	 * @param labels The list of labels.
+	 * @return A boolean.
+	 */
+	public boolean checkIn(double value, String... labels) {
+		for (String label : labels) {
+			if (checkEQ(value, label)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -179,7 +196,7 @@ public class Control {
 	 */
 	public List<Integer> getIndexes(double value) {
 		List<Integer> indexes = new ArrayList<>();
-		if (value < getMinimumValue()) {
+		if (value < getMinimum()) {
 			indexes.add(0);
 		}
 		for (int i = 0; i < segments.size(); i++) {
@@ -187,10 +204,20 @@ public class Control {
 				indexes.add(i);
 			}
 		}
-		if (value > getMaximumValue()) {
+		if (value > getMaximum()) {
 			indexes.add(segments.size() - 1);
 		}
 		return indexes;
+	}
+
+	/**
+	 * Returns the global factor.
+	 * 
+	 * @param value The value to check.
+	 * @return The global factor.
+	 */
+	public double getFactor(double value) {
+		return Calculator.normalize(value, getMaximum(), getMinimum());
 	}
 
 	/**
@@ -198,8 +225,18 @@ public class Control {
 	 * 
 	 * @return The minimum value.
 	 */
-	public double getMinimumValue() {
+	public double getMinimum() {
 		return ListUtils.getFirst(segments).getMinimum();
+	}
+
+	/**
+	 * Returns the minimum of a given label.
+	 * 
+	 * @param label The label.
+	 * @return The minimum of the label.
+	 */
+	public double getMinimum(String label) {
+		return getSegment(label).getMinimum();
 	}
 
 	/**
@@ -207,8 +244,18 @@ public class Control {
 	 * 
 	 * @return The maximum value.
 	 */
-	public double getMaximumValue() {
+	public double getMaximum() {
 		return ListUtils.getLast(segments).getMaximum();
+	}
+
+	/**
+	 * Returns the maximum of a given label.
+	 * 
+	 * @param label The label.
+	 * @return The maximum of the label.
+	 */
+	public double getMaximum(String label) {
+		return getSegment(label).getMaximum();
 	}
 
 	/**

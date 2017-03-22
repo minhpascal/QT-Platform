@@ -20,20 +20,20 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Big bearish.
+ * Medium candle with nearly no body centered.
  *
  * @author Miquel Sas
  */
-public class BigBearishBigBody extends CandlePattern {
+public class MediumDoji extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public BigBearishBigBody() {
+	public MediumDoji() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Big bearish candle with big body");
+		setDescription("Medium candle with nearly no body centered");
 		setLookBackward(1);
 	}
 
@@ -47,13 +47,16 @@ public class BigBearishBigBody extends CandlePattern {
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		Control sizeControl = getControl();
+		Control control = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
-		if (isBearish(data)) {
-			if (sizeControl.checkGE(rangeFactor, Size.Big)) {
-				if (sizeControl.checkGE(bodyFactor, Size.Big)) {
-					return true;
+		double bodyCenter = getBodyCenterFactor(data);
+		if (control.checkGE(rangeFactor, Size.Small) && control.checkLE(rangeFactor, Size.Medium)) {
+			if (control.checkLE(bodyFactor, Size.VerySmall)) {
+				if (control.getSegment(Size.VerySmall).getFactor(bodyFactor) >= 0.3) {
+					if (control.checkIn(bodyCenter, Position.MiddleDown, Position.Middle, Position.MiddleUp)) {
+						return true;
+					}
 				}
 			}
 		}

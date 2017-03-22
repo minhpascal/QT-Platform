@@ -20,20 +20,20 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Big bearish.
+ * Medium big to big bearish candle with body at least half the range.
  *
  * @author Miquel Sas
  */
-public class MediumBearishMediumBody extends CandlePattern {
+public class BigBearish extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public MediumBearishMediumBody() {
+	public BigBearish() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Medium (or bigger) bearish candle with medium or greater body");
+		setDescription("Medium big to big bearish candle with body at least half the range");
 		setLookBackward(1);
 	}
 
@@ -47,12 +47,12 @@ public class MediumBearishMediumBody extends CandlePattern {
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		Control sizeControl = getControl();
+		Control control = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
 		if (isBearish(data)) {
-			if (sizeControl.checkGE(rangeFactor, Size.Medium)) {
-				if (sizeControl.checkGE(bodyFactor, Size.Medium)) {
+			if (control.checkIn(rangeFactor, Size.MediumBig, Size.Big)) {
+				if (control.getFactor(bodyFactor) >= 0.5) {
 					return true;
 				}
 			}

@@ -20,20 +20,20 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Spinnin with long shadows.
+ * Very big bullish candle with body at least half the range.
  *
  * @author Miquel Sas
  */
-public class BigSpinningLongShadows extends CandlePattern {
+public class VeryBigBullish extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public BigSpinningLongShadows() {
+	public VeryBigBullish() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Big candle with spinning body and long shadows");
+		setDescription("Very big bullish candle with body at least half the range");
 		setLookBackward(1);
 	}
 
@@ -50,10 +50,9 @@ public class BigSpinningLongShadows extends CandlePattern {
 		Control control = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
-		double bodyCenter = getBodyCenterFactor(data);
-		if (control.checkGE(rangeFactor, Size.Big)) {
-			if (control.checkLT(bodyFactor, Size.Small)) {
-				if (control.checkEQ(bodyCenter, Position.Middle)) {
+		if (isBullish(data)) {
+			if (control.checkIn(rangeFactor, Size.VeryBig)) {
+				if (control.getFactor(bodyFactor) >= 0.5) {
 					return true;
 				}
 			}

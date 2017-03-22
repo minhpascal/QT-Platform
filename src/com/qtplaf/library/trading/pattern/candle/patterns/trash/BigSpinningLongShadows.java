@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.trading.pattern.candle.patterns;
+package com.qtplaf.library.trading.pattern.candle.patterns.trash;
 
 import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
@@ -20,20 +20,20 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Big bullish.
+ * Spinnin with long shadows.
  *
  * @author Miquel Sas
  */
-public class BigBullishBigBody extends CandlePattern {
+public class BigSpinningLongShadows extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public BigBullishBigBody() {
+	public BigSpinningLongShadows() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Big bullish candle with big body");
+		setDescription("Big candle with spinning body and long shadows");
 		setLookBackward(1);
 	}
 
@@ -47,12 +47,13 @@ public class BigBullishBigBody extends CandlePattern {
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
-		Control sizeControl = getControl();
+		Control control = getControl();
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
-		if (isBullish(data)) {
-			if (sizeControl.checkGE(rangeFactor, Size.Big)) {
-				if (sizeControl.checkGE(bodyFactor, Size.Big)) {
+		double bodyCenter = getBodyCenterFactor(data);
+		if (control.checkGE(rangeFactor, Size.Big)) {
+			if (control.checkLT(bodyFactor, Size.Small)) {
+				if (control.checkEQ(bodyCenter, Position.Middle)) {
 					return true;
 				}
 			}

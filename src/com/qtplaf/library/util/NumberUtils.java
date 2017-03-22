@@ -264,4 +264,20 @@ public class NumberUtils extends org.apache.commons.lang3.math.NumberUtils {
 		}
 		return b.toString();
 	}
+
+	/**
+	 * Check if the number is in the list of numbers.
+	 * 
+	 * @param number The number to check.
+	 * @param numbers The list of numbers.
+	 * @return A boolean.
+	 */
+	public static boolean in(Number number, Number... numbers) {
+		for (Number n : numbers) {
+			if (n.equals(number)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

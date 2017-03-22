@@ -30,8 +30,18 @@ import com.qtplaf.library.database.View;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.pattern.Pattern;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigPiercingBearishBullish;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigPiercingBullishBearish;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigBearish;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigBullish;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigDoji;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigShadowLower;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigSpinning;
+import com.qtplaf.library.trading.pattern.candle.patterns.MediumDoji;
+import com.qtplaf.library.trading.pattern.candle.patterns.MediumSpinning;
+import com.qtplaf.library.trading.pattern.candle.patterns.SmallDoji;
+import com.qtplaf.library.trading.pattern.candle.patterns.SmallSpinning;
+import com.qtplaf.library.trading.pattern.candle.patterns.VeryBigBearish;
+import com.qtplaf.library.trading.pattern.candle.patterns.VeryBigBullish;
+import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
 import com.qtplaf.platform.database.Fields.Family;
@@ -76,6 +86,17 @@ public class TaskPatterns extends TaskAverages {
 	 */
 	private List<Pattern> getCandlePatterns() {
 		List<Pattern> candlePatterns = new ArrayList<>();
+//		candlePatterns.add(new VeryBigBearish());
+//		candlePatterns.add(new VeryBigBullish());
+//		candlePatterns.add(new BigBearish());
+//		candlePatterns.add(new BigBullish());
+//		candlePatterns.add(new SmallSpinning());
+//		candlePatterns.add(new MediumSpinning());
+//		candlePatterns.add(new BigSpinning());
+//		candlePatterns.add(new SmallDoji());
+//		candlePatterns.add(new MediumDoji());
+//		candlePatterns.add(new BigDoji());
+		candlePatterns.add(new BigShadowLower());
 		
 		// States table.
 		Table table = states.getStates().getTableStates();
@@ -196,6 +217,10 @@ public class TaskPatterns extends TaskAverages {
 			step++;
 			// Notify step start.
 			notifyStepStart(step, getStepMessage(step, steps, null, null));
+			
+			if (NumberUtils.in(index, 1007986)) {
+				System.out.println();
+			}
 			
 			// Process patterns.
 			for (Pattern pattern : patternList) {

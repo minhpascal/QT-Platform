@@ -14,25 +14,26 @@
 
 package com.qtplaf.library.trading.pattern.candle.patterns;
 
+import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Big piercing bearish-bullish pattern
+ * Small candle with nearly no body centered.
  *
  * @author Miquel Sas
  */
-public class BigPiercingBearishBullish extends CandlePattern {
+public class SmallDoji extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public BigPiercingBearishBullish() {
+	public SmallDoji() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Big piercing bearish-bullish pattern");
+		setDescription("Small candle with nearly no body centered");
 		setLookBackward(1);
 	}
 
@@ -45,28 +46,19 @@ public class BigPiercingBearishBullish extends CandlePattern {
 	 */
 	@Override
 	public boolean isPattern(DataList dataList, int index) {
-
-		// Index 0 no sense.
-		if (index == 0) {
-			return false;
-		}
-
-		// Big bearish previous
-		if (isPattern(new MediumBearishMediumBody(), dataList, index - 1)) {
-			// Big bullish current
-			if (isPattern(new MediumBullishMediumBody(), dataList, index)) {
-				Data prev = dataList.get(index - 1);
-				Data curr = dataList.get(index);
-				// Low curr < prev
-				if (getLow(curr) <= getBodyLow(prev)) {
-					// Body high curr >= body center prev.
-					if (getBodyHigh(curr) >= getBodyCenter(prev)) {
-						return true;
-					}
+		Data data = dataList.get(index);
+		Control control = getControl();
+		double rangeFactor = getRangeFactor(data, getMaximumRange());
+		double bodyFactor = getBodyFactor(data);
+		double bodyCenter = getBodyCenterFactor(data);
+		if (control.checkLE(rangeFactor, Size.VerySmall)) {
+			if (control.checkLE(bodyFactor, Size.Small)) {
+				if (control.checkIn(bodyCenter, Position.MiddleDown, Position.Middle, Position.MiddleUp)) {
+					return true;
 				}
 			}
 		}
-
 		return false;
 	}
+
 }

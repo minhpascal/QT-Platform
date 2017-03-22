@@ -12,7 +12,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.trading.pattern.candle.patterns;
+package com.qtplaf.library.trading.pattern.candle.patterns.trash;
 
 import com.qtplaf.library.ai.fuzzy.Control;
 import com.qtplaf.library.trading.data.Data;
@@ -20,20 +20,20 @@ import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
 
 /**
- * Spinnin top, spinning with short shadows.
+ * Spinnin with long shadows.
  *
  * @author Miquel Sas
  */
-public class SmallSpinningDoji extends CandlePattern {
+public class BigLongShadowUpper extends CandlePattern {
 
 	/**
 	 * Constructor.
 	 */
-	public SmallSpinningDoji() {
+	public BigLongShadowUpper() {
 		super();
 		setFamily("Candles");
 		setId(getClass().getSimpleName());
-		setDescription("Small candle with spinning body and short shadows");
+		setDescription("Big candle with small body and long upper shadow");
 		setLookBackward(1);
 	}
 
@@ -51,9 +51,9 @@ public class SmallSpinningDoji extends CandlePattern {
 		double rangeFactor = getRangeFactor(data, getMaximumRange());
 		double bodyFactor = getBodyFactor(data);
 		double bodyCenter = getBodyCenterFactor(data);
-		if (control.checkLE(rangeFactor, Size.Small)) {
+		if (control.checkGE(rangeFactor, Size.Big)) {
 			if (control.checkLE(bodyFactor, Size.Small)) {
-				if (control.checkEQ(bodyCenter, Position.Middle)) {
+				if (control.checkLE(bodyCenter, Position.Bottom)) {
 					return true;
 				}
 			}

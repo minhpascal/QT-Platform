@@ -24,6 +24,7 @@ import com.qtplaf.library.math.Calculator;
 import com.qtplaf.library.trading.data.Data;
 import com.qtplaf.library.trading.data.DataList;
 import com.qtplaf.library.trading.pattern.Pattern;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * Root class of candlestick patterns. To correctly calculate proportions and ranges, it receives the average range
@@ -44,17 +45,25 @@ public abstract class CandlePattern extends Pattern {
 	 * Enum the proportional sizes.
 	 */
 	public interface Size {
-		String Big = "2";
-		String Medium = "1";
-		String Small = "0";
+		String VeryBig = "6";
+		String Big = "5";
+		String MediumBig = "4";
+		String Medium = "3";
+		String MediumSmall = "2";
+		String Small = "1";
+		String VerySmall = "0";
 	}
 
 	/**
 	 * Enum proportional positions.
 	 */
 	public interface Position {
-		String Top = "2";
-		String Middle = "1";
+		String Top = "6";
+		String QuasiTop = "5";
+		String MiddleUp = "4";
+		String Middle = "3";
+		String MiddleDown = "2";
+		String QuasiBottom = "1";
 		String Bottom = "0";
 	}
 
@@ -306,12 +315,32 @@ public abstract class CandlePattern extends Pattern {
 	public Control getControl() {
 		if (control == null) {
 			List<Segment> segments = new ArrayList<>();
-			segments.add(new Segment(Size.Small, 0.30, 0.00, 1, new Linear()));
-			segments.add(new Segment(Size.Medium, 0.67, Math.nextUp(0.30), 1, new Linear()));
-			segments.add(new Segment(Size.Big, 1.00, Math.nextUp(0.70), 1, new Linear()));
+			addSegment(segments, Size.VerySmall, 0.10, -1);
+			addSegment(segments, Size.Small, 0.25, -1);
+			addSegment(segments, Size.MediumSmall, 0.40, -1);
+			addSegment(segments, Size.Medium, 0.60, 0);
+			addSegment(segments, Size.MediumBig, 0.75, 1);
+			addSegment(segments, Size.Big, 0.90, 1);
+			addSegment(segments, Size.VeryBig, 1.00, 1);
 			control = new Control(segments);
 		}
 		return control;
+	}
+
+	/**
+	 * Convenience method to build the list of segments.
+	 * 
+	 * @param segments The list of segments.
+	 * @param label The label.
+	 * @param maximum The maximum value.
+	 * @param sign The sign.
+	 */
+	private void addSegment(List<Segment> segments, String label, double maximum, int sign) {
+		double minimum = 0.00;
+		if (!segments.isEmpty()) {
+			minimum = Math.nextUp(ListUtils.getLast(segments).getMaximum());
+		}
+		segments.add(new Segment(label, maximum, minimum, sign, new Linear()));
 	}
 
 	/**
