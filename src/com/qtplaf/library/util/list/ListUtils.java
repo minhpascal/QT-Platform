@@ -207,21 +207,23 @@ public class ListUtils {
 	}
 
 	/**
-	 * Shuffle the list.
+	 * Shuffles an origin list of data to process each iteration over all the origin data in a different order,
+	 * preserving the origin data order in the origin list.
 	 * 
-	 * @param origin
-	 * @return
+	 * @param originData The origin learning data.
+	 * @return The shuffled learning data.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List shuffle(List origin) {
+	public static <T> List<T> shuffle(List<T> originData) {
+		List<T> toShuffle = new ArrayList<>();
+		toShuffle.addAll(originData);
 		Random random = new Random();
-		List destination = new ArrayList();
-		while (!origin.isEmpty()) {
-			int index = random.nextInt(origin.size());
-			Object o = origin.remove(index);
-			destination.add(o);
+		List<T> shuffled = new ArrayList<>();
+		while (!toShuffle.isEmpty()) {
+			int index = random.nextInt(toShuffle.size());
+			T data = toShuffle.remove(index);
+			shuffled.add(data);
 		}
-		return destination;
+		return shuffled;
 	}
 
 	@SuppressWarnings("rawtypes")

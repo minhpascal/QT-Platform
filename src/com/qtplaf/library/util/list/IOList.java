@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A dual input/output list used to dispatch outputs from inputd. Normal usage would be a thread adding inputs and
+ * A dual input/output list used to dispatch outputs from input. Normal usage would be a thread adding inputs and
  * another periodically retrieving the output and processing it. Useful for queued tasks.
  *
  * @author Miquel Sas

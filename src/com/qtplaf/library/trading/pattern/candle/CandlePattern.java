@@ -66,223 +66,6 @@ public abstract class CandlePattern extends Pattern {
 		String QuasiBottom = "1";
 		String Bottom = "0";
 	}
-
-	/**
-	 * Returns the open value.
-	 * 
-	 * @param data The data element.
-	 * @return The open value.
-	 */
-	public static double getOpen(Data data) {
-		return Data.getOpen(data);
-	}
-
-	/**
-	 * Returns the high value.
-	 * 
-	 * @param data The data element.
-	 * @return The high value.
-	 */
-	public static double getHigh(Data data) {
-		return Data.getHigh(data);
-	}
-
-	/**
-	 * Returns the low value.
-	 * 
-	 * @param data The data element.
-	 * @return The low value.
-	 */
-	public static double getLow(Data data) {
-		return Data.getLow(data);
-	}
-
-	/**
-	 * Returns the close value.
-	 * 
-	 * @param data The data element.
-	 * @return The open value.
-	 */
-	public static double getClose(Data data) {
-		return Data.getClose(data);
-	}
-
-	/**
-	 * Returns the body of the candle.
-	 * 
-	 * @param data The data element.
-	 * @return The body.
-	 */
-	public static double getBody(Data data) {
-		double open = getOpen(data);
-		double close = getClose(data);
-		return Math.abs(close - open);
-	}
-
-	/**
-	 * Returns the body high.
-	 * 
-	 * @param data The data element.
-	 * @return The body high.
-	 */
-	public static double getBodyHigh(Data data) {
-		double open = getOpen(data);
-		double close = getClose(data);
-		return Math.max(close, open);
-	}
-
-	/**
-	 * Returns the body low.
-	 * 
-	 * @param data The data element.
-	 * @return The body low.
-	 */
-	public static double getBodyLow(Data data) {
-		double open = getOpen(data);
-		double close = getClose(data);
-		return Math.min(close, open);
-	}
-
-	/**
-	 * Returns the body factor (0 to 1) relating the body with the range.
-	 * 
-	 * @param data The data element.
-	 * @return The body factor.
-	 */
-	public static double getBodyFactor(Data data) {
-		double body = getBody(data);
-		double range = getRange(data);
-		return Math.min(1.0, Calculator.zeroDiv(body, range));
-	}
-
-	/**
-	 * Returns the body center.
-	 * 
-	 * @param data The data element.
-	 * @return The body center.
-	 */
-	public static double getBodyCenter(Data data) {
-		double open = getOpen(data);
-		double close = getClose(data);
-		return (open + close) / 2;
-	}
-
-	/**
-	 * Returns the body center factors that indicates the body position.
-	 * 
-	 * @param data The data element.
-	 * @return The body center factor.
-	 */
-	public static double getBodyCenterFactor(Data data) {
-		double center = getBodyCenter(data);
-		double low = getLow(data);
-		double range = getRange(data);
-		return Calculator.zeroDiv(center - low, range);
-	}
-
-	/**
-	 * Returns the candle range (high - low).
-	 * 
-	 * @param data The data element.
-	 * @return The range (high - low).
-	 */
-	public static double getRange(Data data) {
-		double high = getHigh(data);
-		double low = getLow(data);
-		return high - low;
-	}
-
-	/**
-	 * Returns the range unitary factor (0 to 1) by comparing the range with an estimated maximum range.
-	 * 
-	 * @param data The data element.
-	 * @param maxRange The expected maximum range.
-	 * @return The range fator (range / maxRange).
-	 */
-	public static double getRangeFactor(Data data, double maxRange) {
-		return Math.min(1.0, Calculator.zeroDiv(getRange(data), maxRange));
-	}
-
-	/**
-	 * Returns the shadows factor (1 - body factor).
-	 * 
-	 * @param data The data element.
-	 * @return The shadow factor.
-	 */
-	public static double getShadowsFactor(Data data) {
-		return 1.0 - getBodyFactor(data);
-	}
-
-	/**
-	 * Returns the the lower shadow of the candle.
-	 * 
-	 * @param data The data element.
-	 * @return Tha lower shadow.
-	 */
-	public static double getShadowLower(Data data) {
-		double low = getLow(data);
-		double open = getOpen(data);
-		double close = getClose(data);
-		return Math.min(open, close) - low;
-	}
-
-	/**
-	 * Returns the lower shadow factor related to the range.
-	 * 
-	 * @param data The data element.
-	 * @return The lower shadow factor.
-	 */
-	public static double getShadowLowerFactor(Data data) {
-		double shadow = getShadowLower(data);
-		double range = getRange(data);
-		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
-	}
-
-	/**
-	 * Returns the the upper shadow of the candle.
-	 * 
-	 * @param data The data element.
-	 * @return Tha upper shadow.
-	 */
-	public static double getShadowUpper(Data data) {
-		double high = getHigh(data);
-		double open = getOpen(data);
-		double close = getClose(data);
-		return high - Math.max(open, close);
-	}
-
-	/**
-	 * Returns the upper shadow factor related to the range.
-	 * 
-	 * @param data The data element.
-	 * @return The upper shadow factor.
-	 */
-	public static double getShadowUpperFactor(Data data) {
-		double shadow = getShadowUpper(data);
-		double range = getRange(data);
-		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
-	}
-
-	/**
-	 * Check bearish
-	 * 
-	 * @param data The data element.
-	 * @return A boolean.
-	 */
-	public static boolean isBearish(Data data) {
-		return Data.isBearish(data);
-	}
-
-	/**
-	 * Check bullish
-	 * 
-	 * @param data The data element.
-	 * @return A boolean.
-	 */
-	public static boolean isBullish(Data data) {
-		return Data.isBullish(data);
-	}
-
 	/** Average range statistically calculated for the time frame. */
 	private double rangeAverage;
 	/** Range standard deviation also statistically calculated for the time frame. */
@@ -392,4 +175,224 @@ public abstract class CandlePattern extends Pattern {
 		pattern.setRangeStdDev(getRangeStdDev());
 		return pattern.isPattern(dataList, index);
 	}
+
+	/**
+	 * Returns the open value.
+	 * 
+	 * @param data The data element.
+	 * @return The open value.
+	 */
+	public double getOpen(Data data) {
+		return Data.getOpen(data);
+	}
+
+	/**
+	 * Returns the high value.
+	 * 
+	 * @param data The data element.
+	 * @return The high value.
+	 */
+	public double getHigh(Data data) {
+		return Data.getHigh(data);
+	}
+
+	/**
+	 * Returns the low value.
+	 * 
+	 * @param data The data element.
+	 * @return The low value.
+	 */
+	public double getLow(Data data) {
+		return Data.getLow(data);
+	}
+
+	/**
+	 * Returns the close value.
+	 * 
+	 * @param data The data element.
+	 * @return The open value.
+	 */
+	public double getClose(Data data) {
+		return Data.getClose(data);
+	}
+
+	/**
+	 * Returns the body of the candle.
+	 * 
+	 * @param data The data element.
+	 * @return The body.
+	 */
+	public double getBody(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.abs(close - open);
+	}
+
+	/**
+	 * Returns the body high.
+	 * 
+	 * @param data The data element.
+	 * @return The body high.
+	 */
+	public double getBodyHigh(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.max(close, open);
+	}
+
+	/**
+	 * Returns the body low.
+	 * 
+	 * @param data The data element.
+	 * @return The body low.
+	 */
+	public double getBodyLow(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.min(close, open);
+	}
+
+	/**
+	 * Returns the body factor (0 to 1) relating the body with the range.
+	 * 
+	 * @param data The data element.
+	 * @return The body factor.
+	 */
+	public double getBodyFactor(Data data) {
+		double body = getBody(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(body, range));
+	}
+
+	/**
+	 * Returns the body center.
+	 * 
+	 * @param data The data element.
+	 * @return The body center.
+	 */
+	public double getBodyCenter(Data data) {
+		double open = getOpen(data);
+		double close = getClose(data);
+		return (open + close) / 2;
+	}
+
+	/**
+	 * Returns the body center factors that indicates the body position.
+	 * 
+	 * @param data The data element.
+	 * @return The body center factor.
+	 */
+	public double getBodyCenterFactor(Data data) {
+		double center = getBodyCenter(data);
+		double low = getLow(data);
+		double range = getRange(data);
+		return Calculator.zeroDiv(center - low, range);
+	}
+
+	/**
+	 * Returns the candle range (high - low) of the list of data elements.
+	 * 
+	 * @param datas The list data elements.
+	 * @return The range (high - low).
+	 */
+	public double getRange(Data... datas) {
+		double high = Double.MIN_VALUE;
+		double low = Double.MAX_VALUE;
+		for (Data data : datas) {
+			high = Math.max(high, getHigh(data));
+			low = Math.min(low, getLow(data));
+		}
+		return high - low;
+	}
+
+	/**
+	 * Returns the range unitary factor (0 to 1) by comparing the range with an estimated maximum range.
+	 * 
+	 * @param data The data element.
+	 * @return The range factor (range / maxRange).
+	 */
+	public double getRangeFactor(Data data) {
+		return Math.min(1.0, Calculator.zeroDiv(getRange(data), getMaximumRange()));
+	}
+
+	/**
+	 * Returns the shadows factor (1 - body factor).
+	 * 
+	 * @param data The data element.
+	 * @return The shadow factor.
+	 */
+	public double getShadowsFactor(Data data) {
+		return 1.0 - getBodyFactor(data);
+	}
+
+	/**
+	 * Returns the the lower shadow of the candle.
+	 * 
+	 * @param data The data element.
+	 * @return Tha lower shadow.
+	 */
+	public double getShadowLower(Data data) {
+		double low = getLow(data);
+		double open = getOpen(data);
+		double close = getClose(data);
+		return Math.min(open, close) - low;
+	}
+
+	/**
+	 * Returns the lower shadow factor related to the range.
+	 * 
+	 * @param data The data element.
+	 * @return The lower shadow factor.
+	 */
+	public double getShadowLowerFactor(Data data) {
+		double shadow = getShadowLower(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
+	}
+
+	/**
+	 * Returns the the upper shadow of the candle.
+	 * 
+	 * @param data The data element.
+	 * @return Tha upper shadow.
+	 */
+	public double getShadowUpper(Data data) {
+		double high = getHigh(data);
+		double open = getOpen(data);
+		double close = getClose(data);
+		return high - Math.max(open, close);
+	}
+
+	/**
+	 * Returns the upper shadow factor related to the range.
+	 * 
+	 * @param data The data element.
+	 * @return The upper shadow factor.
+	 */
+	public double getShadowUpperFactor(Data data) {
+		double shadow = getShadowUpper(data);
+		double range = getRange(data);
+		return Math.min(1.0, Calculator.zeroDiv(shadow, range));
+	}
+
+	/**
+	 * Check bearish
+	 * 
+	 * @param data The data element.
+	 * @return A boolean.
+	 */
+	public boolean isBearish(Data data) {
+		return Data.isBearish(data);
+	}
+
+	/**
+	 * Check bullish
+	 * 
+	 * @param data The data element.
+	 * @return A boolean.
+	 */
+	public boolean isBullish(Data data) {
+		return Data.isBullish(data);
+	}
+
 }

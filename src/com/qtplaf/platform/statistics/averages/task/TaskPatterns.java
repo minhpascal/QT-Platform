@@ -30,17 +30,8 @@ import com.qtplaf.library.database.View;
 import com.qtplaf.library.trading.data.PersistorDataList;
 import com.qtplaf.library.trading.pattern.Pattern;
 import com.qtplaf.library.trading.pattern.candle.CandlePattern;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigBearish;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigBullish;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigDoji;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigShadowLower;
-import com.qtplaf.library.trading.pattern.candle.patterns.BigSpinning;
-import com.qtplaf.library.trading.pattern.candle.patterns.MediumDoji;
-import com.qtplaf.library.trading.pattern.candle.patterns.MediumSpinning;
-import com.qtplaf.library.trading.pattern.candle.patterns.SmallDoji;
-import com.qtplaf.library.trading.pattern.candle.patterns.SmallSpinning;
-import com.qtplaf.library.trading.pattern.candle.patterns.VeryBigBearish;
-import com.qtplaf.library.trading.pattern.candle.patterns.VeryBigBullish;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigPiercingBullish;
+import com.qtplaf.library.trading.pattern.candle.patterns.BigShadowUpper;
 import com.qtplaf.library.util.NumberUtils;
 import com.qtplaf.platform.database.Domains;
 import com.qtplaf.platform.database.Fields;
@@ -96,7 +87,9 @@ public class TaskPatterns extends TaskAverages {
 //		candlePatterns.add(new SmallDoji());
 //		candlePatterns.add(new MediumDoji());
 //		candlePatterns.add(new BigDoji());
-		candlePatterns.add(new BigShadowLower());
+//		candlePatterns.add(new BigShadowLower());
+//		candlePatterns.add(new BigShadowUpper());
+		candlePatterns.add(new BigPiercingBullish());
 		
 		// States table.
 		Table table = states.getStates().getTableStates();

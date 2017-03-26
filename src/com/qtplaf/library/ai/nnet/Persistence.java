@@ -75,7 +75,8 @@ public class Persistence {
 			xmlWriter.increaseTabLevel();
 
 			// Iterate neurons
-			for (Neuron neuron : layer) {
+			List<Neuron> neurons = layer.getNeurons();
+			for (Neuron neuron : neurons) {
 				xmlWriter.printStartTag("neuron", getNeuronAttributes(neuron), true);
 			}
 
@@ -149,8 +150,6 @@ public class Persistence {
 		List<XMLAttribute> attributes = new ArrayList<>();
 		// Id
 		attributes.add(new XMLAttribute("id", Long.toString(neuron.getId())));
-		// Input neuron flag
-		attributes.add(new XMLAttribute("input-neuron", Boolean.toString(neuron.isInputNeuron())));
 		// Output function
 		if (neuron.getOutputFunction() != null) {
 			attributes.add(new XMLAttribute("output-function", neuron.getOutputFunction().getClass().getName()));
@@ -161,14 +160,10 @@ public class Persistence {
 		}
 		// Bias
 		attributes.add(new XMLAttribute("bias", Double.toString(neuron.getBias())));
-		// Bias update
-		attributes.add(new XMLAttribute("bias-update", Double.toString(neuron.getBiasUpdate())));
 		// Output
 		attributes.add(new XMLAttribute("output", Double.toString(neuron.getOutput())));
 		// Input
 		attributes.add(new XMLAttribute("input", Double.toString(neuron.getInput())));
-		// Error
-		attributes.add(new XMLAttribute("error", Double.toString(neuron.getError())));
 		return attributes;
 	}
 

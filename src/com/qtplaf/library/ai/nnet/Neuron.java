@@ -16,11 +16,9 @@ package com.qtplaf.library.ai.nnet;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import com.qtplaf.library.ai.nnet.function.InputFunction;
 import com.qtplaf.library.ai.nnet.function.OutputFunction;
-import com.qtplaf.library.util.TextServer;
 
 /**
  * A neuron of a neural network.
@@ -56,10 +54,6 @@ public class Neuron implements Serializable {
 	 */
 	private List<Synapse> outputSynapses = new ArrayList<>();
 	/**
-	 * A flag that indicates if this neuron is an origin input neuron.
-	 */
-	private boolean inputNeuron = false;
-	/**
 	 * The output function used to calculate the output given the input.
 	 */
 	private OutputFunction outputFunction;
@@ -72,10 +66,6 @@ public class Neuron implements Serializable {
 	 */
 	private double bias = 0;
 	/**
-	 * The last bias update.
-	 */
-	private double biasUpdate;
-	/**
 	 * This neuron output value, calculated by passing to the output function the input value.
 	 */
 	private double output;
@@ -84,9 +74,13 @@ public class Neuron implements Serializable {
 	 */
 	private double input;
 	/**
-	 * Local error for this neuron.
+	 * Temporary bias update.
 	 */
-	private double error;
+	private transient double biasUpdate;
+	/**
+	 * Temporary error.
+	 */
+	private transient double error;
 
 	/**
 	 * Default constructor.
@@ -99,18 +93,6 @@ public class Neuron implements Serializable {
 	}
 
 	/**
-	 * Constructs a neuron indicating if it will be an origin input neuron.
-	 * 
-	 * @param id the neuron unique identifier.
-	 * @param originInput A flag that indicates if it's an origin input neuron.
-	 */
-	public Neuron(long id, boolean originInput) {
-		super();
-		this.id = id;
-		this.inputNeuron = originInput;
-	}
-
-	/**
 	 * Returns this neuron identifier.
 	 * 
 	 * @return The identifier.
@@ -120,23 +102,11 @@ public class Neuron implements Serializable {
 	}
 
 	/**
-	 * Check if this neuron is an origin input neuron.
-	 * 
-	 * @return A boolean indicating if this neuron is an origin input neuron.
-	 */
-	public boolean isInputNeuron() {
-		return inputNeuron;
-	}
-
-	/**
 	 * Adds a synapse to the list of input synapses.
 	 * 
 	 * @param synapse The synapse to add.
 	 */
 	public void addInputSynapse(Synapse synapse) {
-		if (isInputNeuron()) {
-			throw new UnsupportedOperationException("Operation not valid for origin input neurons");
-		}
 		synapse.setOutputNeuron(this);
 		inputSynapses.add(synapse);
 	}
@@ -264,10 +234,6 @@ public class Neuron implements Serializable {
 	 * @param inputFunction The input function.
 	 */
 	public void setInputFunction(InputFunction inputFunction) {
-		if (isInputNeuron()) {
-			String error = TextServer.getString("exceptionOperationNotValidForInputNeurons", Locale.UK);
-			throw new UnsupportedOperationException(error);
-		}
 		this.inputFunction = inputFunction;
 	}
 
@@ -287,35 +253,22 @@ public class Neuron implements Serializable {
 	 * function can only be applied to non origin input neurons.
 	 */
 	public void calculateInput() {
-		if (isInputNeuron()) {
-			String error = TextServer.getString("exceptionOperationNotValidForInputNeurons", Locale.UK);
-			throw new UnsupportedOperationException(error);
-		}
 		input = inputFunction.getInput(inputSynapses) + bias;
 	}
 
 	/**
-	 * Returns the local error of this neuron.
+	 * Returns the bias update.
 	 * 
-	 * @return The local error.
+	 * @return The bias update.
 	 */
-	public double getError() {
-		return error;
+	public double getBiasUpdate() {
+		return biasUpdate;
 	}
 
 	/**
-	 * Sets the local error of this neuron.
+	 * Increase the neuron bias and store this last bias update.
 	 * 
-	 * @param error The local error.
-	 */
-	public void setError(double error) {
-		this.error = error;
-	}
-
-	/**
-	 * Increase the bias by the delta amount and register the last bias update.
-	 * 
-	 * @param delta The delta amount to apply.
+	 * @param delta The increase.
 	 */
 	public void increaseBias(double delta) {
 		bias += delta;
@@ -323,20 +276,20 @@ public class Neuron implements Serializable {
 	}
 
 	/**
-	 * Returns the last bias update.
+	 * Return the error.
 	 * 
-	 * @return The last bias update.
+	 * @return The error.
 	 */
-	public double getBiasUpdate() {
-		return biasUpdate;
+	public double getError() {
+		return error;
 	}
 
 	/**
-	 * Set the bias update.
+	 * Set the error.
 	 * 
-	 * @param biasUpdate The bias update.
+	 * @param error The error.
 	 */
-	public void setBiasUpdate(double biasUpdate) {
-		this.biasUpdate = biasUpdate;
+	public void setError(double error) {
+		this.error = error;
 	}
 }

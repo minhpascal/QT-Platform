@@ -40,7 +40,7 @@ public class Data {
 
 	/** Data price (OHLCV) size. */
 	public static final int DataPriceSize = 5;
-
+	
 	/**
 	 * Returns the median price: (H + L) / 2
 	 * 

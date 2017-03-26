@@ -36,9 +36,9 @@ public class Synapse implements Serializable {
 	 */
 	private double weight;
 	/**
-	 * The last weight update.
+	 * Temporary weight update.
 	 */
-	private double weightUpdate;
+	private transient double weightUpdate;
 
 	/**
 	 * Default constructor.
@@ -131,21 +131,21 @@ public class Synapse implements Serializable {
 	}
 
 	/**
-	 * Increase the weight by the delta amount and register the last weight update.
-	 * 
-	 * @param delta The delta amount used to increase the weight.
-	 */
-	public void increaseWeight(double delta) {
-		weight += delta;
-		weightUpdate = delta;
-	}
-
-	/**
-	 * Returns the last weight update.
+	 * Return the last weight update.
 	 * 
 	 * @return The last weight update.
 	 */
 	public double getWeightUpdate() {
 		return weightUpdate;
+	}
+
+	/**
+	 * Increase the weight by delta and store the last update.
+	 * 
+	 * @param delta The increament.
+	 */
+	public void increaseWeight(double delta) {
+		weight += delta;
+		weightUpdate = delta;
 	}
 }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.qtplaf.library.app.Session;
 import com.qtplaf.library.util.StringUtils;
+import com.qtplaf.library.util.list.ListUtils;
 
 /**
  * A task made of multiple tasks that are executed in concurrent threads. The tasks to be executed must correctly manage
@@ -576,7 +577,7 @@ public class TaskRunnerThreads extends TaskRunner {
 	 */
 	private void addPendingTasksToExecute(List<Task> tasksToExecute) {
 		while (!tasksToExecute.isEmpty() && executingTasks.size() < getMaximumConcurrentTasks()) {
-			Task task = tasksToExecute.remove(tasksToExecute.size() - 1);
+			Task task = ListUtils.removeLast(tasksToExecute);
 			executingTasks.add(task);
 			new Thread(task, task.toString()).start();
 		}

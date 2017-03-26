@@ -13,9 +13,7 @@
  */
 package com.qtplaf.library.ai.nnet;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,7 @@ import com.qtplaf.library.math.Vector;
  * 
  * @author Miquel Sas
  */
-public class NeuralNetwork implements Iterable<Layer>, Serializable {
+public class NeuralNetwork {
 
 	/**
 	 * Unique identifier. This identifier is aimed to uniquely identify this network within a pool of networks.
@@ -141,7 +139,7 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 		// Input neurons
 		List<Neuron> inputNeurons = new ArrayList<>();
 		for (int i = 0; i < numberOfInputs; i++) {
-			Neuron neuron = new Neuron(++lastNeuronId, true);
+			Neuron neuron = new Neuron(++lastNeuronId);
 			inputNeurons.add(neuron);
 		}
 
@@ -209,13 +207,13 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 	 */
 	public Vector feedForward(Vector inputVector) {
 
-		// Get the input layer and set the values.
-		Layer inputLayer = getInputLayer();
-		if (inputVector.size() != inputLayer.size()) {
+		// Get the input layer neurons and set the values.
+		List<Neuron> inputNeurons = getInputLayer().getNeurons();
+		if (inputVector.size() != inputNeurons.size()) {
 			throw new IllegalArgumentException("Size of inputs is not the same than the input layer");
 		}
-		for (int i = 0; i < inputLayer.size(); i++) {
-			inputLayer.get(i).setOutput(inputVector.get(i));
+		for (int i = 0; i < inputNeurons.size(); i++) {
+			inputNeurons.get(i).setOutput(inputVector.get(i));
 		}
 
 		// Iterate subsequent layers and calculate outputs.
@@ -224,10 +222,10 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 		}
 
 		// Get the output layer and build the return list
-		Layer outputLayer = getOutputLayer();
-		Vector outputVector = new Vector(outputLayer.size());
-		for (int i = 0; i < outputLayer.size(); i++) {
-			Neuron neuron = outputLayer.get(i);
+		List<Neuron> outputNeurons = getOutputLayer().getNeurons();
+		Vector outputVector = new Vector(outputNeurons.size());
+		for (int i = 0; i < outputNeurons.size(); i++) {
+			Neuron neuron = outputNeurons.get(i);
 			outputVector.set(i, neuron.getOutput());
 		}
 
@@ -240,7 +238,8 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 	 * @param layer The layer.
 	 */
 	private void calculateOutput(Layer layer) {
-		for (Neuron neuron : layer) {
+		List<Neuron> neurons = layer.getNeurons();
+		for (Neuron neuron : neurons) {
 			neuron.calculateOutput();
 		}
 	}
@@ -284,7 +283,8 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 	public Map<Long, Neuron> getNeuronsMap() {
 		Map<Long, Neuron> map = new LinkedHashMap<>();
 		for (Layer layer : layers) {
-			for (Neuron neuron : layer) {
+			List<Neuron> neurons = layer.getNeurons();
+			for (Neuron neuron : neurons) {
 				map.put(neuron.getId(), neuron);
 			}
 		}
@@ -314,34 +314,6 @@ public class NeuralNetwork implements Iterable<Layer>, Serializable {
 	 */
 	public List<Layer> getLayers() {
 		return layers;
-	}
-
-	/**
-	 * Returns the iterator through the layers.
-	 * 
-	 * @return The iterator.
-	 */
-	public Iterator<Layer> iterator() {
-		return layers.iterator();
-	}
-
-	/**
-	 * Returns the size of the network, the number of layers.
-	 * 
-	 * @return The number of layers.
-	 */
-	public int size() {
-		return layers.size();
-	}
-
-	/**
-	 * Returns the layer at the given index.
-	 * 
-	 * @param index The index of the layer.
-	 * @return The layer at index.
-	 */
-	public Layer get(int index) {
-		return layers.get(index);
 	}
 
 	/**

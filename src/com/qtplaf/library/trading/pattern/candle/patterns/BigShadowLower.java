@@ -48,7 +48,7 @@ public class BigShadowLower extends CandlePattern {
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
 		Control control = getControl();
-		double rangeFactor = getRangeFactor(data, getMaximumRange());
+		double rangeFactor = getRangeFactor(data);
 		double bodyFactor = getBodyFactor(data);
 		double bodyCenter = getBodyCenterFactor(data);
 		if (control.getFactor(rangeFactor) >= 0.5) {

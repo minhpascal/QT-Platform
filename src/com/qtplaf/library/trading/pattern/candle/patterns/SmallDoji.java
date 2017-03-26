@@ -48,7 +48,7 @@ public class SmallDoji extends CandlePattern {
 	public boolean isPattern(DataList dataList, int index) {
 		Data data = dataList.get(index);
 		Control control = getControl();
-		double rangeFactor = getRangeFactor(data, getMaximumRange());
+		double rangeFactor = getRangeFactor(data);
 		double bodyFactor = getBodyFactor(data);
 		double bodyCenter = getBodyCenterFactor(data);
 		if (control.checkLE(rangeFactor, Size.VerySmall)) {

@@ -13,9 +13,7 @@
  */
 package com.qtplaf.library.ai.nnet;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -23,7 +21,7 @@ import java.util.List;
  * 
  * @author Miquel Sas
  */
-public class Layer implements Iterable<Neuron>, Serializable {
+public class Layer {
 
 	/**
 	 * The list of neurons.
@@ -64,33 +62,5 @@ public class Layer implements Iterable<Neuron>, Serializable {
 	 */
 	public List<Neuron> getNeurons() {
 		return neurons;
-	}
-
-	/**
-	 * Returns an iterator over the neurons.
-	 * 
-	 * @return An iterator over the neurons.
-	 */
-	public Iterator<Neuron> iterator() {
-		return neurons.iterator();
-	}
-
-	/**
-	 * Returns the neuron at the given index.
-	 * 
-	 * @param index The index.
-	 * @return The neuron at the index position.
-	 */
-	public Neuron get(int index) {
-		return neurons.get(index);
-	}
-
-	/**
-	 * Returns this layer size, that is, the number of neurons.
-	 * 
-	 * @return The size or number of neurons.
-	 */
-	public int size() {
-		return neurons.size();
 	}
 }

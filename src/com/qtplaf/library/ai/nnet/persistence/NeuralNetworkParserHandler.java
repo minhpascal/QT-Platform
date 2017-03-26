@@ -183,7 +183,6 @@ public class NeuralNetworkParserHandler extends ParserHandler {
 		// element: neural-network/layers/layer/neuron
 		if (path.equals("neural-network/layers/layer/neuron")) {
 			long id = Long.parseLong(attributes.getValue("id"));
-			boolean inputNeuron = Boolean.parseBoolean(attributes.getValue("input-neuron"));
 			String outputFunctionClassName = attributes.getValue("output-function");
 			OutputFunction outputFunction = null;
 			try {
@@ -199,21 +198,17 @@ public class NeuralNetworkParserHandler extends ParserHandler {
 				throw new SAXException(exc);
 			}
 			double bias = Double.parseDouble(attributes.getValue("bias"));
-			double biasUpdate = Double.parseDouble(attributes.getValue("bias-update"));
 			double output = Double.parseDouble(attributes.getValue("output"));
 			double input = Double.parseDouble(attributes.getValue("input"));
-			double error = Double.parseDouble(attributes.getValue("error"));
 
-			Neuron neuron = new Neuron(id, inputNeuron);
-			if (!inputNeuron) {
+			Neuron neuron = new Neuron(id);
+			if (inputFunction != null) {
 				neuron.setInputFunction(inputFunction);
 			}
 			neuron.setOutputFunction(outputFunction);
 			neuron.setBias(bias);
-			neuron.setBiasUpdate(biasUpdate);
 			neuron.setOutput(output);
 			neuron.setInput(input);
-			neuron.setError(error);
 
 			getDeque().addFirst(neuron);
 		}

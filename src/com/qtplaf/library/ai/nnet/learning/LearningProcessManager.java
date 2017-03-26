@@ -14,9 +14,7 @@
 package com.qtplaf.library.ai.nnet.learning;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import com.qtplaf.library.ai.nnet.function.ErrorFunction;
 import com.qtplaf.library.math.Vector;
@@ -48,12 +46,12 @@ public class LearningProcessManager {
 	/**
 	 * The learning data.
 	 */
-	private List<Pattern> learningData;
+	private PatternSource learningData;
 	/**
 	 * The optional check data, not seen during the learning process, used to verify the accuracy or networkPerformance
 	 * of the learning process.
 	 */
-	private List<Pattern> checkData;
+	private PatternSource checkData;
 	/**
 	 * Iteration counter over all the learning data.
 	 */
@@ -156,12 +154,16 @@ public class LearningProcessManager {
 	 */
 	protected void calculateNetworkPerformance() {
 		double matches = 0;
-		for (Pattern pattern : checkData) {
-			Vector checkInputs = pattern.getInputVector();
-			Vector checkOutputs = pattern.getOutputVector();
-			Vector networkOutputs = getLearningProcess().processInput(checkInputs);
-			if (checkOutputs.equals(networkOutputs, performancePrecision)) {
-				matches++;
+		if (checkData != null) {
+			checkData.rewind();
+			while (checkData.hasNext()) {
+				Pattern pattern = checkData.next();
+				Vector checkInputs = pattern.getInputVector();
+				Vector checkOutputs = pattern.getOutputVector();
+				Vector networkOutputs = getLearningProcess().processInput(checkInputs);
+				if (checkOutputs.equals(networkOutputs, performancePrecision)) {
+					matches++;
+				}
 			}
 		}
 		double checkSize = checkData.size();
@@ -172,11 +174,13 @@ public class LearningProcessManager {
 	/**
 	 * Calculates the learning performance for a list of patterns processed.
 	 * 
-	 * @param patterns The list of patterns.
+	 * @param patterns The source of patterns.
 	 */
-	protected void calculateLearningPerformance(List<Pattern> patterns) {
+	protected void calculateLearningPerformance(PatternSource patterns) {
 		double matches = 0;
-		for (Pattern pattern : patterns) {
+		patterns.rewind();
+		while (patterns.hasNext()) {
+			Pattern pattern = patterns.next();
 			Vector outputVector = pattern.getOutputVector();
 			Vector networkOutputVector = pattern.getNetworkOutputVector();
 			if (outputVector.equals(networkOutputVector, performancePrecision)) {
@@ -322,25 +326,6 @@ public class LearningProcessManager {
 	public void setHistoryDepth(int historyDepth) {
 		this.historyDepth = historyDepth;
 	}
-
-	/**
-	 * Returns the learning data.
-	 * 
-	 * @return The learning data.
-	 */
-	public List<Pattern> getLearningData() {
-		return learningData;
-	}
-
-	/**
-	 * Returns the check data.
-	 * 
-	 * @return The check data.
-	 */
-	public List<Pattern> getCheckData() {
-		return checkData;
-	}
-
 	/**
 	 * Fires a learning event to the list of listeners.
 	 * 
@@ -378,7 +363,7 @@ public class LearningProcessManager {
 	 * 
 	 * @param learningData The learning data.
 	 */
-	public void setLearningData(List<Pattern> learningData) {
+	public void setLearningData(PatternSource learningData) {
 		this.learningData = learningData;
 	}
 
@@ -387,7 +372,7 @@ public class LearningProcessManager {
 	 * 
 	 * @param checkData The check data.
 	 */
-	public void setCheckData(List<Pattern> checkData) {
+	public void setCheckData(PatternSource checkData) {
 		this.checkData = checkData;
 	}
 
@@ -422,26 +407,6 @@ public class LearningProcessManager {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Shuffles an origin list of data to process each iteration over all the origin data in a different order,
-	 * preserving the origin data order in the origin list.
-	 * 
-	 * @param originData The origin learning data.
-	 * @return The shuffled learning data.
-	 */
-	protected List<Pattern> shuffle(List<Pattern> originData) {
-		List<Pattern> toShuffle = new ArrayList<>();
-		toShuffle.addAll(originData);
-		Random random = new Random();
-		List<Pattern> shuffled = new ArrayList<>();
-		while (!toShuffle.isEmpty()) {
-			int index = random.nextInt(toShuffle.size());
-			Pattern data = toShuffle.remove(index);
-			shuffled.add(data);
-		}
-		return shuffled;
 	}
 
 	/**
@@ -503,7 +468,8 @@ public class LearningProcessManager {
 			setLearningProcessIterationProperties();
 
 			// Retrieve the patterns that will be processed in this iteration.
-			List<Pattern> iterationPatterns = getIterationPatterns();
+			PatternSource iterationPatterns = getIterationPatterns();
+			iterationPatterns.rewind();
 			iterationSize = iterationPatterns.size();
 
 			// Reset the pattern index in the epoch
@@ -516,11 +482,10 @@ public class LearningProcessManager {
 			long iterationStartTime = System.currentTimeMillis();
 
 			// Iterate patterns
-			Iterator<Pattern> patterns = iterationPatterns.iterator();
-			while (!stopExecution && patterns.hasNext()) {
+			while (!stopExecution && iterationPatterns.hasNext()) {
 
 				// The current pattern to process
-				Pattern pattern = patterns.next();
+				Pattern pattern = iterationPatterns.next();
 
 				// Pattern start time
 				long patternStartTime = System.currentTimeMillis();
@@ -580,9 +545,8 @@ public class LearningProcessManager {
 	 * 
 	 * @return The list of patterns that will be processed during the current iteration.
 	 */
-	protected List<Pattern> getIterationPatterns() {
+	protected PatternSource getIterationPatterns() {
 		return learningData;
-		// return shuffle(learningData);
 	}
 
 	/**

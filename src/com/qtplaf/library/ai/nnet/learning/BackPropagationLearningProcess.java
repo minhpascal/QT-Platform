@@ -27,9 +27,9 @@ import com.qtplaf.library.math.Vector;
  * methods to update weights and biases. The bias–variance tradeoff (or dilemma) is the problem of simultaneously
  * minimizing two sources of error and the proposed approach adjust them separately.
  * <p>
- * The learning rate, 0.0 &lt; learning rate &lt;= 1.0, is the factor that reduces that gradient or error derivative. A low
- * learning rate slows learning, while a high learning rate produces changes that generate a greater error, mainly when
- * the error is very small. That suggests to reduce the learning rate while the error becomes small.
+ * The learning rate, 0.0 &lt; learning rate &lt;= 1.0, is the factor that reduces that gradient or error derivative. A
+ * low learning rate slows learning, while a high learning rate produces changes that generate a greater error, mainly
+ * when the error is very small. That suggests to reduce the learning rate while the error becomes small.
  * <p>
  * The momentum, 0.0 &lt;= momentum &lt;= 1.0, is the factor that weights the last change applied against the next error
  * gradient. With a momentum of 0.0, only the next error affects the changes in weights and biases.
@@ -96,72 +96,90 @@ public class BackPropagationLearningProcess extends LearningProcess {
 	 * @param errorVector
 	 */
 	private void updateOutputLayerErrors(Vector errorVector) {
-		Layer layer = getNetwork().getOutputLayer();
-
-		int size = layer.size();
-		for (int i = 0; i < size; i++) {
-
-			Neuron neuron = layer.get(i);
-
-			double neuronInput = neuron.getInput();
-			OutputFunction outputFunction = neuron.getOutputFunction();
-			double inputDerivative = outputFunction.getDerivative(neuronInput);
+		List<Neuron> neurons = getNetwork().getOutputLayer().getNeurons();
+		for (int i = 0; i < neurons.size(); i++) {
+			Neuron neuron = neurons.get(i);
 			double outputError = errorVector.get(i);
-			double neuronError = outputError * inputDerivative;
+			updateOutputLayerErrors(outputError, neuron);
+		}
+	}
 
-			neuron.setError(neuronError);
+	/**
+	 * Updates the output layer error to the neuron.
+	 * 
+	 * @param outputError The output error.
+	 * @param neuron The neuron.
+	 */
+	private void updateOutputLayerErrors(double outputError, Neuron neuron) {
 
-			// Update neuron weights if applicable
-			if (updateWeights) {
-				updateNeuronWeights(neuron);
-			}
+		double neuronInput = neuron.getInput();
+		OutputFunction outputFunction = neuron.getOutputFunction();
+		double inputDerivative = outputFunction.getDerivative(neuronInput);
+		double neuronError = outputError * inputDerivative;
 
-			// Update bias if applicable
-			if (updateBiases) {
-				updateNeuronBias(neuron);
-			}
+		neuron.setError(neuronError);
+
+		// Update neuron weights if applicable
+		if (updateWeights) {
+			updateNeuronWeights(neuron);
+		}
+
+		// Update bias if applicable
+		if (updateBiases) {
+			updateNeuronBias(neuron);
 		}
 	}
 
 	/**
 	 * Updates the hidden layers errors by back propagating the output layer errors.
 	 */
-	protected void updateHiddenLayersErrors() {
-
+	private void updateHiddenLayersErrors() {
 		// Back iterate hidden layers
 		List<Layer> layers = getNetwork().getLayers();
 		for (int i = layers.size() - 2; i > 0; i--) {
 			Layer layer = layers.get(i);
-
 			// Iterate the neurons of the layer
-			for (Neuron neuron : layer) {
-
-				// Calculate the neuron error by weighting the errors of the output neurons of the output synapses.
-				List<Synapse> outputSynapses = neuron.getOutputSynapses();
-				double weightedOutputError = 0;
-				for (Synapse outputSynapse : outputSynapses) {
-					double error = outputSynapse.getOutputNeuron().getError();
-					double weight = outputSynapse.getWeight();
-					weightedOutputError += (error * weight);
-				}
-
-				// Back propagate weighted output
-				OutputFunction outputFunction = neuron.getOutputFunction();
-				double input = neuron.getInput();
-				double derivative = outputFunction.getDerivative(input);
-				double neuronError = weightedOutputError * derivative;
-				neuron.setError(neuronError);
-
-				// Update neuron weights if applicable
-				if (updateWeights) {
-					updateNeuronWeights(neuron);
-				}
-
-				// Update bias if applicable
-				if (updateBiases) {
-					updateNeuronBias(neuron);
-				}
+			List<Neuron> neurons = layer.getNeurons();
+			for (Neuron neuron : neurons) {
+				// Do update.
+				updateHiddenLayersErrors(neuron);
 			}
+		}
+	}
+
+	/**
+	 * Updates the hidden layers errors by back propagating the output layer errors, for the argument neuron.
+	 * 
+	 * @param neuron The neuron.
+	 */
+	private void updateHiddenLayersErrors(Neuron neuron) {
+
+		// Calculate the neuron error by weighting the errors of the output neurons of the output synapses.
+		List<Synapse> outputSynapses = neuron.getOutputSynapses();
+		double weightedOutputError = 0;
+		for (Synapse outputSynapse : outputSynapses) {
+			// Output neuron and update.
+			Neuron outputNeuron = outputSynapse.getOutputNeuron();
+			double error = outputNeuron.getError();
+			double weight = outputSynapse.getWeight();
+			weightedOutputError += (error * weight);
+		}
+
+		// Back propagate weighted output
+		OutputFunction outputFunction = neuron.getOutputFunction();
+		double input = neuron.getInput();
+		double derivative = outputFunction.getDerivative(input);
+		double neuronError = weightedOutputError * derivative;
+		neuron.setError(neuronError);
+
+		// Update neuron weights if applicable
+		if (updateWeights) {
+			updateNeuronWeights(neuron);
+		}
+
+		// Update bias if applicable
+		if (updateBiases) {
+			updateNeuronBias(neuron);
 		}
 	}
 
@@ -304,7 +322,7 @@ public class BackPropagationLearningProcess extends LearningProcess {
 	 * @throws IllegalArgumentException if the properties does not match the required ones.
 	 */
 	public void setProperties(Object... properties) {
-		// Validate number of  properties.
+		// Validate number of properties.
 		if (properties.length != 4) {
 			throw new IllegalArgumentException("Invalid number of properties");
 		}
@@ -325,9 +343,9 @@ public class BackPropagationLearningProcess extends LearningProcess {
 			throw new IllegalArgumentException("Invalid type for the fourth property: update biases");
 		}
 		// Update properties
-		learningRate = (Double)properties[0];
-		momentum = (Double)properties[1];
-		updateWeights = (Boolean)properties[2];
-		updateBiases = (Boolean)properties[3];
+		learningRate = (Double) properties[0];
+		momentum = (Double) properties[1];
+		updateWeights = (Boolean) properties[2];
+		updateBiases = (Boolean) properties[3];
 	}
 }
