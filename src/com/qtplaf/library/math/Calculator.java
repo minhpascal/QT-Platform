@@ -890,9 +890,9 @@ public class Calculator {
 	 * @return The squared Euclidean norm.
 	 */
 	public static double squaredEuclideanNorm(double[] v) {
-		int length = size(v);
+		int size = size(v);
 		double norm = 0;
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < size; i++) {
 			norm += Math.pow(v[i], 2);
 		}
 		return norm;
@@ -906,6 +906,22 @@ public class Calculator {
 	 */
 	public static double euclideanNorm(double[] v) {
 		return Math.sqrt(squaredEuclideanNorm(v));
+	}
+
+	/**
+	 * Ortho normalize the vector (the euclidean norm to be 1).
+	 * 
+	 * @param v The vector.
+	 * @return The ortho normalized vector.
+	 */
+	public static double[] orthoNormal(double[] v) {
+		int size = size(v);
+		double[] n = new double[size];
+		double norm = euclideanNorm(v);
+		for (int i = 0; i < size; i++) {
+			n[i] = (norm == 0 ? 0.0 : v[i] / norm);
+		}
+		return n;
 	}
 
 	/**

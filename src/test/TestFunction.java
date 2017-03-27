@@ -1,7 +1,7 @@
 package test;
 
-import com.qtplaf.library.ai.nnet.function.output.Gaussian;
-import com.qtplaf.library.ai.nnet.function.output.Sigmoid;
+import com.qtplaf.library.ai.nnet.graph.function.output.Gaussian;
+import com.qtplaf.library.ai.nnet.graph.function.output.Sigmoid;
 import com.qtplaf.library.util.NumberUtils;
 
 public class TestFunction {

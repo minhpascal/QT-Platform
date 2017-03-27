@@ -13,7 +13,7 @@
  */
 package com.qtplaf.library.ai.nnet.data.mnist;
 
-import com.qtplaf.library.ai.nnet.learning.Pattern;
+import com.qtplaf.library.ai.nnet.graph.learning.Pattern;
 import com.qtplaf.library.math.Vector;
 
 /**

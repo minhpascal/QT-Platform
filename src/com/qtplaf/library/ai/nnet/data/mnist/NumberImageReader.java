@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qtplaf.library.ai.nnet.learning.Pattern;
+import com.qtplaf.library.ai.nnet.graph.learning.Pattern;
 
 /**
  * Reads number images and stores an array of 'NumberImage' instances. The files read are in MNIST DATABASE
