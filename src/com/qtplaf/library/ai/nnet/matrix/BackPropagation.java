@@ -22,10 +22,8 @@ import com.qtplaf.library.util.list.ListUtils;
  *
  * @author Miquel Sas
  */
-public class BackPropagation {
+public class BackPropagation extends LearningProcess {
 
-	/** The network. */
-	private NeuralNetwork network;
 	/** The learning rate. */
 	private double learningRate = 0.1;
 	/** The momentum. */
@@ -41,8 +39,7 @@ public class BackPropagation {
 	 * @param network The network to train.
 	 */
 	public BackPropagation(NeuralNetwork network) {
-		super();
-		this.network = network;
+		super(network);
 	}
 
 	/**
@@ -84,11 +81,11 @@ public class BackPropagation {
 	/**
 	 * Process the input vector and return the network output vector.
 	 * 
-	 * @param input The input vector to process.
+	 * @param inputs The input vector to process.
 	 * @return The output vector.
 	 */
-	public double[] processInput(double[] input) {
-		return network.processInput(input);
+	public double[] processInputs(double[] inputs) {
+		return getNetwork().processInput(inputs);
 	}
 
 	/**
@@ -107,9 +104,10 @@ public class BackPropagation {
 	 * Updates the hidden layers errors by back propagating the output layer errors.
 	 */
 	private void updateHiddenLayersErrors() {
-		for (int i = network.layers.size() - 2; i > 0; i--) {
-			Layer layerIn = network.layers.get(i);
-			Layer layerOut = network.layers.get(i + 1);
+		for (int i = getNetwork().layers.size() - 2; i >= 0; i--) {
+			Layer layerIn = getNetwork().layers.get(i);
+			Layer layerOut = getNetwork().layers.get(i + 1);
+			updateHiddenLayersErrors(layerIn, layerOut);
 		}
 	}
 
@@ -120,7 +118,33 @@ public class BackPropagation {
 	 * @param layerOut The output layer.
 	 */
 	private void updateHiddenLayersErrors(Layer layerIn, Layer layerOut) {
+		
+		// layerOut.inputSize == layerIn.outputSize
+		for (int in = 0; in < layerOut.inputSize; in++) {
+			
+			double weightedOutputError = 0;
+			for (int out = 0; out < layerOut.outputSize; out++) {
+				double error = layerOut.errors[out];
+				double weight = layerOut.weights[in][out];
+				weightedOutputError += (error * weight);
+			}
 
+			int out = in; // Out index in input layer
+			double outsrc = layerIn.outsrcs[out];
+			double derivative = Calculator.sigmoidDerivative(outsrc);
+			double error = weightedOutputError * derivative;
+			layerIn.errors[out] = error;
+			
+			// Update neuron weights if applicable
+			if (updateWeights) {
+				updateWeights(layerIn, out);
+			}
+
+			// Update bias if applicable
+			if (updateBiases) {
+				updateBias(layerIn, out);
+			}
+		}
 	}
 
 	/**
@@ -131,7 +155,7 @@ public class BackPropagation {
 	private void updateOutputLayerErrors(double[] errors) {
 
 		// Output layer.
-		Layer layer = ListUtils.getLast(network.layers);
+		Layer layer = ListUtils.getLast(getNetwork().layers);
 
 		// Check errors size.
 		if (errors.length != layer.outputSize) {
@@ -193,12 +217,12 @@ public class BackPropagation {
 			// Next weight change
 			double nextWeightChange = learningRate * error * input;
 			// Last weight change
-			double lastWeightChange = layer.deltaWeights[out][in];
+			double lastWeightChange = layer.deltaWeights[in][out];
 			// Calculate weight change using momentum
 			double weightChange = (nextWeightChange * (1 - momentum)) + (lastWeightChange * momentum);
 			// Update the weight and save change.
-			layer.weights[out][in] += weightChange;
-			layer.deltaWeights[out][in] = weightChange;
+			layer.weights[in][out] += weightChange;
+			layer.deltaWeights[in][out] = weightChange;
 		}
 	}
 }

@@ -84,7 +84,7 @@ public class NeuralNetwork {
 	 */
 	public void initializeBiases(double bias) {
 		for (Layer layer : layers) {
-			for (int i = 0; i < layer.inputSize; i++) {
+			for (int i = 0; i < layer.outputSize; i++) {
 				layer.biases[i] = bias;
 			}
 		}
@@ -99,6 +99,7 @@ public class NeuralNetwork {
 			for (int in = 0; in < layer.inputSize; in++) {
 				for (int out = 0; out < layer.outputSize; out++) {
 					layer.weights[in][out] = random.nextGaussian();
+//					layer.weights[in][out] = 0.0;
 				}
 			}
 		}

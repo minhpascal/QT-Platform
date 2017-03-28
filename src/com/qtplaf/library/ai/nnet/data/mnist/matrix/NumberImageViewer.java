@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.ai.nnet.data.mnist;
+package com.qtplaf.library.ai.nnet.data.mnist.matrix;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -46,17 +46,17 @@ public class NumberImageViewer extends JFrame {
 	public static void main(String[] args) throws Exception {
 		File fileImg = SystemUtils.getFileFromClassPathEntries("train-images.idx3-ubyte");
 		File fileLbl = SystemUtils.getFileFromClassPathEntries("train-labels.idx1-ubyte");
-		NumberImageReaderIOData reader = new NumberImageReaderIOData(fileLbl, fileImg);
+		NumberImageReader reader = new NumberImageReader(fileLbl, fileImg);
 		reader.read();
 		new NumberImageViewer(reader.getNumberImages());
 	}
 
-	private int rows = NumberImageIOData.ROWS;
-	private int columns = NumberImageIOData.COLUMNS;
+	private int rows = NumberImage.ROWS;
+	private int columns = NumberImage.COLUMNS;
 
 	private JPanel[][] pixelPanels;
 
-	private List<NumberImageIOData> numberImages;
+	private List<NumberImage> numberImages;
 	private int currentImage = 0;
 	private JLabel labelNumber;
 
@@ -65,7 +65,7 @@ public class NumberImageViewer extends JFrame {
 	 * 
 	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 */
-	public NumberImageViewer(List<NumberImageIOData> numberImages) throws HeadlessException {
+	public NumberImageViewer(List<NumberImage> numberImages) throws HeadlessException {
 		super();
 		this.numberImages = numberImages;
 		setupFrame();
@@ -136,7 +136,7 @@ public class NumberImageViewer extends JFrame {
 	}
 
 	private void showImage() {
-		NumberImageIOData image = numberImages.get(currentImage);
+		NumberImage image = numberImages.get(currentImage);
 		int number = image.getNumber();
 		labelNumber.setText(Integer.toString(number) + " (" + (currentImage + 1) + ")");
 

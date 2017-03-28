@@ -858,7 +858,7 @@ public class Calculator {
 	 * @param a Matrix a
 	 * @param b Matrix b
 	 * @param precision Rounding precision.
-	 * @return
+	 * @return A boolean
 	 */
 	public static boolean areEqual(double[][] a, double[][] b, int precision) {
 
@@ -880,6 +880,28 @@ public class Calculator {
 			}
 		}
 
+		return true;
+	}
+	
+	/**
+	 * Check if two vectors are equal rounding the values at the argument precision.
+	 * 
+	 * @param a Vector a
+	 * @param b Vector b
+	 * @param precision Rounding precision.
+	 * @return A boolean
+	 */
+	public static boolean areEqual(double[] a, double[] b, int precision) {
+		if (a.length != b.length) {
+			return false;
+		}
+		for (int i = 0; i < a.length; i++) {
+			double value_a = NumberUtils.round(a[i], precision);
+			double value_b = NumberUtils.round(b[i], precision);
+			if (value_a != value_b) {
+				return false;
+			}
+		}
 		return true;
 	}
 

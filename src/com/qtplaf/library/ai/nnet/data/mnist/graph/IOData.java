@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.ai.nnet.data.mnist;
+package com.qtplaf.library.ai.nnet.data.mnist.graph;
 
 import java.io.Serializable;
 import java.util.List;

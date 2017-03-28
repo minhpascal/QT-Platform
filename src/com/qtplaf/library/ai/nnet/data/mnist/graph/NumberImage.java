@@ -11,11 +11,9 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.ai.nnet.data.mnist;
+package com.qtplaf.library.ai.nnet.data.mnist.graph;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.qtplaf.library.ai.nnet.graph.learning.Pattern;
 import com.qtplaf.library.math.Vector;
 
 /**
@@ -23,7 +21,7 @@ import com.qtplaf.library.math.Vector;
  * 
  * @author Miquel Sas
  */
-public class NumberImageIOData extends IOData {
+public class NumberImage extends Pattern {
 
 	/** Image rows. */
 	public static final int ROWS = 28;
@@ -42,7 +40,7 @@ public class NumberImageIOData extends IOData {
 	 * @param number The represented number
 	 * @param bytes The raw bytes list
 	 */
-	public NumberImageIOData(int number, byte[] bytes) {
+	public NumberImage(int number, byte[] bytes) {
 		super();
 		if (number < 0 || number > 9) {
 			throw new IllegalArgumentException("Invalid number " + number);
@@ -83,23 +81,6 @@ public class NumberImageIOData extends IOData {
 	}
 
 	/**
-	 * Returns the inputs data.
-	 * 
-	 * @return The inputs
-	 */
-	public List<Double> getInputs() {
-		List<Double> inputs = new ArrayList<>();
-		for (int row = 0; row < ROWS; row++) {
-			for (int column = 0; column < COLUMNS; column++) {
-				double imageByte = 255 - Byte.toUnsignedInt(image[row][column]);
-				double imageInput = imageByte / 255;
-				inputs.add(imageInput);
-			}
-		}
-		return inputs;
-	}
-
-	/**
 	 * Returns the input vector.
 	 * 
 	 * @return The input vector.
@@ -119,32 +100,6 @@ public class NumberImageIOData extends IOData {
 	}
 
 	/**
-	 * Set the inputs data.
-	 * 
-	 * @param inputs The inputs
-	 */
-	public void setInputs(List<Double> inputs) {
-		throw new UnsupportedOperationException("Not applicable in this class");
-	}
-
-	/**
-	 * Returns the outputs data.
-	 * 
-	 * @return the outputs
-	 */
-	public List<Double> getOutputs() {
-		List<Double> outputs = new ArrayList<>();
-		for (int i = 0; i < number; i++) {
-			outputs.add(0.0);
-		}
-		outputs.add(1.0);
-		for (int i = number + 1; i < 10; i++) {
-			outputs.add(0.0);
-		}
-		return outputs;
-	}
-
-	/**
 	 * Returns the output vector.
 	 * 
 	 * @return The output vector.
@@ -161,12 +116,4 @@ public class NumberImageIOData extends IOData {
 		return new Vector(vector);
 	}
 
-	/**
-	 * Set the outputs data.
-	 * 
-	 * @param outputs the outputs
-	 */
-	public void setOutputs(List<Double> outputs) {
-		throw new UnsupportedOperationException("Not applicable in this class");
-	}
 }

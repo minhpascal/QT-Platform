@@ -12,24 +12,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.qtplaf.library.ai.nnet.graph.test;
+package com.qtplaf.library.ai.nnet.matrix.test;
 
 import java.io.File;
 import java.util.List;
 
-import com.qtplaf.library.ai.nnet.data.mnist.graph.NumberImageReader;
-import com.qtplaf.library.ai.nnet.graph.NeuralNetwork;
-import com.qtplaf.library.ai.nnet.graph.function.error.MeanSquared;
-import com.qtplaf.library.ai.nnet.graph.function.input.WeightedSum;
-import com.qtplaf.library.ai.nnet.graph.function.output.Sigmoid;
-import com.qtplaf.library.ai.nnet.graph.learning.BackPropagationLearningProcess;
-import com.qtplaf.library.ai.nnet.graph.learning.LearningEvent;
-import com.qtplaf.library.ai.nnet.graph.learning.LearningListener;
-import com.qtplaf.library.ai.nnet.graph.learning.LearningProcessManager;
-import com.qtplaf.library.ai.nnet.graph.learning.ListPatternSource;
-import com.qtplaf.library.ai.nnet.graph.learning.Pattern;
-import com.qtplaf.library.ai.nnet.graph.learning.stop.IrreducibleErrorStop;
-import com.qtplaf.library.ai.nnet.graph.learning.stop.MaxIterationsStop;
+import com.qtplaf.library.ai.nnet.data.mnist.matrix.NumberImageReader;
+import com.qtplaf.library.ai.nnet.matrix.BackPropagation;
+import com.qtplaf.library.ai.nnet.matrix.LearningEvent;
+import com.qtplaf.library.ai.nnet.matrix.LearningListener;
+import com.qtplaf.library.ai.nnet.matrix.LearningProcessManager;
+import com.qtplaf.library.ai.nnet.matrix.ListPatternSource;
+import com.qtplaf.library.ai.nnet.matrix.NeuralNetwork;
+import com.qtplaf.library.ai.nnet.matrix.Pattern;
+import com.qtplaf.library.ai.nnet.matrix.error.MeanSquared;
+import com.qtplaf.library.ai.nnet.matrix.stop.IrreducibleErrorStop;
+import com.qtplaf.library.ai.nnet.matrix.stop.MaxIterationsStop;
 import com.qtplaf.library.util.SystemUtils;
 
 /**
@@ -41,7 +39,7 @@ public class TestLearningProcessManager {
 	
 	public static class Listener implements LearningListener {
 		public void learningStepPerformed(LearningEvent e) {
-			if (e.getKey().equals(LearningProcessManager.LearningEventPatternProcessed)) {
+			if (e.getId() == LearningEvent.PatternProcessed) {
 				LearningProcessManager manager = e.getLearningProcessManager();
 				int patternIndex = manager.getPatternIndex();
 				int patternsCount = manager.getIterationSize();
@@ -63,12 +61,12 @@ public class TestLearningProcessManager {
 				b.append(manager.getNetworkPerformance());
 				System.out.println(b.toString());
 			}
-			if (e.getKey().equals(LearningProcessManager.LearningEventIterationProcessed)) {
+			if (e.getId() == LearningEvent.IterationProcessed) {
 				LearningProcessManager manager = e.getLearningProcessManager();
 				long seconds = manager.getIterationProcessTime() / 1000;
 				System.out.println(seconds);
 			}
-			if (e.getKey().equals(LearningProcessManager.LearningEventNetworkPerformanceCalculated)) {
+			if (e.getId() == LearningEvent.PerformanceCalculated) {
 				LearningProcessManager manager = e.getLearningProcessManager();
 				if (manager.getNetworkPerformance() > 50) {
 					System.out.println("Now should save results");
@@ -85,17 +83,18 @@ public class TestLearningProcessManager {
 		// Configure the network
 		NeuralNetwork network = new NeuralNetwork();
 		// The hidden layer that receives the input
-		network.addLayer(100, 784, new WeightedSum(), new Sigmoid());
+		network.addLayer(784, 100);
 		// Medium layer
-//		network.addLayer(400, new WeightedSum(), new Sigmoid());
+//		network.addLayer(200);
 		// The output layer
-		network.addLayer(10, new WeightedSum(), new Sigmoid());
+		network.addLayer(10);
+		
 		network.initializeWeights();
 		network.initializeBiases(2.0);
 
 		// Configure the back propagation learning process
-		BackPropagationLearningProcess learningProcess = new BackPropagationLearningProcess(network);
-		learningProcess.setLearningRate(0.1);
+		BackPropagation learningProcess = new BackPropagation(network);
+		learningProcess.setLearningRate(0.05);
 		learningProcess.setMomentum(0.3);
 		learningProcess.setUpdateWeights(true);
 		learningProcess.setUpdateBiases(true);

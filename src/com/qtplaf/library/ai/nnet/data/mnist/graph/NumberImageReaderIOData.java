@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.ai.nnet.data.mnist;
+package com.qtplaf.library.ai.nnet.data.mnist.graph;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,23 +21,21 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qtplaf.library.ai.nnet.graph.learning.Pattern;
-
 /**
- * Reads number images and stores an array of 'NumberImage' instances. The files read are in MNIST DATABASE
+ * Reads number images and stores an array of 'NumberImageIOData' instances. The files read are in MNIST DATABASE
  * format.
  * 
  * @author Miquel Sas
  */
-public class NumberImageReader {
+public class NumberImageReaderIOData {
 
 	/** Image file. */
 	private File imageFile;
 	/** Label file. */
 	private File labelFile;
 
-	/** The list of NumberImage's read. */
-	private List<NumberImage> numberImages;
+	/** The list of NumberImageIOData's read. */
+	private List<NumberImageIOData> numberImages;
 
 	/**
 	 * Constructor assigning the files.
@@ -45,14 +43,14 @@ public class NumberImageReader {
 	 * @param labelFile The label file.
 	 * @param imageFile The image file.
 	 */
-	public NumberImageReader(File labelFile, File imageFile) {
+	public NumberImageReaderIOData(File labelFile, File imageFile) {
 		super();
 		this.labelFile = labelFile;
 		this.imageFile = imageFile;
 	}
 
 	/**
-	 * Read the images and stores them in a list of NumberImage instances.
+	 * Read the images and stores them in a list of NumberImageIOData instances.
 	 * <p>
 	 * Image file:
 	 * <p>
@@ -121,7 +119,7 @@ public class NumberImageReader {
 			byte[] bytes = new byte[imageSize];
 			bisImg.read(bytes, 0, imageSize);
 			int number = bisLbl.read();
-			NumberImage numberImage = new NumberImage(number, bytes);
+			NumberImageIOData numberImage = new NumberImageIOData(number, bytes);
 			numberImages.add(numberImage);
 		}
 
@@ -134,17 +132,17 @@ public class NumberImageReader {
 	 * 
 	 * @return The list of images.
 	 */
-	public List<NumberImage> getNumberImages() {
+	public List<NumberImageIOData> getNumberImages() {
 		return numberImages;
 	}
 	
 	/**
-	 * Returns the list of patterns
-	 * @return The list of patterns.
+	 * Returns the list of images as IOData
+	 * @return The list of IOData instances.
 	 */
-	public List<Pattern> getPatterns() {
-		List<Pattern> data = new ArrayList<>();
-		for (NumberImage numberImage : numberImages) {
+	public List<IOData> getIOData() {
+		List<IOData> data = new ArrayList<>();
+		for (NumberImageIOData numberImage : numberImages) {
 			data.add(numberImage);
 		}
 		return data;

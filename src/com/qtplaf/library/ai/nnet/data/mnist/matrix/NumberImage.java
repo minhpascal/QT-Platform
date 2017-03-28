@@ -11,17 +11,16 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package com.qtplaf.library.ai.nnet.data.mnist;
+package com.qtplaf.library.ai.nnet.data.mnist.matrix;
 
-import com.qtplaf.library.ai.nnet.graph.learning.Pattern;
-import com.qtplaf.library.math.Vector;
+import com.qtplaf.library.ai.nnet.matrix.Pattern;
 
 /**
  * MINIST sample image data: a 28*28 byte image matrix and its number (0 to 9)
  * 
  * @author Miquel Sas
  */
-public class NumberImage extends Pattern {
+public class NumberImage {
 
 	/** Image rows. */
 	public static final int ROWS = 28;
@@ -33,6 +32,11 @@ public class NumberImage extends Pattern {
 
 	/** The number. */
 	private int number;
+
+	/** Inputs. */
+	private double[] inputs;
+	/** Outputs. */
+	private double[] outputs;
 
 	/**
 	 * Constructor assigning the number and the bytes.
@@ -81,39 +85,54 @@ public class NumberImage extends Pattern {
 	}
 
 	/**
-	 * Returns the input vector.
+	 * Returns the inputs data.
 	 * 
-	 * @return The input vector.
+	 * @return The inputs
 	 */
-	public Vector getInputVector() {
-		double[][] vector = new double[ROWS * COLUMNS][1];
-		int index = 0;
-		for (int row = 0; row < ROWS; row++) {
-			for (int column = 0; column < COLUMNS; column++) {
-				double imageByte = 255 - Byte.toUnsignedInt(image[row][column]);
-				double imageInput = imageByte / 255;
-				vector[index][0] = imageInput;
-				index++;
+	public double[] getInputs() {
+		if (inputs == null) {
+			inputs = new double[ROWS * COLUMNS];
+			int index = 0;
+			for (int row = 0; row < ROWS; row++) {
+				for (int column = 0; column < COLUMNS; column++) {
+					double imageByte = 255 - Byte.toUnsignedInt(image[row][column]);
+					double imageInput = imageByte / 255;
+					inputs[index++] = imageInput;
+				}
 			}
 		}
-		return new Vector(vector);
+		return inputs;
 	}
 
 	/**
-	 * Returns the output vector.
+	 * Returns the outputs data.
 	 * 
-	 * @return The output vector.
+	 * @return the outputs
 	 */
-	public Vector getOutputVector() {
-		double[][] vector = new double[10][1];
-		for (int i = 0; i < number; i++) {
-			vector[i][0] = 0.0;
+	public double[] getOutputs() {
+		if (outputs == null) {
+			outputs = new double[10];
+			int index = 0;
+			for (int i = 0; i < number; i++) {
+				outputs[index++] = 0.0;
+			}
+			outputs[index++] = 1.0;
+			for (int i = number + 1; i < 10; i++) {
+				outputs[index++] = 0.0;
+			}
 		}
-		vector[number][0] = 1.0;
-		for (int i = number + 1; i < 10; i++) {
-			vector[i][0] = 0.0;
-		}
-		return new Vector(vector);
+		return outputs;
 	}
 
+	/**
+	 * Returns this number image pattern.
+	 * 
+	 * @return The pattern.
+	 */
+	public Pattern getPattern() {
+		Pattern pattern = new Pattern();
+		pattern.setPatternInputs(getInputs());
+		pattern.setPatternOutputs(getOutputs());
+		return pattern;
+	}
 }
