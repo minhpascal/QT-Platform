@@ -24,8 +24,7 @@ import com.qtplaf.library.util.xml.ParserHandler;
 
 /**
  * Chunk data file descriptor. Chunk data files store data in fixed length records described by the list of types. Each
- * particular implementation will be reponsible for decodifying the chun of data. Additionally the descriptor has
- * information about the instrument, the period, the filter and the offer side.
+ * particular implementation will be reponsible for decodifying the chun of data.
  * <p>
  * Strings must be fixed length and are defined by a list of characters.
  * 

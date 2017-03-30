@@ -2,10 +2,10 @@ package test.other;
 
 import java.io.File;
 
-import com.qtplaf.library.ai.nnet.graph.NeuralNetwork;
-import com.qtplaf.library.ai.nnet.graph.Persistence;
-import com.qtplaf.library.ai.nnet.graph.function.input.WeightedSum;
-import com.qtplaf.library.ai.nnet.graph.function.output.Sigmoid;
+import incubator.nnet.graph.NeuralNetwork;
+import incubator.nnet.graph.Persistence;
+import incubator.nnet.graph.function.input.WeightedSum;
+import incubator.nnet.graph.function.output.Sigmoid;
 
 public class TestXMLWriter {
 
